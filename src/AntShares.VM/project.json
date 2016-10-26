@@ -1,0 +1,28 @@
+﻿{
+  "authors": [ "The Antshares team" ],
+  "copyright": "2016 The Antshares team",
+  "title": "AntShares.VM",
+  "version": "1.0.0",
+  "packOptions": {
+    "owners": [ "The Antshares team" ],
+    "projectUrl": "https://github.com/AntShares/AntShares.VM",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/AntShares/AntShares.VM.git"
+    },
+    "tags": [ "AntShares", "Blockchain", "Smart Contract", "VM" ]
+  },
+
+  "frameworks": {
+    "netstandard1.6": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
+    },
+    "net461": {
+      "frameworkAssemblies": {
+        "System.Numerics": "4.0.0.0"
+      }
+    }
+  }
+}
