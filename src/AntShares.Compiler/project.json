@@ -1,7 +1,7 @@
 ﻿{
   "authors": [ "The Antshares team" ],
   "copyright": "2016 The Antshares team",
-  "title": "AntShares.VM",
+  "title": "AntShares.Compiler",
   "version": "1.1.0",
   "packOptions": {
     "owners": [ "The Antshares team" ],
@@ -10,13 +10,23 @@
       "type": "git",
       "url": "https://github.com/AntShares/AntShares.VM.git"
     },
-    "tags": [ "AntShares", "Blockchain", "Smart Contract", "VM" ]
+    "tags": [ "AntShares", "Blockchain", "Smart Contract", "VM", "Compiler" ]
+  },
+
+  "dependencies": {
+    "AntShares.VM": "1.1.0"
   },
 
   "frameworks": {
-    "netstandard1.6": {
+    "netcoreapp1.0": {
+      "buildOptions": {
+        "emitEntryPoint": true
+      },
       "dependencies": {
-        "NETStandard.Library": "1.6.0"
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
       }
     },
     "net461": {

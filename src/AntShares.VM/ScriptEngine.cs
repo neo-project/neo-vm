@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace AntShares.VM
 {
@@ -177,7 +178,7 @@ namespace AntShares.VM
                         }
                         break;
                     case ScriptOp.OP_SYSCALL:
-                        if (service == null || !service.Invoke(opReader.ReadVarString(), this))
+                        if (service == null || !service.Invoke(Encoding.ASCII.GetString(opReader.ReadVarBytes(252)), this))
                             State |= VMState.FAULT;
                         break;
                     case ScriptOp.OP_HALTIFNOT:
