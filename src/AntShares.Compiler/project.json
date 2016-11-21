@@ -2,7 +2,7 @@
   "authors": [ "The Antshares team" ],
   "copyright": "2016 The Antshares team",
   "title": "AntShares.Compiler",
-  "version": "1.1.0",
+  "version": "1.1.0.2",
   "packOptions": {
     "owners": [ "The Antshares team" ],
     "projectUrl": "https://github.com/AntShares/AntShares.VM",
@@ -14,7 +14,7 @@
   },
 
   "dependencies": {
-    "AntShares.VM": "1.1.0"
+    "AntShares.VM": "1.1.0.2"
   },
 
   "frameworks": {
@@ -27,6 +27,11 @@
           "type": "platform",
           "version": "1.0.1"
         }
+      }
+    },
+    "netstandard1.6": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
       }
     },
     "net461": {

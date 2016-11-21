@@ -44,16 +44,17 @@ namespace AntShares.Compiler
                 index = pline.IndexOf("//");
                 if (index >= 0) pline = pline.Substring(0, index);
                 pline = pline.Trim();
-                if (string.IsNullOrEmpty(pline)) continue;
-                if (pline.EndsWith(":"))
+                index = pline.IndexOf(':');
+                if (index >= 0)
                 {
                     yield return new Label
                     {
                         LineNumber = lineNumber,
-                        Name = pline.Substring(0, pline.Length - 1)
+                        Name = pline.Substring(0, index)
                     };
+                    pline = pline.Substring(index + 1).Trim();
                 }
-                else
+                if (!string.IsNullOrEmpty(pline))
                 {
                     string[] words = pline.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
                     InstructionName name;
