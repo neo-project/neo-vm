@@ -16,7 +16,7 @@ namespace AntShares.VM
 
         private int nOpCount = 0;
 
-        public ISignableObject Signable { get; }
+        public IScriptContainer Signable { get; }
         public RandomAccessStack<ScriptContext> InvocationStack { get; } = new RandomAccessStack<ScriptContext>();
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
@@ -24,7 +24,7 @@ namespace AntShares.VM
         public byte[] CallingScript => InvocationStack.Count > 1 ? InvocationStack.Peek(1).Script : null;
         public VMState State { get; private set; } = VMState.BREAK;
 
-        public ScriptEngine(ISignableObject signable, ICrypto crypto, int max_steps, IScriptTable table = null, IApiService service = null)
+        public ScriptEngine(IScriptContainer signable, ICrypto crypto, int max_steps, IScriptTable table = null, IApiService service = null)
         {
             this.Signable = signable;
             this.crypto = crypto;

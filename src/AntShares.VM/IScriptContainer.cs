@@ -1,6 +1,6 @@
 ﻿namespace AntShares.VM
 {
-    public interface ISignableObject
+    public interface IScriptContainer
     {
         byte[] GetMessage();
     }
