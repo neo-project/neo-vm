@@ -25,6 +25,12 @@ namespace AntShares.VM
             return GetEnumerator();
         }
 
+        public void Insert(int index, T item)
+        {
+            if (index > list.Count) throw new InvalidOperationException();
+            list.Insert(list.Count - index, item);
+        }
+
         public T Peek(int index = 0)
         {
             if (index >= list.Count) throw new InvalidOperationException();
@@ -33,15 +39,26 @@ namespace AntShares.VM
 
         public T Pop()
         {
-            if (list.Count == 0) throw new InvalidOperationException();
-            T item = list[list.Count - 1];
-            list.RemoveAt(list.Count - 1);
-            return item;
+            return Remove(0);
         }
 
         public void Push(T item)
         {
             list.Add(item);
+        }
+
+        public T Remove(int index)
+        {
+            if (index >= list.Count) throw new InvalidOperationException();
+            T item = list[list.Count - index - 1];
+            list.RemoveAt(list.Count - index - 1);
+            return item;
+        }
+
+        public void Set(int index, T item)
+        {
+            if (index >= list.Count) throw new InvalidOperationException();
+            list[list.Count - index - 1] = item;
         }
     }
 }

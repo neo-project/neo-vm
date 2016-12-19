@@ -16,12 +16,9 @@ namespace AntShares.Compiler
         public string[] Arguments;
         public byte[] Code;
 
-        private byte MakeScriptOp(byte count = 1)
+        private byte MakeScriptOp()
         {
-            if (count == 1)
-                return (byte)(ScriptOp)Enum.Parse(typeof(ScriptOp), "OP_" + Name);
-            else
-                return (byte)(ScriptOp)Enum.Parse(typeof(ScriptOp), "OP_" + count + Name);
+            return (byte)(ScriptOp)Enum.Parse(typeof(ScriptOp), "OP_" + Name);
         }
 
         private byte[] ParseHex(string hex)
@@ -48,13 +45,18 @@ namespace AntShares.Compiler
                 case InstructionName.RET:
                 case InstructionName.HALTIFNOT:
                 case InstructionName.HALT:
-                case InstructionName.TOALTSTACK:
-                case InstructionName.FROMALTSTACK:
-                case InstructionName.IFDUP:
+                case InstructionName.XDROP:
+                case InstructionName.XSWAP:
+                case InstructionName.XTUCK:
                 case InstructionName.DEPTH:
+                case InstructionName.DROP:
+                case InstructionName.DUP:
                 case InstructionName.NIP:
+                case InstructionName.OVER:
                 case InstructionName.PICK:
                 case InstructionName.ROLL:
+                case InstructionName.ROT:
+                case InstructionName.SWAP:
                 case InstructionName.TUCK:
                 case InstructionName.CAT:
                 case InstructionName.SUBSTR:
@@ -93,25 +95,6 @@ namespace AntShares.Compiler
                 case InstructionName.HASH256:
                 case InstructionName.CHECKSIG:
                 case InstructionName.CHECKMULTISIG:
-                case InstructionName.ARRAYSIZE:
-                case InstructionName.PACK:
-                case InstructionName.UNPACK:
-                case InstructionName.DISTINCT:
-                case InstructionName.SORT:
-                case InstructionName.REVERSE:
-                case InstructionName.CONCAT:
-                case InstructionName.UNION:
-                case InstructionName.INTERSECT:
-                case InstructionName.EXCEPT:
-                case InstructionName.TAKE:
-                case InstructionName.SKIP:
-                case InstructionName.PICKITEM:
-                case InstructionName.ALL:
-                case InstructionName.ANY:
-                case InstructionName.SUM:
-                case InstructionName.AVERAGE:
-                case InstructionName.MAXITEM:
-                case InstructionName.MINITEM:
                     Code = ProcessOthers();
                     break;
                 case InstructionName.JMP:
@@ -125,15 +108,6 @@ namespace AntShares.Compiler
                     break;
                 case InstructionName.SYSCALL:
                     Code = ProcessSysCall();
-                    break;
-                case InstructionName.DROP:
-                case InstructionName.OVER:
-                case InstructionName.ROT:
-                case InstructionName.SWAP:
-                    Code = ProcessStackOps(2);
-                    break;
-                case InstructionName.DUP:
-                    Code = ProcessStackOps(3);
                     break;
                 case InstructionName.INC:
                     Code = ProcessInc();
@@ -194,16 +168,6 @@ namespace AntShares.Compiler
         {
             if (Arguments.Length != 0) throw new CompilerException(LineNumber, ERR_INCORRECT_NUMBER);
             return new[] { (byte)ScriptOp.OP_0NOTEQUAL };
-        }
-
-        private byte[] ProcessStackOps(byte max)
-        {
-            if (Arguments.Length > 1) throw new CompilerException(LineNumber, ERR_INCORRECT_NUMBER);
-            byte count = 1;
-            if (Arguments.Length == 1)
-                if (!byte.TryParse(Arguments[0], out count) || count == 0 || count > max)
-                    throw new CompilerException(LineNumber, ERR_INVALID_ARGUMENT);
-            return new[] { MakeScriptOp(count) };
         }
 
         internal byte[] ProcessJump(short offset = 0)

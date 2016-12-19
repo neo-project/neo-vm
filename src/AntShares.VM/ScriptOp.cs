@@ -45,15 +45,15 @@
 
 
         // Stack
-        OP_TOALTSTACK = 0x6B, // Puts the input onto the top of the alt stack. Removes it from the main stack.
-        OP_FROMALTSTACK = 0x6C, // Puts the input onto the top of the main stack. Removes it from the alt stack.
-        OP_2DROP = 0x6D, // Removes the top two stack items.
-        OP_2DUP = 0x6E, // Duplicates the top two stack items.
-        OP_3DUP = 0x6F, // Duplicates the top three stack items.
-        OP_2OVER = 0x70, // Copies the pair of items two spaces back in the stack to the front.
-        OP_2ROT = 0x71, // The fifth and sixth items back are moved to the top of the stack.
-        OP_2SWAP = 0x72, // Swaps the top two pairs of items.
-        OP_IFDUP = 0x73, // If the top stack value is not 0, duplicate it.
+        //OP_TOALTSTACK = 0x6B, // Puts the input onto the top of the alt stack. Removes it from the main stack.
+        //OP_FROMALTSTACK = 0x6C, // Puts the input onto the top of the main stack. Removes it from the alt stack.
+        OP_XDROP = 0x6D,
+        //OP_2DUP = 0x6E, // Duplicates the top two stack items.
+        //OP_3DUP = 0x6F, // Duplicates the top three stack items.
+        //OP_2OVER = 0x70, // Copies the pair of items two spaces back in the stack to the front.
+        //OP_2ROT = 0x71, // The fifth and sixth items back are moved to the top of the stack.
+        OP_XSWAP = 0x72,
+        OP_XTUCK = 0x73,
         OP_DEPTH = 0x74, // Puts the number of stack items onto the stack.
         OP_DROP = 0x75, // Removes the top stack item.
         OP_DUP = 0x76, // Duplicates the top stack item.
@@ -126,27 +126,5 @@
         //OP_CHECKSIGVERIFY = 0xAD, // Same as OP_CHECKSIG, but OP_VERIFY is executed afterward.
         OP_CHECKMULTISIG = 0xAE, // For each signature and public key pair, OP_CHECKSIG is executed. If more public keys than signatures are listed, some key/sig pairs can fail. All signatures need to match a public key. If all signatures are valid, 1 is returned, 0 otherwise. Due to a bug, one extra unused value is removed from the stack.
         //OP_CHECKMULTISIGVERIFY = 0xAF, // Same as OP_CHECKMULTISIG, but OP_VERIFY is executed afterward.
-
-
-        // Array
-        OP_ARRAYSIZE = 0xC0,
-        OP_PACK = 0xC1,
-        OP_UNPACK = 0xC2,
-        OP_DISTINCT = 0xC3,
-        OP_SORT = 0xC4,
-        OP_REVERSE = 0xC5,
-        OP_CONCAT = 0xC6,
-        OP_UNION = 0xC7,
-        OP_INTERSECT = 0xC8,
-        OP_EXCEPT = 0xC9,
-        OP_TAKE = 0xCA,
-        OP_SKIP = 0xCB,
-        OP_PICKITEM = 0xCC,
-        OP_ALL = 0xCD,
-        OP_ANY = 0xCE,
-        OP_SUM = 0xCF,
-        OP_AVERAGE = 0xD0,
-        OP_MAXITEM = 0xD1,
-        OP_MINITEM = 0xD2,
     }
 }

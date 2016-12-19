@@ -19,7 +19,6 @@ namespace AntShares.VM
         public IScriptContainer Signable { get; }
         public RandomAccessStack<ScriptContext> InvocationStack { get; } = new RandomAccessStack<ScriptContext>();
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
-        public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
         public byte[] ExecutingScript => InvocationStack.Peek().Script;
         public byte[] CallingScript => InvocationStack.Count > 1 ? InvocationStack.Peek(1).Script : null;
         public VMState State { get; private set; } = VMState.BREAK;
@@ -176,81 +175,91 @@ namespace AntShares.VM
                         break;
 
                     // Stack ops
-                    case ScriptOp.OP_TOALTSTACK:
-                        AltStack.Push(EvaluationStack.Pop());
-                        break;
-                    case ScriptOp.OP_FROMALTSTACK:
-                        EvaluationStack.Push(AltStack.Pop());
-                        break;
-                    case ScriptOp.OP_2DROP:
-                        EvaluationStack.Pop();
-                        EvaluationStack.Pop();
-                        break;
-                    case ScriptOp.OP_2DUP:
+                    case ScriptOp.OP_XDROP:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Peek();
-                            EvaluationStack.Push(x2);
-                            EvaluationStack.Push(x1);
-                            EvaluationStack.Push(x2);
+                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            if (n < 0)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            EvaluationStack.Remove(n);
                         }
                         break;
-                    case ScriptOp.OP_3DUP:
+                    //case ScriptOp.OP_2DUP:
+                    //    {
+                    //        StackItem x2 = EvaluationStack.Pop();
+                    //        StackItem x1 = EvaluationStack.Peek();
+                    //        EvaluationStack.Push(x2);
+                    //        EvaluationStack.Push(x1);
+                    //        EvaluationStack.Push(x2);
+                    //    }
+                    //    break;
+                    //case ScriptOp.OP_3DUP:
+                    //    {
+                    //        StackItem x3 = EvaluationStack.Pop();
+                    //        StackItem x2 = EvaluationStack.Pop();
+                    //        StackItem x1 = EvaluationStack.Peek();
+                    //        EvaluationStack.Push(x2);
+                    //        EvaluationStack.Push(x3);
+                    //        EvaluationStack.Push(x1);
+                    //        EvaluationStack.Push(x2);
+                    //        EvaluationStack.Push(x3);
+                    //    }
+                    //    break;
+                    //case ScriptOp.OP_2OVER:
+                    //    {
+                    //        StackItem x4 = EvaluationStack.Pop();
+                    //        StackItem x3 = EvaluationStack.Pop();
+                    //        StackItem x2 = EvaluationStack.Pop();
+                    //        StackItem x1 = EvaluationStack.Peek();
+                    //        EvaluationStack.Push(x2);
+                    //        EvaluationStack.Push(x3);
+                    //        EvaluationStack.Push(x4);
+                    //        EvaluationStack.Push(x1);
+                    //        EvaluationStack.Push(x2);
+                    //    }
+                    //    break;
+                    //case ScriptOp.OP_2ROT:
+                    //    {
+                    //        StackItem x6 = EvaluationStack.Pop();
+                    //        StackItem x5 = EvaluationStack.Pop();
+                    //        StackItem x4 = EvaluationStack.Pop();
+                    //        StackItem x3 = EvaluationStack.Pop();
+                    //        StackItem x2 = EvaluationStack.Pop();
+                    //        StackItem x1 = EvaluationStack.Pop();
+                    //        EvaluationStack.Push(x3);
+                    //        EvaluationStack.Push(x4);
+                    //        EvaluationStack.Push(x5);
+                    //        EvaluationStack.Push(x6);
+                    //        EvaluationStack.Push(x1);
+                    //        EvaluationStack.Push(x2);
+                    //    }
+                    //    break;
+                    case ScriptOp.OP_XSWAP:
                         {
-                            StackItem x3 = EvaluationStack.Pop();
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Peek();
-                            EvaluationStack.Push(x2);
-                            EvaluationStack.Push(x3);
-                            EvaluationStack.Push(x1);
-                            EvaluationStack.Push(x2);
-                            EvaluationStack.Push(x3);
+                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            if (n < 0)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            if (n == 0) break;
+                            StackItem xn = EvaluationStack.Peek(n);
+                            EvaluationStack.Set(n, EvaluationStack.Peek());
+                            EvaluationStack.Set(0, xn);
                         }
                         break;
-                    case ScriptOp.OP_2OVER:
+                    case ScriptOp.OP_XTUCK:
                         {
-                            StackItem x4 = EvaluationStack.Pop();
-                            StackItem x3 = EvaluationStack.Pop();
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Peek();
-                            EvaluationStack.Push(x2);
-                            EvaluationStack.Push(x3);
-                            EvaluationStack.Push(x4);
-                            EvaluationStack.Push(x1);
-                            EvaluationStack.Push(x2);
+                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            if (n <= 0)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            EvaluationStack.Insert(n, EvaluationStack.Peek());
                         }
-                        break;
-                    case ScriptOp.OP_2ROT:
-                        {
-                            StackItem x6 = EvaluationStack.Pop();
-                            StackItem x5 = EvaluationStack.Pop();
-                            StackItem x4 = EvaluationStack.Pop();
-                            StackItem x3 = EvaluationStack.Pop();
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            EvaluationStack.Push(x3);
-                            EvaluationStack.Push(x4);
-                            EvaluationStack.Push(x5);
-                            EvaluationStack.Push(x6);
-                            EvaluationStack.Push(x1);
-                            EvaluationStack.Push(x2);
-                        }
-                        break;
-                    case ScriptOp.OP_2SWAP:
-                        {
-                            StackItem x4 = EvaluationStack.Pop();
-                            StackItem x3 = EvaluationStack.Pop();
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            EvaluationStack.Push(x3);
-                            EvaluationStack.Push(x4);
-                            EvaluationStack.Push(x1);
-                            EvaluationStack.Push(x2);
-                        }
-                        break;
-                    case ScriptOp.OP_IFDUP:
-                        if (EvaluationStack.Peek())
-                            EvaluationStack.Push(EvaluationStack.Peek());
                         break;
                     case ScriptOp.OP_DEPTH:
                         EvaluationStack.Push(EvaluationStack.Count);
@@ -284,13 +293,7 @@ namespace AntShares.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem[] buffer = new StackItem[n];
-                            for (int i = 0; i < n; i++)
-                                buffer[i] = EvaluationStack.Pop();
-                            StackItem xn = EvaluationStack.Peek();
-                            for (int i = n - 1; i >= 0; i--)
-                                EvaluationStack.Push(buffer[i]);
-                            EvaluationStack.Push(xn);
+                            EvaluationStack.Push(EvaluationStack.Peek(n));
                         }
                         break;
                     case ScriptOp.OP_ROLL:
@@ -302,13 +305,7 @@ namespace AntShares.VM
                                 return;
                             }
                             if (n == 0) break;
-                            StackItem[] buffer = new StackItem[n];
-                            for (int i = 0; i < n; i++)
-                                buffer[i] = EvaluationStack.Pop();
-                            StackItem xn = EvaluationStack.Pop();
-                            for (int i = n - 1; i >= 0; i--)
-                                EvaluationStack.Push(buffer[i]);
-                            EvaluationStack.Push(xn);
+                            EvaluationStack.Push(EvaluationStack.Remove(n));
                         }
                         break;
                     case ScriptOp.OP_ROT:
@@ -880,133 +877,6 @@ namespace AntShares.VM
                             }
                             EvaluationStack.Push(fSuccess);
                         }
-                        break;
-
-                    // Array
-                    case ScriptOp.OP_ARRAYSIZE:
-                        {
-                            StackItem arr = EvaluationStack.Pop();
-                            EvaluationStack.Push(arr.Count);
-                        }
-                        break;
-                    case ScriptOp.OP_PACK:
-                        {
-                            int c = (int)(BigInteger)EvaluationStack.Pop();
-                            StackItem[] arr = new StackItem[c];
-                            while (c-- > 0)
-                                arr[c] = EvaluationStack.Pop();
-                            EvaluationStack.Push(new StackItem(arr));
-                        }
-                        break;
-                    case ScriptOp.OP_UNPACK:
-                        {
-                            StackItem arr = EvaluationStack.Pop();
-                            foreach (StackItem item in arr.GetArray())
-                                EvaluationStack.Push(item);
-                            EvaluationStack.Push(arr.Count);
-                        }
-                        break;
-                    case ScriptOp.OP_DISTINCT:
-                        EvaluationStack.Push(EvaluationStack.Pop().Distinct());
-                        break;
-                    case ScriptOp.OP_SORT:
-                        EvaluationStack.Push(EvaluationStack.Pop().GetIntArray().OrderBy(p => p).ToArray());
-                        break;
-                    case ScriptOp.OP_REVERSE:
-                        EvaluationStack.Push(EvaluationStack.Pop().Reverse());
-                        break;
-                    case ScriptOp.OP_CONCAT:
-                        {
-                            int c = (int)(BigInteger)EvaluationStack.Pop();
-                            if (c == 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            StackItem item = EvaluationStack.Pop();
-                            while (--c > 0)
-                                item = EvaluationStack.Pop().Concat(item);
-                            EvaluationStack.Push(item);
-                        }
-                        break;
-                    case ScriptOp.OP_UNION:
-                        {
-                            int c = (int)(BigInteger)EvaluationStack.Pop();
-                            if (c == 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            StackItem item = EvaluationStack.Pop();
-                            while (--c > 0)
-                                item = EvaluationStack.Pop().Concat(item);
-                            EvaluationStack.Push(item.Distinct());
-                        }
-                        break;
-                    case ScriptOp.OP_INTERSECT:
-                        {
-                            int c = (int)(BigInteger)EvaluationStack.Pop();
-                            if (c == 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            StackItem item = EvaluationStack.Pop();
-                            while (--c > 0)
-                                item = EvaluationStack.Pop().Intersect(item);
-                            EvaluationStack.Push(item);
-                        }
-                        break;
-                    case ScriptOp.OP_EXCEPT:
-                        {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            EvaluationStack.Push(x1.Except(x2));
-                        }
-                        break;
-                    case ScriptOp.OP_TAKE:
-                        {
-                            int count = (int)(BigInteger)EvaluationStack.Pop();
-                            EvaluationStack.Push(EvaluationStack.Pop().Take(count));
-                        }
-                        break;
-                    case ScriptOp.OP_SKIP:
-                        {
-                            int count = (int)(BigInteger)EvaluationStack.Pop();
-                            EvaluationStack.Push(EvaluationStack.Pop().Skip(count));
-                        }
-                        break;
-                    case ScriptOp.OP_PICKITEM:
-                        {
-                            int index = (int)(BigInteger)EvaluationStack.Pop();
-                            EvaluationStack.Push(EvaluationStack.Pop().ElementAt(index));
-                        }
-                        break;
-                    case ScriptOp.OP_ALL:
-                        EvaluationStack.Push(EvaluationStack.Pop().GetBooleanArray().All(p => p));
-                        break;
-                    case ScriptOp.OP_ANY:
-                        EvaluationStack.Push(EvaluationStack.Pop().GetBooleanArray().Any(p => p));
-                        break;
-                    case ScriptOp.OP_SUM:
-                        EvaluationStack.Push(EvaluationStack.Pop().GetIntArray().Aggregate(BigInteger.Zero, (s, p) => s + p));
-                        break;
-                    case ScriptOp.OP_AVERAGE:
-                        {
-                            StackItem arr = EvaluationStack.Pop();
-                            if (arr.Count == 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            EvaluationStack.Push(arr.GetIntArray().Aggregate(BigInteger.Zero, (s, p) => s + p, p => p / arr.Count));
-                        }
-                        break;
-                    case ScriptOp.OP_MAXITEM:
-                        EvaluationStack.Push(EvaluationStack.Pop().GetIntArray().Max());
-                        break;
-                    case ScriptOp.OP_MINITEM:
-                        EvaluationStack.Push(EvaluationStack.Pop().GetIntArray().Min());
                         break;
 
                     default:
