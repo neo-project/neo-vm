@@ -2,7 +2,7 @@
   "authors": [ "The Antshares team" ],
   "copyright": "2016 The Antshares team",
   "title": "AntShares.Compiler",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "packOptions": {
     "owners": [ "The Antshares team" ],
     "projectUrl": "https://github.com/AntShares/AntShares.VM",
@@ -14,7 +14,7 @@
   },
 
   "dependencies": {
-    "AntShares.VM": "1.2.0"
+    "AntShares.VM": "1.2.1"
   },
 
   "frameworks": {

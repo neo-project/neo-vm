@@ -2,5 +2,6 @@
 {
     public interface IApiInterface
     {
+        byte[] ToArray();
     }
 }

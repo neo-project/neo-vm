@@ -163,7 +163,7 @@ namespace AntShares.VM
                             State |= VMState.FAULT;
                         break;
                     case ScriptOp.OP_HALTIFNOT:
-                        if (EvaluationStack.Peek().GetBooleanArray().All(p => p))
+                        if (EvaluationStack.Peek())
                             EvaluationStack.Pop();
                         else
                             ExecuteOp(ScriptOp.OP_HALT, context);
@@ -337,17 +337,9 @@ namespace AntShares.VM
                         break;
                     case ScriptOp.OP_CAT:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            byte[][] b1 = x1.GetBytesArray();
-                            byte[][] b2 = x2.GetBytesArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            byte[][] r = b1.Zip(b2, (p1, p2) => p1.Concat(p2).ToArray()).ToArray();
-                            EvaluationStack.Push(r);
+                            byte[] x2 = (byte[])EvaluationStack.Pop();
+                            byte[] x1 = (byte[])EvaluationStack.Pop();
+                            EvaluationStack.Push(x1.Concat(x2).ToArray());
                         }
                         break;
                     case ScriptOp.OP_SUBSTR:
@@ -364,10 +356,8 @@ namespace AntShares.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem x = EvaluationStack.Pop();
-                            byte[][] s = x.GetBytesArray();
-                            s = s.Select(p => p.Skip(index).Take(count).ToArray()).ToArray();
-                            EvaluationStack.Push(s);
+                            byte[] x = (byte[])EvaluationStack.Pop();
+                            EvaluationStack.Push(x.Skip(index).Take(count).ToArray());
                         }
                         break;
                     case ScriptOp.OP_LEFT:
@@ -378,10 +368,8 @@ namespace AntShares.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem x = EvaluationStack.Pop();
-                            byte[][] s = x.GetBytesArray();
-                            s = s.Select(p => p.Take(count).ToArray()).ToArray();
-                            EvaluationStack.Push(s);
+                            byte[] x = (byte[])EvaluationStack.Pop();
+                            EvaluationStack.Push(x.Take(count).ToArray());
                         }
                         break;
                     case ScriptOp.OP_RIGHT:
@@ -392,404 +380,224 @@ namespace AntShares.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem x = EvaluationStack.Pop();
-                            byte[][] s = x.GetBytesArray();
-                            if (s.Any(p => p.Length < count))
+                            byte[] x = (byte[])EvaluationStack.Pop();
+                            if (x.Length < count)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            s = s.Select(p => p.Skip(p.Length - count).ToArray()).ToArray();
-                            EvaluationStack.Push(s);
+                            EvaluationStack.Push(x.Skip(x.Length - count).ToArray());
                         }
                         break;
                     case ScriptOp.OP_SIZE:
                         {
-                            StackItem x = EvaluationStack.Peek();
-                            int[] r = x.GetBytesArray().Select(p => p.Length).ToArray();
-                            EvaluationStack.Push(r);
+                            byte[] x = (byte[])EvaluationStack.Peek();
+                            EvaluationStack.Push(x.Length);
                         }
                         break;
 
                     // Bitwise logic
                     case ScriptOp.OP_INVERT:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            BigInteger[] r = x.GetIntArray().Select(p => ~p).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(~x);
                         }
                         break;
                     case ScriptOp.OP_AND:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 & p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 & x2);
                         }
                         break;
                     case ScriptOp.OP_OR:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 | p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 | x2);
                         }
                         break;
                     case ScriptOp.OP_XOR:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 ^ p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 ^ x2);
                         }
                         break;
                     case ScriptOp.OP_EQUAL:
                         {
                             StackItem x2 = EvaluationStack.Pop();
                             StackItem x1 = EvaluationStack.Pop();
-                            byte[][] b1 = x1.GetBytesArray();
-                            byte[][] b2 = x2.GetBytesArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            bool[] r = b1.Zip(b2, (p1, p2) => p1.SequenceEqual(p2)).ToArray();
-                            EvaluationStack.Push(r);
+                            EvaluationStack.Push(x1.Equals(x2));
                         }
                         break;
 
                     // Numeric
                     case ScriptOp.OP_1ADD:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            BigInteger[] r = x.GetIntArray().Select(p => p + BigInteger.One).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x + 1);
                         }
                         break;
                     case ScriptOp.OP_1SUB:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            BigInteger[] r = x.GetIntArray().Select(p => p - BigInteger.One).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x - 1);
                         }
                         break;
                     case ScriptOp.OP_2MUL:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            BigInteger[] r = x.GetIntArray().Select(p => p << 1).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x << 1);
                         }
                         break;
                     case ScriptOp.OP_2DIV:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            BigInteger[] r = x.GetIntArray().Select(p => p >> 1).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x >> 1);
                         }
                         break;
                     case ScriptOp.OP_NEGATE:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            BigInteger[] r = x.GetIntArray().Select(p => -p).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(-x);
                         }
                         break;
                     case ScriptOp.OP_ABS:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            BigInteger[] r = x.GetIntArray().Select(p => BigInteger.Abs(p)).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(BigInteger.Abs(x));
                         }
                         break;
                     case ScriptOp.OP_NOT:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            bool[] r = x.GetBooleanArray().Select(p => !p).ToArray();
-                            EvaluationStack.Push(r);
+                            bool x = EvaluationStack.Pop();
+                            EvaluationStack.Push(!x);
                         }
                         break;
                     case ScriptOp.OP_0NOTEQUAL:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            bool[] r = x.GetIntArray().Select(p => p != BigInteger.Zero).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x != BigInteger.Zero);
                         }
                         break;
                     case ScriptOp.OP_ADD:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 + p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 + x2);
                         }
                         break;
                     case ScriptOp.OP_SUB:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 - p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 - x2);
                         }
                         break;
                     case ScriptOp.OP_MUL:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 * p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 * x2);
                         }
                         break;
                     case ScriptOp.OP_DIV:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 / p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 / x2);
                         }
                         break;
                     case ScriptOp.OP_MOD:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 % p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 % x2);
                         }
                         break;
                     case ScriptOp.OP_LSHIFT:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 << (int)p2).ToArray();
-                            EvaluationStack.Push(r);
+                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x << n);
                         }
                         break;
                     case ScriptOp.OP_RSHIFT:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => p1 >> (int)p2).ToArray();
-                            EvaluationStack.Push(r);
+                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x >> n);
                         }
                         break;
                     case ScriptOp.OP_BOOLAND:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            bool[] b1 = x1.GetBooleanArray();
-                            bool[] b2 = x2.GetBooleanArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            bool[] r = b1.Zip(b2, (p1, p2) => p1 && p2).ToArray();
-                            EvaluationStack.Push(r);
+                            bool x2 = EvaluationStack.Pop();
+                            bool x1 = EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 && x2);
                         }
                         break;
                     case ScriptOp.OP_BOOLOR:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            bool[] b1 = x1.GetBooleanArray();
-                            bool[] b2 = x2.GetBooleanArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            bool[] r = b1.Zip(b2, (p1, p2) => p1 || p2).ToArray();
-                            EvaluationStack.Push(r);
+                            bool x2 = EvaluationStack.Pop();
+                            bool x1 = EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 || x2);
                         }
                         break;
                     case ScriptOp.OP_NUMEQUAL:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            bool[] r = b1.Zip(b2, (p1, p2) => p1 == p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 == x2);
                         }
                         break;
                     case ScriptOp.OP_NUMNOTEQUAL:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            bool[] r = b1.Zip(b2, (p1, p2) => p1 != p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 != x2);
                         }
                         break;
                     case ScriptOp.OP_LESSTHAN:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            bool[] r = b1.Zip(b2, (p1, p2) => p1 < p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 < x2);
                         }
                         break;
                     case ScriptOp.OP_GREATERTHAN:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            bool[] r = b1.Zip(b2, (p1, p2) => p1 > p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 > x2);
                         }
                         break;
                     case ScriptOp.OP_LESSTHANOREQUAL:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            bool[] r = b1.Zip(b2, (p1, p2) => p1 <= p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 <= x2);
                         }
                         break;
                     case ScriptOp.OP_GREATERTHANOREQUAL:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            bool[] r = b1.Zip(b2, (p1, p2) => p1 >= p2).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(x1 >= x2);
                         }
                         break;
                     case ScriptOp.OP_MIN:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => BigInteger.Min(p1, p2)).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(BigInteger.Min(x1, x2));
                         }
                         break;
                     case ScriptOp.OP_MAX:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            BigInteger[] b1 = x1.GetIntArray();
-                            BigInteger[] b2 = x2.GetIntArray();
-                            if (b1.Length != b2.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            BigInteger[] r = b1.Zip(b2, (p1, p2) => BigInteger.Max(p1, p2)).ToArray();
-                            EvaluationStack.Push(r);
+                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            EvaluationStack.Push(BigInteger.Max(x1, x2));
                         }
                         break;
                     case ScriptOp.OP_WITHIN:
@@ -805,31 +613,27 @@ namespace AntShares.VM
                     case ScriptOp.OP_SHA1:
                         using (SHA1 sha = SHA1.Create())
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            byte[][] r = x.GetBytesArray().Select(p => sha.ComputeHash(p)).ToArray();
-                            EvaluationStack.Push(r);
+                            byte[] x = (byte[])EvaluationStack.Pop();
+                            EvaluationStack.Push(sha.ComputeHash(x));
                         }
                         break;
                     case ScriptOp.OP_SHA256:
                         using (SHA256 sha = SHA256.Create())
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            byte[][] r = x.GetBytesArray().Select(p => sha.ComputeHash(p)).ToArray();
-                            EvaluationStack.Push(r);
+                            byte[] x = (byte[])EvaluationStack.Pop();
+                            EvaluationStack.Push(sha.ComputeHash(x));
                         }
                         break;
                     case ScriptOp.OP_HASH160:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            byte[][] r = x.GetBytesArray().Select(p => crypto.Hash160(p)).ToArray();
-                            EvaluationStack.Push(r);
+                            byte[] x = (byte[])EvaluationStack.Pop();
+                            EvaluationStack.Push(crypto.Hash160(x));
                         }
                         break;
                     case ScriptOp.OP_HASH256:
                         {
-                            StackItem x = EvaluationStack.Pop();
-                            byte[][] r = x.GetBytesArray().Select(p => crypto.Hash256(p)).ToArray();
-                            EvaluationStack.Push(r);
+                            byte[] x = (byte[])EvaluationStack.Pop();
+                            EvaluationStack.Push(crypto.Hash256(x));
                         }
                         break;
                     case ScriptOp.OP_CHECKSIG:
