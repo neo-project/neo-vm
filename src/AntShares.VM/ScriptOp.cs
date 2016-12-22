@@ -45,8 +45,8 @@
 
 
         // Stack
-        //OP_TOALTSTACK = 0x6B, // Puts the input onto the top of the alt stack. Removes it from the main stack.
-        //OP_FROMALTSTACK = 0x6C, // Puts the input onto the top of the main stack. Removes it from the alt stack.
+        OP_TOALTSTACK = 0x6B, // Puts the input onto the top of the alt stack. Removes it from the main stack.
+        OP_FROMALTSTACK = 0x6C, // Puts the input onto the top of the main stack. Removes it from the alt stack.
         OP_XDROP = 0x6D,
         //OP_2DUP = 0x6E, // Duplicates the top two stack items.
         //OP_3DUP = 0x6F, // Duplicates the top three stack items.

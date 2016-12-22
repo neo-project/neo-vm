@@ -45,6 +45,8 @@ namespace AntShares.Compiler
                 case InstructionName.RET:
                 case InstructionName.HALTIFNOT:
                 case InstructionName.HALT:
+                case InstructionName.TOALTSTACK:
+                case InstructionName.FROMALTSTACK:
                 case InstructionName.XDROP:
                 case InstructionName.XSWAP:
                 case InstructionName.XTUCK:

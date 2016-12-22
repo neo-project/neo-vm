@@ -19,6 +19,7 @@ namespace AntShares.VM
         public IScriptContainer Signable { get; }
         public RandomAccessStack<ScriptContext> InvocationStack { get; } = new RandomAccessStack<ScriptContext>();
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
+        public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
         public byte[] ExecutingScript => InvocationStack.Peek().Script;
         public byte[] CallingScript => InvocationStack.Count > 1 ? InvocationStack.Peek(1).Script : null;
         public VMState State { get; private set; } = VMState.BREAK;
@@ -175,6 +176,12 @@ namespace AntShares.VM
                         break;
 
                     // Stack ops
+                    case ScriptOp.OP_TOALTSTACK:
+                        AltStack.Push(EvaluationStack.Pop());
+                        break;
+                    case ScriptOp.OP_FROMALTSTACK:
+                        EvaluationStack.Push(AltStack.Pop());
+                        break;
                     case ScriptOp.OP_XDROP:
                         {
                             int n = (int)(BigInteger)EvaluationStack.Pop();

@@ -13,6 +13,8 @@
         SYSCALL,
         HALTIFNOT,
         HALT,
+        TOALTSTACK,
+        FROMALTSTACK,
         XDROP,
         XSWAP,
         XTUCK,
