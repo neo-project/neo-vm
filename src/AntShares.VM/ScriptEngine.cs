@@ -9,27 +9,28 @@ namespace AntShares.VM
 {
     public class ScriptEngine : IDisposable
     {
-        private readonly ICrypto crypto;
         private readonly IScriptTable table;
-        private readonly IApiService service;
+        private readonly ApiService service;
         private int max_steps;
 
         private int nOpCount = 0;
 
-        public IScriptContainer Signable { get; }
+        public IScriptContainer ScriptContainer { get; }
+        public ICrypto Crypto { get; }
         public RandomAccessStack<ScriptContext> InvocationStack { get; } = new RandomAccessStack<ScriptContext>();
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
         public byte[] ExecutingScript => InvocationStack.Peek().Script;
         public byte[] CallingScript => InvocationStack.Count > 1 ? InvocationStack.Peek(1).Script : null;
+        public byte[] EntryScript => InvocationStack.Peek(InvocationStack.Count - 1).Script;
         public VMState State { get; private set; } = VMState.BREAK;
 
-        public ScriptEngine(IScriptContainer signable, ICrypto crypto, int max_steps, IScriptTable table = null, IApiService service = null)
+        public ScriptEngine(IScriptContainer container, ICrypto crypto, int max_steps, IScriptTable table = null, ApiService service = null)
         {
-            this.Signable = signable;
-            this.crypto = crypto;
+            this.ScriptContainer = container;
+            this.Crypto = crypto;
             this.table = table;
-            this.service = service;
+            this.service = service ?? new ApiService();
             this.max_steps = max_steps;
         }
 
@@ -160,7 +161,7 @@ namespace AntShares.VM
                         }
                         break;
                     case ScriptOp.OP_SYSCALL:
-                        if (service == null || !service.Invoke(Encoding.ASCII.GetString(context.OpReader.ReadVarBytes(252)), this))
+                        if (!service.Invoke(Encoding.ASCII.GetString(context.OpReader.ReadVarBytes(252)), this))
                             State |= VMState.FAULT;
                         break;
                     case ScriptOp.OP_HALTIFNOT:
@@ -634,20 +635,20 @@ namespace AntShares.VM
                     case ScriptOp.OP_HASH160:
                         {
                             byte[] x = (byte[])EvaluationStack.Pop();
-                            EvaluationStack.Push(crypto.Hash160(x));
+                            EvaluationStack.Push(Crypto.Hash160(x));
                         }
                         break;
                     case ScriptOp.OP_HASH256:
                         {
                             byte[] x = (byte[])EvaluationStack.Pop();
-                            EvaluationStack.Push(crypto.Hash256(x));
+                            EvaluationStack.Push(Crypto.Hash256(x));
                         }
                         break;
                     case ScriptOp.OP_CHECKSIG:
                         {
                             byte[] pubkey = (byte[])EvaluationStack.Pop();
                             byte[] signature = (byte[])EvaluationStack.Pop();
-                            EvaluationStack.Push(crypto.VerifySignature(Signable.GetMessage(), signature, pubkey));
+                            EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature, pubkey));
                         }
                         break;
                     case ScriptOp.OP_CHECKMULTISIG:
@@ -676,11 +677,11 @@ namespace AntShares.VM
                             byte[][] signatures = new byte[m][];
                             for (int i = 0; i < m; i++)
                                 signatures[i] = (byte[])EvaluationStack.Pop();
-                            byte[] message = Signable.GetMessage();
+                            byte[] message = ScriptContainer.GetMessage();
                             bool fSuccess = true;
                             for (int i = 0, j = 0; fSuccess && i < m && j < n;)
                             {
-                                if (crypto.VerifySignature(message, signatures[i], pubkeys[j]))
+                                if (Crypto.VerifySignature(message, signatures[i], pubkeys[j]))
                                     i++;
                                 j++;
                                 if (m - i > n - j)

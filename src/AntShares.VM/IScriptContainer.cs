@@ -1,6 +1,6 @@
 ﻿namespace AntShares.VM
 {
-    public interface IScriptContainer
+    public interface IScriptContainer : IApiInterface
     {
         byte[] GetMessage();
     }
