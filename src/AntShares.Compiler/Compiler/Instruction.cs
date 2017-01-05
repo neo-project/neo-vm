@@ -209,10 +209,7 @@ namespace AntShares.Compiler
         private byte[] ProcessSysCall()
         {
             if (Arguments.Length != 1) throw new CompilerException(LineNumber, ERR_INCORRECT_NUMBER);
-            if (Arguments[0].Length < 3) throw new CompilerException(LineNumber, ERR_INVALID_ARGUMENT);
-            if (Arguments[0][0] != '\"' || Arguments[0][Arguments[0].Length - 1] != '\"') throw new CompilerException(LineNumber, ERR_INVALID_ARGUMENT);
-            string name = Arguments[0].Substring(1, Arguments[0].Length - 2);
-            byte[] data = Encoding.ASCII.GetBytes(name);
+            byte[] data = Encoding.ASCII.GetBytes(Arguments[0]);
             if (data.Length > 252) throw new CompilerException(LineNumber, ERR_INVALID_ARGUMENT);
             byte[] result = new byte[data.Length + 2];
             result[0] = (byte)ScriptOp.OP_SYSCALL;
