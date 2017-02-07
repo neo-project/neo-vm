@@ -9,7 +9,7 @@ namespace AntShares.VM
         public readonly byte[] Script;
         internal readonly bool PushOnly;
         internal readonly BinaryReader OpReader;
-        internal readonly HashSet<uint> BreakPoints = new HashSet<uint>();
+        internal readonly HashSet<uint> BreakPoints;
 
         public int InstructionPointer
         {
@@ -23,11 +23,20 @@ namespace AntShares.VM
             }
         }
 
-        internal ScriptContext(byte[] script, bool push_only)
+        internal ScriptContext(byte[] script, bool push_only, HashSet<uint> break_points = null)
         {
             this.Script = script;
             this.PushOnly = push_only;
             this.OpReader = new BinaryReader(new MemoryStream(script, false));
+            this.BreakPoints = break_points ?? new HashSet<uint>();
+        }
+
+        public ScriptContext Clone()
+        {
+            return new ScriptContext(Script, PushOnly, BreakPoints)
+            {
+                InstructionPointer = InstructionPointer
+            };
         }
 
         public void Dispose()

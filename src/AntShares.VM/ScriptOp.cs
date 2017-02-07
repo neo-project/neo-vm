@@ -40,8 +40,8 @@
         OP_RET = 0x66,
         OP_APPCALL = 0x67,
         OP_SYSCALL = 0x68,
-        OP_HALTIFNOT = 0x69,
-        OP_HALT = 0x6A,
+        //OP_HALTIFNOT = 0x69,
+        //OP_HALT = 0x6A,
 
 
         // Stack

@@ -54,7 +54,7 @@ namespace AntShares.VM
 
         private void ExecuteOp(ScriptOp opcode, ScriptContext context)
         {
-            if (opcode > ScriptOp.OP_16 && opcode != ScriptOp.OP_HALT && context.PushOnly)
+            if (opcode > ScriptOp.OP_16 && opcode != ScriptOp.OP_RET && context.PushOnly)
             {
                 State |= VMState.FAULT;
                 return;
@@ -127,21 +127,14 @@ namespace AntShares.VM
                         }
                         break;
                     case ScriptOp.OP_CALL:
-                        EvaluationStack.Push(context.InstructionPointer + 2);
-                        ExecuteOp(ScriptOp.OP_JMP, context);
+                        InvocationStack.Push(context.Clone());
+                        context.InstructionPointer += 2;
+                        ExecuteOp(ScriptOp.OP_JMP, InvocationStack.Peek());
                         break;
                     case ScriptOp.OP_RET:
-                        {
-                            StackItem result = EvaluationStack.Pop();
-                            int position = (int)(BigInteger)EvaluationStack.Pop();
-                            if (position < 0 || position > context.Script.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            EvaluationStack.Push(result);
-                            context.InstructionPointer = position;
-                        }
+                        InvocationStack.Pop().Dispose();
+                        if (InvocationStack.Count == 0)
+                            State |= VMState.HALT;
                         break;
                     case ScriptOp.OP_APPCALL:
                         {
@@ -163,17 +156,6 @@ namespace AntShares.VM
                     case ScriptOp.OP_SYSCALL:
                         if (!service.Invoke(Encoding.ASCII.GetString(context.OpReader.ReadVarBytes(252)), this))
                             State |= VMState.FAULT;
-                        break;
-                    case ScriptOp.OP_HALTIFNOT:
-                        if (EvaluationStack.Peek())
-                            EvaluationStack.Pop();
-                        else
-                            ExecuteOp(ScriptOp.OP_HALT, context);
-                        break;
-                    case ScriptOp.OP_HALT:
-                        InvocationStack.Pop().Dispose();
-                        if (InvocationStack.Count == 0)
-                            State |= VMState.HALT;
                         break;
 
                     // Stack ops
@@ -719,7 +701,7 @@ namespace AntShares.VM
             if (InvocationStack.Count == 0) State |= VMState.HALT;
             if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
             ScriptContext context = InvocationStack.Peek();
-            ScriptOp opcode = context.InstructionPointer >= context.Script.Length ? ScriptOp.OP_HALT : (ScriptOp)context.OpReader.ReadByte();
+            ScriptOp opcode = context.InstructionPointer >= context.Script.Length ? ScriptOp.OP_RET : (ScriptOp)context.OpReader.ReadByte();
             nOpCount++;
             try
             {
