@@ -43,8 +43,6 @@ namespace AntShares.Compiler
                     break;
                 case InstructionName.NOP:
                 case InstructionName.RET:
-                case InstructionName.HALTIFNOT:
-                case InstructionName.HALT:
                 case InstructionName.TOALTSTACK:
                 case InstructionName.FROMALTSTACK:
                 case InstructionName.XDROP:

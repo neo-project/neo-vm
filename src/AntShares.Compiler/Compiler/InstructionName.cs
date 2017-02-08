@@ -11,8 +11,6 @@
         RET,
         APPCALL,
         SYSCALL,
-        HALTIFNOT,
-        HALT,
         TOALTSTACK,
         FROMALTSTACK,
         XDROP,
