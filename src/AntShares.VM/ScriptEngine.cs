@@ -109,7 +109,8 @@ namespace AntShares.VM
                     case ScriptOp.OP_JMPIF:
                     case ScriptOp.OP_JMPIFNOT:
                         {
-                            int offset = context.InstructionPointer + context.OpReader.ReadInt16() - 3;
+                            int offset = context.OpReader.ReadInt16();
+                            offset = context.InstructionPointer + offset - 3;
                             if (offset < 0 || offset > context.Script.Length)
                             {
                                 State |= VMState.FAULT;
