@@ -4,7 +4,7 @@ using System.IO;
 
 namespace AntShares.VM
 {
-    public class ScriptContext : IDisposable
+    public class ExecutionContext : IDisposable
     {
         public readonly byte[] Script;
         internal readonly bool PushOnly;
@@ -23,7 +23,7 @@ namespace AntShares.VM
             }
         }
 
-        internal ScriptContext(byte[] script, bool push_only, HashSet<uint> break_points = null)
+        internal ExecutionContext(byte[] script, bool push_only, HashSet<uint> break_points = null)
         {
             this.Script = script;
             this.PushOnly = push_only;
@@ -31,9 +31,9 @@ namespace AntShares.VM
             this.BreakPoints = break_points ?? new HashSet<uint>();
         }
 
-        public ScriptContext Clone()
+        public ExecutionContext Clone()
         {
-            return new ScriptContext(Script, PushOnly, BreakPoints)
+            return new ExecutionContext(Script, PushOnly, BreakPoints)
             {
                 InstructionPointer = InstructionPointer
             };

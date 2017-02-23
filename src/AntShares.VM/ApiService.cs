@@ -5,7 +5,7 @@ namespace AntShares.VM
 {
     public class ApiService
     {
-        private Dictionary<string, Func<ScriptEngine, bool>> dictionary = new Dictionary<string, Func<ScriptEngine, bool>>();
+        private Dictionary<string, Func<ExecutionEngine, bool>> dictionary = new Dictionary<string, Func<ExecutionEngine, bool>>();
 
         public ApiService()
         {
@@ -15,38 +15,38 @@ namespace AntShares.VM
             Register("System.ScriptEngine.GetEntryScriptHash", GetEntryScriptHash);
         }
 
-        protected bool Register(string method, Func<ScriptEngine, bool> handler)
+        protected bool Register(string method, Func<ExecutionEngine, bool> handler)
         {
             if (dictionary.ContainsKey(method)) return false;
             dictionary.Add(method, handler);
             return true;
         }
 
-        internal bool Invoke(string method, ScriptEngine engine)
+        internal bool Invoke(string method, ExecutionEngine engine)
         {
             if (!dictionary.ContainsKey(method)) return false;
             return dictionary[method](engine);
         }
 
-        private static bool GetScriptContainer(ScriptEngine engine)
+        private static bool GetScriptContainer(ExecutionEngine engine)
         {
             engine.EvaluationStack.Push(new StackItem(engine.ScriptContainer));
             return true;
         }
 
-        private static bool GetExecutingScriptHash(ScriptEngine engine)
+        private static bool GetExecutingScriptHash(ExecutionEngine engine)
         {
             engine.EvaluationStack.Push(engine.Crypto.Hash160(engine.ExecutingScript));
             return true;
         }
 
-        private static bool GetCallingScriptHash(ScriptEngine engine)
+        private static bool GetCallingScriptHash(ExecutionEngine engine)
         {
             engine.EvaluationStack.Push(engine.Crypto.Hash160(engine.CallingScript));
             return true;
         }
 
-        private static bool GetEntryScriptHash(ScriptEngine engine)
+        private static bool GetEntryScriptHash(ExecutionEngine engine)
         {
             engine.EvaluationStack.Push(engine.Crypto.Hash160(engine.EntryScript));
             return true;

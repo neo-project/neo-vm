@@ -1,6 +1,6 @@
 ﻿namespace AntShares.VM
 {
-    public enum ScriptOp : byte
+    public enum OpCode : byte
     {
         // Constants
         OP_0 = 0x00, // An empty array of bytes is pushed onto the stack. (This is not a no-op: an item is added to the stack.)

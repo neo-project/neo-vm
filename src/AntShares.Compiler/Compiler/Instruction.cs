@@ -18,7 +18,7 @@ namespace AntShares.Compiler
 
         private byte MakeScriptOp()
         {
-            return (byte)(ScriptOp)Enum.Parse(typeof(ScriptOp), "OP_" + Name);
+            return (byte)(OpCode)Enum.Parse(typeof(OpCode), "OP_" + Name);
         }
 
         private byte[] ParseHex(string hex)
@@ -135,7 +135,7 @@ namespace AntShares.Compiler
             byte[] hash = ParseHex(Arguments[0]);
             if (hash.Length != 20) throw new CompilerException(LineNumber, ERR_INVALID_ARGUMENT);
             byte[] result = new byte[21];
-            result[0] = (byte)ScriptOp.OP_APPCALL;
+            result[0] = (byte)OpCode.OP_APPCALL;
             Buffer.BlockCopy(hash, 0, result, 1, 20);
             return result;
         }
@@ -143,31 +143,31 @@ namespace AntShares.Compiler
         private byte[] ProcessDec()
         {
             if (Arguments.Length != 0) throw new CompilerException(LineNumber, ERR_INCORRECT_NUMBER);
-            return new[] { (byte)ScriptOp.OP_1SUB };
+            return new[] { (byte)OpCode.OP_1SUB };
         }
 
         private byte[] ProcessDiv2()
         {
             if (Arguments.Length != 0) throw new CompilerException(LineNumber, ERR_INCORRECT_NUMBER);
-            return new[] { (byte)ScriptOp.OP_2DIV };
+            return new[] { (byte)OpCode.OP_2DIV };
         }
 
         private byte[] ProcessInc()
         {
             if (Arguments.Length != 0) throw new CompilerException(LineNumber, ERR_INCORRECT_NUMBER);
-            return new[] { (byte)ScriptOp.OP_1ADD };
+            return new[] { (byte)OpCode.OP_1ADD };
         }
 
         private byte[] ProcessMul2()
         {
             if (Arguments.Length != 0) throw new CompilerException(LineNumber, ERR_INCORRECT_NUMBER);
-            return new[] { (byte)ScriptOp.OP_2MUL };
+            return new[] { (byte)OpCode.OP_2MUL };
         }
 
         private byte[] ProcessNotZero()
         {
             if (Arguments.Length != 0) throw new CompilerException(LineNumber, ERR_INCORRECT_NUMBER);
-            return new[] { (byte)ScriptOp.OP_0NOTEQUAL };
+            return new[] { (byte)OpCode.OP_0NOTEQUAL };
         }
 
         internal byte[] ProcessJump(short offset = 0)
@@ -192,14 +192,14 @@ namespace AntShares.Compiler
             BigInteger bi;
             if (BigInteger.TryParse(Arguments[0], out bi))
                 using (ScriptBuilder sb = new ScriptBuilder())
-                    return sb.Push(bi).ToArray();
+                    return sb.EmitPush(bi).ToArray();
             else if (string.Compare(Arguments[0], "true", true) == 0)
-                return new[] { (byte)ScriptOp.OP_TRUE };
+                return new[] { (byte)OpCode.OP_TRUE };
             else if (string.Compare(Arguments[0], "false", true) == 0)
-                return new[] { (byte)ScriptOp.OP_FALSE };
+                return new[] { (byte)OpCode.OP_FALSE };
             else if (Arguments[0].StartsWith("0x"))
                 using (ScriptBuilder sb = new ScriptBuilder())
-                    return sb.Push(ParseHex(Arguments[0])).ToArray();
+                    return sb.EmitPush(ParseHex(Arguments[0])).ToArray();
             else
                 throw new CompilerException(LineNumber, ERR_INVALID_ARGUMENT);
         }
@@ -210,7 +210,7 @@ namespace AntShares.Compiler
             byte[] data = Encoding.ASCII.GetBytes(Arguments[0]);
             if (data.Length > 252) throw new CompilerException(LineNumber, ERR_INVALID_ARGUMENT);
             byte[] result = new byte[data.Length + 2];
-            result[0] = (byte)ScriptOp.OP_SYSCALL;
+            result[0] = (byte)OpCode.OP_SYSCALL;
             result[1] = (byte)data.Length;
             Buffer.BlockCopy(data, 0, result, 2, data.Length);
             return result;
