@@ -29,21 +29,21 @@ namespace AntShares.Compiler
         {
             if (scriptHash.Length != 20)
                 throw new ArgumentException();
-            return Emit(OpCode.OP_APPCALL, scriptHash);
+            return Emit(OpCode.APPCALL, scriptHash);
         }
 
         public ScriptBuilder EmitJump(OpCode op, short offset)
         {
-            if (op != OpCode.OP_JMP && op != OpCode.OP_JMPIF && op != OpCode.OP_JMPIFNOT && op != OpCode.OP_CALL)
+            if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT && op != OpCode.CALL)
                 throw new ArgumentException();
             return Emit(op, BitConverter.GetBytes(offset));
         }
 
         public ScriptBuilder EmitPush(BigInteger number)
         {
-            if (number == -1) return Emit(OpCode.OP_1NEGATE);
-            if (number == 0) return Emit(OpCode.OP_0);
-            if (number > 0 && number <= 16) return Emit(OpCode.OP_1 - 1 + (byte)number);
+            if (number == -1) return Emit(OpCode.PUSHM1);
+            if (number == 0) return Emit(OpCode.PUSH0);
+            if (number > 0 && number <= 16) return Emit(OpCode.PUSH1 - 1 + (byte)number);
             return EmitPush(number.ToByteArray());
         }
 
@@ -51,26 +51,26 @@ namespace AntShares.Compiler
         {
             if (data == null)
                 throw new ArgumentNullException();
-            if (data.Length <= (int)OpCode.OP_PUSHBYTES75)
+            if (data.Length <= (int)OpCode.PUSHBYTES75)
             {
                 ms.WriteByte((byte)data.Length);
                 ms.Write(data, 0, data.Length);
             }
             else if (data.Length < 0x100)
             {
-                Emit(OpCode.OP_PUSHDATA1);
+                Emit(OpCode.PUSHDATA1);
                 ms.WriteByte((byte)data.Length);
                 ms.Write(data, 0, data.Length);
             }
             else if (data.Length < 0x10000)
             {
-                Emit(OpCode.OP_PUSHDATA2);
+                Emit(OpCode.PUSHDATA2);
                 ms.Write(BitConverter.GetBytes((ushort)data.Length), 0, 2);
                 ms.Write(data, 0, data.Length);
             }
             else// if (data.Length < 0x100000000L)
             {
-                Emit(OpCode.OP_PUSHDATA4);
+                Emit(OpCode.PUSHDATA4);
                 ms.Write(BitConverter.GetBytes((uint)data.Length), 0, 4);
                 ms.Write(data, 0, data.Length);
             }
@@ -87,7 +87,7 @@ namespace AntShares.Compiler
             byte[] arg = new byte[api_bytes.Length + 1];
             arg[0] = (byte)api_bytes.Length;
             Buffer.BlockCopy(api_bytes, 0, arg, 1, api_bytes.Length);
-            return Emit(OpCode.OP_SYSCALL, arg);
+            return Emit(OpCode.SYSCALL, arg);
         }
 
         public byte[] ToArray()

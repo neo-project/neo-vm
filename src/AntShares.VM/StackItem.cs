@@ -1,56 +1,39 @@
-﻿using System;
-using System.Linq;
+﻿using AntShares.VM.Types;
+using System;
 using System.Numerics;
+using Array = AntShares.VM.Types.Array;
+using Boolean = AntShares.VM.Types.Boolean;
 
 namespace AntShares.VM
 {
-    public class StackItem : IEquatable<StackItem>
+    public abstract class StackItem : IEquatable<StackItem>
     {
-        private byte[] data;
-        private IApiInterface _object;
+        public virtual int ArraySize => 1;
 
-        private StackItem() { }
+        public virtual bool IsArray => false;
 
-        public StackItem(byte[] value)
+        public abstract bool Equals(StackItem other);
+
+        public static StackItem FromInterface(IInteropInterface value)
         {
-            this.data = value;
-            this._object = null;
+            return new InteropInterface(value);
         }
 
-        public StackItem(IApiInterface value)
+        public virtual StackItem[] GetArray()
         {
-            this.data = null;
-            this._object = value;
+            return new[] { this };
         }
 
-        public T GetInterface<T>() where T : class, IApiInterface
+        public virtual BigInteger GetBigInteger()
         {
-            return _object as T;
+            return new BigInteger(GetByteArray());
         }
 
-        internal static bool IsEqual(object x, object y)
-        {
-            if (x.GetType() != y.GetType()) return false;
-            if (x is byte[])
-                return ((byte[])x).SequenceEqual((byte[])y);
-            else
-                return x.Equals(y);
-        }
+        public abstract bool GetBoolean();
 
-        public bool Equals(StackItem other)
-        {
-            if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
-            if (_object != null && other._object != null)
-                return _object.Equals(other._object);
-            if (_object == null && data == null && other._object == null && other.data == null)
-                return true;
-            if ((_object == null && data == null) || (other._object == null && other.data == null))
-                return false;
-            byte[] x = data ?? _object.ToArray();
-            byte[] y = other.data ?? other._object.ToArray();
-            return x.SequenceEqual(y);
-        }
+        public abstract byte[] GetByteArray();
+
+        public abstract T GetInterface<T>() where T : class, IInteropInterface;
 
         public static implicit operator StackItem(int value)
         {
@@ -74,35 +57,22 @@ namespace AntShares.VM
 
         public static implicit operator StackItem(BigInteger value)
         {
-            return new StackItem(value.ToByteArray());
+            return new Integer(value);
         }
 
         public static implicit operator StackItem(bool value)
         {
-            return new StackItem(value ? new[] { (byte)1 } : new byte[0]);
+            return new Boolean(value);
         }
 
         public static implicit operator StackItem(byte[] value)
         {
-            return new StackItem(value);
+            return new ByteArray(value);
         }
 
-        public static explicit operator BigInteger(StackItem value)
+        public static implicit operator StackItem(StackItem[] value)
         {
-            return new BigInteger(value.data);
-        }
-
-        public static implicit operator bool(StackItem value)
-        {
-            if (value.data != null) return value.data.Any(p => p != 0);
-            return value._object != null;
-        }
-
-        public static explicit operator byte[] (StackItem value)
-        {
-            if (value.data != null) return value.data;
-            if (value._object != null) return value._object.ToArray();
-            return null;
+            return new Array(value);
         }
     }
 }

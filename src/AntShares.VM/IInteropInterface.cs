@@ -1,6 +1,6 @@
 ﻿namespace AntShares.VM
 {
-    public interface IApiInterface
+    public interface IInteropInterface
     {
         byte[] ToArray();
     }

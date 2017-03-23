@@ -10,7 +10,7 @@ namespace AntShares.VM
     public class ExecutionEngine : IDisposable
     {
         private readonly IScriptTable table;
-        private readonly ApiService service;
+        private readonly InteropService service;
         private int max_steps;
 
         private int nOpCount = 0;
@@ -25,12 +25,12 @@ namespace AntShares.VM
         public byte[] EntryScript => InvocationStack.Peek(InvocationStack.Count - 1).Script;
         public VMState State { get; private set; } = VMState.BREAK;
 
-        public ExecutionEngine(IScriptContainer container, ICrypto crypto, int max_steps, IScriptTable table = null, ApiService service = null)
+        public ExecutionEngine(IScriptContainer container, ICrypto crypto, int max_steps, IScriptTable table = null, InteropService service = null)
         {
             this.ScriptContainer = container;
             this.Crypto = crypto;
             this.table = table;
-            this.service = service ?? new ApiService();
+            this.service = service ?? new InteropService();
             this.max_steps = max_steps;
         }
 
@@ -54,60 +54,60 @@ namespace AntShares.VM
 
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
         {
-            if (opcode > OpCode.OP_16 && opcode != OpCode.OP_RET && context.PushOnly)
+            if (opcode > OpCode.PUSH16 && opcode != OpCode.RET && context.PushOnly)
             {
                 State |= VMState.FAULT;
                 return;
             }
-            if (opcode > OpCode.OP_16 && nOpCount > max_steps)
+            if (opcode > OpCode.PUSH16 && nOpCount > max_steps)
             {
                 State |= VMState.FAULT | VMState.INSUFFICIENT_RESOURCE;
                 return;
             }
-            if (opcode >= OpCode.OP_PUSHBYTES1 && opcode <= OpCode.OP_PUSHBYTES75)
+            if (opcode >= OpCode.PUSHBYTES1 && opcode <= OpCode.PUSHBYTES75)
                 EvaluationStack.Push(context.OpReader.ReadBytes((byte)opcode));
             else
                 switch (opcode)
                 {
                     // Push value
-                    case OpCode.OP_0:
+                    case OpCode.PUSH0:
                         EvaluationStack.Push(new byte[0]);
                         break;
-                    case OpCode.OP_PUSHDATA1:
+                    case OpCode.PUSHDATA1:
                         EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadByte()));
                         break;
-                    case OpCode.OP_PUSHDATA2:
+                    case OpCode.PUSHDATA2:
                         EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadUInt16()));
                         break;
-                    case OpCode.OP_PUSHDATA4:
+                    case OpCode.PUSHDATA4:
                         EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadInt32()));
                         break;
-                    case OpCode.OP_1NEGATE:
-                    case OpCode.OP_1:
-                    case OpCode.OP_2:
-                    case OpCode.OP_3:
-                    case OpCode.OP_4:
-                    case OpCode.OP_5:
-                    case OpCode.OP_6:
-                    case OpCode.OP_7:
-                    case OpCode.OP_8:
-                    case OpCode.OP_9:
-                    case OpCode.OP_10:
-                    case OpCode.OP_11:
-                    case OpCode.OP_12:
-                    case OpCode.OP_13:
-                    case OpCode.OP_14:
-                    case OpCode.OP_15:
-                    case OpCode.OP_16:
-                        EvaluationStack.Push(opcode - OpCode.OP_1 + 1);
+                    case OpCode.PUSHM1:
+                    case OpCode.PUSH1:
+                    case OpCode.PUSH2:
+                    case OpCode.PUSH3:
+                    case OpCode.PUSH4:
+                    case OpCode.PUSH5:
+                    case OpCode.PUSH6:
+                    case OpCode.PUSH7:
+                    case OpCode.PUSH8:
+                    case OpCode.PUSH9:
+                    case OpCode.PUSH10:
+                    case OpCode.PUSH11:
+                    case OpCode.PUSH12:
+                    case OpCode.PUSH13:
+                    case OpCode.PUSH14:
+                    case OpCode.PUSH15:
+                    case OpCode.PUSH16:
+                        EvaluationStack.Push(opcode - OpCode.PUSH1 + 1);
                         break;
 
                     // Control
-                    case OpCode.OP_NOP:
+                    case OpCode.NOP:
                         break;
-                    case OpCode.OP_JMP:
-                    case OpCode.OP_JMPIF:
-                    case OpCode.OP_JMPIFNOT:
+                    case OpCode.JMP:
+                    case OpCode.JMPIF:
+                    case OpCode.JMPIFNOT:
                         {
                             int offset = context.OpReader.ReadInt16();
                             offset = context.InstructionPointer + offset - 3;
@@ -117,27 +117,27 @@ namespace AntShares.VM
                                 return;
                             }
                             bool fValue = true;
-                            if (opcode > OpCode.OP_JMP)
+                            if (opcode > OpCode.JMP)
                             {
-                                fValue = EvaluationStack.Pop();
-                                if (opcode == OpCode.OP_JMPIFNOT)
+                                fValue = EvaluationStack.Pop().GetBoolean();
+                                if (opcode == OpCode.JMPIFNOT)
                                     fValue = !fValue;
                             }
                             if (fValue)
                                 context.InstructionPointer = offset;
                         }
                         break;
-                    case OpCode.OP_CALL:
+                    case OpCode.CALL:
                         InvocationStack.Push(context.Clone());
                         context.InstructionPointer += 2;
-                        ExecuteOp(OpCode.OP_JMP, InvocationStack.Peek());
+                        ExecuteOp(OpCode.JMP, InvocationStack.Peek());
                         break;
-                    case OpCode.OP_RET:
+                    case OpCode.RET:
                         InvocationStack.Pop().Dispose();
                         if (InvocationStack.Count == 0)
                             State |= VMState.HALT;
                         break;
-                    case OpCode.OP_APPCALL:
+                    case OpCode.APPCALL:
                         {
                             if (table == null)
                             {
@@ -154,21 +154,21 @@ namespace AntShares.VM
                             LoadScript(script);
                         }
                         break;
-                    case OpCode.OP_SYSCALL:
+                    case OpCode.SYSCALL:
                         if (!service.Invoke(Encoding.ASCII.GetString(context.OpReader.ReadVarBytes(252)), this))
                             State |= VMState.FAULT;
                         break;
 
                     // Stack ops
-                    case OpCode.OP_TOALTSTACK:
+                    case OpCode.TOALTSTACK:
                         AltStack.Push(EvaluationStack.Pop());
                         break;
-                    case OpCode.OP_FROMALTSTACK:
+                    case OpCode.FROMALTSTACK:
                         EvaluationStack.Push(AltStack.Pop());
                         break;
-                    case OpCode.OP_XDROP:
+                    case OpCode.XDROP:
                         {
-                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            int n = (int)EvaluationStack.Pop().GetBigInteger();
                             if (n < 0)
                             {
                                 State |= VMState.FAULT;
@@ -177,59 +177,9 @@ namespace AntShares.VM
                             EvaluationStack.Remove(n);
                         }
                         break;
-                    //case ScriptOp.OP_2DUP:
-                    //    {
-                    //        StackItem x2 = EvaluationStack.Pop();
-                    //        StackItem x1 = EvaluationStack.Peek();
-                    //        EvaluationStack.Push(x2);
-                    //        EvaluationStack.Push(x1);
-                    //        EvaluationStack.Push(x2);
-                    //    }
-                    //    break;
-                    //case ScriptOp.OP_3DUP:
-                    //    {
-                    //        StackItem x3 = EvaluationStack.Pop();
-                    //        StackItem x2 = EvaluationStack.Pop();
-                    //        StackItem x1 = EvaluationStack.Peek();
-                    //        EvaluationStack.Push(x2);
-                    //        EvaluationStack.Push(x3);
-                    //        EvaluationStack.Push(x1);
-                    //        EvaluationStack.Push(x2);
-                    //        EvaluationStack.Push(x3);
-                    //    }
-                    //    break;
-                    //case ScriptOp.OP_2OVER:
-                    //    {
-                    //        StackItem x4 = EvaluationStack.Pop();
-                    //        StackItem x3 = EvaluationStack.Pop();
-                    //        StackItem x2 = EvaluationStack.Pop();
-                    //        StackItem x1 = EvaluationStack.Peek();
-                    //        EvaluationStack.Push(x2);
-                    //        EvaluationStack.Push(x3);
-                    //        EvaluationStack.Push(x4);
-                    //        EvaluationStack.Push(x1);
-                    //        EvaluationStack.Push(x2);
-                    //    }
-                    //    break;
-                    //case ScriptOp.OP_2ROT:
-                    //    {
-                    //        StackItem x6 = EvaluationStack.Pop();
-                    //        StackItem x5 = EvaluationStack.Pop();
-                    //        StackItem x4 = EvaluationStack.Pop();
-                    //        StackItem x3 = EvaluationStack.Pop();
-                    //        StackItem x2 = EvaluationStack.Pop();
-                    //        StackItem x1 = EvaluationStack.Pop();
-                    //        EvaluationStack.Push(x3);
-                    //        EvaluationStack.Push(x4);
-                    //        EvaluationStack.Push(x5);
-                    //        EvaluationStack.Push(x6);
-                    //        EvaluationStack.Push(x1);
-                    //        EvaluationStack.Push(x2);
-                    //    }
-                    //    break;
-                    case OpCode.OP_XSWAP:
+                    case OpCode.XSWAP:
                         {
-                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            int n = (int)EvaluationStack.Pop().GetBigInteger();
                             if (n < 0)
                             {
                                 State |= VMState.FAULT;
@@ -241,9 +191,9 @@ namespace AntShares.VM
                             EvaluationStack.Set(0, xn);
                         }
                         break;
-                    case OpCode.OP_XTUCK:
+                    case OpCode.XTUCK:
                         {
-                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            int n = (int)EvaluationStack.Pop().GetBigInteger();
                             if (n <= 0)
                             {
                                 State |= VMState.FAULT;
@@ -252,23 +202,23 @@ namespace AntShares.VM
                             EvaluationStack.Insert(n, EvaluationStack.Peek());
                         }
                         break;
-                    case OpCode.OP_DEPTH:
+                    case OpCode.DEPTH:
                         EvaluationStack.Push(EvaluationStack.Count);
                         break;
-                    case OpCode.OP_DROP:
+                    case OpCode.DROP:
                         EvaluationStack.Pop();
                         break;
-                    case OpCode.OP_DUP:
+                    case OpCode.DUP:
                         EvaluationStack.Push(EvaluationStack.Peek());
                         break;
-                    case OpCode.OP_NIP:
+                    case OpCode.NIP:
                         {
                             StackItem x2 = EvaluationStack.Pop();
                             EvaluationStack.Pop();
                             EvaluationStack.Push(x2);
                         }
                         break;
-                    case OpCode.OP_OVER:
+                    case OpCode.OVER:
                         {
                             StackItem x2 = EvaluationStack.Pop();
                             StackItem x1 = EvaluationStack.Peek();
@@ -276,9 +226,9 @@ namespace AntShares.VM
                             EvaluationStack.Push(x1);
                         }
                         break;
-                    case OpCode.OP_PICK:
+                    case OpCode.PICK:
                         {
-                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            int n = (int)EvaluationStack.Pop().GetBigInteger();
                             if (n < 0)
                             {
                                 State |= VMState.FAULT;
@@ -287,9 +237,9 @@ namespace AntShares.VM
                             EvaluationStack.Push(EvaluationStack.Peek(n));
                         }
                         break;
-                    case OpCode.OP_ROLL:
+                    case OpCode.ROLL:
                         {
-                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            int n = (int)EvaluationStack.Pop().GetBigInteger();
                             if (n < 0)
                             {
                                 State |= VMState.FAULT;
@@ -299,7 +249,7 @@ namespace AntShares.VM
                             EvaluationStack.Push(EvaluationStack.Remove(n));
                         }
                         break;
-                    case OpCode.OP_ROT:
+                    case OpCode.ROT:
                         {
                             StackItem x3 = EvaluationStack.Pop();
                             StackItem x2 = EvaluationStack.Pop();
@@ -309,7 +259,7 @@ namespace AntShares.VM
                             EvaluationStack.Push(x1);
                         }
                         break;
-                    case OpCode.OP_SWAP:
+                    case OpCode.SWAP:
                         {
                             StackItem x2 = EvaluationStack.Pop();
                             StackItem x1 = EvaluationStack.Pop();
@@ -317,7 +267,7 @@ namespace AntShares.VM
                             EvaluationStack.Push(x1);
                         }
                         break;
-                    case OpCode.OP_TUCK:
+                    case OpCode.TUCK:
                         {
                             StackItem x2 = EvaluationStack.Pop();
                             StackItem x1 = EvaluationStack.Pop();
@@ -326,52 +276,52 @@ namespace AntShares.VM
                             EvaluationStack.Push(x2);
                         }
                         break;
-                    case OpCode.OP_CAT:
+                    case OpCode.CAT:
                         {
-                            byte[] x2 = (byte[])EvaluationStack.Pop();
-                            byte[] x1 = (byte[])EvaluationStack.Pop();
+                            byte[] x2 = EvaluationStack.Pop().GetByteArray();
+                            byte[] x1 = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(x1.Concat(x2).ToArray());
                         }
                         break;
-                    case OpCode.OP_SUBSTR:
+                    case OpCode.SUBSTR:
                         {
-                            int count = (int)(BigInteger)EvaluationStack.Pop();
+                            int count = (int)EvaluationStack.Pop().GetBigInteger();
                             if (count < 0)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            int index = (int)(BigInteger)EvaluationStack.Pop();
+                            int index = (int)EvaluationStack.Pop().GetBigInteger();
                             if (index < 0)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            byte[] x = (byte[])EvaluationStack.Pop();
+                            byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(x.Skip(index).Take(count).ToArray());
                         }
                         break;
-                    case OpCode.OP_LEFT:
+                    case OpCode.LEFT:
                         {
-                            int count = (int)(BigInteger)EvaluationStack.Pop();
+                            int count = (int)EvaluationStack.Pop().GetBigInteger();
                             if (count < 0)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            byte[] x = (byte[])EvaluationStack.Pop();
+                            byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(x.Take(count).ToArray());
                         }
                         break;
-                    case OpCode.OP_RIGHT:
+                    case OpCode.RIGHT:
                         {
-                            int count = (int)(BigInteger)EvaluationStack.Pop();
+                            int count = (int)EvaluationStack.Pop().GetBigInteger();
                             if (count < 0)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            byte[] x = (byte[])EvaluationStack.Pop();
+                            byte[] x = EvaluationStack.Pop().GetByteArray();
                             if (x.Length < count)
                             {
                                 State |= VMState.FAULT;
@@ -380,42 +330,42 @@ namespace AntShares.VM
                             EvaluationStack.Push(x.Skip(x.Length - count).ToArray());
                         }
                         break;
-                    case OpCode.OP_SIZE:
+                    case OpCode.SIZE:
                         {
-                            byte[] x = (byte[])EvaluationStack.Peek();
+                            byte[] x = EvaluationStack.Peek().GetByteArray();
                             EvaluationStack.Push(x.Length);
                         }
                         break;
 
                     // Bitwise logic
-                    case OpCode.OP_INVERT:
+                    case OpCode.INVERT:
                         {
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(~x);
                         }
                         break;
-                    case OpCode.OP_AND:
+                    case OpCode.AND:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 & x2);
                         }
                         break;
-                    case OpCode.OP_OR:
+                    case OpCode.OR:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 | x2);
                         }
                         break;
-                    case OpCode.OP_XOR:
+                    case OpCode.XOR:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 ^ x2);
                         }
                         break;
-                    case OpCode.OP_EQUAL:
+                    case OpCode.EQUAL:
                         {
                             StackItem x2 = EvaluationStack.Pop();
                             StackItem x1 = EvaluationStack.Pop();
@@ -424,219 +374,219 @@ namespace AntShares.VM
                         break;
 
                     // Numeric
-                    case OpCode.OP_1ADD:
+                    case OpCode.INC:
                         {
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x + 1);
                         }
                         break;
-                    case OpCode.OP_1SUB:
+                    case OpCode.DEC:
                         {
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x - 1);
                         }
                         break;
-                    case OpCode.OP_2MUL:
+                    case OpCode.SAL:
                         {
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x << 1);
                         }
                         break;
-                    case OpCode.OP_2DIV:
+                    case OpCode.SAR:
                         {
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x >> 1);
                         }
                         break;
-                    case OpCode.OP_NEGATE:
+                    case OpCode.NEGATE:
                         {
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(-x);
                         }
                         break;
-                    case OpCode.OP_ABS:
+                    case OpCode.ABS:
                         {
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(BigInteger.Abs(x));
                         }
                         break;
-                    case OpCode.OP_NOT:
+                    case OpCode.NOT:
                         {
-                            bool x = EvaluationStack.Pop();
+                            bool x = EvaluationStack.Pop().GetBoolean();
                             EvaluationStack.Push(!x);
                         }
                         break;
-                    case OpCode.OP_0NOTEQUAL:
+                    case OpCode.NZ:
                         {
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x != BigInteger.Zero);
                         }
                         break;
-                    case OpCode.OP_ADD:
+                    case OpCode.ADD:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 + x2);
                         }
                         break;
-                    case OpCode.OP_SUB:
+                    case OpCode.SUB:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 - x2);
                         }
                         break;
-                    case OpCode.OP_MUL:
+                    case OpCode.MUL:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 * x2);
                         }
                         break;
-                    case OpCode.OP_DIV:
+                    case OpCode.DIV:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 / x2);
                         }
                         break;
-                    case OpCode.OP_MOD:
+                    case OpCode.MOD:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 % x2);
                         }
                         break;
-                    case OpCode.OP_LSHIFT:
+                    case OpCode.SHL:
                         {
-                            int n = (int)(BigInteger)EvaluationStack.Pop();
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            int n = (int)EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x << n);
                         }
                         break;
-                    case OpCode.OP_RSHIFT:
+                    case OpCode.SHR:
                         {
-                            int n = (int)(BigInteger)EvaluationStack.Pop();
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            int n = (int)EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x >> n);
                         }
                         break;
-                    case OpCode.OP_BOOLAND:
+                    case OpCode.BOOLAND:
                         {
-                            bool x2 = EvaluationStack.Pop();
-                            bool x1 = EvaluationStack.Pop();
+                            bool x2 = EvaluationStack.Pop().GetBoolean();
+                            bool x1 = EvaluationStack.Pop().GetBoolean();
                             EvaluationStack.Push(x1 && x2);
                         }
                         break;
-                    case OpCode.OP_BOOLOR:
+                    case OpCode.BOOLOR:
                         {
-                            bool x2 = EvaluationStack.Pop();
-                            bool x1 = EvaluationStack.Pop();
+                            bool x2 = EvaluationStack.Pop().GetBoolean();
+                            bool x1 = EvaluationStack.Pop().GetBoolean();
                             EvaluationStack.Push(x1 || x2);
                         }
                         break;
-                    case OpCode.OP_NUMEQUAL:
+                    case OpCode.NUMEQUAL:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 == x2);
                         }
                         break;
-                    case OpCode.OP_NUMNOTEQUAL:
+                    case OpCode.NUMNOTEQUAL:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 != x2);
                         }
                         break;
-                    case OpCode.OP_LESSTHAN:
+                    case OpCode.LT:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 < x2);
                         }
                         break;
-                    case OpCode.OP_GREATERTHAN:
+                    case OpCode.GT:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 > x2);
                         }
                         break;
-                    case OpCode.OP_LESSTHANOREQUAL:
+                    case OpCode.LTE:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 <= x2);
                         }
                         break;
-                    case OpCode.OP_GREATERTHANOREQUAL:
+                    case OpCode.GTE:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(x1 >= x2);
                         }
                         break;
-                    case OpCode.OP_MIN:
+                    case OpCode.MIN:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(BigInteger.Min(x1, x2));
                         }
                         break;
-                    case OpCode.OP_MAX:
+                    case OpCode.MAX:
                         {
-                            BigInteger x2 = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x1 = (BigInteger)EvaluationStack.Pop();
+                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(BigInteger.Max(x1, x2));
                         }
                         break;
-                    case OpCode.OP_WITHIN:
+                    case OpCode.WITHIN:
                         {
-                            BigInteger b = (BigInteger)EvaluationStack.Pop();
-                            BigInteger a = (BigInteger)EvaluationStack.Pop();
-                            BigInteger x = (BigInteger)EvaluationStack.Pop();
+                            BigInteger b = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger a = EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
                             EvaluationStack.Push(a <= x && x < b);
                         }
                         break;
 
                     // Crypto
-                    case OpCode.OP_SHA1:
+                    case OpCode.SHA1:
                         using (SHA1 sha = SHA1.Create())
                         {
-                            byte[] x = (byte[])EvaluationStack.Pop();
+                            byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(sha.ComputeHash(x));
                         }
                         break;
-                    case OpCode.OP_SHA256:
+                    case OpCode.SHA256:
                         using (SHA256 sha = SHA256.Create())
                         {
-                            byte[] x = (byte[])EvaluationStack.Pop();
+                            byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(sha.ComputeHash(x));
                         }
                         break;
-                    case OpCode.OP_HASH160:
+                    case OpCode.HASH160:
                         {
-                            byte[] x = (byte[])EvaluationStack.Pop();
+                            byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(Crypto.Hash160(x));
                         }
                         break;
-                    case OpCode.OP_HASH256:
+                    case OpCode.HASH256:
                         {
-                            byte[] x = (byte[])EvaluationStack.Pop();
+                            byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(Crypto.Hash256(x));
                         }
                         break;
-                    case OpCode.OP_CHECKSIG:
+                    case OpCode.CHECKSIG:
                         {
-                            byte[] pubkey = (byte[])EvaluationStack.Pop();
-                            byte[] signature = (byte[])EvaluationStack.Pop();
+                            byte[] pubkey = EvaluationStack.Pop().GetByteArray();
+                            byte[] signature = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature, pubkey));
                         }
                         break;
-                    case OpCode.OP_CHECKMULTISIG:
+                    case OpCode.CHECKMULTISIG:
                         {
-                            int n = (int)(BigInteger)EvaluationStack.Pop();
+                            int n = (int)EvaluationStack.Pop().GetBigInteger();
                             if (n < 1)
                             {
                                 State |= VMState.FAULT;
@@ -650,8 +600,8 @@ namespace AntShares.VM
                             }
                             byte[][] pubkeys = new byte[n][];
                             for (int i = 0; i < n; i++)
-                                pubkeys[i] = (byte[])EvaluationStack.Pop();
-                            int m = (int)(BigInteger)EvaluationStack.Pop();
+                                pubkeys[i] = EvaluationStack.Pop().GetByteArray();
+                            int m = (int)EvaluationStack.Pop().GetBigInteger();
                             if (m < 1 || m > n)
                             {
                                 State |= VMState.FAULT;
@@ -659,7 +609,7 @@ namespace AntShares.VM
                             }
                             byte[][] signatures = new byte[m][];
                             for (int i = 0; i < m; i++)
-                                signatures[i] = (byte[])EvaluationStack.Pop();
+                                signatures[i] = EvaluationStack.Pop().GetByteArray();
                             byte[] message = ScriptContainer.GetMessage();
                             bool fSuccess = true;
                             for (int i = 0, j = 0; fSuccess && i < m && j < n;)
@@ -671,6 +621,50 @@ namespace AntShares.VM
                                     fSuccess = false;
                             }
                             EvaluationStack.Push(fSuccess);
+                        }
+                        break;
+
+                    // Array
+                    case OpCode.ARRAYSIZE:
+                        EvaluationStack.Push(EvaluationStack.Pop().ArraySize);
+                        break;
+                    case OpCode.PACK:
+                        {
+                            int size = (int)EvaluationStack.Pop().GetBigInteger();
+                            if (size < 0 || size > EvaluationStack.Count)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            StackItem[] items = new StackItem[size];
+                            for (int i = 0; i < size; i++)
+                                items[i] = EvaluationStack.Pop();
+                            EvaluationStack.Push(items);
+                        }
+                        break;
+                    case OpCode.UNPACK:
+                        {
+                            StackItem[] items = EvaluationStack.Pop().GetArray();
+                            for (int i = items.Length - 1; i >= 0; i--)
+                                EvaluationStack.Push(items[i]);
+                            EvaluationStack.Push(items.Length);
+                        }
+                        break;
+                    case OpCode.PICKITEM:
+                        {
+                            int index = (int)EvaluationStack.Pop().GetBigInteger();
+                            if (index < 0)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            StackItem[] items = EvaluationStack.Pop().GetArray();
+                            if (index >= items.Length)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            EvaluationStack.Push(items[index]);
                         }
                         break;
 
@@ -702,7 +696,7 @@ namespace AntShares.VM
             if (InvocationStack.Count == 0) State |= VMState.HALT;
             if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
             ExecutionContext context = InvocationStack.Peek();
-            OpCode opcode = context.InstructionPointer >= context.Script.Length ? OpCode.OP_RET : (OpCode)context.OpReader.ReadByte();
+            OpCode opcode = context.InstructionPointer >= context.Script.Length ? OpCode.RET : (OpCode)context.OpReader.ReadByte();
             nOpCount++;
             try
             {
