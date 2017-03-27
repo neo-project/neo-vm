@@ -1,4 +1,4 @@
-﻿namespace AntShares.Compiler
+﻿namespace AntShares.Compiler.ASM
 {
     internal class Label : Semanteme
     {

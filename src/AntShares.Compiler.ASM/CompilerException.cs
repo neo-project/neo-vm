@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AntShares.Compiler
+namespace AntShares.Compiler.ASM
 {
     public class CompilerException : Exception
     {

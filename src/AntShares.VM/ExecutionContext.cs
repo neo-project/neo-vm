@@ -7,7 +7,7 @@ namespace AntShares.VM
     public class ExecutionContext : IDisposable
     {
         public readonly byte[] Script;
-        internal readonly bool PushOnly;
+        public readonly bool PushOnly;
         internal readonly BinaryReader OpReader;
         internal readonly HashSet<uint> BreakPoints;
 
@@ -22,6 +22,8 @@ namespace AntShares.VM
                 OpReader.BaseStream.Seek(value, SeekOrigin.Begin);
             }
         }
+
+        public OpCode NextInstruction => (OpCode)Script[OpReader.BaseStream.Position];
 
         internal ExecutionContext(byte[] script, bool push_only, HashSet<uint> break_points = null)
         {

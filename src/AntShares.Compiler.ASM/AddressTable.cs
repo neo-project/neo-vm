@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AntShares.Compiler
+namespace AntShares.Compiler.ASM
 {
     internal class AddressTable
     {

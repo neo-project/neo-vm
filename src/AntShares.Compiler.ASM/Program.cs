@@ -1,7 +1,7 @@
 ﻿using AntShares.Compiler;
 using System.IO;
 
-namespace AntShares
+namespace AntShares.Compiler.ASM
 {
     internal class Program
     {
