@@ -10,7 +10,5 @@ namespace AntShares.VM
         HALT = 1 << 0,
         FAULT = 1 << 1,
         BREAK = 1 << 2,
-
-        INSUFFICIENT_RESOURCE = 1 << 4
     }
 }
