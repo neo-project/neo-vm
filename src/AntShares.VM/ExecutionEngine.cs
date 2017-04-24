@@ -18,9 +18,8 @@ namespace AntShares.VM
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
         public ExecutionContext CurrentContext => InvocationStack.Peek();
-        public byte[] ExecutingScript => CurrentContext.Script;
-        public byte[] CallingScript => InvocationStack.Count > 1 ? InvocationStack.Peek(1).Script : null;
-        public byte[] EntryScript => InvocationStack.Peek(InvocationStack.Count - 1).Script;
+        public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
+        public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
         public VMState State { get; private set; } = VMState.BREAK;
 
         public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, InteropService service = null)
@@ -667,7 +666,7 @@ namespace AntShares.VM
 
         public void LoadScript(byte[] script, bool push_only = false)
         {
-            InvocationStack.Push(new ExecutionContext(script, push_only));
+            InvocationStack.Push(new ExecutionContext(this, script, push_only));
         }
 
         public bool RemoveBreakPoint(uint position)
