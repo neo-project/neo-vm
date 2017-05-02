@@ -118,7 +118,7 @@ namespace AntShares.Compiler.MSIL
             var defs = refs.Resolve();
             foreach (var attr in defs.CustomAttributes)
             {
-                if (attr.AttributeType.Name == "ScriptOpAttribute")
+                if (attr.AttributeType.Name == "OpCodeAttribute")
                 {
                     var type = attr.ConstructorArguments[0].Type;
                     var value = (byte)attr.ConstructorArguments[0].Value;

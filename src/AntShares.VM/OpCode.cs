@@ -39,6 +39,7 @@
         RET = 0x66,
         APPCALL = 0x67,
         SYSCALL = 0x68,
+        TAILCALL = 0x69,
 
 
         // Stack

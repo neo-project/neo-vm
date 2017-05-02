@@ -129,6 +129,7 @@ namespace AntShares.VM
                             State |= VMState.HALT;
                         break;
                     case OpCode.APPCALL:
+                    case OpCode.TAILCALL:
                         {
                             if (table == null)
                             {
@@ -142,6 +143,8 @@ namespace AntShares.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+                            if (opcode == OpCode.TAILCALL)
+                                InvocationStack.Pop().Dispose();
                             LoadScript(script);
                         }
                         break;

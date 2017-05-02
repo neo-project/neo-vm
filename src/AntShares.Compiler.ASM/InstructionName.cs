@@ -11,6 +11,7 @@
         RET,
         APPCALL,
         SYSCALL,
+        TAILCALL,
         TOALTSTACK,
         FROMALTSTACK,
         XDROP,
