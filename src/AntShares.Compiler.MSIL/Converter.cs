@@ -92,6 +92,11 @@ namespace AntShares.Compiler.MSIL
                     mainmethod = key;
                 }
             }
+            if(mainmethod=="")
+            {
+                throw new Exception("找不到入口函数，请检查");
+
+            }
             //得找到第一个函数
             this.LinkCode(mainmethod);
             //this.findFirstFunc();//得找到第一个函数
@@ -103,6 +108,11 @@ namespace AntShares.Compiler.MSIL
         }
         private void LinkCode(string main)
         {
+            if(this.outModule.mapMethods.ContainsKey(main)==false)
+            {
+                throw new Exception("找不到名为" + main + "的入口");
+                return;
+            }
             var first = this.outModule.mapMethods[main];
             first.funcaddr = 0;
             this.outModule.total_Codes.Clear();

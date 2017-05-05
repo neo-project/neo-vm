@@ -16,9 +16,93 @@ namespace AntShares.Compiler.MSIL
         //控制台输出约定了特别的语法
         public static void Main(string[] args)
         {
-
+            //set console
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+            var log = new DefLogger();
+            log.Log("AntShars.Compiler.MSIL console app  v0.01");
 
+            string filename = args[0];
+            string onlyname = System.IO.Path.GetFileNameWithoutExtension(filename);
+            string filepdb = onlyname + ".pdb";
+
+            ILModule mod = new ILModule();
+            System.IO.Stream fs = null;
+            System.IO.Stream fspdb = null;
+
+            //open file
+            try
+            {
+                fs = System.IO.File.OpenRead(filename);
+
+                if (System.IO.File.Exists(filepdb))
+                {
+                    fspdb = System.IO.File.OpenRead(filepdb);
+                }
+
+            }
+            catch(Exception err)
+            {
+                log.Log("Open File Error:"+err.ToString());
+                return;
+            }
+            //load module
+            try
+            {
+                mod.LoadModule(fs, fspdb);
+            }
+            catch (Exception err)
+            {
+                log.Log("LoadModule Error:" + err.ToString());
+                return;
+            }
+            byte[] bytes = null;
+            bool bSucc = false;
+            //convert and build
+            try
+            {
+                var conv = new ModuleConverter(log);
+
+                AntsModule am = conv.Convert(mod);
+                log.Log("Begin Build.");
+                 bytes = am.Build();
+
+            }
+            catch (Exception err)
+            {
+                log.Log("Convert Error:" +  err.ToString());
+                return;
+            }
+            //write bytes
+            try
+            {
+
+                string bytesname = onlyname + ".antshares.bytes";
+
+                System.IO.File.Delete(bytesname);
+                System.IO.File.WriteAllBytes(bytesname, bytes);
+                log.Log("write:" + bytesname);
+
+            }
+            catch (Exception err)
+            {
+                log.Log("Write Bytes Error:" + err.ToString());
+                return;
+            }
+            try
+            {
+                fs.Dispose();
+                if (fspdb != null)
+                    fspdb.Dispose();
+            }
+            catch
+            {
+
+            }
+
+            if(bSucc)
+            {
+                log.Log("SUCC");
+            }
         }
     }
 }
