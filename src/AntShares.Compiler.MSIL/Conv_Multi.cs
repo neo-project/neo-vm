@@ -92,58 +92,74 @@ namespace AntShares.Compiler.MSIL
 
         public bool IsSysCall(Mono.Cecil.MethodReference refs, out string name)
         {
-            var defs = refs.Resolve();
-            foreach (var attr in defs.CustomAttributes)
+            try
             {
-                if (attr.AttributeType.Name == "SyscallAttribute")
+                var defs = refs.Resolve();
+                foreach (var attr in defs.CustomAttributes)
                 {
-                    var type = attr.ConstructorArguments[0].Type;
-                    var value = (string)attr.ConstructorArguments[0].Value;
+                    if (attr.AttributeType.Name == "SyscallAttribute")
+                    {
+                        var type = attr.ConstructorArguments[0].Type;
+                        var value = (string)attr.ConstructorArguments[0].Value;
 
-                    //dosth
-                    name = value;
-                    return true;
+                        //dosth
+                        name = value;
+                        return true;
 
 
 
+                    }
+                    //if(attr.t)
                 }
-                //if(attr.t)
+                name = "";
+                return false;
             }
-            name = "";
-            return false;
+            catch
+            {
+                name = "";
+                return false;
+            }
 
         }
         public bool IsOpCall(Mono.Cecil.MethodReference refs, out string name)
         {
-            var defs = refs.Resolve();
-            foreach (var attr in defs.CustomAttributes)
+            try
             {
-                if (attr.AttributeType.Name == "ScriptOpAttribute")
+                var defs = refs.Resolve();
+                foreach (var attr in defs.CustomAttributes)
                 {
-                    var type = attr.ConstructorArguments[0].Type;
-                    var value = (byte)attr.ConstructorArguments[0].Value;
-
-                    foreach (var t in type.Resolve().Fields)
+                    if (attr.AttributeType.Name == "ScriptOpAttribute" || attr.AttributeType.Name == "OpCodeAttribute")
                     {
-                        if (t.Constant != null)
+                        var type = attr.ConstructorArguments[0].Type;
+                        var value = (byte)attr.ConstructorArguments[0].Value;
+
+                        foreach (var t in type.Resolve().Fields)
                         {
-                            if ((byte)t.Constant == value)
+                            if (t.Constant != null)
                             {
+                                if ((byte)t.Constant == value)
+                                {
 
-                                //dosth
-                                name = t.Name;
-                                return true;
+                                    //dosth
+                                    name = t.Name;
+                                    return true;
 
+                                }
                             }
                         }
+
+
                     }
-
-
+                    //if(attr.t)
                 }
-                //if(attr.t)
+                name = "";
+                return false;
             }
-            name = "";
-            return false;
+            catch
+            {
+                name = "";
+                return false;
+            }
         }
         private int _ConvertCall(OpCode src, AntsMethod to)
         {
@@ -172,10 +188,49 @@ namespace AntShares.Compiler.MSIL
                 {
                     //donothing
                     return 0;
-
+                }
+                else if(src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int64)")
+                {
+                    return 0;
+                }
+                else if(src.tokenMethod == "System.Boolean System.Object::Equals(System.Object)")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
+                    return 0;
+                }
+                else if(src.tokenMethod== "System.Numerics.BigInteger System.Numerics.BigInteger::op_Addition(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.ADD, src, to);
+                    return 0;
+                }
+                else if(src.tokenMethod== "System.Numerics.BigInteger System.Numerics.BigInteger::op_Subtraction(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.SUB, src, to);
+                    return 0;
+                }
+                else if(src.tokenMethod== "System.Numerics.BigInteger System.Numerics.BigInteger::op_Multiply(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.MUL, src, to);
+                    return 0;
+                }
+                else if(src.tokenMethod== "System.Boolean System.Numerics.BigInteger::op_LessThanOrEqual(System.Numerics.BigInteger,System.Int64)")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.LTE, src, to);
+                    return 0;
+                }
+                else if(src.tokenMethod== "System.Boolean System.Numerics.BigInteger::op_LessThan(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.LT, src, to);
+                    return 0;
+                }
+                else if(src.tokenMethod== "System.Boolean System.Numerics.BigInteger::op_GreaterThan(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.GT, src, to);
+                    return 0;
                 }
                 else
                 {
+                   
                     string name;
                     if (IsOpCall(refs, out name))
                     {

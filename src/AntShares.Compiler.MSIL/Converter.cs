@@ -48,7 +48,7 @@ namespace AntShares.Compiler.MSIL
         public Dictionary<ILMethod, AntsMethod> methodLink = new Dictionary<ILMethod, AntsMethod>();
         public AntsModule Convert(ILModule _in)
         {
-            logger.Log("beginConvert.");
+            //logger.Log("beginConvert.");
             this.outModule = new AntsModule(this.logger);
             foreach (var t in _in.mapType)
             {
@@ -73,26 +73,60 @@ namespace AntShares.Compiler.MSIL
                 {
                     if (m.Value.method == null) continue;
                     var nm = this.methodLink[m.Value];
-                    try
+                    //try
                     {
                         this.ConvertMethod(m.Value, nm);
                     }
-                    catch (Exception err)
-                    {
-                        logger.Log("error:" + err.Message);
-                    }
+                    //catch (Exception err)
+                    //{
+                    //    logger.Log("error:" + err.Message);
+                    //}
                 }
             }
             //转换完了，做个link，全部拼到一起
             string mainmethod = "";
             foreach (var key in outModule.mapMethods.Keys)
             {
-                if (key.Contains("Verify"))
+                if (key.Contains("::Verify("))
                 {
-                    mainmethod = key;
+                    var m = outModule.mapMethods[key];
+                    foreach (var l in this.methodLink)
+                    {
+                        if (l.Value == m)
+                        {
+                            var srcm = l.Key.method;
+                            if (srcm.DeclaringType.BaseType.Name == "VerificationCode" && srcm.ReturnType.FullName == "System.Boolean")
+                            {
+                                logger.Log("找到函数入口点:" + key);
+                                if (mainmethod != "")
+                                    throw new Exception("拥有多个函数入口点，请检查");
+                                mainmethod = key;
+
+                            }
+                        }
+                    }
+                }
+                if (key.Contains("::Main("))
+                {
+                    var m = outModule.mapMethods[key];
+                    foreach (var l in this.methodLink)
+                    {
+                        if (l.Value == m)
+                        {
+                            var srcm = l.Key.method;
+                            if (srcm.DeclaringType.BaseType.Name == "FunctionCode")
+                            {
+                                logger.Log("找到函数入口点:" + key);
+                                if (mainmethod != "")
+                                    throw new Exception("拥有多个函数入口点，请检查");
+                                mainmethod = key;
+
+                            }
+                        }
+                    }
                 }
             }
-            if(mainmethod=="")
+            if (mainmethod == "")
             {
                 throw new Exception("找不到入口函数，请检查");
 
@@ -108,7 +142,7 @@ namespace AntShares.Compiler.MSIL
         }
         private void LinkCode(string main)
         {
-            if(this.outModule.mapMethods.ContainsKey(main)==false)
+            if (this.outModule.mapMethods.ContainsKey(main) == false)
             {
                 throw new Exception("找不到名为" + main + "的入口");
                 return;
@@ -276,6 +310,9 @@ namespace AntShares.Compiler.MSIL
                     _Convert1by1(AntShares.VM.OpCode.DROP, src, to);
                     break;
 
+                case CodeEx.Ldc_I4:
+                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(src.tokenI32));
+                    break;
                 case CodeEx.Ldc_I4_0:
                     _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(0));
                     break;
@@ -493,7 +530,8 @@ namespace AntShares.Compiler.MSIL
                     break;
 
                 default:
-                    logger.Log("not support code" + src.code);
+                    throw new Exception("not support code" + src.code);
+                    //logger.Log("not support code" + src.code);
                     break;
 
             }

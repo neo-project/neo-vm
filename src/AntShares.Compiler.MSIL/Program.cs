@@ -40,9 +40,9 @@ namespace AntShares.Compiler.MSIL
                 }
 
             }
-            catch(Exception err)
+            catch (Exception err)
             {
-                log.Log("Open File Error:"+err.ToString());
+                log.Log("Open File Error:" + err.ToString());
                 return;
             }
             //load module
@@ -63,13 +63,12 @@ namespace AntShares.Compiler.MSIL
                 var conv = new ModuleConverter(log);
 
                 AntsModule am = conv.Convert(mod);
-                log.Log("Begin Build.");
-                 bytes = am.Build();
-
+                bytes = am.Build();
+                log.Log("convert succ");
             }
             catch (Exception err)
             {
-                log.Log("Convert Error:" +  err.ToString());
+                log.Log("Convert Error:" + err.ToString());
                 return;
             }
             //write bytes
@@ -81,7 +80,7 @@ namespace AntShares.Compiler.MSIL
                 System.IO.File.Delete(bytesname);
                 System.IO.File.WriteAllBytes(bytesname, bytes);
                 log.Log("write:" + bytesname);
-
+                bSucc = true;
             }
             catch (Exception err)
             {
@@ -99,7 +98,7 @@ namespace AntShares.Compiler.MSIL
 
             }
 
-            if(bSucc)
+            if (bSucc)
             {
                 log.Log("SUCC");
             }
