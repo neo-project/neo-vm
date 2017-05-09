@@ -156,7 +156,7 @@ namespace AntShares.Compiler.MSIL
                 c.srcfunc = src.tokenMethod;
                 return 0;
             }
-            else if (refs.ReturnType.Name == "ScriptEngine")
+            else if (refs.ReturnType.Name == "ExecutionEngine")
             {
                 //donothing 語法過渡類型
                 return 0;

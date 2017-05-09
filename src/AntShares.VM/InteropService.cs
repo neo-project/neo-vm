@@ -9,10 +9,10 @@ namespace AntShares.VM
 
         public InteropService()
         {
-            Register("System.ScriptEngine.GetScriptContainer", GetScriptContainer);
-            Register("System.ScriptEngine.GetExecutingScriptHash", GetExecutingScriptHash);
-            Register("System.ScriptEngine.GetCallingScriptHash", GetCallingScriptHash);
-            Register("System.ScriptEngine.GetEntryScriptHash", GetEntryScriptHash);
+            Register("System.ExecutionEngine.GetScriptContainer", GetScriptContainer);
+            Register("System.ExecutionEngine.GetExecutingScriptHash", GetExecutingScriptHash);
+            Register("System.ExecutionEngine.GetCallingScriptHash", GetCallingScriptHash);
+            Register("System.ExecutionEngine.GetEntryScriptHash", GetEntryScriptHash);
         }
 
         protected void Register(string method, Func<ExecutionEngine, bool> handler)
