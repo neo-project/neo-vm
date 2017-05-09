@@ -11,32 +11,29 @@ namespace AntShares.VM
     {
         private readonly IScriptTable table;
         private readonly InteropService service;
-        private int max_steps;
 
-        private int nOpCount = 0;
 
         public IScriptContainer ScriptContainer { get; }
         public ICrypto Crypto { get; }
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
-        public byte[] ExecutingScript => InvocationStack.Peek().Script;
-        public byte[] CallingScript => InvocationStack.Count > 1 ? InvocationStack.Peek(1).Script : null;
-        public byte[] EntryScript => InvocationStack.Peek(InvocationStack.Count - 1).Script;
+        public ExecutionContext CurrentContext => InvocationStack.Peek();
+        public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
+        public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
         public VMState State { get; private set; } = VMState.BREAK;
 
-        public ExecutionEngine(IScriptContainer container, ICrypto crypto, int max_steps, IScriptTable table = null, InteropService service = null)
+        public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, InteropService service = null)
         {
             this.ScriptContainer = container;
             this.Crypto = crypto;
             this.table = table;
             this.service = service ?? new InteropService();
-            this.max_steps = max_steps;
         }
 
         public void AddBreakPoint(uint position)
         {
-            InvocationStack.Peek().BreakPoints.Add(position);
+            CurrentContext.BreakPoints.Add(position);
         }
 
         public void Dispose()
@@ -57,11 +54,6 @@ namespace AntShares.VM
             if (opcode > OpCode.PUSH16 && opcode != OpCode.RET && context.PushOnly)
             {
                 State |= VMState.FAULT;
-                return;
-            }
-            if (opcode > OpCode.PUSH16 && nOpCount > max_steps)
-            {
-                State |= VMState.FAULT | VMState.INSUFFICIENT_RESOURCE;
                 return;
             }
             if (opcode >= OpCode.PUSHBYTES1 && opcode <= OpCode.PUSHBYTES75)
@@ -130,7 +122,7 @@ namespace AntShares.VM
                     case OpCode.CALL:
                         InvocationStack.Push(context.Clone());
                         context.InstructionPointer += 2;
-                        ExecuteOp(OpCode.JMP, InvocationStack.Peek());
+                        ExecuteOp(OpCode.JMP, CurrentContext);
                         break;
                     case OpCode.RET:
                         InvocationStack.Pop().Dispose();
@@ -138,6 +130,7 @@ namespace AntShares.VM
                             State |= VMState.HALT;
                         break;
                     case OpCode.APPCALL:
+                    case OpCode.TAILCALL:
                         {
                             if (table == null)
                             {
@@ -151,6 +144,8 @@ namespace AntShares.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+                            if (opcode == OpCode.TAILCALL)
+                                InvocationStack.Pop().Dispose();
                             LoadScript(script);
                         }
                         break;
@@ -592,12 +587,6 @@ namespace AntShares.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            nOpCount += n;
-                            if (nOpCount > max_steps)
-                            {
-                                State |= VMState.FAULT | VMState.INSUFFICIENT_RESOURCE;
-                                return;
-                            }
                             byte[][] pubkeys = new byte[n][];
                             for (int i = 0; i < n; i++)
                                 pubkeys[i] = EvaluationStack.Pop().GetByteArray();
@@ -674,33 +663,30 @@ namespace AntShares.VM
                 }
             if (InvocationStack.Count > 0)
             {
-                context = InvocationStack.Peek();
-                if (context.BreakPoints.Contains((uint)context.InstructionPointer))
+                if (CurrentContext.BreakPoints.Contains((uint)CurrentContext.InstructionPointer))
                     State |= VMState.BREAK;
             }
         }
 
         public void LoadScript(byte[] script, bool push_only = false)
         {
-            InvocationStack.Push(new ExecutionContext(script, push_only));
+            InvocationStack.Push(new ExecutionContext(this, script, push_only));
         }
 
         public bool RemoveBreakPoint(uint position)
         {
             if (InvocationStack.Count == 0) return false;
-            return InvocationStack.Peek().BreakPoints.Remove(position);
+            return CurrentContext.BreakPoints.Remove(position);
         }
 
         public void StepInto()
         {
             if (InvocationStack.Count == 0) State |= VMState.HALT;
             if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
-            ExecutionContext context = InvocationStack.Peek();
-            OpCode opcode = context.InstructionPointer >= context.Script.Length ? OpCode.RET : (OpCode)context.OpReader.ReadByte();
-            nOpCount++;
+            OpCode opcode = CurrentContext.InstructionPointer >= CurrentContext.Script.Length ? OpCode.RET : (OpCode)CurrentContext.OpReader.ReadByte();
             try
             {
-                ExecuteOp(opcode, context);
+                ExecuteOp(opcode, CurrentContext);
             }
             catch (Exception ex) when (ex is EndOfStreamException || ex is InvalidOperationException)
             {

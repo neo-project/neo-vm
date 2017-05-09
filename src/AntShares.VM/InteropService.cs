@@ -9,17 +9,15 @@ namespace AntShares.VM
 
         public InteropService()
         {
-            Register("System.ScriptEngine.GetScriptContainer", GetScriptContainer);
-            Register("System.ScriptEngine.GetExecutingScriptHash", GetExecutingScriptHash);
-            Register("System.ScriptEngine.GetCallingScriptHash", GetCallingScriptHash);
-            Register("System.ScriptEngine.GetEntryScriptHash", GetEntryScriptHash);
+            Register("System.ExecutionEngine.GetScriptContainer", GetScriptContainer);
+            Register("System.ExecutionEngine.GetExecutingScriptHash", GetExecutingScriptHash);
+            Register("System.ExecutionEngine.GetCallingScriptHash", GetCallingScriptHash);
+            Register("System.ExecutionEngine.GetEntryScriptHash", GetEntryScriptHash);
         }
 
-        protected bool Register(string method, Func<ExecutionEngine, bool> handler)
+        protected void Register(string method, Func<ExecutionEngine, bool> handler)
         {
-            if (dictionary.ContainsKey(method)) return false;
-            dictionary.Add(method, handler);
-            return true;
+            dictionary[method] = handler;
         }
 
         internal bool Invoke(string method, ExecutionEngine engine)
@@ -36,19 +34,19 @@ namespace AntShares.VM
 
         private static bool GetExecutingScriptHash(ExecutionEngine engine)
         {
-            engine.EvaluationStack.Push(engine.Crypto.Hash160(engine.ExecutingScript));
+            engine.EvaluationStack.Push(engine.CurrentContext.ScriptHash);
             return true;
         }
 
         private static bool GetCallingScriptHash(ExecutionEngine engine)
         {
-            engine.EvaluationStack.Push(engine.Crypto.Hash160(engine.CallingScript));
+            engine.EvaluationStack.Push(engine.CallingContext.ScriptHash);
             return true;
         }
 
         private static bool GetEntryScriptHash(ExecutionEngine engine)
         {
-            engine.EvaluationStack.Push(engine.Crypto.Hash160(engine.EntryScript));
+            engine.EvaluationStack.Push(engine.EntryContext.ScriptHash);
             return true;
         }
     }

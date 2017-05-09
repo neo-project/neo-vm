@@ -6,6 +6,7 @@ namespace AntShares.VM
 {
     public class ExecutionContext : IDisposable
     {
+        private ExecutionEngine engine;
         public readonly byte[] Script;
         public readonly bool PushOnly;
         internal readonly BinaryReader OpReader;
@@ -25,8 +26,19 @@ namespace AntShares.VM
 
         public OpCode NextInstruction => (OpCode)Script[OpReader.BaseStream.Position];
 
-        internal ExecutionContext(byte[] script, bool push_only, HashSet<uint> break_points = null)
+        private byte[] _script_hash = null;
+        public byte[] ScriptHash
         {
+            get
+            {
+                if (_script_hash == null)
+                    _script_hash = engine.Crypto.Hash160(Script);
+                return _script_hash;
+            }
+        }
+        internal ExecutionContext(ExecutionEngine engine, byte[] script, bool push_only, HashSet<uint> break_points = null)
+        {
+            this.engine = engine;
             this.Script = script;
             this.PushOnly = push_only;
             this.OpReader = new BinaryReader(new MemoryStream(script, false));
@@ -35,7 +47,7 @@ namespace AntShares.VM
 
         public ExecutionContext Clone()
         {
-            return new ExecutionContext(Script, PushOnly, BreakPoints)
+            return new ExecutionContext(engine, Script, PushOnly, BreakPoints)
             {
                 InstructionPointer = InstructionPointer
             };
