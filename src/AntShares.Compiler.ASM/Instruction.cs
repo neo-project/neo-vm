@@ -109,6 +109,7 @@ namespace AntShares.Compiler.ASM
                     Code = ProcessJump();
                     break;
                 case InstructionName.APPCALL:
+                case InstructionName.TAILCALL:
                     Code = ProcessAppCall();
                     break;
                 case InstructionName.SYSCALL:
@@ -125,7 +126,7 @@ namespace AntShares.Compiler.ASM
             byte[] hash = ParseHex(Arguments[0]);
             if (hash.Length != 20) throw new CompilerException(LineNumber, ERR_INVALID_ARGUMENT);
             byte[] result = new byte[21];
-            result[0] = (byte)OpCode.APPCALL;
+            result[0] = MakeScriptOp();
             Buffer.BlockCopy(hash, 0, result, 1, 20);
             return result;
         }
