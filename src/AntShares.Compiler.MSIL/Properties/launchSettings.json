@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "AntShares.Compiler.MSIL": {
-      "commandName": "Project",
-      "commandLineArgs": "SmartContract18.dll",
-      "workingDirectory": "C:\\Users\\light\\Documents\\Visual Studio 2015\\Projects\\SmartContract18\\bin\\Debug"
-    }
-  }
-}
