@@ -4,7 +4,8 @@
   "title": "AntShares.Compiler.MSIL",
   "version": "1.6.2",
   "buildOptions": {
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "platform": "anycpu"
   },
 
   "dependencies": {
@@ -15,7 +16,7 @@
     }
   },
   "runtimes": {
-    "win10-x64":{}
+    "win10-x64": {}
   },
   "frameworks": {
     "netcoreapp1.0": { }

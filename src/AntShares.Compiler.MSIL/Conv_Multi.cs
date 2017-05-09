@@ -128,7 +128,7 @@ namespace AntShares.Compiler.MSIL
                 var defs = refs.Resolve();
                 foreach (var attr in defs.CustomAttributes)
                 {
-                    if (attr.AttributeType.Name == "ScriptOpAttribute" || attr.AttributeType.Name == "OpCodeAttribute")
+                    if (attr.AttributeType.Name == "OpCodeAttribute")
                     {
                         var type = attr.ConstructorArguments[0].Type;
                         var value = (byte)attr.ConstructorArguments[0].Value;
@@ -172,7 +172,7 @@ namespace AntShares.Compiler.MSIL
                 c.srcfunc = src.tokenMethod;
                 return 0;
             }
-            else if (refs.ReturnType.Name == "ScriptEngine" || refs.ReturnType.Name == "ExecutionEngine")
+            else if (refs.ReturnType.Name == "ExecutionEngine")
             {
                 //donothing 語法過渡類型
                 return 0;
