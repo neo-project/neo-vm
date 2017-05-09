@@ -12,7 +12,6 @@ namespace AntShares.VM
         private readonly IScriptTable table;
         private readonly InteropService service;
 
-
         public IScriptContainer ScriptContainer { get; }
         public ICrypto Crypto { get; }
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();

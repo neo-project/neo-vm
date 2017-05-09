@@ -36,6 +36,7 @@ namespace AntShares.VM
                 return _script_hash;
             }
         }
+
         internal ExecutionContext(ExecutionEngine engine, byte[] script, bool push_only, HashSet<uint> break_points = null)
         {
             this.engine = engine;
