@@ -266,14 +266,24 @@ namespace AntShares.Compiler.MSIL
             }
             else
             {
-                for(var i=0;i<pcount/2;i++)
+                for (var i = 0; i < pcount / 2; i++)
                 {
-                    _Insert1(VM.OpCode.PUSHDATA1, "load"+i, to, int2Pushdata1bytes(i));
-                    _Insert1(VM.OpCode.PICK, "", to);
                     int saveto = (pcount - 1 - i);
-                    _Insert1(VM.OpCode.PUSHDATA1, "save to" + saveto, to, int2Pushdata1bytes(saveto));
+                    _Insert1(VM.OpCode.PUSHDATA1, "load" + saveto, to, int2Pushdata1bytes(saveto));
+                    _Insert1(VM.OpCode.PICK, "", to);
+
+                    _Insert1(VM.OpCode.PUSHDATA1, "load" + i + 1, to, int2Pushdata1bytes(i + 1));
+                    _Insert1(VM.OpCode.PICK, "", to);
+
+
+                    _Insert1(VM.OpCode.PUSHDATA1, "save to" + saveto + 2, to, int2Pushdata1bytes(saveto + 2));
                     _Insert1(VM.OpCode.XSWAP, "", to);
                     _Insert1(VM.OpCode.DROP, "", to);
+
+                    _Insert1(VM.OpCode.PUSHDATA1, "save to" + i + 1, to, int2Pushdata1bytes(i + 1));
+                    _Insert1(VM.OpCode.XSWAP, "", to);
+                    _Insert1(VM.OpCode.DROP, "", to);
+
                 }
             }
 
