@@ -21,12 +21,14 @@ namespace AntShares.Compiler.MSIL
         public void LoadModule(System.IO.Stream dllStream, System.IO.Stream pdbStream)
         {
             this.module = Mono.Cecil.ModuleDefinition.ReadModule(dllStream);
+#if WITHPDB
             if (pdbStream != null)
             {
-                //Mono.Cecil.Pdb is not available.
-                //var debugInfoLoader = new Mono.Cecil.Pdb.PdbReaderProvider();
-                //module.ReadSymbols(debugInfoLoader.GetSymbolReader(module, pdbStream));
+                var debugInfoLoader = new Mono.Cecil.Pdb.PdbReaderProvider();
+
+                module.ReadSymbols(debugInfoLoader.GetSymbolReader(module, pdbStream));
             }
+#endif
             if (module.HasAssemblyReferences)
             {
                 foreach (var ar in module.AssemblyReferences)

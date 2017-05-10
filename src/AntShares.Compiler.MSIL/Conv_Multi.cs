@@ -75,7 +75,8 @@ namespace AntShares.Compiler.MSIL
                 c.debugline = 0;
             }
             //push n
-            _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, null, to, int2Pushdata1bytes(to.paramtypes.Count - 1 - pos));
+            _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, null, to, int2Pushdata1bytes(pos));//翻转取参数顺序
+            //_Convert1by1(AntShares.VM.OpCode.PUSHDATA1, null, to, int2Pushdata1bytes(to.paramtypes.Count - 1 - pos));
             //d+n
             _Convert1by1(AntShares.VM.OpCode.ADD, null, to);
 
@@ -165,12 +166,12 @@ namespace AntShares.Compiler.MSIL
         {
             Mono.Cecil.MethodReference refs = src.tokenUnknown as Mono.Cecil.MethodReference;
 
+            int calltype = 0;
+            string callname = "";
+            VM.OpCode callcode = VM.OpCode.NOP;
             if (this.outModule.mapMethods.ContainsKey(src.tokenMethod))
             {//this is a call
-                var c = _Convert1by1(AntShares.VM.OpCode.CALL, src, to, new byte[] { 5, 0 });
-                c.needfix = true;
-                c.srcfunc = src.tokenMethod;
-                return 0;
+                calltype = 1;
             }
             else if (refs.ReturnType.Name == "ExecutionEngine")
             {
@@ -230,25 +231,70 @@ namespace AntShares.Compiler.MSIL
                 }
                 else
                 {
-                   
-                    string name;
-                    if (IsOpCall(refs, out name))
+                    if (IsOpCall(refs, out callname))
                     {
-                        if (name == "CHECKSIG")
+                        if (callname == "CHECKSIG")
                         {
-                            _Convert1by1(AntShares.VM.OpCode.CHECKSIG, src, to);
-                            return 0;
+                            callcode = VM.OpCode.CHECKSIG;
+                            calltype = 2;
                         }
                     }
-                    if (IsSysCall(refs, out name))
+                    if (IsSysCall(refs, out callname))
                     {
-                        _Convert1by1(AntShares.VM.OpCode.SYSCALL, src, to,str2Pushdata1bytes(name));
-                        return 0;
+                        calltype = 3;
                     }
-                    throw new Exception("unknown call:" + src.tokenMethod);
 
                 }
             }
+
+            if (calltype == 0)
+                throw new Exception("unknown call:" + src.tokenMethod);
+            var md = src.tokenUnknown as Mono.Cecil.MethodReference;
+            var pcount = md.Parameters.Count;
+            _Convert1by1(VM.OpCode.NOP, src, to);
+            if (pcount <= 1)
+            {
+                        }
+            else if (pcount == 2)
+            {
+                _Insert1(VM.OpCode.SWAP, "swap 2 param", to);
+                    }
+            else if(pcount==3)
+            {
+                _Insert1(VM.OpCode.PUSHDATA1, "swap 0 and 2 param", to, int2Pushdata1bytes(2));
+                _Insert1(VM.OpCode.XSWAP, "", to);
+            }
+            else
+            {
+                for(var i=0;i<pcount/2;i++)
+                {
+                    _Insert1(VM.OpCode.PUSHDATA1, "load"+i, to, int2Pushdata1bytes(i));
+                    _Insert1(VM.OpCode.PICK, "", to);
+                    int saveto = (pcount - 1 - i);
+                    _Insert1(VM.OpCode.PUSHDATA1, "save to" + saveto, to, int2Pushdata1bytes(saveto));
+                    _Insert1(VM.OpCode.XSWAP, "", to);
+                    _Insert1(VM.OpCode.DROP, "", to);
+                }
+            }
+
+            if (calltype == 1)
+                    {
+                var c = _Convert1by1(AntShares.VM.OpCode.CALL, null, to, new byte[] { 5, 0 });
+                c.needfix = true;
+                c.srcfunc = src.tokenMethod;
+                        return 0;
+                    }
+            else if (calltype == 2)
+            {
+                _Convert1by1(callcode, null, to);
+                return 0;
+                }
+            else if (calltype == 3)
+            {
+                _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, str2Pushdata1bytes(callname));
+                return 0;
+            }
+            return 0;
         }
 
         private int _ConvertNewArr(ILMethod method, OpCode src, AntsMethod to)
