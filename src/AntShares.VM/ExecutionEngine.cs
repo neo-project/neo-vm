@@ -575,7 +575,14 @@ namespace AntShares.VM
                         {
                             byte[] pubkey = EvaluationStack.Pop().GetByteArray();
                             byte[] signature = EvaluationStack.Pop().GetByteArray();
-                            EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature, pubkey));
+                            try
+                            {
+                                EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature, pubkey));
+                            }
+                            catch (ArgumentException)
+                            {
+                                EvaluationStack.Push(false);
+                            }
                         }
                         break;
                     case OpCode.CHECKMULTISIG:
@@ -600,13 +607,20 @@ namespace AntShares.VM
                                 signatures[i] = EvaluationStack.Pop().GetByteArray();
                             byte[] message = ScriptContainer.GetMessage();
                             bool fSuccess = true;
-                            for (int i = 0, j = 0; fSuccess && i < m && j < n;)
+                            try
                             {
-                                if (Crypto.VerifySignature(message, signatures[i], pubkeys[j]))
-                                    i++;
-                                j++;
-                                if (m - i > n - j)
-                                    fSuccess = false;
+                                for (int i = 0, j = 0; fSuccess && i < m && j < n;)
+                                {
+                                    if (Crypto.VerifySignature(message, signatures[i], pubkeys[j]))
+                                        i++;
+                                    j++;
+                                    if (m - i > n - j)
+                                        fSuccess = false;
+                                }
+                            }
+                            catch (ArgumentException)
+                            {
+                                fSuccess = false;
                             }
                             EvaluationStack.Push(fSuccess);
                         }

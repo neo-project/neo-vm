@@ -2,7 +2,7 @@
   "authors": [ "The Antshares team" ],
   "copyright": "2016-2017 The Antshares team",
   "title": "AntShares.Compiler.MSIL",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "buildOptions": {
     "emitEntryPoint": true,
     "platform": "anycpu"
@@ -10,7 +10,7 @@
 
   "dependencies": {
     "AntShares.MonoCecil": "1.0.0",
-	"AntShares.VM": "1.6.3",
+	"AntShares.VM": "1.6.4",
     "Microsoft.NETCore.App": {
       "version": "1.0.1"
     }
