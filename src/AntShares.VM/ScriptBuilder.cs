@@ -24,11 +24,11 @@ namespace AntShares.VM
             return this;
         }
 
-        public ScriptBuilder EmitAppCall(byte[] scriptHash)
+        public ScriptBuilder EmitAppCall(byte[] scriptHash, bool useTailCall = false)
         {
             if (scriptHash.Length != 20)
                 throw new ArgumentException();
-            return Emit(OpCode.APPCALL, scriptHash);
+            return Emit(useTailCall ? OpCode.TAILCALL : OpCode.APPCALL, scriptHash);
         }
 
         public ScriptBuilder EmitJump(OpCode op, short offset)
@@ -44,6 +44,11 @@ namespace AntShares.VM
             if (number == 0) return Emit(OpCode.PUSH0);
             if (number > 0 && number <= 16) return Emit(OpCode.PUSH1 - 1 + (byte)number);
             return EmitPush(number.ToByteArray());
+        }
+
+        public ScriptBuilder EmitPush(bool data)
+        {
+            return Emit(data ? OpCode.PUSHT : OpCode.PUSHF);
         }
 
         public ScriptBuilder EmitPush(byte[] data)
