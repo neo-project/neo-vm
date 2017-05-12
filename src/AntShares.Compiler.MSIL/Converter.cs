@@ -145,7 +145,6 @@ namespace AntShares.Compiler.MSIL
             if (this.outModule.mapMethods.ContainsKey(main) == false)
             {
                 throw new Exception("找不到名为" + main + "的入口");
-                return;
             }
             var first = this.outModule.mapMethods[main];
             first.funcaddr = 0;
@@ -532,7 +531,6 @@ namespace AntShares.Compiler.MSIL
                 default:
                     throw new Exception("not support code" + src.code);
                     //logger.Log("not support code" + src.code);
-                    break;
 
             }
 

@@ -173,7 +173,7 @@ namespace AntShares.Compiler.MSIL
             {//this is a call
                 calltype = 1;
             }
-            else if (refs.ReturnType.Name == "ExecutionEngine")
+            else if (refs.ReturnType.Name == "ExecutionEngine" || refs.ReturnType.Name == "Storage")
             {
                 //donothing 語法過渡類型
                 return 0;
