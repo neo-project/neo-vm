@@ -342,7 +342,9 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Ldc_I4_S:
                     _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(src.tokenI32));
                     break;
-
+                case CodeEx.Ldstr:
+                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, str2Pushdata1bytes(src.tokenStr));
+                    break;
                 case CodeEx.Stloc_0:
                     _ConvertStLoc(src, to, 0);
                     break;
