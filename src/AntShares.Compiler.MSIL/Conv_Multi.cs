@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace AntShares.Compiler.MSIL
 {
@@ -21,7 +22,7 @@ namespace AntShares.Compiler.MSIL
 
             //_Convert1by1(AntShares.VM.ScriptOp.OP_DUP, src, to);
             //push n
-            _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, null, to, int2Pushdata1bytes(pos));
+            _ConvertPush(pos, null, to);
             //d-n-1
             _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
             _Convert1by1(AntShares.VM.OpCode.DEC, null, to);
@@ -49,7 +50,7 @@ namespace AntShares.Compiler.MSIL
                 c.debugline = 0;
             }
             //push n
-            _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, null, to, int2Pushdata1bytes(pos));
+            _ConvertPush(pos, null, to);
             //d-n-1
             _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
             _Convert1by1(AntShares.VM.OpCode.DEC, null, to);
@@ -75,7 +76,7 @@ namespace AntShares.Compiler.MSIL
                 c.debugline = 0;
             }
             //push n
-            _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, null, to, int2Pushdata1bytes(pos));//翻转取参数顺序
+            _ConvertPush(pos, null, to);//翻转取参数顺序
             //_Convert1by1(AntShares.VM.OpCode.PUSHDATA1, null, to, int2Pushdata1bytes(to.paramtypes.Count - 1 - pos));
             //d+n
             _Convert1by1(AntShares.VM.OpCode.ADD, null, to);
@@ -254,14 +255,14 @@ namespace AntShares.Compiler.MSIL
             _Convert1by1(VM.OpCode.NOP, src, to);
             if (pcount <= 1)
             {
-                        }
+            }
             else if (pcount == 2)
             {
                 _Insert1(VM.OpCode.SWAP, "swap 2 param", to);
-                    }
+            }
             else if(pcount==3)
             {
-                _Insert1(VM.OpCode.PUSHDATA1, "swap 0 and 2 param", to, int2Pushdata1bytes(2));
+                _InsertPush(2, "swap 0 and 2 param", to);
                 _Insert1(VM.OpCode.XSWAP, "", to);
             }
             else
@@ -269,18 +270,18 @@ namespace AntShares.Compiler.MSIL
                 for (var i = 0; i < pcount / 2; i++)
                 {
                     int saveto = (pcount - 1 - i);
-                    _Insert1(VM.OpCode.PUSHDATA1, "load" + saveto, to, int2Pushdata1bytes(saveto));
+                    _InsertPush(saveto, "load" + saveto, to);
                     _Insert1(VM.OpCode.PICK, "", to);
 
-                    _Insert1(VM.OpCode.PUSHDATA1, "load" + i + 1, to, int2Pushdata1bytes(i + 1));
+                    _InsertPush(i + 1, "load" + i + 1, to);
                     _Insert1(VM.OpCode.PICK, "", to);
 
 
-                    _Insert1(VM.OpCode.PUSHDATA1, "save to" + saveto + 2, to, int2Pushdata1bytes(saveto + 2));
+                    _InsertPush(saveto + 2, "save to" + saveto + 2, to);
                     _Insert1(VM.OpCode.XSWAP, "", to);
                     _Insert1(VM.OpCode.DROP, "", to);
 
-                    _Insert1(VM.OpCode.PUSHDATA1, "save to" + i + 1, to, int2Pushdata1bytes(i + 1));
+                    _InsertPush(i + 1, "save to" + i + 1, to);
                     _Insert1(VM.OpCode.XSWAP, "", to);
                     _Insert1(VM.OpCode.DROP, "", to);
 
@@ -288,20 +289,22 @@ namespace AntShares.Compiler.MSIL
             }
 
             if (calltype == 1)
-                    {
+            {
                 var c = _Convert1by1(AntShares.VM.OpCode.CALL, null, to, new byte[] { 5, 0 });
                 c.needfix = true;
                 c.srcfunc = src.tokenMethod;
-                        return 0;
-                    }
+                return 0;
+            }
             else if (calltype == 2)
             {
                 _Convert1by1(callcode, null, to);
                 return 0;
-                }
+            }
             else if (calltype == 3)
             {
-                _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, str2Pushdata1bytes(callname));
+                var bytes = Encoding.UTF8.GetBytes(callname);
+                if (bytes.Length > 252) throw new Exception("string is to long");
+                _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, bytes.Prepend((byte)bytes.Length).ToArray());
                 return 0;
             }
             return 0;
@@ -337,14 +340,14 @@ namespace AntShares.Compiler.MSIL
                 {//這是在初始化數組
 
                     var data = method.body_Codes[n2].tokenUnknown as byte[];
-                    this._Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, toPushdata1bytes(data));
+                    this._ConvertPush(data, src, to);
 
                     return 3;
 
                 }
                 else
                 {
-                    this._Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, toPushdata1bytes(new byte[number]));
+                    this._ConvertPush(new byte[number], src, to);
                 }
             }
 

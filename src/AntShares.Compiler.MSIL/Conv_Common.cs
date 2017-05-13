@@ -1,4 +1,7 @@
-﻿namespace AntShares.Compiler.MSIL
+﻿using System;
+using System.Numerics;
+
+namespace AntShares.Compiler.MSIL
 {
     /// <summary>
     /// 从ILCode 向小蚁 VM 转换的转换器
@@ -26,6 +29,41 @@
             }
             to.body_Codes[startaddr] = _code;
             return _code;
+        }
+
+        private AntsCode _InsertPush(byte[] data, string comment, AntsMethod to)
+        {
+            if (data.Length == 0) return _Insert1(VM.OpCode.PUSH0, comment, to);
+            if (data.Length <= 75) return _Insert1((VM.OpCode)data.Length, comment, to, data);
+            byte prefixLen;
+            VM.OpCode code;
+            if (data.Length <= byte.MaxValue)
+            {
+                prefixLen = sizeof(byte);
+                code = VM.OpCode.PUSHDATA1;
+            }
+            else if (data.Length <= ushort.MaxValue)
+            {
+                prefixLen = sizeof(ushort);
+                code = VM.OpCode.PUSHDATA2;
+            }
+            else
+            {
+                prefixLen = sizeof(uint);
+                code = VM.OpCode.PUSHDATA4;
+            }
+            byte[] bytes = new byte[data.Length + prefixLen];
+            Buffer.BlockCopy(BitConverter.GetBytes(data.Length), 0, bytes, 0, prefixLen);
+            Buffer.BlockCopy(data, 0, bytes, prefixLen, data.Length);
+            return _Insert1(code, comment, to, bytes);
+        }
+
+        private AntsCode _InsertPush(int i, string comment, AntsMethod to)
+        {
+            if (i == 0) return _Insert1(VM.OpCode.PUSH0, comment, to);
+            if (i == -1) return _Insert1(VM.OpCode.PUSHM1, comment, to);
+            if (i > 0 && i <= 16) return _Insert1((VM.OpCode)(byte)i + 0x50, comment, to);
+            return _InsertPush(((BigInteger)i).ToByteArray(), comment, to);
         }
 
         private AntsCode _Convert1by1(AntShares.VM.OpCode code, OpCode src, AntsMethod to, byte[] data = null)
@@ -56,6 +94,40 @@
             return _code;
         }
 
+        private AntsCode _ConvertPush(byte[] data, OpCode src, AntsMethod to)
+        {
+            if (data.Length == 0) return _Convert1by1(VM.OpCode.PUSH0, src, to);
+            if (data.Length <= 75) return _Convert1by1((VM.OpCode)data.Length, src, to, data);
+            byte prefixLen;
+            VM.OpCode code;
+            if (data.Length <= byte.MaxValue)
+            {
+                prefixLen = sizeof(byte);
+                code = VM.OpCode.PUSHDATA1;
+            }
+            else if (data.Length <= ushort.MaxValue)
+            {
+                prefixLen = sizeof(ushort);
+                code = VM.OpCode.PUSHDATA2;
+            }
+            else
+            {
+                prefixLen = sizeof(uint);
+                code = VM.OpCode.PUSHDATA4;
+            }
+            byte[] bytes = new byte[data.Length + prefixLen];
+            Buffer.BlockCopy(BitConverter.GetBytes(data.Length), 0, bytes, 0, prefixLen);
+            Buffer.BlockCopy(data, 0, bytes, prefixLen, data.Length);
+            return _Convert1by1(code, src, to, bytes);
+        }
+
+        private AntsCode _ConvertPush(int i, OpCode src, AntsMethod to)
+        {
+            if (i == 0) return _Convert1by1(VM.OpCode.PUSH0, src, to);
+            if (i == -1) return _Convert1by1(VM.OpCode.PUSHM1, src, to);
+            if (i > 0 && i <= 16) return _Convert1by1((VM.OpCode)(byte)i + 0x50, src, to);
+            return _ConvertPush(((BigInteger)i).ToByteArray(), src, to);
+        }
 
         private void _insertBeginCode(ILMethod from, AntsMethod to)
         {
@@ -67,7 +139,7 @@
             foreach (var src in from.body_Variables)
             {
                 to.body_Variables.Add(new ILParam(src.name, src.type));
-                _Insert1(AntShares.VM.OpCode.PUSHDATA1, "body_Variables init", to, int2Pushdata1bytes(0));
+                _InsertPush(0, "body_Variables init", to);
             }
         }
 

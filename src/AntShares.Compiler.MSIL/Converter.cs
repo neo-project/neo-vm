@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace AntShares.Compiler.MSIL
 {
@@ -248,28 +249,7 @@ namespace AntShares.Compiler.MSIL
         //    }
         //    return "";
         //}
-        static byte[] str2Pushdata1bytes(string str)
-        {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(str);
-            if (bytes.Length > 252) throw new Exception("string is to long");
-            return toPushdata1bytes(bytes);
-        }
-        static byte[] int2Pushdata1bytes(int di)
-        {
-            var b = BitConverter.GetBytes(di);
-            return toPushdata1bytes(b);
-        }
-        static byte[] toPushdata1bytes(byte[] data)
-        {
-            var bytes = new byte[data.Length + 1];
-            bytes[0] = (byte)data.Length;
-            for (var i = 0; i < data.Length; i++)
-            {
-                bytes[i + 1] = data[i];
-            }
-            return bytes;
 
-        }
         static int pushdata1bytes2int(byte[] data)
         {
             var n = BitConverter.ToInt32(data, 1);
@@ -310,40 +290,38 @@ namespace AntShares.Compiler.MSIL
                     break;
 
                 case CodeEx.Ldc_I4:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(src.tokenI32));
+                case CodeEx.Ldc_I4_S:
+                    _ConvertPush(src.tokenI32, src, to);
                     break;
                 case CodeEx.Ldc_I4_0:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(0));
+                    _ConvertPush(0, src, to);
                     break;
                 case CodeEx.Ldc_I4_1:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(1));
+                    _ConvertPush(1, src, to);
                     break;
                 case CodeEx.Ldc_I4_2:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(2));
+                    _ConvertPush(2, src, to);
                     break;
                 case CodeEx.Ldc_I4_3:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(3));
+                    _ConvertPush(3, src, to);
                     break;
                 case CodeEx.Ldc_I4_4:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(4));
+                    _ConvertPush(4, src, to);
                     break;
                 case CodeEx.Ldc_I4_5:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(5));
+                    _ConvertPush(5, src, to);
                     break;
                 case CodeEx.Ldc_I4_6:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(6));
+                    _ConvertPush(6, src, to);
                     break;
                 case CodeEx.Ldc_I4_7:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(7));
+                    _ConvertPush(7, src, to);
                     break;
                 case CodeEx.Ldc_I4_8:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(1));
-                    break;
-                case CodeEx.Ldc_I4_S:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(src.tokenI32));
+                    _ConvertPush(8, src, to);
                     break;
                 case CodeEx.Ldstr:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, str2Pushdata1bytes(src.tokenStr));
+                    _ConvertPush(Encoding.UTF8.GetBytes(src.tokenStr), src, to);
                     break;
                 case CodeEx.Stloc_0:
                     _ConvertStLoc(src, to, 0);
