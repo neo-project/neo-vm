@@ -2,13 +2,13 @@
   "authors": [ "The Antshares team" ],
   "copyright": "2016-2017 The Antshares team",
   "title": "AntShares.Compiler.ASM",
-  "version": "1.6.2",
+  "version": "1.6.4",
   "buildOptions": {
 	"emitEntryPoint": true
   },
 
   "dependencies": {
-    "AntShares.VM": "1.6.2",
+    "AntShares.VM": "1.6.4",
     "Microsoft.NETCore.App": {
       "type": "platform",
       "version": "1.0.1"

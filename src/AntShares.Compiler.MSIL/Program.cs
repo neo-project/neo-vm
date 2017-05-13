@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AntShares.Compiler.MSIL
 {
@@ -80,7 +77,7 @@ namespace AntShares.Compiler.MSIL
             try
             {
 
-                string bytesname = onlyname + ".antshares.bytes";
+                string bytesname = onlyname + ".avm";
 
                 System.IO.File.Delete(bytesname);
                 System.IO.File.WriteAllBytes(bytesname, bytes);
