@@ -304,7 +304,8 @@ namespace AntShares.Compiler.MSIL
             {
                 var bytes = Encoding.UTF8.GetBytes(callname);
                 if (bytes.Length > 252) throw new Exception("string is to long");
-                _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, bytes.Prepend((byte)bytes.Length).ToArray());
+
+                _ConvertPush(bytes, null, to);
                 return 0;
             }
             return 0;
@@ -314,16 +315,17 @@ namespace AntShares.Compiler.MSIL
         {
             var code = to.body_Codes.Last().Value;
             //we need a number
-            if (code.code != AntShares.VM.OpCode.PUSHDATA1)
+            if (code.code > AntShares.VM.OpCode.PUSH16)
             {
                 this.logger.Log("_ConvertNewArr::not support var lens for array.");
                 return 0;
             }
-            var number = pushdata1bytes2int(code.bytes);
+            var number = getNumber(code);
 
             //移除上一条指令
             to.body_Codes.Remove(code.addr);
             this.addr--;
+            if (code.bytes != null)
             this.addr -= code.bytes.Length;
 
             var type = src.tokenType;

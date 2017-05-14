@@ -249,7 +249,31 @@ namespace AntShares.Compiler.MSIL
         //    }
         //    return "";
         //}
-
+        static int getNumber(AntsCode code)
+        {
+            if (code.code <= VM.OpCode.PUSHBYTES75)
+                return (int)code.code;
+            else if (code.code == VM.OpCode.PUSH0) return 0;
+            else if (code.code == VM.OpCode.PUSH1) return 1;
+            else if (code.code == VM.OpCode.PUSH2) return 2;
+            else if (code.code == VM.OpCode.PUSH3) return 3;
+            else if (code.code == VM.OpCode.PUSH4) return 4;
+            else if (code.code == VM.OpCode.PUSH5) return 5;
+            else if (code.code == VM.OpCode.PUSH6) return 6;
+            else if (code.code == VM.OpCode.PUSH7) return 7;
+            else if (code.code == VM.OpCode.PUSH8) return 8;
+            else if (code.code == VM.OpCode.PUSH9) return 9;
+            else if (code.code == VM.OpCode.PUSH10) return 10;
+            else if (code.code == VM.OpCode.PUSH11) return 11;
+            else if (code.code == VM.OpCode.PUSH12) return 12;
+            else if (code.code == VM.OpCode.PUSH13) return 13;
+            else if (code.code == VM.OpCode.PUSH14) return 14;
+            else if (code.code == VM.OpCode.PUSH15) return 15;
+            else if (code.code == VM.OpCode.PUSH16) return 16;
+            else if (code.code == VM.OpCode.PUSHDATA1) return pushdata1bytes2int(code.bytes);
+            else
+                throw new Exception("not support getNumber From this:" + code.ToString());
+        }
         static int pushdata1bytes2int(byte[] data)
         {
             var n = BitConverter.ToInt32(data, 1);
