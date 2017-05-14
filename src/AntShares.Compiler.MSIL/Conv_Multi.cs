@@ -304,8 +304,11 @@ namespace AntShares.Compiler.MSIL
             {
                 var bytes = Encoding.UTF8.GetBytes(callname);
                 if (bytes.Length > 252) throw new Exception("string is to long");
-
-                _ConvertPush(bytes, null, to);
+                byte[] outbytes = new byte[bytes.Length + 1];
+                outbytes[0] = (byte)bytes.Length;
+                Array.Copy(bytes, 0, outbytes, 1, bytes.Length);
+                //bytes.Prepend 函数在 dotnet framework 4.6 编译不过
+                _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, outbytes); 
                 return 0;
             }
             return 0;
