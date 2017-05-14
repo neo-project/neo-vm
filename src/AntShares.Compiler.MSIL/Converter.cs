@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace AntShares.Compiler.MSIL
 {
@@ -248,27 +249,30 @@ namespace AntShares.Compiler.MSIL
         //    }
         //    return "";
         //}
-        static byte[] str2Pushdata1bytes(string str)
+        static int getNumber(AntsCode code)
         {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(str);
-            if (bytes.Length > 252) throw new Exception("string is to long");
-            return toPushdata1bytes(bytes);
-        }
-        static byte[] int2Pushdata1bytes(int di)
-        {
-            var b = BitConverter.GetBytes(di);
-            return toPushdata1bytes(b);
-        }
-        static byte[] toPushdata1bytes(byte[] data)
-        {
-            var bytes = new byte[data.Length + 1];
-            bytes[0] = (byte)data.Length;
-            for (var i = 0; i < data.Length; i++)
-            {
-                bytes[i + 1] = data[i];
-            }
-            return bytes;
-
+            if (code.code <= VM.OpCode.PUSHBYTES75)
+                return (int)code.code;
+            else if (code.code == VM.OpCode.PUSH0) return 0;
+            else if (code.code == VM.OpCode.PUSH1) return 1;
+            else if (code.code == VM.OpCode.PUSH2) return 2;
+            else if (code.code == VM.OpCode.PUSH3) return 3;
+            else if (code.code == VM.OpCode.PUSH4) return 4;
+            else if (code.code == VM.OpCode.PUSH5) return 5;
+            else if (code.code == VM.OpCode.PUSH6) return 6;
+            else if (code.code == VM.OpCode.PUSH7) return 7;
+            else if (code.code == VM.OpCode.PUSH8) return 8;
+            else if (code.code == VM.OpCode.PUSH9) return 9;
+            else if (code.code == VM.OpCode.PUSH10) return 10;
+            else if (code.code == VM.OpCode.PUSH11) return 11;
+            else if (code.code == VM.OpCode.PUSH12) return 12;
+            else if (code.code == VM.OpCode.PUSH13) return 13;
+            else if (code.code == VM.OpCode.PUSH14) return 14;
+            else if (code.code == VM.OpCode.PUSH15) return 15;
+            else if (code.code == VM.OpCode.PUSH16) return 16;
+            else if (code.code == VM.OpCode.PUSHDATA1) return pushdata1bytes2int(code.bytes);
+            else
+                throw new Exception("not support getNumber From this:" + code.ToString());
         }
         static int pushdata1bytes2int(byte[] data)
         {
@@ -310,39 +314,39 @@ namespace AntShares.Compiler.MSIL
                     break;
 
                 case CodeEx.Ldc_I4:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(src.tokenI32));
+                case CodeEx.Ldc_I4_S:
+                    _ConvertPush(src.tokenI32, src, to);
                     break;
                 case CodeEx.Ldc_I4_0:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(0));
+                    _ConvertPush(0, src, to);
                     break;
                 case CodeEx.Ldc_I4_1:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(1));
+                    _ConvertPush(1, src, to);
                     break;
                 case CodeEx.Ldc_I4_2:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(2));
+                    _ConvertPush(2, src, to);
                     break;
                 case CodeEx.Ldc_I4_3:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(3));
+                    _ConvertPush(3, src, to);
                     break;
                 case CodeEx.Ldc_I4_4:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(4));
+                    _ConvertPush(4, src, to);
                     break;
                 case CodeEx.Ldc_I4_5:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(5));
+                    _ConvertPush(5, src, to);
                     break;
                 case CodeEx.Ldc_I4_6:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(6));
+                    _ConvertPush(6, src, to);
                     break;
                 case CodeEx.Ldc_I4_7:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(7));
+                    _ConvertPush(7, src, to);
                     break;
                 case CodeEx.Ldc_I4_8:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(1));
+                    _ConvertPush(8, src, to);
                     break;
-                case CodeEx.Ldc_I4_S:
-                    _Convert1by1(AntShares.VM.OpCode.PUSHDATA1, src, to, int2Pushdata1bytes(src.tokenI32));
+                case CodeEx.Ldstr:
+                    _ConvertPush(Encoding.UTF8.GetBytes(src.tokenStr), src, to);
                     break;
-
                 case CodeEx.Stloc_0:
                     _ConvertStLoc(src, to, 0);
                     break;
