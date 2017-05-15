@@ -313,6 +313,10 @@ namespace AntShares.Compiler.MSIL
                     _Convert1by1(AntShares.VM.OpCode.DROP, src, to);
                     break;
 
+                case CodeEx.Ldnull:
+                    _ConvertPush(new byte[0], src, to);
+                    break;
+
                 case CodeEx.Ldc_I4:
                 case CodeEx.Ldc_I4_S:
                     _ConvertPush(src.tokenI32, src, to);

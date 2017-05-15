@@ -176,11 +176,21 @@ namespace AntShares.Compiler.MSIL
             }
             else if (refs.ReturnType.Name == "ExecutionEngine" || refs.ReturnType.Name == "Storage")
             {
+                if (src != null)
+                {
+                    //有可能jump到此处
+                    this.addrconv[src.addr] = this.addr;//因为没插入代码，实际是下一行
+                }
                 //donothing 語法過渡類型
                 return 0;
             }
             else
             {//maybe a syscall // or other
+                if (src.tokenMethod == "System.Int32 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
+                {
+                    //donothing
+                    return 0;
+                }
                 if (src.tokenMethod == "System.Int32 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
                 {
                     //donothing
@@ -195,7 +205,7 @@ namespace AntShares.Compiler.MSIL
                 {
                     return 0;
                 }
-                else if(src.tokenMethod == "System.Boolean System.Object::Equals(System.Object)")
+                if(src.tokenMethod.Contains("::op_Equality(")|| src.tokenMethod.Contains("::Equals("))
                 {
                     _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
                     return 0;
@@ -329,7 +339,7 @@ namespace AntShares.Compiler.MSIL
             to.body_Codes.Remove(code.addr);
             this.addr--;
             if (code.bytes != null)
-            this.addr -= code.bytes.Length;
+                this.addr -= code.bytes.Length;
 
             var type = src.tokenType;
             if (type != "System.Byte")
