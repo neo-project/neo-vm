@@ -176,6 +176,11 @@ namespace AntShares.Compiler.MSIL
             }
             else if (refs.ReturnType.Name == "ExecutionEngine" || refs.ReturnType.Name == "Storage")
             {
+                if (src != null)
+                {
+                    //有可能jump到此处
+                    this.addrconv[src.addr] = this.addr;//因为没插入代码，实际是下一行
+                }
                 //donothing 語法過渡類型
                 return 0;
             }
@@ -186,46 +191,61 @@ namespace AntShares.Compiler.MSIL
                     //donothing
                     return 0;
                 }
+                if (src.tokenMethod == "System.Int32 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
+                {
+                    //donothing
+                    return 0;
+                }
                 else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int32)")//int->bignumber
                 {
                     //donothing
                     return 0;
                 }
-                else if(src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int64)")
+                else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int64)")
                 {
                     return 0;
                 }
-                else if(src.tokenMethod == "System.Boolean System.Object::Equals(System.Object)")
+                if(src.tokenMethod.Contains("::op_Equality(")|| src.tokenMethod.Contains("::Equals("))
                 {
+                    if (src.tokenMethod == "System.Boolean System.String::op_Equality(System.String,System.String)")
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
+                        return 0;
+                    }
+                    else if (src.tokenMethod == "System.Boolean System.Object::Equals(System.Object)")
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
+                        return 0;
+                    }
                     _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Numerics.BigInteger System.Numerics.BigInteger::op_Addition(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Addition(System.Numerics.BigInteger,System.Numerics.BigInteger)")
                 {
                     _Convert1by1(AntShares.VM.OpCode.ADD, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Numerics.BigInteger System.Numerics.BigInteger::op_Subtraction(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Subtraction(System.Numerics.BigInteger,System.Numerics.BigInteger)")
                 {
                     _Convert1by1(AntShares.VM.OpCode.SUB, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Numerics.BigInteger System.Numerics.BigInteger::op_Multiply(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Multiply(System.Numerics.BigInteger,System.Numerics.BigInteger)")
                 {
                     _Convert1by1(AntShares.VM.OpCode.MUL, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Boolean System.Numerics.BigInteger::op_LessThanOrEqual(System.Numerics.BigInteger,System.Int64)")
+                else if (src.tokenMethod == "System.Boolean System.Numerics.BigInteger::op_LessThanOrEqual(System.Numerics.BigInteger,System.Int64)")
                 {
                     _Convert1by1(AntShares.VM.OpCode.LTE, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Boolean System.Numerics.BigInteger::op_LessThan(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if (src.tokenMethod == "System.Boolean System.Numerics.BigInteger::op_LessThan(System.Numerics.BigInteger,System.Numerics.BigInteger)")
                 {
                     _Convert1by1(AntShares.VM.OpCode.LT, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Boolean System.Numerics.BigInteger::op_GreaterThan(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if (src.tokenMethod == "System.Boolean System.Numerics.BigInteger::op_GreaterThan(System.Numerics.BigInteger,System.Numerics.BigInteger)")
                 {
                     _Convert1by1(AntShares.VM.OpCode.GT, src, to);
                     return 0;
@@ -260,7 +280,7 @@ namespace AntShares.Compiler.MSIL
             {
                 _Insert1(VM.OpCode.SWAP, "swap 2 param", to);
             }
-            else if(pcount==3)
+            else if (pcount == 3)
             {
                 _InsertPush(2, "swap 0 and 2 param", to);
                 _Insert1(VM.OpCode.XSWAP, "", to);
@@ -329,7 +349,7 @@ namespace AntShares.Compiler.MSIL
             to.body_Codes.Remove(code.addr);
             this.addr--;
             if (code.bytes != null)
-            this.addr -= code.bytes.Length;
+                this.addr -= code.bytes.Length;
 
             var type = src.tokenType;
             if (type != "System.Byte")
