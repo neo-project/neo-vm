@@ -195,7 +195,7 @@ namespace AntShares.Compiler.MSIL
                         //donothing
                         return 0;
                     }
-                    else if (src.tokenMethod == "System.Int32 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
+                    else if (src.tokenMethod == "System.Int64 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
                     {
                         //donothing
                         return 0;
