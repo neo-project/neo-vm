@@ -186,68 +186,186 @@ namespace AntShares.Compiler.MSIL
             }
             else
             {//maybe a syscall // or other
-                if (src.tokenMethod == "System.Int32 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
+                if (src.tokenMethod.Contains("::op_Explicit(") || src.tokenMethod.Contains("::op_Implicit("))
                 {
-                    //donothing
+                    //各类显示隐示转换都忽略
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    if (src.tokenMethod == "System.Int32 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
+                    {
+                        //donothing
+                        return 0;
+                    }
+                    else if (src.tokenMethod == "System.Int64 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
+                    {
+                        //donothing
+                        return 0;
+                    }
+                    else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int32)")//int->bignumber
+                    {
+                        //donothing
+                        return 0;
+                    }
+                    else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int64)")
+                    {
+                        return 0;
+                    }
+
                     return 0;
                 }
-                if (src.tokenMethod == "System.Int32 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
+                else if (src.tokenMethod.Contains("::op_Equality(") || src.tokenMethod.Contains("::Equals("))
                 {
-                    //donothing
-                    return 0;
-                }
-                else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int32)")//int->bignumber
-                {
-                    //donothing
-                    return 0;
-                }
-                else if(src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int64)")
-                {
-                    return 0;
-                }
-                if(src.tokenMethod.Contains("::op_Equality(")|| src.tokenMethod.Contains("::Equals("))
-                {
+                    //各类==指令
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    if (src.tokenMethod == "System.Boolean System.String::op_Equality(System.String,System.String)")
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
+                        return 0;
+                    }
+                    else if (src.tokenMethod == "System.Boolean System.Object::Equals(System.Object)")
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
+                        return 0;
+                    }
                     _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Numerics.BigInteger System.Numerics.BigInteger::op_Addition(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if(src.tokenMethod.Contains("::op_Inequality("))
                 {
+                    //各类!=指令
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    if (src.tokenMethod == "System.Boolean System.Numerics.BigInteger::op_Inequality(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                    {
+                        _Convert1by1(VM.OpCode.INVERT, src, to);
+                        _Insert1(AntShares.VM.OpCode.EQUAL, "", to);
+                        return 0;
+                    }
+                    _Convert1by1(VM.OpCode.INVERT, src, to);
+                    _Insert1(AntShares.VM.OpCode.EQUAL, "", to);
+                    return 0;
+                }
+                else if (src.tokenMethod.Contains("::op_Addition(") )
+                {
+                    //各类+指令
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Addition(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.ADD, src, to);
+                        return 0;
+                    }
                     _Convert1by1(AntShares.VM.OpCode.ADD, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Numerics.BigInteger System.Numerics.BigInteger::op_Subtraction(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if (src.tokenMethod.Contains("::op_Subtraction("))
                 {
+                    //各类-指令
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Subtraction(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.SUB, src, to);
+                        return 0;
+                    }
                     _Convert1by1(AntShares.VM.OpCode.SUB, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Numerics.BigInteger System.Numerics.BigInteger::op_Multiply(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if (src.tokenMethod.Contains("::op_Multiply("))
                 {
+                    //各类*指令
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Multiply(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.MUL, src, to);
+                        return 0;
+                    }
                     _Convert1by1(AntShares.VM.OpCode.MUL, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Boolean System.Numerics.BigInteger::op_LessThanOrEqual(System.Numerics.BigInteger,System.Int64)")
+                else if (src.tokenMethod.Contains("::op_Division("))
                 {
-                    _Convert1by1(AntShares.VM.OpCode.LTE, src, to);
+                    //各类/指令
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Division(System.Numerics.BigInteger, System.Numerics.BigInteger)")
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.DIV, src, to);
+                        return 0;
+                    }
+                    _Convert1by1(AntShares.VM.OpCode.DIV, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Boolean System.Numerics.BigInteger::op_LessThan(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if (src.tokenMethod.Contains("::op_Modulus("))
                 {
+                    //各类%指令
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Modulus(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.MOD, src, to);
+                        return 0;
+                    }
+                    _Convert1by1(AntShares.VM.OpCode.MOD, src, to);
+                    return 0;
+                }
+                else if (src.tokenMethod.Contains("::op_LessThan("))
+                {
+                    //各类<指令
+                    //有可能有一些会特殊处理，故还保留独立判断
                     _Convert1by1(AntShares.VM.OpCode.LT, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.Boolean System.Numerics.BigInteger::op_GreaterThan(System.Numerics.BigInteger,System.Numerics.BigInteger)")
+                else if (src.tokenMethod.Contains("::op_GreaterThan("))
                 {
+                    //各类>指令
+                    //有可能有一些会特殊处理，故还保留独立判断
                     _Convert1by1(AntShares.VM.OpCode.GT, src, to);
                     return 0;
+                }
+                else if (src.tokenMethod.Contains("::op_LessThanOrEqual("))
+                {
+                    //各类<=指令
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    _Convert1by1(AntShares.VM.OpCode.LTE, src, to);
+                    return 0;
+                }
+                else if (src.tokenMethod.Contains("::op_GreaterThanOrEqual("))
+                {
+                    //各类>=指令
+                    //有可能有一些会特殊处理，故还保留独立判断
+                    _Convert1by1(AntShares.VM.OpCode.GTE, src, to);
+                    return 0;
+                }
+                else if(src.tokenMethod.Contains("::get_Length("))
+                {
+                    //各类.Length指令
+                    //"System.Int32 System.String::get_Length()"
+                    _Convert1by1(AntShares.VM.OpCode.SIZE, src, to);
+                    return 0;
+                }
+                else if(src.tokenMethod.Contains("::Concat("))
+                {
+                    //各类.Concat
+                    //"System.String System.String::Concat(System.String,System.String)"
+                    _Convert1by1(AntShares.VM.OpCode.CAT, src, to);
+                    return 0;
+                }
+                else if(src.tokenMethod== "System.String System.String::Substring(System.Int32,System.Int32)")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.SUBSTR, src, to);
+                    return 0;
+
+                }
+                else if(src.tokenMethod== "System.String System.String::Substring(System.Int32)")
+                {
+                    throw new Exception("antsmachine cant use this call,please use  .SubString(1,2) with 2 params.");
                 }
                 else
                 {
                     if (IsOpCall(refs, out callname))
                     {
-                        if (callname == "CHECKSIG")
+                        if (System.Enum.TryParse<VM.OpCode>(callname, out callcode))
                         {
-                            callcode = VM.OpCode.CHECKSIG;
                             calltype = 2;
+                        }
+                        else
+                        {
+                            throw new Exception("Can not find OpCall:" + callname);
                         }
                     }
                     if (IsSysCall(refs, out callname))
@@ -270,7 +388,7 @@ namespace AntShares.Compiler.MSIL
             {
                 _Insert1(VM.OpCode.SWAP, "swap 2 param", to);
             }
-            else if(pcount==3)
+            else if (pcount == 3)
             {
                 _InsertPush(2, "swap 0 and 2 param", to);
                 _Insert1(VM.OpCode.XSWAP, "", to);
@@ -318,7 +436,7 @@ namespace AntShares.Compiler.MSIL
                 outbytes[0] = (byte)bytes.Length;
                 Array.Copy(bytes, 0, outbytes, 1, bytes.Length);
                 //bytes.Prepend 函数在 dotnet framework 4.6 编译不过
-                _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, outbytes); 
+                _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, outbytes);
                 return 0;
             }
             return 0;
