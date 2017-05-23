@@ -348,6 +348,12 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Ldc_I4_8:
                     _ConvertPush(8, src, to);
                     break;
+                case CodeEx.Ldc_I4_M1:
+                    _ConvertPush(-1, src, to);
+                    break;
+                case CodeEx.Ldc_I8:
+                    _ConvertPush(src.tokenI64, src, to);
+                    break;
                 case CodeEx.Ldstr:
                     _ConvertPush(Encoding.UTF8.GetBytes(src.tokenStr), src, to);
                     break;
@@ -400,8 +406,8 @@ namespace AntShares.Compiler.MSIL
                     _ConvertLdArg(src, to, src.tokenI32);
                     break;
                 //需要地址轉換的情況
-                case CodeEx.Br_S:
                 case CodeEx.Br:
+                case CodeEx.Br_S:
                     {
                         var code = _Convert1by1(AntShares.VM.OpCode.JMP, src, to, new byte[] { 0, 0 });
                         code.needfix = true;
@@ -425,8 +431,28 @@ namespace AntShares.Compiler.MSIL
                         code.srcaddr = src.tokenAddr_Index;
                     }
                     break;
+                case CodeEx.Beq:
+                case CodeEx.Beq_S:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.NUMEQUAL, src, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.tokenAddr_Index;
+                    }
+                    break;
+                case CodeEx.Bne_Un:
+                case CodeEx.Bne_Un_S:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.NUMNOTEQUAL, src, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.tokenAddr_Index;
+                    }
+                    break;
                 case CodeEx.Blt:
                 case CodeEx.Blt_S:
+                case CodeEx.Blt_Un:
+                case CodeEx.Blt_Un_S:
                     {
                         _Convert1by1(AntShares.VM.OpCode.LT, src, to);
                         var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
@@ -436,6 +462,8 @@ namespace AntShares.Compiler.MSIL
                     break;
                 case CodeEx.Ble:
                 case CodeEx.Ble_S:
+                case CodeEx.Ble_Un:
+                case CodeEx.Ble_Un_S:
                     {
                         _Convert1by1(AntShares.VM.OpCode.LTE, src, to);
                         var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
@@ -445,6 +473,8 @@ namespace AntShares.Compiler.MSIL
                     break;
                 case CodeEx.Bgt:
                 case CodeEx.Bgt_S:
+                case CodeEx.Bgt_Un:
+                case CodeEx.Bgt_Un_S:
                     {
                         _Convert1by1(AntShares.VM.OpCode.GT, src, to);
                         var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
@@ -454,6 +484,8 @@ namespace AntShares.Compiler.MSIL
                     break;
                 case CodeEx.Bge:
                 case CodeEx.Bge_S:
+                case CodeEx.Bge_Un:
+                case CodeEx.Bge_Un_S:
                     {
                         _Convert1by1(AntShares.VM.OpCode.GTE, src, to);
                         var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
@@ -461,6 +493,26 @@ namespace AntShares.Compiler.MSIL
                         code.srcaddr = src.tokenAddr_Index;
                     }
                     break;
+
+                //Stack
+                case CodeEx.Dup:
+                    _Convert1by1(AntShares.VM.OpCode.DUP, src, to);
+                    break;
+
+                //Bitwise logic
+                case CodeEx.And:
+                    _Convert1by1(AntShares.VM.OpCode.AND, src, to);
+                    break;
+                case CodeEx.Or:
+                    _Convert1by1(AntShares.VM.OpCode.OR, src, to);
+                    break;
+                case CodeEx.Xor:
+                    _Convert1by1(AntShares.VM.OpCode.XOR, src, to);
+                    break;
+                case CodeEx.Not:
+                    _Convert1by1(AntShares.VM.OpCode.INVERT, src, to);
+                    break;
+
                 //math
                 case CodeEx.Add:
                 case CodeEx.Add_Ovf:
@@ -484,6 +536,16 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Rem:
                 case CodeEx.Rem_Un:
                     _Convert1by1(AntShares.VM.OpCode.MOD, src, to);
+                    break;
+                case CodeEx.Neg:
+                    _Convert1by1(AntShares.VM.OpCode.NEGATE, src, to);
+                    break;
+                case CodeEx.Shl:
+                    _Convert1by1(AntShares.VM.OpCode.SHL, src, to);
+                    break;
+                case CodeEx.Shr:
+                case CodeEx.Shr_Un:
+                    _Convert1by1(AntShares.VM.OpCode.SHR, src, to);
                     break;
 
                 //logic
@@ -512,7 +574,21 @@ namespace AntShares.Compiler.MSIL
 
 
                 //array
+                case CodeEx.Ldelem_U1:
+                    _ConvertPush(1, src, to);
+                    _Convert1by1(AntShares.VM.OpCode.SUBSTR, null, to);
+                    break;
+                case CodeEx.Ldelem_Any:
+                case CodeEx.Ldelem_I:
+                case CodeEx.Ldelem_I1:
+                case CodeEx.Ldelem_I2:
+                case CodeEx.Ldelem_I4:
+                case CodeEx.Ldelem_I8:
+                case CodeEx.Ldelem_R4:
+                case CodeEx.Ldelem_R8:
                 case CodeEx.Ldelem_Ref:
+                case CodeEx.Ldelem_U2:
+                case CodeEx.Ldelem_U4:
                     _Convert1by1(AntShares.VM.OpCode.PICKITEM, src, to);
                     break;
                 case CodeEx.Ldlen:
@@ -524,11 +600,33 @@ namespace AntShares.Compiler.MSIL
 
                 case CodeEx.Box:
                 case CodeEx.Unbox:
+                case CodeEx.Unbox_Any:
+                case CodeEx.Break:
                 case CodeEx.Conv_I:
                 case CodeEx.Conv_I1:
                 case CodeEx.Conv_I2:
                 case CodeEx.Conv_I4:
                 case CodeEx.Conv_I8:
+                case CodeEx.Conv_Ovf_I:
+                case CodeEx.Conv_Ovf_I_Un:
+                case CodeEx.Conv_Ovf_I1:
+                case CodeEx.Conv_Ovf_I1_Un:
+                case CodeEx.Conv_Ovf_I2:
+                case CodeEx.Conv_Ovf_I2_Un:
+                case CodeEx.Conv_Ovf_I4:
+                case CodeEx.Conv_Ovf_I4_Un:
+                case CodeEx.Conv_Ovf_I8:
+                case CodeEx.Conv_Ovf_I8_Un:
+                case CodeEx.Conv_Ovf_U:
+                case CodeEx.Conv_Ovf_U_Un:
+                case CodeEx.Conv_Ovf_U1:
+                case CodeEx.Conv_Ovf_U1_Un:
+                case CodeEx.Conv_Ovf_U2:
+                case CodeEx.Conv_Ovf_U2_Un:
+                case CodeEx.Conv_Ovf_U4:
+                case CodeEx.Conv_Ovf_U4_Un:
+                case CodeEx.Conv_Ovf_U8:
+                case CodeEx.Conv_Ovf_U8_Un:
                 case CodeEx.Conv_U:
                 case CodeEx.Conv_U1:
                 case CodeEx.Conv_U2:
@@ -537,7 +635,7 @@ namespace AntShares.Compiler.MSIL
                     break;
 
                 default:
-                    throw new Exception("not support code" + src.code);
+                    throw new Exception("unsupported instruction " + src.code);
                     //logger.Log("not support code" + src.code);
 
             }
