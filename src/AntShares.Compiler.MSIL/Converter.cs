@@ -575,9 +575,6 @@ namespace AntShares.Compiler.MSIL
 
                 //array
                 case CodeEx.Ldelem_U1:
-                    _ConvertPush(1, src, to);
-                    _Convert1by1(AntShares.VM.OpCode.SUBSTR, null, to);
-                    break;
                 case CodeEx.Ldelem_Any:
                 case CodeEx.Ldelem_I:
                 case CodeEx.Ldelem_I1:
@@ -601,7 +598,8 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Box:
                 case CodeEx.Unbox:
                 case CodeEx.Unbox_Any:
-                case CodeEx.Break:
+                //case CodeEx.Break://断点指令，不会遇到，这是调试器临时插入的
+				//也有可能以后利用这个断点调试
                 case CodeEx.Conv_I:
                 case CodeEx.Conv_I1:
                 case CodeEx.Conv_I2:
