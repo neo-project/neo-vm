@@ -575,6 +575,9 @@ namespace AntShares.Compiler.MSIL
 
                 //array
                 case CodeEx.Ldelem_U1:
+                    _ConvertPush(1, src, to);
+                    _Convert1by1(AntShares.VM.OpCode.SUBSTR, null, to);
+                    break;
                 case CodeEx.Ldelem_Any:
                 case CodeEx.Ldelem_I:
                 case CodeEx.Ldelem_I1:
