@@ -1,20 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C709FAAE-D265-41D2-B7BC-759F3CD830FF}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntShares.VM", "src\AntShares.VM\AntShares.VM.csproj", "{6A621185-36A9-4E1A-8D3D-462D19503E32}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AntShares.VM", "src\AntShares.VM\AntShares.VM.xproj", "{6A621185-36A9-4E1A-8D3D-462D19503E32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntShares.Compiler.ASM", "src\AntShares.Compiler.ASM\AntShares.Compiler.ASM.csproj", "{C17DE6B6-6885-4BA9-BAA8-273F3E03144D}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AntShares.Compiler.ASM", "src\AntShares.Compiler.ASM\AntShares.Compiler.ASM.xproj", "{C17DE6B6-6885-4BA9-BAA8-273F3E03144D}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AntShares.Compiler.MSIL", "src\AntShares.Compiler.MSIL\AntShares.Compiler.MSIL.xproj", "{5C3F2957-0E5C-443D-AE16-AD5E816993E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntShares.Compiler.MSIL", "src\AntShares.Compiler.MSIL\AntShares.Compiler.MSIL.csproj", "{5C3F2957-0E5C-443D-AE16-AD5E816993E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

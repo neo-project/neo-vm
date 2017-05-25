@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Copyright>2016-2017 The Antshares team</Copyright>
+    <AssemblyTitle>AntShares.Compiler.ASM</AssemblyTitle>
+    <VersionPrefix>1.6.5</VersionPrefix>
+    <Authors>The Antshares team</Authors>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <AssemblyName>AntShares.Compiler.ASM</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>AntShares.Compiler.ASM</PackageId>
+    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>RELEASE;NETCOREAPP1_0</DefineConstants>
+    <DebugType>none</DebugType>
+    <DebugSymbols>False</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AntShares.VM\AntShares.VM.csproj" />
+  </ItemGroup>
+
+</Project>
