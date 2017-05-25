@@ -674,7 +674,7 @@ namespace AntShares.VM
                         State |= VMState.FAULT;
                         return;
                 }
-            if (InvocationStack.Count > 0)
+            if (!State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
             {
                 if (CurrentContext.BreakPoints.Contains((uint)CurrentContext.InstructionPointer))
                     State |= VMState.BREAK;
@@ -701,7 +701,7 @@ namespace AntShares.VM
             {
                 ExecuteOp(opcode, CurrentContext);
             }
-            catch (Exception ex) when (ex is EndOfStreamException || ex is InvalidOperationException)
+            catch
             {
                 State |= VMState.FAULT;
             }
