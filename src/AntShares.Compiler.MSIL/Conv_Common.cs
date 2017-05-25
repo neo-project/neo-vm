@@ -121,7 +121,7 @@ namespace AntShares.Compiler.MSIL
             return _Convert1by1(code, src, to, bytes);
         }
 
-        private AntsCode _ConvertPush(int i, OpCode src, AntsMethod to)
+        private AntsCode _ConvertPush(long i, OpCode src, AntsMethod to)
         {
             if (i == 0) return _Convert1by1(VM.OpCode.PUSH0, src, to);
             if (i == -1) return _Convert1by1(VM.OpCode.PUSHM1, src, to);
