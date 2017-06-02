@@ -174,16 +174,6 @@ namespace AntShares.Compiler.MSIL
             {//this is a call
                 calltype = 1;
             }
-            else if (refs.ReturnType.Name == "ExecutionEngine" || refs.ReturnType.Name == "Storage")
-            {
-                if (src != null)
-                {
-                    //有可能jump到此处
-                    this.addrconv[src.addr] = this.addr;//因为没插入代码，实际是下一行
-                }
-                //donothing 語法過渡類型
-                return 0;
-            }
             else
             {//maybe a syscall // or other
                 if (src.tokenMethod.Contains("::op_Explicit(") || src.tokenMethod.Contains("::op_Implicit("))

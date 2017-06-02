@@ -70,8 +70,8 @@ namespace AntShares.Compiler.ASM
                 case InstructionName.EQUAL:
                 case InstructionName.INC:
                 case InstructionName.DEC:
-                case InstructionName.SAL:
-                case InstructionName.SAR:
+                //case InstructionName.SAL:
+                //case InstructionName.SAR:
                 case InstructionName.NEGATE:
                 case InstructionName.ABS:
                 case InstructionName.NOT:
@@ -100,6 +100,10 @@ namespace AntShares.Compiler.ASM
                 case InstructionName.HASH256:
                 case InstructionName.CHECKSIG:
                 case InstructionName.CHECKMULTISIG:
+                case InstructionName.ARRAYSIZE:
+                case InstructionName.PACK:
+                case InstructionName.UNPACK:
+                case InstructionName.PICKITEM:
                     Code = ProcessOthers();
                     break;
                 case InstructionName.JMP:

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
@@ -380,18 +379,18 @@ namespace AntShares.VM
                             EvaluationStack.Push(x - 1);
                         }
                         break;
-                    case OpCode.SAL:
-                        {
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x << 1);
-                        }
-                        break;
-                    case OpCode.SAR:
-                        {
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x >> 1);
-                        }
-                        break;
+                    //case OpCode.SAL:
+                    //    {
+                    //        BigInteger x = EvaluationStack.Pop().GetBigInteger();
+                    //        EvaluationStack.Push(x << 1);
+                    //    }
+                    //    break;
+                    //case OpCode.SAR:
+                    //    {
+                    //        BigInteger x = EvaluationStack.Pop().GetBigInteger();
+                    //        EvaluationStack.Push(x >> 1);
+                    //    }
+                    //    break;
                     case OpCode.NEGATE:
                         {
                             BigInteger x = EvaluationStack.Pop().GetBigInteger();

@@ -39,8 +39,8 @@
         EQUAL,
         INC,
         DEC,
-        SAL,
-        SAR,
+        //SAL,
+        //SAR,
         NEGATE,
         ABS,
         NOT,
@@ -69,5 +69,9 @@
         HASH256,
         CHECKSIG,
         CHECKMULTISIG,
+        ARRAYSIZE,
+        PACK,
+        UNPACK,
+        PICKITEM,
     }
 }
