@@ -18,19 +18,9 @@ namespace AntShares.VM.Types
             return value.SequenceEqual(other.GetByteArray());
         }
 
-        public override bool GetBoolean()
-        {
-            return value.Any(p => p != 0);
-        }
-
         public override byte[] GetByteArray()
         {
             return value;
-        }
-
-        public override T GetInterface<T>()
-        {
-            return null;
         }
     }
 }

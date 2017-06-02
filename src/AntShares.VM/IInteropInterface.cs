@@ -2,6 +2,5 @@
 {
     public interface IInteropInterface
     {
-        byte[] ToArray();
     }
 }

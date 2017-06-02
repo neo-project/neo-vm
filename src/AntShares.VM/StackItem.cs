@@ -1,5 +1,6 @@
 ﻿using AntShares.VM.Types;
 using System;
+using System.Linq;
 using System.Numerics;
 using Array = AntShares.VM.Types.Array;
 using Boolean = AntShares.VM.Types.Boolean;
@@ -8,8 +9,6 @@ namespace AntShares.VM
 {
     public abstract class StackItem : IEquatable<StackItem>
     {
-        public virtual int ArraySize => 1;
-
         public virtual bool IsArray => false;
 
         public abstract bool Equals(StackItem other);
@@ -21,7 +20,7 @@ namespace AntShares.VM
 
         public virtual StackItem[] GetArray()
         {
-            return new[] { this };
+            throw new NotSupportedException();
         }
 
         public virtual BigInteger GetBigInteger()
@@ -29,11 +28,17 @@ namespace AntShares.VM
             return new BigInteger(GetByteArray());
         }
 
-        public abstract bool GetBoolean();
+        public virtual bool GetBoolean()
+        {
+            return GetByteArray().Any(p => p != 0);
+        }
 
         public abstract byte[] GetByteArray();
 
-        public abstract T GetInterface<T>() where T : class, IInteropInterface;
+        public virtual T GetInterface<T>() where T : class, IInteropInterface
+        {
+            throw new NotSupportedException();
+        }
 
         public static implicit operator StackItem(int value)
         {

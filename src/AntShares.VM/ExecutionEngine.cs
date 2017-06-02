@@ -627,7 +627,15 @@ namespace AntShares.VM
 
                     // Array
                     case OpCode.ARRAYSIZE:
-                        EvaluationStack.Push(EvaluationStack.Pop().ArraySize);
+                        {
+                            StackItem item = EvaluationStack.Pop();
+                            if (!item.IsArray)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            EvaluationStack.Push(item.GetArray().Length);
+                        }
                         break;
                     case OpCode.PACK:
                         {
@@ -645,7 +653,13 @@ namespace AntShares.VM
                         break;
                     case OpCode.UNPACK:
                         {
-                            StackItem[] items = EvaluationStack.Pop().GetArray();
+                            StackItem item = EvaluationStack.Pop();
+                            if (!item.IsArray)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            StackItem[] items = item.GetArray();
                             for (int i = items.Length - 1; i >= 0; i--)
                                 EvaluationStack.Push(items[i]);
                             EvaluationStack.Push(items.Length);
@@ -659,7 +673,13 @@ namespace AntShares.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem[] items = EvaluationStack.Pop().GetArray();
+                            StackItem item = EvaluationStack.Pop();
+                            if (!item.IsArray)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            StackItem[] items = item.GetArray();
                             if (index >= items.Length)
                             {
                                 State |= VMState.FAULT;

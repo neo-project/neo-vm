@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace AntShares.VM.Types
 {
-    public class Integer : StackItem
+    internal class Integer : StackItem
     {
         private BigInteger value;
 
@@ -36,11 +36,6 @@ namespace AntShares.VM.Types
         public override byte[] GetByteArray()
         {
             return value.ToByteArray();
-        }
-
-        public override T GetInterface<T>()
-        {
-            return null;
         }
     }
 }

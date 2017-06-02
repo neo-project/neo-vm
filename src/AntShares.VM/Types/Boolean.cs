@@ -40,10 +40,5 @@ namespace AntShares.VM.Types
         {
             return value ? TRUE : FALSE;
         }
-
-        public override T GetInterface<T>()
-        {
-            return null;
-        }
     }
 }

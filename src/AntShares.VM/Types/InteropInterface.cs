@@ -1,4 +1,6 @@
-﻿namespace AntShares.VM.Types
+﻿using System;
+
+namespace AntShares.VM.Types
 {
     internal class InteropInterface : StackItem
     {
@@ -25,7 +27,7 @@
 
         public override byte[] GetByteArray()
         {
-            return _object.ToArray();
+            throw new NotSupportedException();
         }
 
         public override T GetInterface<T>()
