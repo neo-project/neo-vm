@@ -574,7 +574,7 @@ namespace AntShares.Compiler.MSIL
 
 
                 //array
-                case CodeEx.Ldelem_U1:
+                case CodeEx.Ldelem_U1://用意为byte[] 取一部分.....
                     _ConvertPush(1, src, to);
                     _Convert1by1(AntShares.VM.OpCode.SUBSTR, null, to);
                     break;
@@ -602,6 +602,7 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Unbox:
                 case CodeEx.Unbox_Any:
                 case CodeEx.Break:
+				//也有可能以后利用这个断点调试
                 case CodeEx.Conv_I:
                 case CodeEx.Conv_I1:
                 case CodeEx.Conv_I2:
@@ -633,7 +634,23 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Conv_U4:
                 case CodeEx.Conv_U8:
                     break;
-
+                    
+                ///////////////////////////////////////////////
+                //以下因为支持结构体而出现
+                //加载一个引用，这里改为加载一个pos值
+                case CodeEx.Ldloca:
+                case CodeEx.Ldloca_S:
+                    _ConvertLdLocA(src, to, src.tokenI32);
+                    break;
+                case CodeEx.Initobj:
+                    _ConvertInitObj(src, to);
+                    break;
+                case CodeEx.Stfld:
+                    _ConvertStfld(src, to);
+                    break;
+                case CodeEx.Ldfld:
+                    _ConvertLdfld(src, to);
+                    break;
                 default:
                     throw new Exception("unsupported instruction " + src.code);
                     //logger.Log("not support code" + src.code);

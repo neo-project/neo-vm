@@ -65,7 +65,10 @@ namespace AntShares.Compiler.MSIL
             //pick
             _Convert1by1(AntShares.VM.OpCode.PICK, null, to);
         }
-
+        private void _ConvertLdLocA(OpCode src, AntsMethod to, int pos)
+        {
+            _ConvertPush(pos, src, to);
+        }
         private void _ConvertLdArg(OpCode src, AntsMethod to, int pos)
         {
             //push d
@@ -174,6 +177,16 @@ namespace AntShares.Compiler.MSIL
             {//this is a call
                 calltype = 1;
             }
+            else if (refs.ReturnType.Name == "ExecutionEngine" || refs.ReturnType.Name == "Storage")
+            {
+                if (src != null)
+                {
+                    //有可能jump到此处
+                    this.addrconv[src.addr] = this.addr;//因为没插入代码，实际是下一行
+                }
+                //donothing 語法過渡類型
+                return 0;
+            }
             else
             {//maybe a syscall // or other
                 if (src.tokenMethod.Contains("::op_Explicit(") || src.tokenMethod.Contains("::op_Implicit("))
@@ -202,6 +215,12 @@ namespace AntShares.Compiler.MSIL
 
                     return 0;
                 }
+                else if (src.tokenMethod == "System.Void System.Diagnostics.Debugger::Break()")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.NOP, src, to);
+
+                    return 0;
+                }
                 else if (src.tokenMethod.Contains("::op_Equality(") || src.tokenMethod.Contains("::Equals("))
                 {
                     //各类==指令
@@ -219,7 +238,7 @@ namespace AntShares.Compiler.MSIL
                     _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod.Contains("::op_Inequality("))
+                else if (src.tokenMethod.Contains("::op_Inequality("))
                 {
                     //各类!=指令
                     //有可能有一些会特殊处理，故还保留独立判断
@@ -233,7 +252,7 @@ namespace AntShares.Compiler.MSIL
                     _Insert1(AntShares.VM.OpCode.EQUAL, "", to);
                     return 0;
                 }
-                else if (src.tokenMethod.Contains("::op_Addition(") )
+                else if (src.tokenMethod.Contains("::op_Addition("))
                 {
                     //各类+指令
                     //有可能有一些会特殊处理，故还保留独立判断
@@ -321,27 +340,27 @@ namespace AntShares.Compiler.MSIL
                     _Convert1by1(AntShares.VM.OpCode.GTE, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod.Contains("::get_Length("))
+                else if (src.tokenMethod.Contains("::get_Length("))
                 {
                     //各类.Length指令
                     //"System.Int32 System.String::get_Length()"
                     _Convert1by1(AntShares.VM.OpCode.SIZE, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod.Contains("::Concat("))
+                else if (src.tokenMethod.Contains("::Concat("))
                 {
                     //各类.Concat
                     //"System.String System.String::Concat(System.String,System.String)"
                     _Convert1by1(AntShares.VM.OpCode.CAT, src, to);
                     return 0;
                 }
-                else if(src.tokenMethod== "System.String System.String::Substring(System.Int32,System.Int32)")
+                else if (src.tokenMethod == "System.String System.String::Substring(System.Int32,System.Int32)")
                 {
                     _Convert1by1(AntShares.VM.OpCode.SUBSTR, src, to);
                     return 0;
 
                 }
-                else if(src.tokenMethod== "System.String System.String::Substring(System.Int32)")
+                else if (src.tokenMethod == "System.String System.String::Substring(System.Int32)")
                 {
                     throw new Exception("antsmachine cant use this call,please use  .SubString(1,2) with 2 params.");
                 }
@@ -478,6 +497,89 @@ namespace AntShares.Compiler.MSIL
 
             return 0;
 
+        }
+        private int _ConvertInitObj(OpCode src, AntsMethod to)
+        {
+            var type = (src.tokenUnknown as Mono.Cecil.TypeReference).Resolve();
+            _Convert1by1(AntShares.VM.OpCode.NOP, src, to);//空白
+            _ConvertPush(type.Fields.Count, null, to);//插入个数量
+            _Insert1(VM.OpCode.ARRAYNEW, null, to);
+            //然後要將計算棧上的第一個值，寫入第二個值對應的pos
+            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//replace n to top
+
+            //push d
+            _Convert1by1(AntShares.VM.OpCode.DEPTH, null, to);
+
+            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);//d 多了一位，剪掉
+            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把n拿上來
+            //push n
+            //_ConvertPush(pos, null, to);有n了
+            //d-n-1
+            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);
+
+            //push olddepth
+            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            _Convert1by1(AntShares.VM.OpCode.DUP, null, to);
+            _Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
+            //(d-n-1)-olddepth
+            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+
+            //swap d-n-1 and top
+            _Convert1by1(AntShares.VM.OpCode.XSWAP, null, to);
+            //drop top
+            _Convert1by1(AntShares.VM.OpCode.DROP, null, to);
+            return 0;
+        }
+        private int _ConvertStfld(OpCode src, AntsMethod to)
+        {
+            var field = (src.tokenUnknown as Mono.Cecil.FieldReference).Resolve();
+            var type = field.DeclaringType;
+            var id = type.Fields.IndexOf(field);
+            if (id < 0)
+                throw new Exception("impossible.");
+            _Convert1by1(AntShares.VM.OpCode.NOP, src, to);//空白
+
+            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把n拿上來 n 和 item
+            //push d
+            _Convert1by1(AntShares.VM.OpCode.DEPTH, src, to);
+            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);//d 多了一位，剪掉
+            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把n拿上來
+
+            //push n
+            //_ConvertPush(pos, null, to);有n了
+            //d-n-1
+            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);
+
+            //push olddepth
+            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            _Convert1by1(AntShares.VM.OpCode.DUP, null, to);
+            _Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
+            //(d-n-1)-olddepth
+            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+
+            //pick
+            _Convert1by1(AntShares.VM.OpCode.PICK, null, to);
+
+
+            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把item 拿上來 
+            _ConvertPush(id, null, to);
+            _Convert1by1(AntShares.VM.OpCode.ARRAYSETITEM, null, to);//修改值
+            return 0;
+        }
+
+        private int _ConvertLdfld(OpCode src, AntsMethod to)
+        {
+            var field = (src.tokenUnknown as Mono.Cecil.FieldReference).Resolve();
+            var type = field.DeclaringType;
+            var id = type.Fields.IndexOf(field);
+            if (id < 0)
+                throw new Exception("impossible.");
+            _ConvertPush(id, src, to);
+            _Convert1by1(AntShares.VM.OpCode.PICKITEM, null, to);//修改值
+
+            return 0;
         }
     }
 }

@@ -688,7 +688,28 @@ namespace AntShares.VM
                             EvaluationStack.Push(items[index]);
                         }
                         break;
-
+                    case OpCode.ARRAYNEW:
+                        {
+                            int count = (int)EvaluationStack.Pop().GetBigInteger();
+                            StackItem[] items = new StackItem[count];
+                            StackItem aii = items;
+                            EvaluationStack.Push(aii);
+                        }
+                        break;
+                    case OpCode.ARRAYSETITEM:
+                        {
+                            int index = (int)EvaluationStack.Pop().GetBigInteger();
+                            StackItem newItem = EvaluationStack.Pop();
+                            StackItem arrItem = EvaluationStack.Pop();
+                            if (!arrItem.IsArray)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            StackItem[] items = arrItem.GetArray();
+                            items[index] = newItem;
+                        }
+                        break;
                     default:
                         State |= VMState.FAULT;
                         return;
