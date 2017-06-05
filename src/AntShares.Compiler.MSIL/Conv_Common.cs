@@ -97,7 +97,7 @@ namespace AntShares.Compiler.MSIL
         private AntsCode _ConvertPush(byte[] data, OpCode src, AntsMethod to)
         {
             if (data.Length == 0) return _Convert1by1(VM.OpCode.PUSH0, src, to);
-            if (data.Length <= 75) return _Convert1by1((VM.OpCode)data.Length, src, to, data);
+            //if (data.Length <= 75) return _Convert1by1((VM.OpCode)data.Length, src, to, data);
             byte prefixLen;
             VM.OpCode code;
             if (data.Length <= byte.MaxValue)

@@ -692,7 +692,7 @@ namespace AntShares.VM
                         {
                             int index = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem newItem = EvaluationStack.Pop();
-                            StackItem arrItem = EvaluationStack.Peek();
+                            StackItem arrItem = EvaluationStack.Pop();
                             if (!arrItem.IsArray)
                             {
                                 State |= VMState.FAULT;
