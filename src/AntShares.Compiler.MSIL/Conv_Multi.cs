@@ -177,16 +177,6 @@ namespace AntShares.Compiler.MSIL
             {//this is a call
                 calltype = 1;
             }
-            else if (refs.ReturnType.Name == "ExecutionEngine" || refs.ReturnType.Name == "Storage")
-            {
-                if (src != null)
-                {
-                    //有可能jump到此处
-                    this.addrconv[src.addr] = this.addr;//因为没插入代码，实际是下一行
-                }
-                //donothing 語法過渡類型
-                return 0;
-            }
             else
             {//maybe a syscall // or other
                 if (src.tokenMethod.Contains("::op_Explicit(") || src.tokenMethod.Contains("::op_Implicit("))
@@ -503,7 +493,7 @@ namespace AntShares.Compiler.MSIL
             var type = (src.tokenUnknown as Mono.Cecil.TypeReference).Resolve();
             _Convert1by1(AntShares.VM.OpCode.NOP, src, to);//空白
             _ConvertPush(type.Fields.Count, null, to);//插入个数量
-            _Insert1(VM.OpCode.ARRAYNEW, null, to);
+            _Insert1(VM.OpCode.NEWARRAY, null, to);
             //然後要將計算棧上的第一個值，寫入第二個值對應的pos
             _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//replace n to top
 
@@ -565,7 +555,7 @@ namespace AntShares.Compiler.MSIL
 
             _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把item 拿上來 
             _ConvertPush(id, null, to);
-            _Convert1by1(AntShares.VM.OpCode.ARRAYSETITEM, null, to);//修改值
+            _Convert1by1(AntShares.VM.OpCode.SETITEM, null, to);//修改值
             return 0;
         }
 

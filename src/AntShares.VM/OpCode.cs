@@ -123,7 +123,7 @@
         PACK = 0xC1,
         UNPACK = 0xC2,
         PICKITEM = 0xC3,
-        ARRAYNEW = 0xC4,
-        ARRAYSETITEM =0xC5,
+        SETITEM = 0xC4,
+        NEWARRAY = 0xC5,
     }
 }
