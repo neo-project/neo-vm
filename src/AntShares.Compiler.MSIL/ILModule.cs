@@ -97,12 +97,12 @@ namespace AntShares.Compiler.MSIL
                         this.paramtypes.Add(new ILParam(p.Name, p.ParameterType.FullName));
                     }
                 }
-                if(method.HasBody)
+                if (method.HasBody)
                 {
                     var bodyNative = method.Body;
                     if (bodyNative.HasVariables)
                     {
-                        foreach(var v in bodyNative.Variables)
+                        foreach (var v in bodyNative.Variables)
                         {
                             this.body_Variables.Add(new ILParam(v.Name, v.VariableType.FullName));
                         }
@@ -119,7 +119,7 @@ namespace AntShares.Compiler.MSIL
                             c.debugline = code.SequencePoint.StartLine;
                         }
                         c.InitToken(code.Operand);
-                        this.body_Codes.Add(c.addr,c);
+                        this.body_Codes.Add(c.addr, c);
                     }
                 }
             }
@@ -401,16 +401,16 @@ namespace AntShares.Compiler.MSIL
         public override string ToString()
         {
             var info = "IL_" + addr.ToString("X04") + " " + code + " ";
-            if (this.tokenValueType == TokenValueType.Method) 
-            info += tokenMethod;
+            if (this.tokenValueType == TokenValueType.Method)
+                info += tokenMethod;
             if (this.tokenValueType == TokenValueType.String)
                 info += tokenStr;
 
-            if(debugline>=0)
+            if (debugline >= 0)
             {
                 info += "(" + debugline + ")";
             }
-            return  info;
+            return info;
         }
         public enum TokenValueType
         {
@@ -487,7 +487,7 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Newarr:
                     this.tokenType = (_p as Mono.Cecil.TypeReference).FullName;
                     this.tokenValueType = TokenValueType.Type;
-                    //this.tokenUnknown = _p;
+                    this.tokenUnknown = _p;
                     break;
                 case CodeEx.Ldfld:
                 case CodeEx.Ldflda:
@@ -496,7 +496,7 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Stfld:
                 case CodeEx.Stsfld:
                     this.tokenField = (_p as Mono.Cecil.FieldReference).FullName;
-                    //this.tokenUnknown = _p;
+                    this.tokenUnknown = _p;
                     this.tokenValueType = TokenValueType.Field;
                     break;
                 case CodeEx.Call:
@@ -659,12 +659,12 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Ldtoken:
                     var def = (_p as Mono.Cecil.FieldDefinition);
                     this.tokenUnknown = def.InitialValue;
-                    this.tokenValueType=TokenValueType.Nothing;
+                    this.tokenValueType = TokenValueType.Nothing;
                     break;
                 default:
                     this.tokenUnknown = _p;
                     this.tokenValueType = TokenValueType.Nothing;
-                   break;
+                    break;
             }
         }
     }

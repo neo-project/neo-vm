@@ -688,7 +688,37 @@ namespace AntShares.VM
                             EvaluationStack.Push(items[index]);
                         }
                         break;
-
+                    case OpCode.SETITEM:
+                        {
+                            StackItem newItem = EvaluationStack.Pop();
+                            int index = (int)EvaluationStack.Pop().GetBigInteger();
+                            StackItem arrItem = EvaluationStack.Pop();
+                            if (!arrItem.IsArray)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            StackItem[] items = arrItem.GetArray();
+                            if (index < 0 || index >= items.Length)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            items[index] = newItem;
+                        }
+                        break;
+                    case OpCode.NEWARRAY:
+                        {
+                            int count = (int)EvaluationStack.Pop().GetBigInteger();
+                            StackItem[] items = new StackItem[count];
+                            for (var i = 0; i < count; i++)
+                            {
+                                items[i] = false;
+                            }
+                            StackItem aii = items;
+                            EvaluationStack.Push(aii);
+                        }
+                        break;
                     default:
                         State |= VMState.FAULT;
                         return;
