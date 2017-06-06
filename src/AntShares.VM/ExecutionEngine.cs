@@ -711,7 +711,7 @@ namespace AntShares.VM
                         {
                             int count = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem[] items = new StackItem[count];
-                            for(var i=0;i<count;i++)
+                            for (var i = 0; i < count; i++)
                             {
                                 items[i] = false;
                             }

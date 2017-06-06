@@ -613,7 +613,7 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Unbox:
                 case CodeEx.Unbox_Any:
                 case CodeEx.Break:
-				//也有可能以后利用这个断点调试
+                //也有可能以后利用这个断点调试
                 case CodeEx.Conv_I:
                 case CodeEx.Conv_I1:
                 case CodeEx.Conv_I2:
@@ -645,7 +645,7 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Conv_U4:
                 case CodeEx.Conv_U8:
                     break;
-                    
+
                 ///////////////////////////////////////////////
                 //以下因为支持结构体而出现
                 //加载一个引用，这里改为加载一个pos值
