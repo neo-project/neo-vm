@@ -713,7 +713,7 @@ namespace AntShares.VM
                             StackItem[] items = new StackItem[count];
                             for(var i=0;i<count;i++)
                             {
-                                items[i] = 0;
+                                items[i] = false;
                             }
                             StackItem aii = items;
                             EvaluationStack.Push(aii);
