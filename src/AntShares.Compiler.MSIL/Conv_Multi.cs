@@ -11,8 +11,9 @@ namespace AntShares.Compiler.MSIL
     {
         private void _ConvertStLoc(OpCode src, AntsMethod to, int pos)
         {
+            _Convert1by1(AntShares.VM.OpCode.CLONE, src, to);
             //push d
-            var c = _Convert1by1(AntShares.VM.OpCode.DEPTH, src, to);
+            var c = _Convert1by1(AntShares.VM.OpCode.DEPTH, null, to);
             if (c.debugcode == null)
             {
                 c.debugcode = "from StLoc -> 6 code";
@@ -65,9 +66,18 @@ namespace AntShares.Compiler.MSIL
             //pick
             _Convert1by1(AntShares.VM.OpCode.PICK, null, to);
         }
-        private void _ConvertLdLocA(OpCode src, AntsMethod to, int pos)
-        {
-            _ConvertPush(pos, src, to);
+        private void _ConvertLdLocA(ILMethod method, OpCode src, AntsMethod to, int pos)
+        {//这有两种情况，我们需要先判断这个引用地址是拿出来干嘛的
+
+            var n1 = method.body_Codes[ method.GetNextCodeAddr(src.addr)];
+            if (n1.code == CodeEx.Initobj)//初始化结构体，必须给引用地址
+            {
+                _ConvertPush(pos, src, to);
+            }
+            else
+            {
+                _ConvertLdLoc(src, to, pos);
+            }
         }
         private void _ConvertLdArg(OpCode src, AntsMethod to, int pos)
         {
@@ -526,39 +536,25 @@ namespace AntShares.Compiler.MSIL
             _Convert1by1(AntShares.VM.OpCode.DROP, null, to);
             return 0;
         }
-        private int _ConvertStfld(OpCode src, AntsMethod to)
+        private int _ConvertNewObj(OpCode src, AntsMethod to)
+        {
+            var type = (src.tokenUnknown as Mono.Cecil.MethodReference).Resolve();
+            _Convert1by1(AntShares.VM.OpCode.NOP, src, to);//空白
+            _ConvertPush(type.DeclaringType.Fields.Count, null, to);//插入个数量
+            _Insert1(VM.OpCode.NEWARRAY, null, to);
+            return 0;
+        }
+
+        private int _ConvertStfld(ILMethod method,OpCode src, AntsMethod to)
         {
             var field = (src.tokenUnknown as Mono.Cecil.FieldReference).Resolve();
             var type = field.DeclaringType;
             var id = type.Fields.IndexOf(field);
             if (id < 0)
                 throw new Exception("impossible.");
-            _Convert1by1(AntShares.VM.OpCode.NOP, src, to);//空白
 
-            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把n拿上來 n 和 item
-            //push d
-            _Convert1by1(AntShares.VM.OpCode.DEPTH, src, to);
-            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);//d 多了一位，剪掉
-            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把n拿上來
+            _Convert1by1(AntShares.VM.OpCode.CLONE, src, to);
 
-            //push n
-            //_ConvertPush(pos, null, to);有n了
-            //d-n-1
-            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
-            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);
-
-            //push olddepth
-            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
-            _Convert1by1(AntShares.VM.OpCode.DUP, null, to);
-            _Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
-            //(d-n-1)-olddepth
-            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
-
-            //pick
-            _Convert1by1(AntShares.VM.OpCode.PICK, null, to);
-
-
-            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把item 拿上來 
             _ConvertPush(id, null, to);//index
             _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把item 拿上來 
 

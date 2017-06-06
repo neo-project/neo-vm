@@ -202,7 +202,19 @@ namespace AntShares.VM
                         EvaluationStack.Pop();
                         break;
                     case OpCode.DUP:
-                        EvaluationStack.Push(EvaluationStack.Peek());
+                        {//这条指令的意思是，对值类型始终创建一个副本，对array 创建一个引用
+                            var src = EvaluationStack.Peek();
+                            if (src.IsArray == false)
+                                src = src.Clone();
+                            EvaluationStack.Push(src);
+                        }
+                        break;
+                    case OpCode.CLONE:
+                        {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
+                            var src = EvaluationStack.Pop();
+                            src = src.Clone();
+                            EvaluationStack.Push(src);
+                        }
                         break;
                     case OpCode.NIP:
                         {
@@ -325,7 +337,7 @@ namespace AntShares.VM
                         break;
                     case OpCode.SIZE:
                         {
-                            byte[] x = EvaluationStack.Peek().GetByteArray();
+                            byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(x.Length);
                         }
                         break;
@@ -631,10 +643,14 @@ namespace AntShares.VM
                             StackItem item = EvaluationStack.Pop();
                             if (!item.IsArray)
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                EvaluationStack.Push(item.GetByteArray().Length);
+                                //State |= VMState.FAULT;
+                                //return;
                             }
-                            EvaluationStack.Push(item.GetArray().Length);
+                            else
+                            {
+                                EvaluationStack.Push(item.GetArray().Length);
+                            }
                         }
                         break;
                     case OpCode.PACK:
@@ -711,14 +727,15 @@ namespace AntShares.VM
                         {
                             int count = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem[] items = new StackItem[count];
-                            for (var i = 0; i < count; i++)
+                            for(var i=0;i<count;i++)
                             {
-                                items[i] = false;
+                                items[i] = 0;
                             }
                             StackItem aii = items;
                             EvaluationStack.Push(aii);
                         }
                         break;
+
                     default:
                         State |= VMState.FAULT;
                         return;

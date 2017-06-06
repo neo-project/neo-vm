@@ -592,7 +592,9 @@ namespace AntShares.Compiler.MSIL
                     _Convert1by1(AntShares.VM.OpCode.PICKITEM, src, to);
                     break;
                 case CodeEx.Ldlen:
-                    _Convert1by1(AntShares.VM.OpCode.ARRAYSIZE, src, to);
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.ARRAYSIZE, src, to);
+                    }
                     break;
                 case CodeEx.Stelem_Any:
                 case CodeEx.Stelem_I:
@@ -603,7 +605,10 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Stelem_R4:
                 case CodeEx.Stelem_R8:
                 case CodeEx.Stelem_Ref:
-                    _Convert1by1(AntShares.VM.OpCode.SETITEM, src, to);
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.CLONE, src, to);
+                        _Convert1by1(AntShares.VM.OpCode.SETITEM, src, to);
+                    }
                     break;
 
                 case CodeEx.Castclass:
@@ -651,21 +656,27 @@ namespace AntShares.Compiler.MSIL
                 //加载一个引用，这里改为加载一个pos值
                 case CodeEx.Ldloca:
                 case CodeEx.Ldloca_S:
-                    _ConvertLdLocA(src, to, src.tokenI32);
+                    _ConvertLdLocA(method, src, to, src.tokenI32);
                     break;
                 case CodeEx.Initobj:
                     _ConvertInitObj(src, to);
                     break;
+                case CodeEx.Newobj:
+                    _ConvertNewObj(src, to);
+                    break;
                 case CodeEx.Stfld:
-                    _ConvertStfld(src, to);
+                    _ConvertStfld(method, src, to);
                     break;
                 case CodeEx.Ldfld:
                     _ConvertLdfld(src, to);
                     break;
                 default:
+#if WITHPDB
+                    logger.Log("not support code" + src.code);
+                    break;
+#else
                     throw new Exception("unsupported instruction " + src.code);
-                    //logger.Log("not support code" + src.code);
-
+#endif
             }
 
             return skipcount;

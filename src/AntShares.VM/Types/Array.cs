@@ -8,11 +8,25 @@ namespace AntShares.VM.Types
     {
         private StackItem[] _array;
 
+
         public override bool IsArray => true;
 
         public Array(StackItem[] value)
         {
             this._array = value;
+        }
+
+        public override StackItem Clone()
+        {
+            StackItem[] newArray = new StackItem[this._array.Length];
+            for (var i = 0; i < _array.Length; i++)
+            {
+                if (_array[i].IsArray)
+                    newArray[i] = _array[i];
+                else
+                    newArray[i] = _array[i].Clone();
+            }
+            return new Array(newArray);
         }
 
         public override bool Equals(StackItem other)

@@ -39,6 +39,7 @@ namespace AntShares.VM
         {
             throw new NotSupportedException();
         }
+        public abstract StackItem Clone();
 
         public static implicit operator StackItem(int value)
         {

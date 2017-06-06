@@ -125,5 +125,6 @@
         PICKITEM = 0xC3,
         SETITEM = 0xC4,
         NEWARRAY = 0xC5,
+        CLONE = 0xC6,
     }
 }

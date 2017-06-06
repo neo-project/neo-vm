@@ -46,7 +46,15 @@ namespace AntShares.Compiler.MSIL
                 {
 
                     mapType[t.FullName] = new ILType(this, t);
+                    if(t.HasNestedTypes)
+                    {
+                        foreach(var nt in t.NestedTypes)
+                        {
+                            mapType[nt.FullName] = new ILType(this, nt);
 
+                        }
+                    }
+                   
                 }
             }
         }
@@ -444,6 +452,7 @@ namespace AntShares.Compiler.MSIL
         public string tokenStr;
         public void InitToken(object _p)
         {
+            this.tokenUnknown = _p;
             switch (code)
             {
                 case CodeEx.Leave:
@@ -575,6 +584,9 @@ namespace AntShares.Compiler.MSIL
                     this.tokenValueType = TokenValueType.String;
                     break;
 
+                case CodeEx.Stloc_0:
+
+                    break;
                 case CodeEx.Ldloca:
                 case CodeEx.Ldloca_S:
                 case CodeEx.Ldloc_S:
