@@ -443,28 +443,33 @@ namespace AntShares.Compiler.MSIL
 
         private int _ConvertNewArr(ILMethod method, OpCode src, AntsMethod to)
         {
-            var code = to.body_Codes.Last().Value;
-            //we need a number
-            if (code.code > AntShares.VM.OpCode.PUSH16)
-            {
-                this.logger.Log("_ConvertNewArr::not support var lens for array.");
-                return 0;
-            }
-            var number = getNumber(code);
 
-            //移除上一条指令
-            to.body_Codes.Remove(code.addr);
-            this.addr--;
-            if (code.bytes != null)
-                this.addr -= code.bytes.Length;
 
             var type = src.tokenType;
             if (type != "System.Byte")
             {
-                this.logger.Log("_ConvertNewArr::not support type " + type + " for array.");
+                _Convert1by1(VM.OpCode.NEWARRAY, src, to);
+                return 0;
+                //this.logger.Log("_ConvertNewArr::not support type " + type + " for array.");
             }
             else
             {
+                var code = to.body_Codes.Last().Value;
+                //we need a number
+                if (code.code > AntShares.VM.OpCode.PUSH16)
+                {
+
+                    this.logger.Log("_ConvertNewArr::not support var lens for array.");
+                    return 0;
+                }
+                var number = getNumber(code);
+
+                //移除上一条指令
+                to.body_Codes.Remove(code.addr);
+                this.addr--;
+                if (code.bytes != null)
+                    this.addr -= code.bytes.Length;
+
                 int n = method.GetNextCodeAddr(src.addr);
                 int n2 = method.GetNextCodeAddr(n);
                 int n3 = method.GetNextCodeAddr(n2);
@@ -554,8 +559,10 @@ namespace AntShares.Compiler.MSIL
 
 
             _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把item 拿上來 
-            _ConvertPush(id, null, to);
-            _Convert1by1(AntShares.VM.OpCode.SETITEM, null, to);//修改值
+            _ConvertPush(id, null, to);//index
+            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把item 拿上來 
+
+            _Convert1by1(AntShares.VM.OpCode.SETITEM, null, to);//修改值 //item //index //array
             return 0;
         }
 

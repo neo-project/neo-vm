@@ -594,6 +594,17 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Ldlen:
                     _Convert1by1(AntShares.VM.OpCode.ARRAYSIZE, src, to);
                     break;
+                case CodeEx.Stelem_Any:
+                case CodeEx.Stelem_I:
+                case CodeEx.Stelem_I1:
+                case CodeEx.Stelem_I2:
+                case CodeEx.Stelem_I4:
+                case CodeEx.Stelem_I8:
+                case CodeEx.Stelem_R4:
+                case CodeEx.Stelem_R8:
+                case CodeEx.Stelem_Ref:
+                    _Convert1by1(AntShares.VM.OpCode.SETITEM, src, to);
+                    break;
 
                 case CodeEx.Castclass:
                     break;

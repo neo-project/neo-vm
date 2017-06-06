@@ -690,8 +690,8 @@ namespace AntShares.VM
                         break;
                     case OpCode.SETITEM:
                         {
-                            int index = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem newItem = EvaluationStack.Pop();
+                            int index = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem arrItem = EvaluationStack.Pop();
                             if (!arrItem.IsArray)
                             {
@@ -711,6 +711,10 @@ namespace AntShares.VM
                         {
                             int count = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem[] items = new StackItem[count];
+                            for(var i=0;i<count;i++)
+                            {
+                                items[i] = 0;
+                            }
                             StackItem aii = items;
                             EvaluationStack.Push(aii);
                         }
