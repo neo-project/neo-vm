@@ -360,6 +360,12 @@ namespace AntShares.Compiler.MSIL
                     return 0;
 
                 }
+                else if(src.tokenMethod == "System.Char System.String::get_Chars(System.Int32)")
+                {
+                    _ConvertPush(1, src, to);
+                    _Convert1by1(AntShares.VM.OpCode.SUBSTR, null, to);
+                    return 0;
+                }
                 else if (src.tokenMethod == "System.String System.String::Substring(System.Int32)")
                 {
                     throw new Exception("antsmachine cant use this call,please use  .SubString(1,2) with 2 params.");

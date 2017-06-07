@@ -14,10 +14,7 @@ namespace AntShares.VM.Types
         {
             this.value = value;
         }
-        public override StackItem Clone()
-        {
-            return new Boolean(this.value);
-        }
+
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;

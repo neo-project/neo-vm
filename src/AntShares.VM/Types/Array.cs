@@ -16,15 +16,12 @@ namespace AntShares.VM.Types
             this._array = value;
         }
 
-        public override StackItem Clone()
+        public StackItem Clone()
         {
             StackItem[] newArray = new StackItem[this._array.Length];
             for (var i = 0; i < _array.Length; i++)
             {
-                if (_array[i].IsArray)
                     newArray[i] = _array[i];
-                else
-                    newArray[i] = _array[i].Clone();
             }
             return new Array(newArray);
         }

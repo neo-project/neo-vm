@@ -202,20 +202,12 @@ namespace AntShares.VM
                         EvaluationStack.Pop();
                         break;
                     case OpCode.DUP:
-                        {//这条指令的意思是，对值类型始终创建一个副本，对array 创建一个引用
+                        {
                             var src = EvaluationStack.Peek();
-                            if (src.IsArray == false)
-                                src = src.Clone();
                             EvaluationStack.Push(src);
                         }
                         break;
-                    case OpCode.CLONE:
-                        {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
-                            var src = EvaluationStack.Pop();
-                            src = src.Clone();
-                            EvaluationStack.Push(src);
-                        }
-                        break;
+
                     case OpCode.NIP:
                         {
                             StackItem x2 = EvaluationStack.Pop();
@@ -735,7 +727,16 @@ namespace AntShares.VM
                             EvaluationStack.Push(aii);
                         }
                         break;
-
+                    case OpCode.CLONE:
+                        {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
+                            var src = EvaluationStack.Pop();
+                            if(src.IsArray)
+                            {
+                                src = (src as AntShares.VM.Types.Array).Clone();
+                            }
+                            EvaluationStack.Push(src);
+                        }
+                        break;
                     default:
                         State |= VMState.FAULT;
                         return;

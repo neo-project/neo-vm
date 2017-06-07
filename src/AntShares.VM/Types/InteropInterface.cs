@@ -9,10 +9,7 @@ namespace AntShares.VM.Types
         {
             this._object = value;
         }
-        public override StackItem Clone()
-        {
-            return new InteropInterface(this._object);
-        }
+
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
