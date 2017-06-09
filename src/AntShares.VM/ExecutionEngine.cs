@@ -719,22 +719,55 @@ namespace AntShares.VM
                         {
                             int count = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem[] items = new StackItem[count];
-                            for(var i=0;i<count;i++)
+                            for (var i = 0; i < count; i++)
                             {
                                 items[i] = 0;
                             }
-                            StackItem aii = items;
-                            EvaluationStack.Push(aii);
+
+                            EvaluationStack.Push(new VM.Types.Array(items));
+                        }
+                        break;
+                    case OpCode.NEWSTRUCT:
+                        {
+                            int count = (int)EvaluationStack.Pop().GetBigInteger();
+                            StackItem[] items = new StackItem[count];
+                            for (var i = 0; i < count; i++)
+                            {
+                                items[i] = 0;
+                            }
+                            EvaluationStack.Push(new VM.Types.Struct(items));
                         }
                         break;
                     case OpCode.CLONE:
                         {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
                             var src = EvaluationStack.Pop();
-                            if(src.IsArray)
+                            if (src.IsArray)
                             {
-                                src = (src as AntShares.VM.Types.Array).Clone();
+                                if (src.IsStruct)
+                                {
+                                    src = (src as AntShares.VM.Types.Struct).Clone();
+
+                                }
+                                else
+                                {
+                                    src = (src as AntShares.VM.Types.Array).Clone();
+                                }
                             }
+
                             EvaluationStack.Push(src);
+                        }
+                        break;
+                    case OpCode.CLONESTRUCTONLY:
+                        {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
+                            var src = EvaluationStack.Pop();
+
+                            if (src.IsStruct)
+                            {
+                                src = (src as AntShares.VM.Types.Struct).Clone();
+                            }
+
+                            EvaluationStack.Push(src);
+
                         }
                         break;
                     default:

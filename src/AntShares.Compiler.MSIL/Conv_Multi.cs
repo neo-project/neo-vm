@@ -11,7 +11,8 @@ namespace AntShares.Compiler.MSIL
     {
         private void _ConvertStLoc(OpCode src, AntsMethod to, int pos)
         {
-            _Convert1by1(AntShares.VM.OpCode.CLONE, src, to);
+            
+            _Convert1by1(AntShares.VM.OpCode.CLONESTRUCTONLY, src, to);
             //push d
             var c = _Convert1by1(AntShares.VM.OpCode.DEPTH, null, to);
             if (c.debugcode == null)
@@ -370,6 +371,10 @@ namespace AntShares.Compiler.MSIL
                 {
                     throw new Exception("antsmachine cant use this call,please use  .SubString(1,2) with 2 params.");
                 }
+                else if(src.tokenMethod== "System.String System.Char::ToString()")
+                {
+                    return 0;
+                }
                 else
                 {
                     if (IsOpCall(refs, out callname))
@@ -459,8 +464,6 @@ namespace AntShares.Compiler.MSIL
 
         private int _ConvertNewArr(ILMethod method, OpCode src, AntsMethod to)
         {
-
-
             var type = src.tokenType;
             if (type != "System.Byte")
             {
@@ -474,9 +477,7 @@ namespace AntShares.Compiler.MSIL
                 //we need a number
                 if (code.code > AntShares.VM.OpCode.PUSH16)
                 {
-
-                    this.logger.Log("_ConvertNewArr::not support var lens for array.");
-                    return 0;
+                    throw new Exception("_ConvertNewArr::not support var lens for new byte[?].");
                 }
                 var number = getNumber(code);
 
@@ -514,7 +515,14 @@ namespace AntShares.Compiler.MSIL
             var type = (src.tokenUnknown as Mono.Cecil.TypeReference).Resolve();
             _Convert1by1(AntShares.VM.OpCode.NOP, src, to);//空白
             _ConvertPush(type.Fields.Count, null, to);//插入个数量
-            _Insert1(VM.OpCode.NEWARRAY, null, to);
+            if (type.IsValueType)
+            {
+                _Insert1(VM.OpCode.NEWSTRUCT, null, to);
+            }
+            else
+            {
+                _Insert1(VM.OpCode.NEWARRAY, null, to);
+            }
             //然後要將計算棧上的第一個值，寫入第二個值對應的pos
             _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//replace n to top
 
@@ -547,7 +555,14 @@ namespace AntShares.Compiler.MSIL
             var type = (src.tokenUnknown as Mono.Cecil.MethodReference).Resolve();
             _Convert1by1(AntShares.VM.OpCode.NOP, src, to);//空白
             _ConvertPush(type.DeclaringType.Fields.Count, null, to);//插入个数量
-            _Insert1(VM.OpCode.NEWARRAY, null, to);
+            if (type.DeclaringType.IsValueType)
+            {
+                _Insert1(VM.OpCode.NEWSTRUCT, null, to);
+            }
+            else
+            {
+                _Insert1(VM.OpCode.NEWARRAY, null, to);
+            }
             return 0;
         }
 
@@ -559,7 +574,7 @@ namespace AntShares.Compiler.MSIL
             if (id < 0)
                 throw new Exception("impossible.");
 
-            _Convert1by1(AntShares.VM.OpCode.CLONE, src, to);
+            _Convert1by1(AntShares.VM.OpCode.CLONESTRUCTONLY, src, to);
 
             _ConvertPush(id, null, to);//index
             _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把item 拿上來 
