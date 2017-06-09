@@ -9,101 +9,110 @@ namespace AntShares.Compiler.MSIL
     /// </summary>
     public partial class ModuleConverter
     {
-        private void _ConvertStLoc(OpCode src, AntsMethod to, int pos)
+        private void _ConvertStLoc(ILMethod method, OpCode src, AntsMethod to, int pos)
         {
-            
-            _Convert1by1(AntShares.VM.OpCode.CLONESTRUCTONLY, src, to);
-            //push d
-            var c = _Convert1by1(AntShares.VM.OpCode.DEPTH, null, to);
-            if (c.debugcode == null)
-            {
-                c.debugcode = "from StLoc -> 6 code";
-                c.debugline = 0;
-            }
 
-
-            //_Convert1by1(AntShares.VM.ScriptOp.OP_DUP, src, to);
-            //push n
-            _ConvertPush(pos, null, to);
-            //d-n-1
-            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
-            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);
-
-            //push olddepth
-            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            //get array
+            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, src, to);
             _Convert1by1(AntShares.VM.OpCode.DUP, null, to);
             _Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
-            //(d-n-1)-olddepth
-            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+            //get i
+            _ConvertPush(pos + method.paramtypes.Count, null, to);//翻转取参数顺序
 
-            //swap d-n-1 and top
-            _Convert1by1(AntShares.VM.OpCode.XSWAP, null, to);
-            //drop top
-            _Convert1by1(AntShares.VM.OpCode.DROP, null, to);
+            //getitem
+            _ConvertPush(2, null, to);
+            _Convert1by1(AntShares.VM.OpCode.ROLL, null, to);
+
+            _Convert1by1(AntShares.VM.OpCode.SETITEM, null, to);
+
+
+            //_Convert1by1(AntShares.VM.OpCode.CLONESTRUCTONLY, src, to);
+            ////push d
+            //var c = _Convert1by1(AntShares.VM.OpCode.DEPTH, null, to);
+            //if (c.debugcode == null)
+            //{
+            //    c.debugcode = "from StLoc -> 6 code";
+            //    c.debugline = 0;
+            //}
+
+
+            ////_Convert1by1(AntShares.VM.ScriptOp.OP_DUP, src, to);
+            ////push n
+            //_ConvertPush(pos, null, to);
+            ////d-n-1
+            //_Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+            //_Convert1by1(AntShares.VM.OpCode.DEC, null, to);
+
+            ////push olddepth
+            //_Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            //_Convert1by1(AntShares.VM.OpCode.DUP, null, to);
+            //_Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
+            ////(d-n-1)-olddepth
+            //_Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+
+            ////swap d-n-1 and top
+            //_Convert1by1(AntShares.VM.OpCode.XSWAP, null, to);
+            ////drop top
+            //_Convert1by1(AntShares.VM.OpCode.DROP, null, to);
 
         }
-        private void _ConvertLdLoc(OpCode src, AntsMethod to, int pos)
+        private void _ConvertLdLoc(ILMethod method, OpCode src, AntsMethod to, int pos)
         {
-            //push d
-            var c = _Convert1by1(AntShares.VM.OpCode.DEPTH, src, to);
-            if (c.debugcode == null)
-            {
-                c.debugcode = "from LdLoc -> 5 code";
-                c.debugline = 0;
-            }
-            //push n
-            _ConvertPush(pos, null, to);
-            //d-n-1
-            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
-            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);
-
-            //push olddepth
-            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            //get array
+            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, src, to);
             _Convert1by1(AntShares.VM.OpCode.DUP, null, to);
             _Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
-            //(d-n-1)-olddepth
-            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+            //get i
+            _ConvertPush(pos + method.paramtypes.Count, null, to);//翻转取参数顺序
+            _Convert1by1(AntShares.VM.OpCode.PICKITEM, null, to);
 
-            //pick
-            _Convert1by1(AntShares.VM.OpCode.PICK, null, to);
+
         }
         private void _ConvertLdLocA(ILMethod method, OpCode src, AntsMethod to, int pos)
         {//这有两种情况，我们需要先判断这个引用地址是拿出来干嘛的
 
-            var n1 = method.body_Codes[ method.GetNextCodeAddr(src.addr)];
+            var n1 = method.body_Codes[method.GetNextCodeAddr(src.addr)];
             if (n1.code == CodeEx.Initobj)//初始化结构体，必须给引用地址
             {
-                _ConvertPush(pos, src, to);
+                _ConvertPush(pos + method.paramtypes.Count, src, to);
             }
             else
             {
-                _ConvertLdLoc(src, to, pos);
+                _ConvertLdLoc(method, src, to, pos);
             }
         }
         private void _ConvertLdArg(OpCode src, AntsMethod to, int pos)
         {
-            //push d
-            var c = _Convert1by1(AntShares.VM.OpCode.DEPTH, src, to);
-            if (c.debugcode == null)
-            {
-                c.debugcode = "from LdArg -> 5 code";
-                c.debugline = 0;
-            }
-            //push n
-            _ConvertPush(pos, null, to);//翻转取参数顺序
-            //_Convert1by1(AntShares.VM.OpCode.PUSHDATA1, null, to, int2Pushdata1bytes(to.paramtypes.Count - 1 - pos));
-            //d+n
-            _Convert1by1(AntShares.VM.OpCode.ADD, null, to);
-
-            //push olddepth
-            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            //get array
+            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, src, to);
             _Convert1by1(AntShares.VM.OpCode.DUP, null, to);
             _Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
-            //(d+n)-olddepth
-            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+            //get i
+            _ConvertPush(pos, null, to);//翻转取参数顺序
+            _Convert1by1(AntShares.VM.OpCode.PICKITEM, null, to);
 
-            //pick
-            _Convert1by1(AntShares.VM.OpCode.PICK, null, to);
+            ////push d
+            //var c = _Convert1by1(AntShares.VM.OpCode.DEPTH, src, to);
+            //if (c.debugcode == null)
+            //{
+            //    c.debugcode = "from LdArg -> 5 code";
+            //    c.debugline = 0;
+            //}
+            ////push n
+            //_ConvertPush(pos, null, to);//翻转取参数顺序
+            ////_Convert1by1(AntShares.VM.OpCode.PUSHDATA1, null, to, int2Pushdata1bytes(to.paramtypes.Count - 1 - pos));
+            ////d+n
+            //_Convert1by1(AntShares.VM.OpCode.ADD, null, to);
+
+            ////push olddepth
+            //_Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            //_Convert1by1(AntShares.VM.OpCode.DUP, null, to);
+            //_Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
+            ////(d+n)-olddepth
+            //_Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+
+            ////pick
+            //_Convert1by1(AntShares.VM.OpCode.PICK, null, to);
         }
 
         public bool IsSysCall(Mono.Cecil.MethodReference refs, out string name)
@@ -361,7 +370,7 @@ namespace AntShares.Compiler.MSIL
                     return 0;
 
                 }
-                else if(src.tokenMethod == "System.Char System.String::get_Chars(System.Int32)")
+                else if (src.tokenMethod == "System.Char System.String::get_Chars(System.Int32)")
                 {
                     _ConvertPush(1, src, to);
                     _Convert1by1(AntShares.VM.OpCode.SUBSTR, null, to);
@@ -371,7 +380,7 @@ namespace AntShares.Compiler.MSIL
                 {
                     throw new Exception("antsmachine cant use this call,please use  .SubString(1,2) with 2 params.");
                 }
-                else if(src.tokenMethod== "System.String System.Char::ToString()")
+                else if (src.tokenMethod == "System.String System.Char::ToString()")
                 {
                     return 0;
                 }
@@ -523,31 +532,46 @@ namespace AntShares.Compiler.MSIL
             {
                 _Insert1(VM.OpCode.NEWARRAY, null, to);
             }
-            //然後要將計算棧上的第一個值，寫入第二個值對應的pos
-            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//replace n to top
+            //now stack  a index, a value
 
-            //push d
-            _Convert1by1(AntShares.VM.OpCode.DEPTH, null, to);
+            //getarray
+            _Insert1(VM.OpCode.FROMALTSTACK, null, to);
+            _Insert1(VM.OpCode.DUP, null, to);
+            _Insert1(VM.OpCode.TOALTSTACK, null, to);
 
-            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);//d 多了一位，剪掉
-            _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把n拿上來
-            //push n
-            //_ConvertPush(pos, null, to);有n了
-            //d-n-1
-            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
-            _Convert1by1(AntShares.VM.OpCode.DEC, null, to);
+            _InsertPush(2, "", to);//move item
+            _Insert1(VM.OpCode.ROLL, null, to);
 
-            //push olddepth
-            _Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
-            _Convert1by1(AntShares.VM.OpCode.DUP, null, to);
-            _Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
-            //(d-n-1)-olddepth
-            _Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+            _InsertPush(2, "", to);//move value
+            _Insert1(VM.OpCode.ROLL, null, to);
 
-            //swap d-n-1 and top
-            _Convert1by1(AntShares.VM.OpCode.XSWAP, null, to);
-            //drop top
-            _Convert1by1(AntShares.VM.OpCode.DROP, null, to);
+            _Insert1(VM.OpCode.SETITEM, null, to);
+
+            ////然後要將計算棧上的第一個值，寫入第二個值對應的pos
+            //_Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//replace n to top
+
+            ////push d
+            //_Convert1by1(AntShares.VM.OpCode.DEPTH, null, to);
+
+            //_Convert1by1(AntShares.VM.OpCode.DEC, null, to);//d 多了一位，剪掉
+            //_Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把n拿上來
+            ////push n
+            ////_ConvertPush(pos, null, to);有n了
+            ////d-n-1
+            //_Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+            //_Convert1by1(AntShares.VM.OpCode.DEC, null, to);
+
+            ////push olddepth
+            //_Convert1by1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            //_Convert1by1(AntShares.VM.OpCode.DUP, null, to);
+            //_Convert1by1(AntShares.VM.OpCode.TOALTSTACK, null, to);
+            ////(d-n-1)-olddepth
+            //_Convert1by1(AntShares.VM.OpCode.SUB, null, to);
+
+            ////swap d-n-1 and top
+            //_Convert1by1(AntShares.VM.OpCode.XSWAP, null, to);
+            ////drop top
+            //_Convert1by1(AntShares.VM.OpCode.DROP, null, to);
             return 0;
         }
         private int _ConvertNewObj(OpCode src, AntsMethod to)
@@ -566,7 +590,7 @@ namespace AntShares.Compiler.MSIL
             return 0;
         }
 
-        private int _ConvertStfld(ILMethod method,OpCode src, AntsMethod to)
+        private int _ConvertStfld(ILMethod method, OpCode src, AntsMethod to)
         {
             var field = (src.tokenUnknown as Mono.Cecil.FieldReference).Resolve();
             var type = field.DeclaringType;

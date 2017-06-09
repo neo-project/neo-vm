@@ -358,35 +358,35 @@ namespace AntShares.Compiler.MSIL
                     _ConvertPush(Encoding.UTF8.GetBytes(src.tokenStr), src, to);
                     break;
                 case CodeEx.Stloc_0:
-                    _ConvertStLoc(src, to, 0);
+                    _ConvertStLoc(method,src, to, 0);
                     break;
                 case CodeEx.Stloc_1:
-                    _ConvertStLoc(src, to, 1);
+                    _ConvertStLoc(method, src, to, 1);
                     break;
                 case CodeEx.Stloc_2:
-                    _ConvertStLoc(src, to, 2);
+                    _ConvertStLoc(method, src, to, 2);
                     break;
                 case CodeEx.Stloc_3:
-                    _ConvertStLoc(src, to, 3);
+                    _ConvertStLoc(method, src, to, 3);
                     break;
                 case CodeEx.Stloc_S:
-                    _ConvertStLoc(src, to, src.tokenI32);
+                    _ConvertStLoc(method, src, to, src.tokenI32);
                     break;
 
                 case CodeEx.Ldloc_0:
-                    _ConvertLdLoc(src, to, 0);
+                    _ConvertLdLoc(method,src, to, 0);
                     break;
                 case CodeEx.Ldloc_1:
-                    _ConvertLdLoc(src, to, 1);
+                    _ConvertLdLoc(method, src, to, 1);
                     break;
                 case CodeEx.Ldloc_2:
-                    _ConvertLdLoc(src, to, 2);
+                    _ConvertLdLoc(method, src, to, 2);
                     break;
                 case CodeEx.Ldloc_3:
-                    _ConvertLdLoc(src, to, 3);
+                    _ConvertLdLoc(method, src, to, 3);
                     break;
                 case CodeEx.Ldloc_S:
-                    _ConvertLdLoc(src, to, src.tokenI32);
+                    _ConvertLdLoc(method, src, to, src.tokenI32);
                     break;
 
                 case CodeEx.Ldarg_0:

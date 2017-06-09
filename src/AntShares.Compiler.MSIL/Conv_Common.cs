@@ -131,60 +131,80 @@ namespace AntShares.Compiler.MSIL
 
         private void _insertBeginCode(ILMethod from, AntsMethod to)
         {
-            //压入深度临时栈
-            _Insert1(AntShares.VM.OpCode.DEPTH, "record depth.", to);
-            _Insert1(AntShares.VM.OpCode.TOALTSTACK, "", to);
+            ////压入深度临时栈
+            //_Insert1(AntShares.VM.OpCode.DEPTH, "record depth.", to);
+            //_Insert1(AntShares.VM.OpCode.TOALTSTACK, "", to);
 
-            //初始化临时槽位位置
-            foreach (var src in from.body_Variables)
+            ////初始化临时槽位位置
+            //foreach (var src in from.body_Variables)
+            //{
+            //    to.body_Variables.Add(new ILParam(src.name, src.type));
+            //    _InsertPush(0, "body_Variables init", to);
+            //}
+
+            //新玩法，用一个数组，应该能减少指令数量
+            _InsertPush(from.paramtypes.Count + from.body_Variables.Count, "begincode", to);
+            _Insert1(AntShares.VM.OpCode.NEWARRAY, "", to);
+            _Insert1(AntShares.VM.OpCode.TOALTSTACK, "", to);
+            //移动参数槽位
+            for (var i = 0; i < from.paramtypes.Count; i++)
             {
-                to.body_Variables.Add(new ILParam(src.name, src.type));
-                _InsertPush(0, "body_Variables init", to);
+                //getarray
+                _Insert1(AntShares.VM.OpCode.FROMALTSTACK, "set param:" + i, to);
+                _Insert1(AntShares.VM.OpCode.DUP, null, to);
+                _Insert1(AntShares.VM.OpCode.TOALTSTACK, null, to);
+
+                _InsertPush(i, "", to); //Array pos
+
+                _InsertPush(2, "", to); //Array item
+                _Insert1(AntShares.VM.OpCode.ROLL, null, to);
+
+                _Insert1(AntShares.VM.OpCode.SETITEM, null, to);
             }
         }
 
         private void _insertEndCode(ILMethod from, AntsMethod to, OpCode src)
         {
-            //占位不谢
+            ////占位不谢
             _Convert1by1(AntShares.VM.OpCode.NOP, src, to);
 
-            //移除临时槽位
-            //drop body_Variables
-            for (var i = 0; i < from.body_Variables.Count; i++)
-            {
-                _Insert1(AntShares.VM.OpCode.DEPTH, "body_Variables drop", to, null);
-                _Insert1(AntShares.VM.OpCode.DEC, null, to, null);
+            ////移除临时槽位
+            ////drop body_Variables
+            //for (var i = 0; i < from.body_Variables.Count; i++)
+            //{
+            //    _Insert1(AntShares.VM.OpCode.DEPTH, "body_Variables drop", to, null);
+            //    _Insert1(AntShares.VM.OpCode.DEC, null, to, null);
 
-                //push olddepth
-                _Insert1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
-                _Insert1(AntShares.VM.OpCode.DUP, null, to);
-                _Insert1(AntShares.VM.OpCode.TOALTSTACK, null, to);
-                //(d-1)-olddepth
-                _Insert1(AntShares.VM.OpCode.SUB, null, to);
+            //    //push olddepth
+            //    _Insert1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            //    _Insert1(AntShares.VM.OpCode.DUP, null, to);
+            //    _Insert1(AntShares.VM.OpCode.TOALTSTACK, null, to);
+            //    //(d-1)-olddepth
+            //    _Insert1(AntShares.VM.OpCode.SUB, null, to);
 
-                _Insert1(AntShares.VM.OpCode.XDROP, null, to, null);
-            }
-            //移除参数槽位
-            for (var i = 0; i < from.paramtypes.Count; i++)
-            {
-                //d
-                _Insert1(AntShares.VM.OpCode.DEPTH, "param drop", to, null);
+            //    _Insert1(AntShares.VM.OpCode.XDROP, null, to, null);
+            //}
+            ////移除参数槽位
+            //for (var i = 0; i < from.paramtypes.Count; i++)
+            //{
+            //    //d
+            //    _Insert1(AntShares.VM.OpCode.DEPTH, "param drop", to, null);
 
-                //push olddepth
-                _Insert1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
-                _Insert1(AntShares.VM.OpCode.DUP, null, to);
-                _Insert1(AntShares.VM.OpCode.DEC, null, to);//深度-1
-                _Insert1(AntShares.VM.OpCode.TOALTSTACK, null, to);
+            //    //push olddepth
+            //    _Insert1(AntShares.VM.OpCode.FROMALTSTACK, null, to);
+            //    _Insert1(AntShares.VM.OpCode.DUP, null, to);
+            //    _Insert1(AntShares.VM.OpCode.DEC, null, to);//深度-1
+            //    _Insert1(AntShares.VM.OpCode.TOALTSTACK, null, to);
 
-                //(d)-olddepth
-                _Insert1(AntShares.VM.OpCode.SUB, null, to);
+            //    //(d)-olddepth
+            //    _Insert1(AntShares.VM.OpCode.SUB, null, to);
 
-                _Insert1(AntShares.VM.OpCode.XDROP, null, to, null);
+            //    _Insert1(AntShares.VM.OpCode.XDROP, null, to, null);
 
-            }
+            //}
 
             //移除深度临时栈
-            _Insert1(AntShares.VM.OpCode.FROMALTSTACK, "", to);
+            _Insert1(AntShares.VM.OpCode.FROMALTSTACK, "endcode", to);
             _Insert1(AntShares.VM.OpCode.DROP, "", to);
         }
 
