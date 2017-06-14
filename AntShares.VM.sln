@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.6
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntShares.Compiler.ASM", "src\AntShares.Compiler.ASM\AntShares.Compiler.ASM.csproj", "{C17DE6B6-6885-4BA9-BAA8-273F3E03144D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntShares.Compiler.MSIL", "src\AntShares.Compiler.MSIL\AntShares.Compiler.MSIL.csproj", "{5C3F2957-0E5C-443D-AE16-AD5E816993E4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntShares.Compiler.JVM", "src\AntShares.Compiler.JVM\AntShares.Compiler.JVM.csproj", "{B123EDE8-395E-4D58-BF28-9D483A5D2FBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{5C3F2957-0E5C-443D-AE16-AD5E816993E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C3F2957-0E5C-443D-AE16-AD5E816993E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C3F2957-0E5C-443D-AE16-AD5E816993E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B123EDE8-395E-4D58-BF28-9D483A5D2FBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B123EDE8-395E-4D58-BF28-9D483A5D2FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B123EDE8-395E-4D58-BF28-9D483A5D2FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B123EDE8-395E-4D58-BF28-9D483A5D2FBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,5 +43,6 @@ Global
 		{6A621185-36A9-4E1A-8D3D-462D19503E32} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
 		{C17DE6B6-6885-4BA9-BAA8-273F3E03144D} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
 		{5C3F2957-0E5C-443D-AE16-AD5E816993E4} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
+		{B123EDE8-395E-4D58-BF28-9D483A5D2FBC} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
 	EndGlobalSection
 EndGlobal

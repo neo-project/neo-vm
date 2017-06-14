@@ -102,7 +102,7 @@ namespace AntShares.Compiler.MSIL
                     hasParam = true;
                     foreach (var p in method.Parameters)
                     {
-                        this.paramtypes.Add(new Param(p.Name, p.ParameterType.FullName));
+                        this.paramtypes.Add(new AntsParam(p.Name, p.ParameterType.FullName));
                     }
                 }
                 if (method.HasBody)
@@ -112,7 +112,7 @@ namespace AntShares.Compiler.MSIL
                     {
                         foreach (var v in bodyNative.Variables)
                         {
-                            this.body_Variables.Add(new Param(v.Name, v.VariableType.FullName));
+                            this.body_Variables.Add(new AntsParam(v.Name, v.VariableType.FullName));
                         }
                     }
                     for (int i = 0; i < bodyNative.Instructions.Count; i++)
@@ -134,10 +134,10 @@ namespace AntShares.Compiler.MSIL
         }
 
         public string returntype;
-        public List<Param> paramtypes = new List<Param>();
+        public List<AntsParam> paramtypes = new List<AntsParam>();
         public bool hasParam = false;
         public Mono.Cecil.MethodDefinition method;
-        public List<Param> body_Variables = new List<Param>();
+        public List<AntsParam> body_Variables = new List<AntsParam>();
         public SortedDictionary<int, OpCode> body_Codes = new SortedDictionary<int, OpCode>();
         public string fail = null;
         public int GetNextCodeAddr(int srcaddr)

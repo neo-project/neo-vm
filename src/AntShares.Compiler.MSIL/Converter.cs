@@ -196,7 +196,7 @@ namespace AntShares.Compiler.MSIL
             to.returntype = from.returntype;
             foreach (var src in from.paramtypes)
             {
-                to.paramtypes.Add(new Param(src.name, src.type));
+                to.paramtypes.Add(new AntsParam(src.name, src.type));
             }
 
 
