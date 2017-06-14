@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -146,6 +147,42 @@ namespace AntShares.Compiler.MSIL
             }
 
         }
+        public bool IsAppCall(Mono.Cecil.MethodReference refs, out byte[] hash)
+        {
+            try
+            {
+                var defs = refs.Resolve();
+                foreach (var attr in defs.CustomAttributes)
+                {
+                    if (attr.AttributeType.Name == "AppcallAttribute")
+                    {
+                        var type = attr.ConstructorArguments[0].Type;
+                        var a = attr.ConstructorArguments[0];
+                        var list = a.Value as Mono.Cecil.CustomAttributeArgument[];
+                        hash = new byte[20];
+                        for (var i = 0; i < 20; i++)
+                        {
+                            hash[i] = (byte)list[i].Value;
+                        }
+
+                        //dosth
+                        return true;
+
+
+
+                    }
+                    //if(attr.t)
+                }
+                hash = null;
+                return false;
+            }
+            catch
+            {
+                hash = null;
+                return false;
+            }
+
+        }
         public bool IsOpCall(Mono.Cecil.MethodReference refs, out string name)
         {
             try
@@ -192,8 +229,29 @@ namespace AntShares.Compiler.MSIL
 
             int calltype = 0;
             string callname = "";
+            byte[] callhash = null;
             VM.OpCode callcode = VM.OpCode.NOP;
-            if (this.outModule.mapMethods.ContainsKey(src.tokenMethod))
+
+            if (IsOpCall(refs, out callname))
+            {
+                if (System.Enum.TryParse<VM.OpCode>(callname, out callcode))
+                {
+                    calltype = 2;
+                }
+                else
+                {
+                    throw new Exception("Can not find OpCall:" + callname);
+                }
+            }
+            else if (IsSysCall(refs, out callname))
+            {
+                calltype = 3;
+            }
+            else if (IsAppCall(refs, out callhash))
+            {
+                calltype = 4;
+            }
+            else if (this.outModule.mapMethods.ContainsKey(src.tokenMethod))
             {//this is a call
                 calltype = 1;
             }
@@ -386,21 +444,6 @@ namespace AntShares.Compiler.MSIL
                 }
                 else
                 {
-                    if (IsOpCall(refs, out callname))
-                    {
-                        if (System.Enum.TryParse<VM.OpCode>(callname, out callcode))
-                        {
-                            calltype = 2;
-                        }
-                        else
-                        {
-                            throw new Exception("Can not find OpCall:" + callname);
-                        }
-                    }
-                    if (IsSysCall(refs, out callname))
-                    {
-                        calltype = 3;
-                    }
 
                 }
             }
@@ -467,6 +510,11 @@ namespace AntShares.Compiler.MSIL
                 //bytes.Prepend 函数在 dotnet framework 4.6 编译不过
                 _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, outbytes);
                 return 0;
+            }
+            else if (calltype == 4)
+            {
+                _Convert1by1(AntShares.VM.OpCode.APPCALL, null, to, callhash);
+
             }
             return 0;
         }
