@@ -42,6 +42,7 @@
         TAILCALL = 0x69,
 
 
+        DUPFROMALTSTACK = 0x6A,
         // Stack
         TOALTSTACK = 0x6B, // Puts the input onto the top of the alt stack. Removes it from the main stack.
         FROMALTSTACK = 0x6C, // Puts the input onto the top of the main stack. Removes it from the alt stack.

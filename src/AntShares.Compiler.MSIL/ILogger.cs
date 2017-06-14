@@ -1,4 +1,4 @@
-﻿namespace AntShares.Compiler.MSIL
+﻿namespace AntShares.Compiler
 {
     public interface ILogger
     {

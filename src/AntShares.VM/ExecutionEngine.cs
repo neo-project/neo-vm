@@ -159,6 +159,12 @@ namespace AntShares.VM
                     case OpCode.FROMALTSTACK:
                         EvaluationStack.Push(AltStack.Pop());
                         break;
+                    case OpCode.DUPFROMALTSTACK:
+                        {
+                            var src = AltStack.Peek();
+                            EvaluationStack.Push(src);
+                        }
+                        break;
                     case OpCode.XDROP:
                         {
                             int n = (int)EvaluationStack.Pop().GetBigInteger();

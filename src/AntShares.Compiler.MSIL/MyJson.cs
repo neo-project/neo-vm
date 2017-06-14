@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AntShares.Compiler.MSIL
+namespace AntShares.Compiler
 {
     public class MyJson
     {

@@ -102,7 +102,7 @@ namespace AntShares.Compiler.MSIL
                     hasParam = true;
                     foreach (var p in method.Parameters)
                     {
-                        this.paramtypes.Add(new ILParam(p.Name, p.ParameterType.FullName));
+                        this.paramtypes.Add(new Param(p.Name, p.ParameterType.FullName));
                     }
                 }
                 if (method.HasBody)
@@ -112,7 +112,7 @@ namespace AntShares.Compiler.MSIL
                     {
                         foreach (var v in bodyNative.Variables)
                         {
-                            this.body_Variables.Add(new ILParam(v.Name, v.VariableType.FullName));
+                            this.body_Variables.Add(new Param(v.Name, v.VariableType.FullName));
                         }
                     }
                     for (int i = 0; i < bodyNative.Instructions.Count; i++)
@@ -134,10 +134,10 @@ namespace AntShares.Compiler.MSIL
         }
 
         public string returntype;
-        public List<ILParam> paramtypes = new List<ILParam>();
+        public List<Param> paramtypes = new List<Param>();
         public bool hasParam = false;
         public Mono.Cecil.MethodDefinition method;
-        public List<ILParam> body_Variables = new List<ILParam>();
+        public List<Param> body_Variables = new List<Param>();
         public SortedDictionary<int, OpCode> body_Codes = new SortedDictionary<int, OpCode>();
         public string fail = null;
         public int GetNextCodeAddr(int srcaddr)
@@ -159,28 +159,7 @@ namespace AntShares.Compiler.MSIL
             return -1;
         }
     }
-    public class ILParam
-    {
-        public ILParam(string name, string type)
-        {
-            this.name = name;
-            this.type = type;
-        }
-        public string name
-        {
-            get;
-            private set;
-        }
-        public string type
-        {
-            get;
-            private set;
-        }
-        public override string ToString()
-        {
-            return type + " " + name;
-        }
-    }
+
     public enum CodeEx
     {
         Nop,
