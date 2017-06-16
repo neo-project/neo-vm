@@ -12,7 +12,7 @@ namespace AntShares.VM.Types
         {
         }
 
-        public override StackItem Clone()
+        public StackItem Clone()
         {
             StackItem[] newArray = new StackItem[this._array.Length];
             for (var i = 0; i < _array.Length; i++)
