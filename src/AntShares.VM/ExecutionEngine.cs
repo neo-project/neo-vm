@@ -744,25 +744,25 @@ namespace AntShares.VM
                             EvaluationStack.Push(new VM.Types.Struct(items));
                         }
                         break;
-                    case OpCode.CLONE:
-                        {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
-                            var src = EvaluationStack.Pop();
-                            if (src.IsArray)
-                            {
-                                if (src.IsStruct)
-                                {
-                                    src = (src as AntShares.VM.Types.Struct).Clone();
+                    //case OpCode.CLONE:
+                    //    {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
+                    //        var src = EvaluationStack.Pop();
+                    //        if (src.IsArray)
+                    //        {
+                    //            if (src.IsStruct)
+                    //            {
+                    //                src = (src as AntShares.VM.Types.Struct).Clone();
 
-                                }
-                                else
-                                {
-                                    src = (src as AntShares.VM.Types.Array).Clone();
-                                }
-                            }
+                    //            }
+                    //            else
+                    //            {
+                    //                src = (src as AntShares.VM.Types.Array).Clone();
+                    //            }
+                    //        }
 
-                            EvaluationStack.Push(src);
-                        }
-                        break;
+                    //        EvaluationStack.Push(src);
+                    //    }
+                    //    break;
                     case OpCode.CLONESTRUCTONLY:
                         {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
                             var src = EvaluationStack.Pop();

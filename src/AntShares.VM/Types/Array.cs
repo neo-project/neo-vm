@@ -16,24 +16,24 @@ namespace AntShares.VM.Types
             this._array = value;
         }
 
-        public virtual StackItem Clone()
-        {
-            StackItem[] newArray = new StackItem[this._array.Length];
-            for (var i = 0; i < _array.Length; i++)
-            {
-                if(_array[i].IsStruct)
-                {
-                    newArray[i] = (_array[i] as Struct).Clone();
-                }
-                else
-                {
-                    newArray[i] = _array[i]; //array = 是引用
-                                             //其他的由于是固定值类型，不会改内部值，所以虽然需要复制，直接= 就行
+        //public virtual StackItem Clone()
+        //{
+        //    StackItem[] newArray = new StackItem[this._array.Length];
+        //    for (var i = 0; i < _array.Length; i++)
+        //    {
+        //        if(_array[i].IsStruct)
+        //        {
+        //            newArray[i] = (_array[i] as Struct).Clone();
+        //        }
+        //        else
+        //        {
+        //            newArray[i] = _array[i]; //array = 是引用
+        //                                     //其他的由于是固定值类型，不会改内部值，所以虽然需要复制，直接= 就行
 
-                }
-            }
-            return new Array(newArray);
-        }
+        //        }
+        //    }
+        //    return new Array(newArray);
+        //}
 
         public override bool Equals(StackItem other)
         {
