@@ -128,7 +128,7 @@
         NEWARRAY = 0xC5,  //用作引用類型
         //CLONE = 0xC6,
         NEWSTRUCT = 0xC7,//用作值類型
-        CLONESTRUCTONLY = 0xC8,//仅仅当类型是值类型时Clone， //其它do nothing。
+        //CLONESTRUCTONLY = 0xC8,//仅仅当类型是值类型时Clone， //其它do nothing。
         //IL的值类型处理不生成特别指令，实在虚拟机内部判断何时Copy的，我们需要插入这些代码
 
 
