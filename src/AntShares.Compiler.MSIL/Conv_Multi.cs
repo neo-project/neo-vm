@@ -646,7 +646,7 @@ namespace AntShares.Compiler.MSIL
             if (id < 0)
                 throw new Exception("impossible.");
 
-            _Convert1by1(AntShares.VM.OpCode.CLONESTRUCTONLY, src, to);
+            //_Convert1by1(AntShares.VM.OpCode.CLONESTRUCTONLY, src, to);
 
             _ConvertPush(id, null, to);//index
             _Convert1by1(AntShares.VM.OpCode.SWAP, null, to);//把item 拿上來 

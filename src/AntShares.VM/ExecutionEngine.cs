@@ -705,6 +705,10 @@ namespace AntShares.VM
                     case OpCode.SETITEM:
                         {
                             StackItem newItem = EvaluationStack.Pop();
+                            if(newItem.IsStruct)
+                            {
+                                newItem = (newItem as AntShares.VM.Types.Struct).Clone();
+                            }
                             int index = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem arrItem = EvaluationStack.Pop();
                             if (!arrItem.IsArray)
@@ -763,19 +767,19 @@ namespace AntShares.VM
                     //        EvaluationStack.Push(src);
                     //    }
                     //    break;
-                    case OpCode.CLONESTRUCTONLY:
-                        {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
-                            var src = EvaluationStack.Pop();
+                    //case OpCode.CLONESTRUCTONLY:
+                    //    {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
+                    //        var src = EvaluationStack.Pop();
 
-                            if (src.IsStruct)
-                            {
-                                src = (src as AntShares.VM.Types.Struct).Clone();
-                            }
+                    //        if (src.IsStruct)
+                    //        {
+                    //            src = (src as AntShares.VM.Types.Struct).Clone();
+                    //        }
 
-                            EvaluationStack.Push(src);
+                    //        EvaluationStack.Push(src);
 
-                        }
-                        break;
+                    //    }
+                    //    break;
                     default:
                         State |= VMState.FAULT;
                         return;

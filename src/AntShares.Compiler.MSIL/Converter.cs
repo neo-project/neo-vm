@@ -606,8 +606,8 @@ namespace AntShares.Compiler.MSIL
                 case CodeEx.Stelem_R8:
                 case CodeEx.Stelem_Ref:
                     {
-                        //不應該總是clone，要檢查是否是值類型
-                        _Convert1by1(AntShares.VM.OpCode.CLONESTRUCTONLY, src, to);
+                        //在SetItem内部处理此过程
+                        //_Convert1by1(AntShares.VM.OpCode.CLONESTRUCTONLY, src, to);
 
                         _Convert1by1(AntShares.VM.OpCode.SETITEM, src, to);
                     }
