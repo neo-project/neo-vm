@@ -27,34 +27,18 @@ namespace AntShares.Compiler.JVM
             string filename = args[0];
             string onlyname = System.IO.Path.GetFileNameWithoutExtension(filename);
             javaloader.ClassFile classFile = null;
-            JavaClass module = null;
-            //open file
-            try
-            {
-                var bs = System.IO.File.ReadAllBytes(filename);
-                classFile = new javaloader.ClassFile(bs, 0, bs.Length);
-                module = new JavaClass(classFile);
-            }
-            catch (Exception err)
-            {
-                log.Log("Open File Error:" + err.ToString());
-                return;
-            }
-            //load module
-            try
-            {
-                module = new JavaClass(classFile);
-            }
-            catch (Exception err)
-            {
-                log.Log("LoadModule Error:" + err.ToString());
-                return;
-            }
+            JavaModule module = new JavaModule();
+
+
             byte[] bytes = null;
             bool bSucc = false;
             //convert and build
             try
             {
+                var path = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                path = System.IO.Path.GetDirectoryName(path);
+                module.LoadJar(System.IO.Path.Combine(path, "AntShares.SmartContract.Framework.jar"));
+                module.LoadClass(filename);
                 var conv = new ModuleConverter(log);
 
                 AntsModule am = conv.Convert(module);

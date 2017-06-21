@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +10,65 @@ using static javaloader.ClassFile.Method;
 
 namespace AntShares.Compiler.JVM
 {
+    public class JavaModule
+    {
+        public Dictionary<string, JavaClass> classes = new Dictionary<string, JavaClass>();
+        public void LoadClass(string filename, string codepath = null)
+        {
+            LoadClassByBytes(System.IO.File.ReadAllBytes(filename), codepath);
+        }
+        public JavaClass LoadClassByBytes(byte[] data, string srccode = null)
+        {
+            var js = new javaloader.ClassFile(data, 0, data.Length);
+            var _class = new JavaClass(js, null);
+            this.classes[_class.classfile.Name] = _class;
+            return _class;
+        }
+        public void LoadJar(string filename, string codepath = null)
+        {
+            string f = System.IO.Path.GetFileName(filename);
+            bool bskip = false;
+            if (f == "AntShares.SmartContract.Framework.jar")
+            {
+                bskip = true;
+            }
+            using (var zipStream = new ZipInputStream(File.OpenRead(filename)))
+            {
+                ZipEntry ent = null;
+
+                while ((ent = zipStream.GetNextEntry()) != null)
+                {
+                    var extname = System.IO.Path.GetExtension(ent.Name);
+                    if (ent.IsFile && extname == ".class")
+                    {
+                        byte[] data = null;
+                        using (
+                        MemoryStream ms = new MemoryStream())
+                        {
+                            byte[] buf = new byte[2048];
+                            int size = buf.Length;
+                            while (size > 0)
+                            {
+                                size = zipStream.Read(buf, 0, buf.Length);
+                                if (size > 0)
+                                    ms.Write(buf, 0, size);
+                            }
+                            data = ms.ToArray();
+                        }
+                       var cc= LoadClassByBytes(data, codepath);
+                        cc.skip = bskip;
+                    }
+
+                }
+            }
+
+
+
+        }
+
+
+
+    }
     public class JavaClass
     {
         public JavaClass(javaloader.ClassFile classfile, string[] srcfile = null)
@@ -22,11 +83,26 @@ namespace AntShares.Compiler.JVM
             }
             foreach (var m in this.classfile.Methods)
             {
+                bool bskip = false;
+                if (m.Annotations != null)
+                {
+                    object[] info = m.Annotations[0] as object[];
+                    if (info[1] as string == "LAntShares/SmartContract/Framework/Appcall;" ||
+                        info[1] as string == "LAntShares/SmartContract/Framework/Syscall;" |
+                        info[1] as string == "LAntShares/SmartContract/Framework/Opcall;")
+                    {
+                        //continue;
+                        bskip = true;
+                    }
+                    //if(m.Annotations[0])
+                }
                 var nm = new JavaMethod(this, m);
-                this.methods.Add(m.Name, nm);
+                nm.skip = bskip;
+                this.methods[m.Name] = nm;
             }
             this.superClass = this.classfile.SuperClass;
         }
+        public bool skip = false;
         public string[] srcfile;
         public string superClass;
         public javaloader.ClassFile classfile;
@@ -36,6 +112,7 @@ namespace AntShares.Compiler.JVM
     }
     public class JavaMethod
     {
+        public bool skip = false;
         public JavaClass DeclaringType;
         public javaloader.ClassFile.Method method;
         public string returnType;
@@ -47,7 +124,7 @@ namespace AntShares.Compiler.JVM
         //public int addLocal_VariablesCount = 0;
         //不做表转换了，直接按最大索引给
         public Dictionary<int, int> argTable;// new List<int>();//index->arg index
-        //public Dictionary<int, int> localTable;//index->localIndex;
+                                             //public Dictionary<int, int> localTable;//index->localIndex;
 
         public JavaMethod(JavaClass type, javaloader.ClassFile.Method method)
         {
@@ -56,33 +133,35 @@ namespace AntShares.Compiler.JVM
             //method.LocalVariableTableAttribute
             this.argTable = new Dictionary<int, int>();
             //this.localTable = new Dictionary<int, int>();
-            for (var i = 0; i < method.ArgMap.Length; i++)
-            {
-                var ind = method.ArgMap[i];
-                if (ind >= 0)
-                    this.argTable[ind] = i;
-            }
-            scanTypes(method.Signature);
+            if (method.ArgMap != null)
+                for (var i = 0; i < method.ArgMap.Length; i++)
+                {
+                    var ind = method.ArgMap[i];
+                    if (ind >= 0)
+                        this.argTable[ind] = i;
+                }
+            scanTypes(method.Signature,out this.returnType,this.paramTypes);
             Dictionary<int, string> local = new Dictionary<int, string>();
 
-            foreach (var lv in this.method.LocalVariableTableAttribute)
-            {
-                var ind = lv.index;
-                if (this.argTable.ContainsValue(ind) == false)
+            if (this.method.LocalVariableTableAttribute != null)
+                foreach (var lv in this.method.LocalVariableTableAttribute)
                 {
+                    var ind = lv.index;
+                    if (this.argTable.ContainsValue(ind) == false)
+                    {
 
-                    var desc = lv.name + ";" + lv.descriptor;
-                    if (local.ContainsKey(ind))
-                    {
-                        local[ind] = local[ind] + "||" + desc;
+                        var desc = lv.name + ";" + lv.descriptor;
+                        if (local.ContainsKey(ind))
+                        {
+                            local[ind] = local[ind] + "||" + desc;
+                        }
+                        else
+                        {
+                            local[ind] = desc;
+                        }
                     }
-                    else
-                    {
-                        local[ind] = desc;
-                    }
+                    this.MaxVariableIndex = Math.Max(ind + 1, this.MaxVariableIndex);
                 }
-                this.MaxVariableIndex = Math.Max(ind + 1, this.MaxVariableIndex);
-            }
             //for (var i = 0; i < local.Count; i++)
             //{
             //    this.localTable[local.Keys.ToArray()[i]] = i;
@@ -110,19 +189,19 @@ namespace AntShares.Compiler.JVM
                     this.body_Variables[lv.Key - this.paramTypes.Count] = new AntsParam("local", lv.Value);
                 }
             }
+            if (this.method.Instructions != null)
+                for (var i = 0; i < this.method.Instructions.Length; i++)
+                {
+                    Instruction code = this.method.Instructions[i];
+                    var opcode = new OpCode();
 
-            for (var i = 0; i < this.method.Instructions.Length; i++)
-            {
-                Instruction code = this.method.Instructions[i];
-                var opcode = new OpCode();
-
-                opcode.InitToken(this, code);
-                this.body_Codes[code.PC] = opcode;
-            }
+                    opcode.InitToken(this, code);
+                    this.body_Codes[code.PC] = opcode;
+                }
             // this.method.LocalVariableTableAttribute
 
         }
-        string getTypeString(string sign, ref int i)
+        static string getTypeString(string sign, ref int i)
         {
             if (sign[i] == '[') //for array
             {
@@ -163,7 +242,7 @@ namespace AntShares.Compiler.JVM
             }
             else if (sign[i] == 'L')//a long string
             {
-                var i2 = sign.IndexOf(';');
+                var i2 = sign.IndexOf(';', i);
 
                 var type = sign.Substring(i + 1, i2 - i - 1);
 
@@ -175,8 +254,9 @@ namespace AntShares.Compiler.JVM
                 throw new Exception("not parsed sign.");
             }
         }
-        void scanTypes(string sign)
+        public static void scanTypes(string sign,out string returnType,List<string> paramTypes)
         {
+            returnType = "";
             bool forreturn = false;
             for (var i = 0; i < sign.Length; i++)
             {
@@ -207,6 +287,38 @@ namespace AntShares.Compiler.JVM
                 }
             }
         }
+        //void scanTypes(string sign)
+        //{
+        //    bool forreturn = false;
+        //    for (var i = 0; i < sign.Length; i++)
+        //    {
+
+        //        if (sign[i] == '(') //beginparam
+        //        {
+        //            continue;
+        //        }
+        //        else if (sign[i] == ')')//endparam
+        //        {
+        //            forreturn = true;
+        //            continue;
+        //        }
+        //        else
+        //        {
+        //            string type = getTypeString(sign, ref i);
+        //            if (forreturn)
+        //            {
+        //                returnType = type;
+        //                return;
+        //            }
+        //            else
+        //            {
+        //                paramTypes.Add(type);
+        //                continue;
+        //            }
+
+        //        }
+        //    }
+        //}
 
         public int GetNextCodeAddr(int srcaddr)
         {

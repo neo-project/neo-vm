@@ -69,367 +69,263 @@ namespace AntShares.Compiler.JVM
             _Convert1by1(AntShares.VM.OpCode.PICK, null, to);
         }
 
-        
-        //public bool IsSysCall(Mono.Cecil.MethodReference refs, out string name)
-        //{
-        //    try
-        //    {
-        //        var defs = refs.Resolve();
-        //        foreach (var attr in defs.CustomAttributes)
-        //        {
-        //            if (attr.AttributeType.Name == "SyscallAttribute")
-        //            {
-        //                var type = attr.ConstructorArguments[0].Type;
-        //                var value = (string)attr.ConstructorArguments[0].Value;
+        public bool IsOpCall(JavaMethod method, OpCode src, out string callname)
+        {
+            if (method != null)
+                if (method.method.Annotations != null)
+                {
 
-        //                //dosth
-        //                name = value;
-        //                return true;
-
+                    object[] op = method.method.Annotations[0] as object[];
+                    if (op[1] as string == "LAntShares/SmartContract/Framework/OpCode;")
+                    {
+                        if (op[2] as string == "value")
+                        {
+                            var info = op[3] as string;
+                            callname = info;
+                            return true;
+                        }
 
 
-        //            }
-        //            //if(attr.t)
-        //        }
-        //        name = "";
-        //        return false;
-        //    }
-        //    catch
-        //    {
-        //        name = "";
-        //        return false;
-        //    }
-
-        //}
-        //public bool IsOpCall(Mono.Cecil.MethodReference refs, out string name)
-        //{
-        //    try
-        //    {
-        //        var defs = refs.Resolve();
-        //        foreach (var attr in defs.CustomAttributes)
-        //        {
-        //            if (attr.AttributeType.Name == "OpCodeAttribute")
-        //            {
-        //                var type = attr.ConstructorArguments[0].Type;
-        //                var value = (byte)attr.ConstructorArguments[0].Value;
-
-        //                foreach (var t in type.Resolve().Fields)
-        //                {
-        //                    if (t.Constant != null)
-        //                    {
-        //                        if ((byte)t.Constant == value)
-        //                        {
-
-        //                            //dosth
-        //                            name = t.Name;
-        //                            return true;
-
-        //                        }
-        //                    }
-        //                }
+                    }
+                }
 
 
-        //            }
-        //            //if(attr.t)
-        //        }
-        //        name = "";
-        //        return false;
-        //    }
-        //    catch
-        //    {
-        //        name = "";
-        //        return false;
-        //    }
-        //}
-        //private int _ConvertCall(OpCode src, AntsMethod to)
-        //{
-        //    Mono.Cecil.MethodReference refs = src.tokenUnknown as Mono.Cecil.MethodReference;
+            //m.Annotations
 
-        //    int calltype = 0;
-        //    string callname = "";
-        //    VM.OpCode callcode = VM.OpCode.NOP;
-        //    if (this.outModule.mapMethods.ContainsKey(src.tokenMethod))
-        //    {//this is a call
-        //        calltype = 1;
-        //    }
-        //    else if (refs.ReturnType.Name == "ExecutionEngine" || refs.ReturnType.Name == "Storage")
-        //    {
-        //        if (src != null)
-        //        {
-        //            //有可能jump到此处
-        //            this.addrconv[src.addr] = this.addr;//因为没插入代码，实际是下一行
-        //        }
-        //        //donothing 語法過渡類型
-        //        return 0;
-        //    }
-        //    else
-        //    {//maybe a syscall // or other
-        //        if (src.tokenMethod.Contains("::op_Explicit(") || src.tokenMethod.Contains("::op_Implicit("))
-        //        {
-        //            //各类显示隐示转换都忽略
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            if (src.tokenMethod == "System.Int32 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
-        //            {
-        //                //donothing
-        //                return 0;
-        //            }
-        //            else if (src.tokenMethod == "System.Int64 System.Numerics.BigInteger::op_Explicit(System.Numerics.BigInteger)")
-        //            {
-        //                //donothing
-        //                return 0;
-        //            }
-        //            else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int32)")//int->bignumber
-        //            {
-        //                //donothing
-        //                return 0;
-        //            }
-        //            else if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Implicit(System.Int64)")
-        //            {
-        //                return 0;
-        //            }
+            callname = "";
+            return false;
+        }
+        public bool IsSysCall(JavaMethod method, OpCode src, out string callname)
+        {
+            if (method != null)
+                if (method.method.Annotations != null)
+                {
 
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod == "System.Void System.Diagnostics.Debugger::Break()")
-        //        {
-        //            _Convert1by1(AntShares.VM.OpCode.NOP, src, to);
-
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_Equality(") || src.tokenMethod.Contains("::Equals("))
-        //        {
-        //            //各类==指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            if (src.tokenMethod == "System.Boolean System.String::op_Equality(System.String,System.String)")
-        //            {
-        //                _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
-        //                return 0;
-        //            }
-        //            else if (src.tokenMethod == "System.Boolean System.Object::Equals(System.Object)")
-        //            {
-        //                _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
-        //                return 0;
-        //            }
-        //            _Convert1by1(AntShares.VM.OpCode.EQUAL, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_Inequality("))
-        //        {
-        //            //各类!=指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            if (src.tokenMethod == "System.Boolean System.Numerics.BigInteger::op_Inequality(System.Numerics.BigInteger,System.Numerics.BigInteger)")
-        //            {
-        //                _Convert1by1(VM.OpCode.INVERT, src, to);
-        //                _Insert1(AntShares.VM.OpCode.EQUAL, "", to);
-        //                return 0;
-        //            }
-        //            _Convert1by1(VM.OpCode.INVERT, src, to);
-        //            _Insert1(AntShares.VM.OpCode.EQUAL, "", to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_Addition("))
-        //        {
-        //            //各类+指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Addition(System.Numerics.BigInteger,System.Numerics.BigInteger)")
-        //            {
-        //                _Convert1by1(AntShares.VM.OpCode.ADD, src, to);
-        //                return 0;
-        //            }
-        //            _Convert1by1(AntShares.VM.OpCode.ADD, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_Subtraction("))
-        //        {
-        //            //各类-指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Subtraction(System.Numerics.BigInteger,System.Numerics.BigInteger)")
-        //            {
-        //                _Convert1by1(AntShares.VM.OpCode.SUB, src, to);
-        //                return 0;
-        //            }
-        //            _Convert1by1(AntShares.VM.OpCode.SUB, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_Multiply("))
-        //        {
-        //            //各类*指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Multiply(System.Numerics.BigInteger,System.Numerics.BigInteger)")
-        //            {
-        //                _Convert1by1(AntShares.VM.OpCode.MUL, src, to);
-        //                return 0;
-        //            }
-        //            _Convert1by1(AntShares.VM.OpCode.MUL, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_Division("))
-        //        {
-        //            //各类/指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Division(System.Numerics.BigInteger, System.Numerics.BigInteger)")
-        //            {
-        //                _Convert1by1(AntShares.VM.OpCode.DIV, src, to);
-        //                return 0;
-        //            }
-        //            _Convert1by1(AntShares.VM.OpCode.DIV, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_Modulus("))
-        //        {
-        //            //各类%指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            if (src.tokenMethod == "System.Numerics.BigInteger System.Numerics.BigInteger::op_Modulus(System.Numerics.BigInteger,System.Numerics.BigInteger)")
-        //            {
-        //                _Convert1by1(AntShares.VM.OpCode.MOD, src, to);
-        //                return 0;
-        //            }
-        //            _Convert1by1(AntShares.VM.OpCode.MOD, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_LessThan("))
-        //        {
-        //            //各类<指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            _Convert1by1(AntShares.VM.OpCode.LT, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_GreaterThan("))
-        //        {
-        //            //各类>指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            _Convert1by1(AntShares.VM.OpCode.GT, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_LessThanOrEqual("))
-        //        {
-        //            //各类<=指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            _Convert1by1(AntShares.VM.OpCode.LTE, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::op_GreaterThanOrEqual("))
-        //        {
-        //            //各类>=指令
-        //            //有可能有一些会特殊处理，故还保留独立判断
-        //            _Convert1by1(AntShares.VM.OpCode.GTE, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::get_Length("))
-        //        {
-        //            //各类.Length指令
-        //            //"System.Int32 System.String::get_Length()"
-        //            _Convert1by1(AntShares.VM.OpCode.SIZE, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod.Contains("::Concat("))
-        //        {
-        //            //各类.Concat
-        //            //"System.String System.String::Concat(System.String,System.String)"
-        //            _Convert1by1(AntShares.VM.OpCode.CAT, src, to);
-        //            return 0;
-        //        }
-        //        else if (src.tokenMethod == "System.String System.String::Substring(System.Int32,System.Int32)")
-        //        {
-        //            _Convert1by1(AntShares.VM.OpCode.SUBSTR, src, to);
-        //            return 0;
-
-        //        }
-        //        else if (src.tokenMethod == "System.String System.String::Substring(System.Int32)")
-        //        {
-        //            throw new Exception("antsmachine cant use this call,please use  .SubString(1,2) with 2 params.");
-        //        }
-        //        else
-        //        {
-        //            if (IsOpCall(refs, out callname))
-        //            {
-        //                if (System.Enum.TryParse<VM.OpCode>(callname, out callcode))
-        //                {
-        //                    calltype = 2;
-        //                }
-        //                else
-        //                {
-        //                    throw new Exception("Can not find OpCall:" + callname);
-        //                }
-        //            }
-        //            if (IsSysCall(refs, out callname))
-        //            {
-        //                calltype = 3;
-        //            }
-
-        //        }
-        //    }
-
-        //    if (calltype == 0)
-        //        throw new Exception("unknown call:" + src.tokenMethod);
-        //    var md = src.tokenUnknown as Mono.Cecil.MethodReference;
-        //    var pcount = md.Parameters.Count;
-        //    _Convert1by1(VM.OpCode.NOP, src, to);
-        //    if (pcount <= 1)
-        //    {
-        //    }
-        //    else if (pcount == 2)
-        //    {
-        //        _Insert1(VM.OpCode.SWAP, "swap 2 param", to);
-        //    }
-        //    else if (pcount == 3)
-        //    {
-        //        _InsertPush(2, "swap 0 and 2 param", to);
-        //        _Insert1(VM.OpCode.XSWAP, "", to);
-        //    }
-        //    else
-        //    {
-        //        for (var i = 0; i < pcount / 2; i++)
-        //        {
-        //            int saveto = (pcount - 1 - i);
-        //            _InsertPush(saveto, "load" + saveto, to);
-        //            _Insert1(VM.OpCode.PICK, "", to);
-
-        //            _InsertPush(i + 1, "load" + i + 1, to);
-        //            _Insert1(VM.OpCode.PICK, "", to);
+                    object[] op = method.method.Annotations[0] as object[];
+                    if (op[1] as string == "LAntShares/SmartContract/Framework/Syscall;")
+                    {
+                        if (op[2] as string == "value")
+                        {
+                            var info = op[3] as string;
+                            callname = info;
+                            return true;
+                        }
 
 
-        //            _InsertPush(saveto + 2, "save to" + saveto + 2, to);
-        //            _Insert1(VM.OpCode.XSWAP, "", to);
-        //            _Insert1(VM.OpCode.DROP, "", to);
+                    }
+                }
 
-        //            _InsertPush(i + 1, "save to" + i + 1, to);
-        //            _Insert1(VM.OpCode.XSWAP, "", to);
-        //            _Insert1(VM.OpCode.DROP, "", to);
 
-        //        }
-        //    }
+            //m.Annotations
 
-        //    if (calltype == 1)
-        //    {
-        //        var c = _Convert1by1(AntShares.VM.OpCode.CALL, null, to, new byte[] { 5, 0 });
-        //        c.needfix = true;
-        //        c.srcfunc = src.tokenMethod;
-        //        return 0;
-        //    }
-        //    else if (calltype == 2)
-        //    {
-        //        _Convert1by1(callcode, null, to);
-        //        return 0;
-        //    }
-        //    else if (calltype == 3)
-        //    {
-        //        var bytes = Encoding.UTF8.GetBytes(callname);
-        //        if (bytes.Length > 252) throw new Exception("string is to long");
-        //        byte[] outbytes = new byte[bytes.Length + 1];
-        //        outbytes[0] = (byte)bytes.Length;
-        //        Array.Copy(bytes, 0, outbytes, 1, bytes.Length);
-        //        //bytes.Prepend 函数在 dotnet framework 4.6 编译不过
-        //        _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, outbytes);
-        //        return 0;
-        //    }
-        //    return 0;
-        //}
+            callname = "";
+            return false;
+        }
+        public bool IsAppCall(JavaMethod method, OpCode src, out byte[] callhash)
+        {
+            if (method != null)
+                if (method.method.Annotations != null)
+                {
+
+                    object[] op = method.method.Annotations[0] as object[];
+                    if (op[1] as string == "LAntShares/SmartContract/Framework/Appcall;")
+                    {
+                        if (op[2] as string == "HexStr")
+                        {
+                            var info = op[3] as string;
+                            byte[] bytes = new byte[info.Length / 2];
+
+                            for (var i = 0; i < info.Length / 2; i++)
+                            {
+                                bytes[i] = byte.Parse(info.Substring(i * 2, 2), System.Globalization.NumberStyles.AllowHexSpecifier);
+                            }
+                            callhash = bytes;
+                            return true;
+                        }
+
+
+                    }
+                }
+
+
+            //m.Annotations
+
+            callhash = null;
+            return false;
+        }
+        private int _ConvertCall(JavaMethod method, OpCode src, AntsMethod to)
+        {
+            _Convert1by1(VM.OpCode.NOP, src, to);
+            var cc = method.DeclaringType.classfile.constantpool;
+            var c = cc[src.arg1] as javaloader.ClassFile.ConstantPoolItemMethodref;
+            var name = c.Class + "::" + c.Name;
+
+            List<string> paramTypes = new List<string>();
+            string returntype;
+            JavaMethod.scanTypes(c.Signature, out returntype, paramTypes);
+
+
+            JavaClass javaclass = null;
+            JavaMethod _javamethod = null;
+
+            if (this.srcModule.classes.ContainsKey(c.Class))
+            {
+                javaclass = this.srcModule.classes[c.Class];
+                _javamethod = javaclass.methods[c.Name];
+            }
+            int calltype = 0;
+            string callname = "";
+            byte[] callhash = null;
+            VM.OpCode callcode = VM.OpCode.NOP;
+
+            if (IsOpCall(_javamethod, src, out callname))
+            {
+                if (System.Enum.TryParse<VM.OpCode>(callname, out callcode))
+                {
+                    calltype = 2;
+                }
+                else
+                {
+                    throw new Exception("Can not find OpCall:" + callname);
+                }
+            }
+            else if (IsSysCall(_javamethod, src, out callname))
+            {
+                calltype = 3;
+            }
+            else if (IsAppCall(_javamethod, src, out callhash))
+            {
+                calltype = 4;
+            }
+            else if (this.outModule.mapMethods.ContainsKey(name))
+            {//this is a call
+                calltype = 1;
+            }
+            else
+            {
+
+                if (name == "java.io.PrintStream::println")
+                {//drop 1;
+                    Console.WriteLine("logstr.");
+                    _Convert1by1(VM.OpCode.DROP, src, to);
+                    return 0;
+                }
+                else if (name == "java.math.BigInteger::add")
+                {
+                    _Convert1by1(VM.OpCode.ADD, src, to);
+                    return 0;
+                }
+                else if (name == "java.math.BigInteger::multiply")
+                {
+                    _Convert1by1(VM.OpCode.MUL, src, to);
+                    return 0;
+                }
+                else if (name == "java.math.BigInteger::divide")
+                {
+                    _Convert1by1(VM.OpCode.DIV, src, to);
+                    return 0;
+                }
+                else if (name == "java.math.BigInteger::mod")
+                {
+                    _Convert1by1(VM.OpCode.MOD, src, to);
+                    return 0;
+                }
+                else if (name == "java.math.BigInteger::compareTo")
+                {
+                    _Convert1by1(VM.OpCode.SUB, src, to);
+                    //_Convert1by1(VM.OpCode.DEC, src, to);
+                    return 0;
+                }
+                else if (name == "java.math.BigInteger::equals")
+                {
+                    _Convert1by1(VM.OpCode.NUMEQUAL, src, to);
+                    //_Convert1by1(VM.OpCode.DEC, src, to);
+                    return 0;
+                }
+                else if (name == "java.math.BigInteger::valueOf" ||
+                    name == "java.math.BigInteger::intValue")
+                {
+                    //donothing
+                    return 0;
+                }
+            }
+
+            if (calltype == 0)
+            {
+                throw new Exception("unknown call:" + name);
+            }
+            var pcount = paramTypes.Count;
+
+            _Convert1by1(VM.OpCode.NOP, src, to);
+            if (pcount <= 1)
+            {
+            }
+            else if (pcount == 2)
+            {
+                _Insert1(VM.OpCode.SWAP, "swap 2 param", to);
+            }
+            else if (pcount == 3)
+            {
+                _InsertPush(2, "swap 0 and 2 param", to);
+                _Insert1(VM.OpCode.XSWAP, "", to);
+            }
+            else
+            {
+                for (var i = 0; i < pcount / 2; i++)
+                {
+                    int saveto = (pcount - 1 - i);
+                    _InsertPush(saveto, "load" + saveto, to);
+                    _Insert1(VM.OpCode.PICK, "", to);
+
+                    _InsertPush(i + 1, "load" + i + 1, to);
+                    _Insert1(VM.OpCode.PICK, "", to);
+
+
+                    _InsertPush(saveto + 2, "save to" + saveto + 2, to);
+                    _Insert1(VM.OpCode.XSWAP, "", to);
+                    _Insert1(VM.OpCode.DROP, "", to);
+
+                    _InsertPush(i + 1, "save to" + i + 1, to);
+                    _Insert1(VM.OpCode.XSWAP, "", to);
+                    _Insert1(VM.OpCode.DROP, "", to);
+
+                }
+            }
+            if (calltype == 1)
+            {
+                var _c = _Convert1by1(AntShares.VM.OpCode.CALL, null, to, new byte[] { 5, 0 });
+                _c.needfix = true;
+                _c.srcfunc = src.tokenMethod;
+                return 0;
+            }
+            else if (calltype == 2)
+            {
+                _Convert1by1(callcode, null, to);
+                return 0;
+            }
+            else if (calltype == 3)
+            {
+                var bytes = Encoding.UTF8.GetBytes(callname);
+                if (bytes.Length > 252) throw new Exception("string is too long");
+                byte[] outbytes = new byte[bytes.Length + 1];
+                outbytes[0] = (byte)bytes.Length;
+                Array.Copy(bytes, 0, outbytes, 1, bytes.Length);
+                //bytes.Prepend 函数在 dotnet framework 4.6 编译不过
+                _Convert1by1(AntShares.VM.OpCode.SYSCALL, null, to, outbytes);
+                return 0;
+            }
+            else if (calltype == 4)
+            {
+                _Convert1by1(AntShares.VM.OpCode.APPCALL, null, to, callhash);
+
+            }
+            return 0;
+        }
 
         private int _ConvertNewArray(JavaMethod method, OpCode src, AntsMethod to)
         {
             int skipcount = 0;
-            if(src.arg1!=8)
+            if (src.arg1 != 8)
             {
                 this.logger.Log("_ConvertNewArray::not support type " + src.arg1 + " for array.");
             }
@@ -455,18 +351,18 @@ namespace AntShares.Compiler.JVM
             {
                 int n = method.GetNextCodeAddr(next.addr);
                 next = method.body_Codes[n];
-                if(next.code== javaloader.NormalizedByteCode.__dup)
+                if (next.code == javaloader.NormalizedByteCode.__dup)
                 {
                     dupcount++;
                     skipcount++;
                 }
-                else if(next.code== javaloader.NormalizedByteCode.__iconst)
+                else if (next.code == javaloader.NormalizedByteCode.__iconst)
                 {
                     buf[pcount] = next.arg1;
                     pcount++;
                     skipcount++;
                 }
-                else if(next.code== javaloader.NormalizedByteCode.__bastore)
+                else if (next.code == javaloader.NormalizedByteCode.__bastore)
                 {
                     dupcount--;
                     var v = (byte)buf[pcount - 1];
@@ -477,7 +373,7 @@ namespace AntShares.Compiler.JVM
                     pcount -= 2;
                     skipcount++;
                 }
-                else if(next.code== javaloader.NormalizedByteCode.__astore)
+                else if (next.code == javaloader.NormalizedByteCode.__astore)
                 {
                     _ConvertPush(outbuf.ToArray(), src, to);
                     return skipcount;

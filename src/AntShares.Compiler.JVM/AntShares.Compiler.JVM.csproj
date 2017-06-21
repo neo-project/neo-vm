@@ -13,7 +13,16 @@
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
     <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SharpZipLib.NETStandard" Version="0.86.0.1" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AntShares.VM\AntShares.VM.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="AntShares.SmartContract.Framework.jar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

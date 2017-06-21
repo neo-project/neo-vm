@@ -9,19 +9,16 @@ namespace AntShares.Compiler.JVM
 {
     public class Converter
     {
-        public static byte[] Convert(byte[] classFileBytes, ILogger logger = null)
+        public static byte[] Convert(string classfilename, ILogger logger = null)
         {
 
-            var classfile = new javaloader.ClassFile(classFileBytes, 0, classFileBytes.Length);
+            var moduleJVMPackage = new JavaModule();
+            moduleJVMPackage.LoadClass("go.class");
+            moduleJVMPackage.LoadJar("AntShares.SmartContract.Framework.jar");
 
-            if (logger == null)
-            {
-                logger = new DefLogger();
-            }
-            var javaclass = new JavaClass(classfile);
             var converter = new ModuleConverter(logger);
             //有异常的话在 convert 函数中会直接throw 出来
-            var antmodule = converter.Convert(javaclass);
+            var antmodule = converter.Convert(moduleJVMPackage);
             return antmodule.Build();
         }
 
@@ -46,36 +43,47 @@ namespace AntShares.Compiler.JVM
         }
 
         ILogger logger;
+        JavaModule srcModule;
         public AntsModule outModule;
         public Dictionary<JavaMethod, AntsMethod> methodLink = new Dictionary<JavaMethod, AntsMethod>();
-        public AntsModule Convert(JavaClass _in)
+        public AntsModule Convert(JavaModule _in)
         {
+            this.srcModule = _in;
             //logger.Log("beginConvert.");
             this.outModule = new AntsModule(this.logger);
-            foreach (var m in _in.methods)
+            foreach (var c in _in.classes.Values)
             {
-                if (m.Key[0] == '<') continue;//系統函數不要
-                AntsMethod nm = new AntsMethod();
-                nm.name = m.Key;
-                this.methodLink[m.Value] = nm;
-                outModule.mapMethods[nm.name] = nm;
-            }
-
-            foreach (var m in _in.methods)
-            {
-                if (m.Key[0] == '<') continue;//系統函數不要
-
-                var nm = this.methodLink[m.Value];
-                //try
+                if (c.skip) continue;
+                foreach (var m in c.methods)
                 {
-                    this.ConvertMethod(m.Value, nm);
+                    if (m.Value.skip) continue;
+                    if (m.Key[0] == '<') continue;//系統函數不要
+                    AntsMethod nm = new AntsMethod();
+                    nm.name = c.classfile.Name + "::" + m.Key;
+                    this.methodLink[m.Value] = nm;
+                    outModule.mapMethods[nm.name] = nm;
                 }
-                //catch (Exception err)
-                //{
-                //    logger.Log("error:" + err.Message);
-                //}
             }
 
+            foreach (var c in _in.classes.Values)
+            {
+                if (c.skip) continue;
+                foreach (var m in c.methods)
+                {
+                    if (m.Value.skip) continue;
+                    if (m.Key[0] == '<') continue;//系統函數不要
+
+                    var nm = this.methodLink[m.Value];
+                    //try
+                    {
+                        this.ConvertMethod(m.Value, nm);
+                    }
+                    //catch (Exception err)
+                    //{
+                    //    logger.Log("error:" + err.Message);
+                    //}
+                }
+            }
             //转换完了，做个link，全部拼到一起
             string mainmethod = "";
             foreach (var key in outModule.mapMethods.Keys)
@@ -301,7 +309,26 @@ namespace AntShares.Compiler.JVM
 
                         var cc = method.DeclaringType.classfile.constantpool;
                         var c = cc[src.arg1] as javaloader.ClassFile.ConstantPoolItemFieldref;
-                        this.convertType.Push(c.Signature);
+                        if (c.Class == "java.math.BigInteger")
+                        {
+                            if (c.Name == "ONE")
+                            {
+                                _ConvertPush(1, src, to);
+                            }
+                            if (c.Name == "ZERO")
+                            {
+                                _ConvertPush(0, src, to);
+                            }
+
+                        }
+                        if (c.Class == "java.lang.System")
+                        {
+                            if (c.Name == "out")
+                            {
+                                //donothing
+                            }
+                        }
+                        //this.convertType.Push(c.Signature);
                     }
                     break;
                 case javaloader.NormalizedByteCode.__ldc:
@@ -330,7 +357,14 @@ namespace AntShares.Compiler.JVM
                     }
                     break;
                 case javaloader.NormalizedByteCode.__iconst:
+
                     _ConvertPush(src.arg1, src, to);
+                    break;
+                case javaloader.NormalizedByteCode.__lconst_1:
+                    _ConvertPush(1, src, to);
+                    break;
+                case javaloader.NormalizedByteCode.__lconst_0:
+                    _ConvertPush(0, src, to);
                     break;
                 case javaloader.NormalizedByteCode.__newarray:
                     skipcount = _ConvertNewArray(method, src, to);
@@ -348,22 +382,15 @@ namespace AntShares.Compiler.JVM
                 case javaloader.NormalizedByteCode.__invokevirtual:
                 case javaloader.NormalizedByteCode.__invokestatic:
                     {
-                        _Convert1by1(VM.OpCode.NOP, src, to);
+                        _ConvertCall(method, src, to);
 
-                        var cc = method.DeclaringType.classfile.constantpool;
-                        var c = cc[src.arg1] as javaloader.ClassFile.ConstantPoolItemMethodref;
-                        var name = c.Class + "::" + c.Name;
-                        if (name == "java.io.PrintStream::println")
-                        {
-                            //donothing;
-                        }
                     }
                     break;
                 case javaloader.NormalizedByteCode.__iinc:
                     _Convert1by1(VM.OpCode.NOP, src, to);
                     {
                         _Insert1(VM.OpCode.DUPFROMALTSTACK, "", to);
-                        _InsertPush(src.arg1,"",to);
+                        _InsertPush(src.arg1, "", to);
                         _Insert1(VM.OpCode.PICKITEM, "", to);
                         _InsertPush(src.arg2, "", to);
                         _Insert1(VM.OpCode.ADD, "", to);
@@ -420,14 +447,7 @@ namespace AntShares.Compiler.JVM
                         code.srcaddr = src.arg1 + src.addr;
                     }
                     break;
-                case javaloader.NormalizedByteCode.__if_icmplt:
-                    {
-                        _Convert1by1(AntShares.VM.OpCode.LT, src, to);
-                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
-                        code.needfix = true;
-                        code.srcaddr = src.addr + src.arg1;
-                    }
-                    break;
+
                 //    case CodeEx.Br_S:
                 //        {
                 //            var code = _Convert1by1(AntShares.VM.OpCode.JMP, src, to, new byte[] { 0, 0 });
@@ -436,84 +456,108 @@ namespace AntShares.Compiler.JVM
                 //        }
 
                 //        break;
-                //    case CodeEx.Brtrue:
-                //    case CodeEx.Brtrue_S:
-                //        {
-                //            var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, src, to, new byte[] { 0, 0 });
-                //            code.needfix = true;
-                //            code.srcaddr = src.tokenAddr_Index;
-                //        }
-                //        break;
-                //    case CodeEx.Brfalse:
-                //    case CodeEx.Brfalse_S:
-                //        {
-                //            var code = _Convert1by1(AntShares.VM.OpCode.JMPIFNOT, src, to, new byte[] { 0, 0 });
-                //            code.needfix = true;
-                //            code.srcaddr = src.tokenAddr_Index;
-                //        }
-                //        break;
-                //    case CodeEx.Beq:
-                //    case CodeEx.Beq_S:
-                //        {
-                //            _Convert1by1(AntShares.VM.OpCode.NUMEQUAL, src, to);
-                //            var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
-                //            code.needfix = true;
-                //            code.srcaddr = src.tokenAddr_Index;
-                //        }
-                //        break;
-                //    case CodeEx.Bne_Un:
-                //    case CodeEx.Bne_Un_S:
-                //        {
-                //            _Convert1by1(AntShares.VM.OpCode.NUMNOTEQUAL, src, to);
-                //            var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
-                //            code.needfix = true;
-                //            code.srcaddr = src.tokenAddr_Index;
-                //        }
-                //        break;
-                //    case CodeEx.Blt:
-                //    case CodeEx.Blt_S:
-                //    case CodeEx.Blt_Un:
-                //    case CodeEx.Blt_Un_S:
-                //        {
-                //            _Convert1by1(AntShares.VM.OpCode.LT, src, to);
-                //            var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
-                //            code.needfix = true;
-                //            code.srcaddr = src.tokenAddr_Index;
-                //        }
-                //        break;
-                //    case CodeEx.Ble:
-                //    case CodeEx.Ble_S:
-                //    case CodeEx.Ble_Un:
-                //    case CodeEx.Ble_Un_S:
-                //        {
-                //            _Convert1by1(AntShares.VM.OpCode.LTE, src, to);
-                //            var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
-                //            code.needfix = true;
-                //            code.srcaddr = src.tokenAddr_Index;
-                //        }
-                //        break;
-                //    case CodeEx.Bgt:
-                //    case CodeEx.Bgt_S:
-                //    case CodeEx.Bgt_Un:
-                //    case CodeEx.Bgt_Un_S:
-                //        {
-                //            _Convert1by1(AntShares.VM.OpCode.GT, src, to);
-                //            var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
-                //            code.needfix = true;
-                //            code.srcaddr = src.tokenAddr_Index;
-                //        }
-                //        break;
-                //    case CodeEx.Bge:
-                //    case CodeEx.Bge_S:
-                //    case CodeEx.Bge_Un:
-                //    case CodeEx.Bge_Un_S:
-                //        {
-                //            _Convert1by1(AntShares.VM.OpCode.GTE, src, to);
-                //            var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
-                //            code.needfix = true;
-                //            code.srcaddr = src.tokenAddr_Index;
-                //        }
-                //        break;
+                case javaloader.NormalizedByteCode.__if_icmpeq:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.NUMEQUAL, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__if_icmpne:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.NUMNOTEQUAL, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__ifne:
+                    {
+                        _ConvertPush(0, src, to);//和0比较
+                        _Convert1by1(AntShares.VM.OpCode.NUMNOTEQUAL, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.arg1 + src.addr;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__ifeq:
+                    {
+                        _ConvertPush(0, src, to);//和0比较
+                        _Convert1by1(AntShares.VM.OpCode.NUMEQUAL, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.arg1 + src.addr;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__iflt:
+                    {
+                        _ConvertPush(0, src, to);//和0比较
+                        _Convert1by1(AntShares.VM.OpCode.GT, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.arg1 + src.addr;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__if_icmplt:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.LT, src, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__ifle:
+                    {
+                        _ConvertPush(0, src, to);//和0比较
+                        _Convert1by1(AntShares.VM.OpCode.GT, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__if_icmple:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.LTE, src, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__ifgt:
+                    {
+                        _ConvertPush(0, src, to);//和0比较
+                        _Convert1by1(AntShares.VM.OpCode.LT, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__if_icmpgt:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.GT, src, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__ifge:
+                    {
+                        _ConvertPush(0, src, to);//和0比较
+                        _Convert1by1(AntShares.VM.OpCode.LTE, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__if_icmpge:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.GTE, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
 
                 //    //Stack
                 case javaloader.NormalizedByteCode.__dup:
@@ -534,30 +578,30 @@ namespace AntShares.Compiler.JVM
                 //        _Convert1by1(AntShares.VM.OpCode.INVERT, src, to);
                 //        break;
 
-                //    //math
-                //    case CodeEx.Add:
-                //    case CodeEx.Add_Ovf:
-                //    case CodeEx.Add_Ovf_Un:
-                //        _Convert1by1(AntShares.VM.OpCode.ADD, src, to);
-                //        break;
-                //    case CodeEx.Sub:
-                //    case CodeEx.Sub_Ovf:
-                //    case CodeEx.Sub_Ovf_Un:
-                //        _Convert1by1(AntShares.VM.OpCode.SUB, src, to);
-                //        break;
-                //    case CodeEx.Mul:
-                //    case CodeEx.Mul_Ovf:
-                //    case CodeEx.Mul_Ovf_Un:
-                //        _Convert1by1(AntShares.VM.OpCode.MUL, src, to);
-                //        break;
-                //    case CodeEx.Div:
-                //    case CodeEx.Div_Un:
-                //        _Convert1by1(AntShares.VM.OpCode.DIV, src, to);
-                //        break;
-                //    case CodeEx.Rem:
-                //    case CodeEx.Rem_Un:
-                //        _Convert1by1(AntShares.VM.OpCode.MOD, src, to);
-                //        break;
+                case javaloader.NormalizedByteCode.__iadd:
+                case javaloader.NormalizedByteCode.__ladd:
+                    _Convert1by1(AntShares.VM.OpCode.ADD, src, to);
+                    break;
+
+                case javaloader.NormalizedByteCode.__isub:
+                case javaloader.NormalizedByteCode.__lsub:
+                    _Convert1by1(AntShares.VM.OpCode.SUB, src, to);
+                    break;
+
+                case javaloader.NormalizedByteCode.__imul:
+                case javaloader.NormalizedByteCode.__lmul:
+                    _Convert1by1(AntShares.VM.OpCode.MUL, src, to);
+                    break;
+                case javaloader.NormalizedByteCode.__idiv:
+                case javaloader.NormalizedByteCode.__ldiv:
+                    _Convert1by1(AntShares.VM.OpCode.DIV, src, to);
+                    break;
+
+                case javaloader.NormalizedByteCode.__irem:
+                case javaloader.NormalizedByteCode.__lrem:
+                    _Convert1by1(AntShares.VM.OpCode.MOD, src, to);
+                    break;
+
                 //    case CodeEx.Neg:
                 //        _Convert1by1(AntShares.VM.OpCode.NEGATE, src, to);
                 //        break;

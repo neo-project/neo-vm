@@ -429,7 +429,6 @@ namespace javaloader
                             }
                             annotations = ReadAnnotations(br, this, utf8_cp);
                             break;
-#if STATIC_COMPILER
 						case "RuntimeInvisibleAnnotations":
 							if(majorVersion < 49)
 							{
@@ -444,7 +443,7 @@ namespace javaloader
 								}
 							}
 							break;
-#endif
+
                         case "BootstrapMethods":
                             if (majorVersion < 51)
                             {
@@ -2492,7 +2491,9 @@ namespace javaloader
                 int attributes_count = br.ReadUInt16();
                 for (int i = 0; i < attributes_count; i++)
                 {
-                    switch (classFile.GetConstantPoolUtf8String(utf8_cp, br.ReadUInt16()))
+                    var id = br.ReadUInt16();
+                    var sid = classFile.GetConstantPoolUtf8String(utf8_cp, id);
+                    switch (sid)
                     {
                         case "Deprecated":
                             if (br.ReadUInt32() != 0)
@@ -2549,6 +2550,15 @@ namespace javaloader
                             if (classFile.MajorVersion < 49)
                             {
                                 goto default;
+                            }
+                            annotations = ReadAnnotations(br, classFile, utf8_cp);
+                            break;
+                        case "RuntimeInvisibleAnnotations":
+                            {
+                                if (classFile.MajorVersion < 49)
+                                {
+                                    goto default;
+                                }
                             }
                             annotations = ReadAnnotations(br, classFile, utf8_cp);
                             break;
