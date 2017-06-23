@@ -73,6 +73,8 @@ namespace AntShares.VM
                         EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadInt32()));
                         break;
                     case OpCode.PUSHM1:
+                        EvaluationStack.Push(-1);
+                        break;
                     case OpCode.PUSH1:
                     case OpCode.PUSH2:
                     case OpCode.PUSH3:
@@ -401,6 +403,17 @@ namespace AntShares.VM
                     //        EvaluationStack.Push(x >> 1);
                     //    }
                     //    break;
+                    case OpCode.SIGN:
+                        {
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
+                            if (x == 0)
+                                EvaluationStack.Push(0);
+                            else if (x < 0)
+                                EvaluationStack.Push(-1);
+                            else
+                                EvaluationStack.Push(1);
+                        }
+                        break;
                     case OpCode.NEGATE:
                         {
                             BigInteger x = EvaluationStack.Pop().GetBigInteger();

@@ -256,6 +256,7 @@ namespace AntShares.Compiler.JVM
                 {
                     //need parse
                     _Convert1by1(VM.OpCode.SUB, src, to);
+                    _Convert1by1(VM.OpCode.SIGN, null, to);
                     //_Convert1by1(VM.OpCode.DEC, src, to);
                     return 0;
                 }
