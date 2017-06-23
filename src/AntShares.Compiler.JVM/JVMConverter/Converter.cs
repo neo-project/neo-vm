@@ -107,7 +107,8 @@ namespace AntShares.Compiler.JVM
                         }
                     }
                 }
-                if (key.Contains("Main"))
+                var name = key.Substring(key.IndexOf("::") + 2);
+                if (name == ("Main"))
                 {
                     var m = outModule.mapMethods[key];
                     foreach (var l in this.methodLink)
@@ -303,6 +304,9 @@ namespace AntShares.Compiler.JVM
                     _Insert1(AntShares.VM.OpCode.RET, null, to);
                     break;
 
+                case javaloader.NormalizedByteCode.__pop:
+                    _Convert1by1(AntShares.VM.OpCode.DROP, src, to);
+                    break;
                 case javaloader.NormalizedByteCode.__getstatic:
                     {
                         _Convert1by1(AntShares.VM.OpCode.NOP, src, to);
@@ -367,6 +371,7 @@ namespace AntShares.Compiler.JVM
                     _ConvertPush(0, src, to);
                     break;
                 case javaloader.NormalizedByteCode.__newarray:
+                case javaloader.NormalizedByteCode.__anewarray:
                     skipcount = _ConvertNewArray(method, src, to);
                     break;
 
@@ -378,9 +383,21 @@ namespace AntShares.Compiler.JVM
                 case javaloader.NormalizedByteCode.__iload:
                     _ConvertLdLoc(src, to, src.arg1);
                     break;
+                case javaloader.NormalizedByteCode.__aaload:
+                case javaloader.NormalizedByteCode.__iaload:
+                    _Convert1by1(VM.OpCode.PICKITEM, src, to);
+                    break;
+                case javaloader.NormalizedByteCode.__iastore:
+                case javaloader.NormalizedByteCode.__aastore:
+                    _Convert1by1(VM.OpCode.SETITEM, src, to);
+                    break;
+                case javaloader.NormalizedByteCode.__arraylength:
+                    _Convert1by1(VM.OpCode.ARRAYSIZE, src, to);
+                    break;
 
                 case javaloader.NormalizedByteCode.__invokevirtual:
                 case javaloader.NormalizedByteCode.__invokestatic:
+                case javaloader.NormalizedByteCode.__invokespecial:
                     {
                         _ConvertCall(method, src, to);
 
@@ -456,6 +473,23 @@ namespace AntShares.Compiler.JVM
                 //        }
 
                 //        break;
+                case javaloader.NormalizedByteCode.__if_acmpeq:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.EQUAL, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__if_acmpne:
+                    {
+                        _Convert1by1(AntShares.VM.OpCode.EQUAL, null, to);
+                        _Convert1by1(AntShares.VM.OpCode.NOT, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
                 case javaloader.NormalizedByteCode.__if_icmpeq:
                     {
                         _Convert1by1(AntShares.VM.OpCode.NUMEQUAL, null, to);
@@ -558,25 +592,43 @@ namespace AntShares.Compiler.JVM
                         code.srcaddr = src.addr + src.arg1;
                     }
                     break;
-
+                case javaloader.NormalizedByteCode.__ifnull:
+                    {
+                        _ConvertPush(0, src, to);//和0比较
+                        _Convert1by1(AntShares.VM.OpCode.NUMEQUAL, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
+                case javaloader.NormalizedByteCode.__ifnonnull:
+                    {
+                        _ConvertPush(0, src, to);//和0比较
+                        _Convert1by1(AntShares.VM.OpCode.NUMNOTEQUAL, null, to);
+                        var code = _Convert1by1(AntShares.VM.OpCode.JMPIF, null, to, new byte[] { 0, 0 });
+                        code.needfix = true;
+                        code.srcaddr = src.addr + src.arg1;
+                    }
+                    break;
                 //    //Stack
                 case javaloader.NormalizedByteCode.__dup:
                     _Convert1by1(AntShares.VM.OpCode.DUP, src, to);
                     break;
 
                 //    //Bitwise logic
-                //    case CodeEx.And:
-                //        _Convert1by1(AntShares.VM.OpCode.AND, src, to);
-                //        break;
-                //    case CodeEx.Or:
-                //        _Convert1by1(AntShares.VM.OpCode.OR, src, to);
-                //        break;
-                //    case CodeEx.Xor:
-                //        _Convert1by1(AntShares.VM.OpCode.XOR, src, to);
-                //        break;
-                //    case CodeEx.Not:
-                //        _Convert1by1(AntShares.VM.OpCode.INVERT, src, to);
-                //        break;
+                case javaloader.NormalizedByteCode.__iand:
+                case javaloader.NormalizedByteCode.__land:
+                    _Convert1by1(AntShares.VM.OpCode.AND, src, to);
+                        break;
+                case javaloader.NormalizedByteCode.__ior:
+                case javaloader.NormalizedByteCode.__lor:
+                    _Convert1by1(AntShares.VM.OpCode.OR, src, to);
+                    break;
+                case javaloader.NormalizedByteCode.__ixor:
+                case javaloader.NormalizedByteCode.__lxor:
+                    _Convert1by1(AntShares.VM.OpCode.XOR, src, to);
+                    break;
+
 
                 case javaloader.NormalizedByteCode.__iadd:
                 case javaloader.NormalizedByteCode.__ladd:
@@ -602,6 +654,10 @@ namespace AntShares.Compiler.JVM
                     _Convert1by1(AntShares.VM.OpCode.MOD, src, to);
                     break;
 
+                case javaloader.NormalizedByteCode.__new:
+                    _ConvertNew(method, src, to);
+
+                    break;
                 //    case CodeEx.Neg:
                 //        _Convert1by1(AntShares.VM.OpCode.NEGATE, src, to);
                 //        break;
@@ -662,7 +718,9 @@ namespace AntShares.Compiler.JVM
 
                 //    case CodeEx.Castclass:
                 //        break;
-
+                case javaloader.NormalizedByteCode.__i2c:
+                case javaloader.NormalizedByteCode.__checkcast:
+                    break;
                 //    case CodeEx.Box:
                 //    case CodeEx.Unbox:
                 //    case CodeEx.Unbox_Any:
@@ -717,9 +775,13 @@ namespace AntShares.Compiler.JVM
                 //        _ConvertLdfld(src, to);
                 //        break;
                 default:
+#if WITHPDB
                     //throw new Exception("unsupported instruction " + src.code);
                     logger.Log("not support code" + src.code);
                     break;
+#else
+                    throw new Exception("unsupported instruction " + src.code);
+#endif
 
             }
 

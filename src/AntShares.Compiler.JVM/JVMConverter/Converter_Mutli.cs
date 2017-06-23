@@ -80,8 +80,8 @@ namespace AntShares.Compiler.JVM
                     {
                         if (op[2] as string == "value")
                         {
-                            var info = op[3] as string;
-                            callname = info;
+                            var info = op[3] as object[];
+                            callname = info[2] as string;
                             return true;
                         }
 
@@ -171,7 +171,29 @@ namespace AntShares.Compiler.JVM
             if (this.srcModule.classes.ContainsKey(c.Class))
             {
                 javaclass = this.srcModule.classes[c.Class];
-                _javamethod = javaclass.methods[c.Name];
+                if (javaclass.methods.ContainsKey(c.Name))
+                {
+                    _javamethod = javaclass.methods[c.Name];
+                }
+                else
+                {
+                    while (javaclass != null)
+                    {
+                        if (this.srcModule.classes.ContainsKey(javaclass.superClass))
+                        {
+                            javaclass = this.srcModule.classes[javaclass.superClass];
+                            if (javaclass.methods.ContainsKey(c.Name))
+                            {
+                                _javamethod = javaclass.methods[c.Name];
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            javaclass = null;
+                        }
+                    }
+                }
             }
             int calltype = 0;
             string callname = "";
@@ -232,21 +254,51 @@ namespace AntShares.Compiler.JVM
                 }
                 else if (name == "java.math.BigInteger::compareTo")
                 {
+                    //need parse
                     _Convert1by1(VM.OpCode.SUB, src, to);
                     //_Convert1by1(VM.OpCode.DEC, src, to);
                     return 0;
                 }
-                else if (name == "java.math.BigInteger::equals")
+                else if (name == "java.math.BigInteger::equals" ||
+                    name == "java.lang.String::equals")
                 {
                     _Convert1by1(VM.OpCode.NUMEQUAL, src, to);
                     //_Convert1by1(VM.OpCode.DEC, src, to);
                     return 0;
                 }
                 else if (name == "java.math.BigInteger::valueOf" ||
-                    name == "java.math.BigInteger::intValue")
+                    name == "java.math.BigInteger::intValue" ||
+                    name == "java.lang.Boolean::valueOf" ||
+                    name == "java.lang.Character::valueOf"||
+                    name == "java.lang.String::valueOf")
                 {
                     //donothing
                     return 0;
+                }
+                else if (name == "java.lang.Boolean::booleanValue")
+                {
+                    _Convert1by1(VM.OpCode.NOP, src, to);
+                    return 0;
+                }
+                else if (name == "java.lang.String::hashCode")
+                {
+                    //java switch 的编译方式很奇怪
+                    return 0;
+                }
+                else if (name == "java.lang.String::charAt")
+                {
+                    _ConvertPush(1, src, to);
+                    _Convert1by1(AntShares.VM.OpCode.SUBSTR, null, to);
+                    return 0;
+                }
+                else if(name== "java.lang.String::length")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.SIZE, null, to);
+                    return 0;
+                }
+                else if(c.Class== "java.lang.StringBuilder")
+                {
+                    return _ConvertStringBuilder(c.Name, null, to);
                 }
             }
 
@@ -295,7 +347,7 @@ namespace AntShares.Compiler.JVM
             {
                 var _c = _Convert1by1(AntShares.VM.OpCode.CALL, null, to, new byte[] { 5, 0 });
                 _c.needfix = true;
-                _c.srcfunc = src.tokenMethod;
+                _c.srcfunc = name;
                 return 0;
             }
             else if (calltype == 2)
@@ -327,7 +379,9 @@ namespace AntShares.Compiler.JVM
             int skipcount = 0;
             if (src.arg1 != 8)
             {
-                this.logger.Log("_ConvertNewArray::not support type " + src.arg1 + " for array.");
+                //this.logger.Log("_ConvertNewArray::not support type " + src.arg1 + " for array.");
+                _Convert1by1(VM.OpCode.NEWARRAY, src, to);
+                return 0;
             }
             //bytearray
             var code = to.body_Codes.Last().Value;
@@ -385,6 +439,58 @@ namespace AntShares.Compiler.JVM
             }
             while (next != null);
 
+            return 0;
+        }
+        private int _ConvertNew(JavaMethod method, OpCode src, AntsMethod to)
+        {
+            var c =            method.DeclaringType.classfile.constantpool[src.arg1] as javaloader.ClassFile.ConstantPoolItemClass;
+            if(c.Name== "java.lang.StringBuilder")
+            {
+                _ConvertPush(1, src, to);
+                _Insert1(VM.OpCode.NEWARRAY, "", to);
+            }
+            else
+            {
+                throw new Exception("new not supported type." + c.Name);
+            }
+            return 0;
+        }
+        private int _ConvertStringBuilder(string callname, OpCode src, AntsMethod to)
+        {
+            if(callname=="<init>")
+            {
+                _Convert1by1(VM.OpCode.SWAP, null, to);
+                _Convert1by1(VM.OpCode.DUP, null, to);
+
+                _ConvertPush(0, null, to);
+                _ConvertPush(3, null, to);
+                _Convert1by1(VM.OpCode.ROLL, null, to);
+                _Convert1by1(VM.OpCode.SETITEM, null, to);
+                return 0;
+            }
+            if(callname=="append")
+            {
+                _Convert1by1(VM.OpCode.SWAP, null, to);//把对象数组换上来
+                _Convert1by1(VM.OpCode.DUP, null, to);
+                _ConvertPush(0, null, to);
+                _Convert1by1(VM.OpCode.PICKITEM, null, to);
+
+                _ConvertPush(2, null, to);
+                _Convert1by1(VM.OpCode.ROLL,null,to);
+                _Convert1by1(VM.OpCode.SWAP, null, to);//把对象数组换上来
+                _Convert1by1(VM.OpCode.CAT, null, to);
+
+                _ConvertPush(0, null, to);
+                _Convert1by1(VM.OpCode.SWAP, null, to);//把对象数组换上来
+                _Convert1by1(VM.OpCode.SETITEM, null, to);
+                return 0;
+            }
+            if(callname== "toString")
+            {
+                _ConvertPush(0, null, to);
+                _Convert1by1(VM.OpCode.PICKITEM, null, to);
+                return 0;
+            }
             return 0;
         }
         //private int _ConvertNewArr(ILMethod method, OpCode src, AntsMethod to)

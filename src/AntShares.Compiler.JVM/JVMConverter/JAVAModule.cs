@@ -240,6 +240,10 @@ namespace AntShares.Compiler.JVM
             {
                 return "double";
             }
+            else if(sign[i]=='C')
+            {
+                return "char";
+            }
             else if (sign[i] == 'L')//a long string
             {
                 var i2 = sign.IndexOf(';', i);
