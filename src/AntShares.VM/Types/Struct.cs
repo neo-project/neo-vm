@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Numerics;
+﻿using System.Linq;
 
 namespace AntShares.VM.Types
 {
@@ -8,7 +6,7 @@ namespace AntShares.VM.Types
     {
         public override bool IsStruct => true;
 
-        public Struct(StackItem[] value):base(value)
+        public Struct(StackItem[] value) : base(value)
         {
         }
 

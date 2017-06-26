@@ -40,6 +40,5 @@ namespace AntShares.VM.Types
         {
             return value ? TRUE : FALSE;
         }
-
     }
 }
