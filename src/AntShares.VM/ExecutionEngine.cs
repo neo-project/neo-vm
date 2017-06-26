@@ -89,7 +89,7 @@ namespace AntShares.VM
                     case OpCode.PUSH14:
                     case OpCode.PUSH15:
                     case OpCode.PUSH16:
-                        EvaluationStack.Push(opcode - OpCode.PUSH1 + 1);
+                        EvaluationStack.Push((int)opcode - (int)OpCode.PUSH1 + 1);
                         break;
 
                     // Control
@@ -153,6 +153,9 @@ namespace AntShares.VM
                         break;
 
                     // Stack ops
+                    case OpCode.DUPFROMALTSTACK:
+                        EvaluationStack.Push(AltStack.Peek());
+                        break;
                     case OpCode.TOALTSTACK:
                         AltStack.Push(EvaluationStack.Pop());
                         break;
@@ -325,7 +328,7 @@ namespace AntShares.VM
                         break;
                     case OpCode.SIZE:
                         {
-                            byte[] x = EvaluationStack.Peek().GetByteArray();
+                            byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(x.Length);
                         }
                         break;
@@ -630,11 +633,9 @@ namespace AntShares.VM
                         {
                             StackItem item = EvaluationStack.Pop();
                             if (!item.IsArray)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            EvaluationStack.Push(item.GetArray().Length);
+                                EvaluationStack.Push(item.GetByteArray().Length);
+                            else
+                                EvaluationStack.Push(item.GetArray().Length);
                         }
                         break;
                     case OpCode.PACK:
@@ -691,6 +692,10 @@ namespace AntShares.VM
                     case OpCode.SETITEM:
                         {
                             StackItem newItem = EvaluationStack.Pop();
+                            if (newItem.IsStruct)
+                            {
+                                newItem = (newItem as AntShares.VM.Types.Struct).Clone();
+                            }
                             int index = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem arrItem = EvaluationStack.Pop();
                             if (!arrItem.IsArray)
@@ -715,8 +720,18 @@ namespace AntShares.VM
                             {
                                 items[i] = false;
                             }
-                            StackItem aii = items;
-                            EvaluationStack.Push(aii);
+                            EvaluationStack.Push(new VM.Types.Array(items));
+                        }
+                        break;
+                    case OpCode.NEWSTRUCT:
+                        {
+                            int count = (int)EvaluationStack.Pop().GetBigInteger();
+                            StackItem[] items = new StackItem[count];
+                            for (var i = 0; i < count; i++)
+                            {
+                                items[i] = false;
+                            }
+                            EvaluationStack.Push(new VM.Types.Struct(items));
                         }
                         break;
                     default:

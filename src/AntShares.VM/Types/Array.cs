@@ -6,7 +6,7 @@ namespace AntShares.VM.Types
 {
     internal class Array : StackItem
     {
-        private StackItem[] _array;
+        protected StackItem[] _array;
 
         public override bool IsArray => true;
 

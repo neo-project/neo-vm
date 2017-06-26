@@ -10,6 +10,7 @@ namespace AntShares.VM
     public abstract class StackItem : IEquatable<StackItem>
     {
         public virtual bool IsArray => false;
+        public virtual bool IsStruct => false;
 
         public abstract bool Equals(StackItem other);
 

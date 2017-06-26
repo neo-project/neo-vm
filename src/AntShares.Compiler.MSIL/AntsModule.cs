@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace AntShares.Compiler.MSIL
+namespace AntShares.Compiler
 {
     public class AntsModule
     {
@@ -85,10 +85,10 @@ namespace AntShares.Compiler.MSIL
     public class AntsMethod
     {
         public string name;
-        public List<ILParam> paramtypes = new List<ILParam>();
+        public List<AntsParam> paramtypes = new List<AntsParam>();
         public string returntype;
         //临时变量
-        public List<ILParam> body_Variables = new List<ILParam>();
+        public List<AntsParam> body_Variables = new List<AntsParam>();
 
         //临时记录在此，会合并到一起
         public SortedDictionary<int, AntsCode> body_Codes = new SortedDictionary<int, AntsCode>();
@@ -209,6 +209,28 @@ namespace AntShares.Compiler.MSIL
         public void FromJson(MyJson.JsonNode_Object json)
         {
 
+        }
+    }
+    public class AntsParam
+    {
+        public AntsParam(string name, string type)
+        {
+            this.name = name;
+            this.type = type;
+        }
+        public string name
+        {
+            get;
+            private set;
+        }
+        public string type
+        {
+            get;
+            private set;
+        }
+        public override string ToString()
+        {
+            return type + " " + name;
         }
     }
 }

@@ -43,6 +43,7 @@
 
 
         // Stack
+        DUPFROMALTSTACK = 0x6A,
         TOALTSTACK = 0x6B, // Puts the input onto the top of the alt stack. Removes it from the main stack.
         FROMALTSTACK = 0x6C, // Puts the input onto the top of the main stack. Removes it from the alt stack.
         XDROP = 0x6D,
@@ -124,6 +125,7 @@
         UNPACK = 0xC2,
         PICKITEM = 0xC3,
         SETITEM = 0xC4,
-        NEWARRAY = 0xC5,
+        NEWARRAY = 0xC5, //用作引用類型
+        NEWSTRUCT = 0xC6, //用作值類型
     }
 }

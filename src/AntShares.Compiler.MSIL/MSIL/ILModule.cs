@@ -46,7 +46,15 @@ namespace AntShares.Compiler.MSIL
                 {
 
                     mapType[t.FullName] = new ILType(this, t);
+                    if(t.HasNestedTypes)
+                    {
+                        foreach(var nt in t.NestedTypes)
+                        {
+                            mapType[nt.FullName] = new ILType(this, nt);
 
+                        }
+                    }
+                   
                 }
             }
         }
@@ -94,7 +102,7 @@ namespace AntShares.Compiler.MSIL
                     hasParam = true;
                     foreach (var p in method.Parameters)
                     {
-                        this.paramtypes.Add(new ILParam(p.Name, p.ParameterType.FullName));
+                        this.paramtypes.Add(new AntsParam(p.Name, p.ParameterType.FullName));
                     }
                 }
                 if (method.HasBody)
@@ -104,7 +112,7 @@ namespace AntShares.Compiler.MSIL
                     {
                         foreach (var v in bodyNative.Variables)
                         {
-                            this.body_Variables.Add(new ILParam(v.Name, v.VariableType.FullName));
+                            this.body_Variables.Add(new AntsParam(v.Name, v.VariableType.FullName));
                         }
                     }
                     for (int i = 0; i < bodyNative.Instructions.Count; i++)
@@ -126,10 +134,10 @@ namespace AntShares.Compiler.MSIL
         }
 
         public string returntype;
-        public List<ILParam> paramtypes = new List<ILParam>();
+        public List<AntsParam> paramtypes = new List<AntsParam>();
         public bool hasParam = false;
         public Mono.Cecil.MethodDefinition method;
-        public List<ILParam> body_Variables = new List<ILParam>();
+        public List<AntsParam> body_Variables = new List<AntsParam>();
         public SortedDictionary<int, OpCode> body_Codes = new SortedDictionary<int, OpCode>();
         public string fail = null;
         public int GetNextCodeAddr(int srcaddr)
@@ -151,28 +159,7 @@ namespace AntShares.Compiler.MSIL
             return -1;
         }
     }
-    public class ILParam
-    {
-        public ILParam(string name, string type)
-        {
-            this.name = name;
-            this.type = type;
-        }
-        public string name
-        {
-            get;
-            private set;
-        }
-        public string type
-        {
-            get;
-            private set;
-        }
-        public override string ToString()
-        {
-            return type + " " + name;
-        }
-    }
+
     public enum CodeEx
     {
         Nop,
@@ -444,6 +431,7 @@ namespace AntShares.Compiler.MSIL
         public string tokenStr;
         public void InitToken(object _p)
         {
+            this.tokenUnknown = _p;
             switch (code)
             {
                 case CodeEx.Leave:
@@ -575,6 +563,9 @@ namespace AntShares.Compiler.MSIL
                     this.tokenValueType = TokenValueType.String;
                     break;
 
+                case CodeEx.Stloc_0:
+
+                    break;
                 case CodeEx.Ldloca:
                 case CodeEx.Ldloca_S:
                 case CodeEx.Ldloc_S:
