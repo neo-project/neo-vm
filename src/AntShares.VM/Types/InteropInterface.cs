@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace AntShares.VM.Types
 {
     internal class InteropInterface : StackItem

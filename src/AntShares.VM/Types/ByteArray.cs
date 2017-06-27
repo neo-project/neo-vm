@@ -18,11 +18,9 @@ namespace AntShares.VM.Types
             return value.SequenceEqual(other.GetByteArray());
         }
 
-
         public override byte[] GetByteArray()
         {
             return value;
         }
-
     }
 }

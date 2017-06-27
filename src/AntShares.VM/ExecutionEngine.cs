@@ -73,8 +73,6 @@ namespace AntShares.VM
                         EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadInt32()));
                         break;
                     case OpCode.PUSHM1:
-                        EvaluationStack.Push(-1);
-                        break;
                     case OpCode.PUSH1:
                     case OpCode.PUSH2:
                     case OpCode.PUSH3:
@@ -91,7 +89,7 @@ namespace AntShares.VM
                     case OpCode.PUSH14:
                     case OpCode.PUSH15:
                     case OpCode.PUSH16:
-                        EvaluationStack.Push(opcode - OpCode.PUSH1 + 1);
+                        EvaluationStack.Push((int)opcode - (int)OpCode.PUSH1 + 1);
                         break;
 
                     // Control
@@ -155,17 +153,14 @@ namespace AntShares.VM
                         break;
 
                     // Stack ops
+                    case OpCode.DUPFROMALTSTACK:
+                        EvaluationStack.Push(AltStack.Peek());
+                        break;
                     case OpCode.TOALTSTACK:
                         AltStack.Push(EvaluationStack.Pop());
                         break;
                     case OpCode.FROMALTSTACK:
                         EvaluationStack.Push(AltStack.Pop());
-                        break;
-                    case OpCode.DUPFROMALTSTACK:
-                        {
-                            var src = AltStack.Peek();
-                            EvaluationStack.Push(src);
-                        }
                         break;
                     case OpCode.XDROP:
                         {
@@ -210,12 +205,8 @@ namespace AntShares.VM
                         EvaluationStack.Pop();
                         break;
                     case OpCode.DUP:
-                        {
-                            var src = EvaluationStack.Peek();
-                            EvaluationStack.Push(src);
-                        }
+                        EvaluationStack.Push(EvaluationStack.Peek());
                         break;
-
                     case OpCode.NIP:
                         {
                             StackItem x2 = EvaluationStack.Pop();
@@ -653,15 +644,9 @@ namespace AntShares.VM
                         {
                             StackItem item = EvaluationStack.Pop();
                             if (!item.IsArray)
-                            {
                                 EvaluationStack.Push(item.GetByteArray().Length);
-                                //State |= VMState.FAULT;
-                                //return;
-                            }
                             else
-                            {
                                 EvaluationStack.Push(item.GetArray().Length);
-                            }
                         }
                         break;
                     case OpCode.PACK:
@@ -718,7 +703,7 @@ namespace AntShares.VM
                     case OpCode.SETITEM:
                         {
                             StackItem newItem = EvaluationStack.Pop();
-                            if(newItem.IsStruct)
+                            if (newItem.IsStruct)
                             {
                                 newItem = (newItem as AntShares.VM.Types.Struct).Clone();
                             }
@@ -744,9 +729,8 @@ namespace AntShares.VM
                             StackItem[] items = new StackItem[count];
                             for (var i = 0; i < count; i++)
                             {
-                                items[i] = 0;
+                                items[i] = false;
                             }
-
                             EvaluationStack.Push(new VM.Types.Array(items));
                         }
                         break;
@@ -756,43 +740,11 @@ namespace AntShares.VM
                             StackItem[] items = new StackItem[count];
                             for (var i = 0; i < count; i++)
                             {
-                                items[i] = 0;
+                                items[i] = false;
                             }
                             EvaluationStack.Push(new VM.Types.Struct(items));
                         }
                         break;
-                    //case OpCode.CLONE:
-                    //    {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
-                    //        var src = EvaluationStack.Pop();
-                    //        if (src.IsArray)
-                    //        {
-                    //            if (src.IsStruct)
-                    //            {
-                    //                src = (src as AntShares.VM.Types.Struct).Clone();
-
-                    //            }
-                    //            else
-                    //            {
-                    //                src = (src as AntShares.VM.Types.Array).Clone();
-                    //            }
-                    //        }
-
-                    //        EvaluationStack.Push(src);
-                    //    }
-                    //    break;
-                    //case OpCode.CLONESTRUCTONLY:
-                    //    {//这条指令的意思是，移除栈顶元素，并创建一个他的副本
-                    //        var src = EvaluationStack.Pop();
-
-                    //        if (src.IsStruct)
-                    //        {
-                    //            src = (src as AntShares.VM.Types.Struct).Clone();
-                    //        }
-
-                    //        EvaluationStack.Push(src);
-
-                    //    }
-                    //    break;
                     default:
                         State |= VMState.FAULT;
                         return;

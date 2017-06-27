@@ -12,6 +12,7 @@
     <PackageId>AntShares.Compiler.MSIL</PackageId>
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
     <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+    <RootNamespace>AntShares.Compiler</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

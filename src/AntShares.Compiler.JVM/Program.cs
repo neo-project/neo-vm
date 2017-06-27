@@ -26,7 +26,7 @@ namespace AntShares.Compiler.JVM
             }
             string filename = args[0];
             string onlyname = System.IO.Path.GetFileNameWithoutExtension(filename);
-            javaloader.ClassFile classFile = null;
+            //javaloader.ClassFile classFile = null;
             JavaModule module = new JavaModule();
 
 

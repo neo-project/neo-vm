@@ -37,6 +37,5 @@ namespace AntShares.VM.Types
         {
             return value.ToByteArray();
         }
-
     }
 }
