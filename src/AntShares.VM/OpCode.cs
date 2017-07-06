@@ -83,8 +83,7 @@
         // Note: Arithmetic inputs are limited to signed 32-bit integers, but may overflow their output.
         INC = 0x8B, // 1 is added to the input.
         DEC = 0x8C, // 1 is subtracted from the input.
-        //SAL = 0x8D, // The input is multiplied by 2.
-        //SAR = 0x8E, // The input is divided by 2.
+        SIGN = 0x8D,
         NEGATE = 0x8F, // The sign of the input is flipped.
         ABS = 0x90, // The input is made positive.
         NOT = 0x91, // If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
@@ -107,7 +106,6 @@
         MIN = 0xA3, // Returns the smaller of a and b.
         MAX = 0xA4, // Returns the larger of a and b.
         WITHIN = 0xA5, // Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
-        SIGN =0xA6,// Returns the length of the input. 
 
         // Crypto
         //RIPEMD160 = 0xA6, // The input is hashed using RIPEMD-160.

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using AntShares.Compiler.JVM;
+using System;
 using System.Reflection;
 
-namespace AntShares.Compiler.JVM
+namespace AntShares.Compiler
 {
     public class Program
     {
