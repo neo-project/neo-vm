@@ -382,18 +382,12 @@ namespace AntShares.VM
                             EvaluationStack.Push(x - 1);
                         }
                         break;
-                    //case OpCode.SAL:
-                    //    {
-                    //        BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                    //        EvaluationStack.Push(x << 1);
-                    //    }
-                    //    break;
-                    //case OpCode.SAR:
-                    //    {
-                    //        BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                    //        EvaluationStack.Push(x >> 1);
-                    //    }
-                    //    break;
+                    case OpCode.SIGN:
+                        {
+                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
+                            EvaluationStack.Push(x.Sign);
+                        }
+                        break;
                     case OpCode.NEGATE:
                         {
                             BigInteger x = EvaluationStack.Pop().GetBigInteger();

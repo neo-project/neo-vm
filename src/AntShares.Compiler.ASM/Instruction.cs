@@ -43,6 +43,7 @@ namespace AntShares.Compiler.ASM
                     break;
                 case InstructionName.NOP:
                 case InstructionName.RET:
+                case InstructionName.DUPFROMALTSTACK:
                 case InstructionName.TOALTSTACK:
                 case InstructionName.FROMALTSTACK:
                 case InstructionName.XDROP:
@@ -70,8 +71,7 @@ namespace AntShares.Compiler.ASM
                 case InstructionName.EQUAL:
                 case InstructionName.INC:
                 case InstructionName.DEC:
-                //case InstructionName.SAL:
-                //case InstructionName.SAR:
+                case InstructionName.SIGN:
                 case InstructionName.NEGATE:
                 case InstructionName.ABS:
                 case InstructionName.NOT:
@@ -104,6 +104,9 @@ namespace AntShares.Compiler.ASM
                 case InstructionName.PACK:
                 case InstructionName.UNPACK:
                 case InstructionName.PICKITEM:
+                case InstructionName.SETITEM:
+                case InstructionName.NEWARRAY:
+                case InstructionName.NEWSTRUCT:
                     Code = ProcessOthers();
                     break;
                 case InstructionName.JMP:

@@ -12,6 +12,7 @@
         APPCALL,
         SYSCALL,
         TAILCALL,
+        DUPFROMALTSTACK,
         TOALTSTACK,
         FROMALTSTACK,
         XDROP,
@@ -39,8 +40,7 @@
         EQUAL,
         INC,
         DEC,
-        //SAL,
-        //SAR,
+        SIGN,
         NEGATE,
         ABS,
         NOT,
@@ -73,5 +73,8 @@
         PACK,
         UNPACK,
         PICKITEM,
+        SETITEM,
+        NEWARRAY,
+        NEWSTRUCT,
     }
 }
