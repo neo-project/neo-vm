@@ -73,9 +73,15 @@ namespace AntShares.Compiler.MSIL
         {//这有两种情况，我们需要先判断这个引用地址是拿出来干嘛的
 
             var n1 = method.body_Codes[method.GetNextCodeAddr(src.addr)];
+            var n2 = method.body_Codes[method.GetNextCodeAddr(n1.addr)];
             if (n1.code == CodeEx.Initobj)//初始化结构体，必须给引用地址
             {
                 _ConvertPush(pos + method.paramtypes.Count, src, to);
+            }
+            else if(n2.code==CodeEx.Call&&n2.tokenMethod.Contains(".ctor"))
+            {
+                _ConvertPush(pos + method.paramtypes.Count, src, to);
+
             }
             else
             {
@@ -116,112 +122,120 @@ namespace AntShares.Compiler.MSIL
             //_Convert1by1(AntShares.VM.OpCode.PICK, null, to);
         }
 
-        public bool IsSysCall(Mono.Cecil.MethodReference refs, out string name)
+        public bool IsSysCall(Mono.Cecil.MethodDefinition defs, out string name)
         {
-            try
-            {
-                var defs = refs.Resolve();
-                foreach (var attr in defs.CustomAttributes)
-                {
-                    if (attr.AttributeType.Name == "SyscallAttribute")
-                    {
-                        var type = attr.ConstructorArguments[0].Type;
-                        var value = (string)attr.ConstructorArguments[0].Value;
-
-                        //dosth
-                        name = value;
-                        return true;
-
-
-
-                    }
-                    //if(attr.t)
-                }
-                name = "";
-                return false;
-            }
-            catch
+            if (defs == null)
             {
                 name = "";
                 return false;
             }
-
-        }
-        public bool IsAppCall(Mono.Cecil.MethodReference refs, out byte[] hash)
-        {
-            try
+            foreach (var attr in defs.CustomAttributes)
             {
-                var defs = refs.Resolve();
-                foreach (var attr in defs.CustomAttributes)
+                if (attr.AttributeType.Name == "SyscallAttribute")
                 {
-                    if (attr.AttributeType.Name == "AppcallAttribute")
-                    {
-                        var type = attr.ConstructorArguments[0].Type;
-                        var a = attr.ConstructorArguments[0];
-                        var list = a.Value as Mono.Cecil.CustomAttributeArgument[];
-                        hash = new byte[20];
-                        for (var i = 0; i < 20; i++)
-                        {
-                            hash[i] = (byte)list[i].Value;
-                        }
+                    var type = attr.ConstructorArguments[0].Type;
+                    var value = (string)attr.ConstructorArguments[0].Value;
 
-                        //dosth
-                        return true;
+                    //dosth
+                    name = value;
+                    return true;
 
 
 
-                    }
-                    //if(attr.t)
                 }
-                hash = null;
-                return false;
+                //if(attr.t)
             }
-            catch
-            {
-                hash = null;
-                return false;
-            }
+            name = "";
+            return false;
+
 
         }
-        public bool IsOpCall(Mono.Cecil.MethodReference refs, out string name)
+        public bool IsAppCall(Mono.Cecil.MethodDefinition defs, out byte[] hash)
         {
-            try
+            if (defs == null)
             {
-                var defs = refs.Resolve();
-                foreach (var attr in defs.CustomAttributes)
+                hash = null;
+                return false;
+            }
+            foreach (var attr in defs.CustomAttributes)
+            {
+                if (attr.AttributeType.Name == "AppcallAttribute")
                 {
-                    if (attr.AttributeType.Name == "OpCodeAttribute")
+                    var type = attr.ConstructorArguments[0].Type;
+                    var a = attr.ConstructorArguments[0];
+                    var list = a.Value as Mono.Cecil.CustomAttributeArgument[];
+                    hash = new byte[20];
+                    for (var i = 0; i < 20; i++)
                     {
-                        var type = attr.ConstructorArguments[0].Type;
-                        var value = (byte)attr.ConstructorArguments[0].Value;
+                        hash[i] = (byte)list[i].Value;
+                    }
 
-                        foreach (var t in type.Resolve().Fields)
+                    //dosth
+                    return true;
+
+
+
+                }
+                //if(attr.t)
+            }
+            hash = null;
+            return false;
+
+
+        }
+        public bool IsNonCall(Mono.Cecil.MethodDefinition defs)
+        {
+            if (defs == null)
+            {
+                return false;
+            }
+            foreach (var attr in defs.CustomAttributes)
+            {
+                if (attr.AttributeType.Name == "NonemitAttribute")
+                {
+                    return true;
+                }
+                //if(attr.t)
+            }
+            return false;
+        }
+        public bool IsOpCall(Mono.Cecil.MethodDefinition defs, out string name)
+        {
+            if (defs == null)
+            {
+                name = "";
+                return false;
+            }
+
+            foreach (var attr in defs.CustomAttributes)
+            {
+                if (attr.AttributeType.Name == "OpCodeAttribute")
+                {
+                    var type = attr.ConstructorArguments[0].Type;
+                    var value = (byte)attr.ConstructorArguments[0].Value;
+
+                    foreach (var t in type.Resolve().Fields)
+                    {
+                        if (t.Constant != null)
                         {
-                            if (t.Constant != null)
+                            if ((byte)t.Constant == value)
                             {
-                                if ((byte)t.Constant == value)
-                                {
 
-                                    //dosth
-                                    name = t.Name;
-                                    return true;
+                                //dosth
+                                name = t.Name;
+                                return true;
 
-                                }
                             }
                         }
-
-
                     }
-                    //if(attr.t)
+
+
                 }
-                name = "";
-                return false;
+                //if(attr.t)
             }
-            catch
-            {
-                name = "";
-                return false;
-            }
+            name = "";
+            return false;
+
         }
         private int _ConvertCall(OpCode src, AntsMethod to)
         {
@@ -232,7 +246,20 @@ namespace AntShares.Compiler.MSIL
             byte[] callhash = null;
             VM.OpCode callcode = VM.OpCode.NOP;
 
-            if (IsOpCall(refs, out callname))
+            Mono.Cecil.MethodDefinition defs = null;
+            try
+            {
+                defs = refs.Resolve();
+            }
+            catch
+            {
+
+            }
+            if (IsNonCall(defs))
+            {
+                return 0;
+            }
+            else if (IsOpCall(defs, out callname))
             {
                 if (System.Enum.TryParse<VM.OpCode>(callname, out callcode))
                 {
@@ -243,11 +270,11 @@ namespace AntShares.Compiler.MSIL
                     throw new Exception("Can not find OpCall:" + callname);
                 }
             }
-            else if (IsSysCall(refs, out callname))
+            else if (IsSysCall(defs, out callname))
             {
                 calltype = 3;
             }
-            else if (IsAppCall(refs, out callhash))
+            else if (IsAppCall(defs, out callhash))
             {
                 calltype = 4;
             }
@@ -422,6 +449,7 @@ namespace AntShares.Compiler.MSIL
                     _Convert1by1(AntShares.VM.OpCode.CAT, src, to);
                     return 0;
                 }
+
                 else if (src.tokenMethod == "System.String System.String::Substring(System.Int32,System.Int32)")
                 {
                     _Convert1by1(AntShares.VM.OpCode.SUBSTR, src, to);
@@ -440,6 +468,20 @@ namespace AntShares.Compiler.MSIL
                 }
                 else if (src.tokenMethod == "System.String System.Char::ToString()")
                 {
+                    return 0;
+                }
+                else if (src.tokenMethod == "System.Byte[] System.Numerics.BigInteger::ToByteArray()")
+                {
+                    return 0;
+                }
+                else if (src.tokenMethod == "System.Void System.Numerics.BigInteger::.ctor(System.Byte[])")
+                {
+                    _Convert1by1(AntShares.VM.OpCode.DUPFROMALTSTACK, src, to);
+                    _ConvertPush(2, null, to);
+                    _Convert1by1(VM.OpCode.ROLL, null, to);
+                    _ConvertPush(2, null, to);
+                    _Convert1by1(VM.OpCode.ROLL, null, to);
+                    _Convert1by1(VM.OpCode.SETITEM, null, to);
                     return 0;
                 }
                 else
@@ -525,6 +567,27 @@ namespace AntShares.Compiler.MSIL
             if (type != "System.Byte")
             {
                 _Convert1by1(VM.OpCode.NEWARRAY, src, to);
+                int n = method.GetNextCodeAddr(src.addr);
+                int n2 = method.GetNextCodeAddr(n);
+                int n3 = method.GetNextCodeAddr(n2);
+                if (n >= 0 && n2 >= 0 && n3 >= 0 && method.body_Codes[n].code == CodeEx.Dup && method.body_Codes[n2].code == CodeEx.Ldtoken && method.body_Codes[n3].code == CodeEx.Call)
+                {//這是在初始化數組
+                    var data = method.body_Codes[n2].tokenUnknown as byte[];
+                    if (type == "System.Char")
+                    {
+                        for (var i = 0; i < data.Length; i += 2)
+                        {
+                            char info = BitConverter.ToChar(data, i);
+                            _Convert1by1(VM.OpCode.DUP, null, to);
+                            _ConvertPush(i / 2, null, to);
+                            _ConvertPush(info, null, to);
+                            _Convert1by1(VM.OpCode.SETITEM, null, to);
+                        }
+                        return 3;
+                    }
+                    throw new Exception("not support this type's init array.");
+
+                }
                 return 0;
                 //this.logger.Log("_ConvertNewArr::not support type " + type + " for array.");
             }
@@ -547,7 +610,7 @@ namespace AntShares.Compiler.MSIL
                 int n = method.GetNextCodeAddr(src.addr);
                 int n2 = method.GetNextCodeAddr(n);
                 int n3 = method.GetNextCodeAddr(n2);
-                if (method.body_Codes[n].code == CodeEx.Dup && method.body_Codes[n2].code == CodeEx.Ldtoken && method.body_Codes[n3].code == CodeEx.Call)
+                if (n >= 0 && n2 >= 0 && n3 >= 0 && method.body_Codes[n].code == CodeEx.Dup && method.body_Codes[n2].code == CodeEx.Ldtoken && method.body_Codes[n3].code == CodeEx.Call)
                 {//這是在初始化數組
 
                     var data = method.body_Codes[n2].tokenUnknown as byte[];
