@@ -403,6 +403,8 @@ namespace AntShares.Compiler.MSIL
                     break;
                 case CodeEx.Ldarg_S:
                 case CodeEx.Ldarg:
+                case CodeEx.Ldarga:
+                case CodeEx.Ldarga_S:
                     _ConvertLdArg(src, to, src.tokenI32);
                     break;
                 //需要地址轉換的情況
