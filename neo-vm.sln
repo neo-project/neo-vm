@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.15
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo-vm", "src\neo-vm\neo-vm.csproj", "{6A621185-36A9-4E1A-8D3D-462D19503E32}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A621185-36A9-4E1A-8D3D-462D19503E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A621185-36A9-4E1A-8D3D-462D19503E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A621185-36A9-4E1A-8D3D-462D19503E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A621185-36A9-4E1A-8D3D-462D19503E32}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6A621185-36A9-4E1A-8D3D-462D19503E32} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
+	EndGlobalSection
+EndGlobal
