@@ -583,24 +583,56 @@ namespace Neo.VM
                         break;
                     case OpCode.CHECKMULTISIG:
                         {
-                            int n = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (n < 1)
+                            int n;
+                            byte[][] pubkeys;
+                            StackItem item = EvaluationStack.Pop();
+                            if (item.IsArray)
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                pubkeys = item.GetArray().Select(p => p.GetByteArray()).ToArray();
+                                n = pubkeys.Length;
+                                if (n == 0)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
                             }
-                            byte[][] pubkeys = new byte[n][];
-                            for (int i = 0; i < n; i++)
-                                pubkeys[i] = EvaluationStack.Pop().GetByteArray();
-                            int m = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (m < 1 || m > n)
+                            else
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                n = (int)item.GetBigInteger();
+                                if (n < 1)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                pubkeys = new byte[n][];
+                                for (int i = 0; i < n; i++)
+                                    pubkeys[i] = EvaluationStack.Pop().GetByteArray();
                             }
-                            byte[][] signatures = new byte[m][];
-                            for (int i = 0; i < m; i++)
-                                signatures[i] = EvaluationStack.Pop().GetByteArray();
+                            int m;
+                            byte[][] signatures;
+                            item = EvaluationStack.Pop();
+                            if (item.IsArray)
+                            {
+                                signatures = item.GetArray().Select(p => p.GetByteArray()).ToArray();
+                                m = signatures.Length;
+                                if (m == 0 || m > n)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                m = (int)item.GetBigInteger();
+                                if (m < 1 || m > n)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                signatures = new byte[m][];
+                                for (int i = 0; i < m; i++)
+                                    signatures[i] = EvaluationStack.Pop().GetByteArray();
+                            }
                             byte[] message = ScriptContainer.GetMessage();
                             bool fSuccess = true;
                             try
