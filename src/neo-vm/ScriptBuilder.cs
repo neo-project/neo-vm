@@ -81,6 +81,11 @@ namespace Neo.VM
             return this;
         }
 
+        public ScriptBuilder EmitPush(string data)
+        {
+            return EmitPush(Encoding.UTF8.GetBytes(data));
+        }
+
         public ScriptBuilder EmitSysCall(string api)
         {
             if (api == null)

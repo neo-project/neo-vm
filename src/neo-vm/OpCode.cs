@@ -79,6 +79,7 @@
         //OP_RESERVED1 = 0x89, // Transaction is invalid unless occuring in an unexecuted OP_IF branch
         //OP_RESERVED2 = 0x8A, // Transaction is invalid unless occuring in an unexecuted OP_IF branch
 
+
         // Arithmetic
         // Note: Arithmetic inputs are limited to signed 32-bit integers, but may overflow their output.
         INC = 0x8B, // 1 is added to the input.
@@ -107,6 +108,7 @@
         MAX = 0xA4, // Returns the larger of a and b.
         WITHIN = 0xA5, // Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
 
+
         // Crypto
         //RIPEMD160 = 0xA6, // The input is hashed using RIPEMD-160.
         SHA1 = 0xA7, // The input is hashed using SHA-1.
@@ -125,5 +127,9 @@
         SETITEM = 0xC4,
         NEWARRAY = 0xC5, //用作引用類型
         NEWSTRUCT = 0xC6, //用作值類型
+
+
+        // Exceptions
+        THROW = 0xF0
     }
 }

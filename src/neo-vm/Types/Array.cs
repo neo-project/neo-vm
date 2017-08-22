@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Numerics;
 
 namespace Neo.VM.Types
 {
@@ -29,11 +28,6 @@ namespace Neo.VM.Types
         public override StackItem[] GetArray()
         {
             return _array;
-        }
-
-        public override BigInteger GetBigInteger()
-        {
-            throw new NotSupportedException();
         }
 
         public override bool GetBoolean()

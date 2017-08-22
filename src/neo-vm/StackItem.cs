@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Text;
 using Array = Neo.VM.Types.Array;
 using Boolean = Neo.VM.Types.Boolean;
 
@@ -39,6 +40,11 @@ namespace Neo.VM
         public virtual T GetInterface<T>() where T : class, IInteropInterface
         {
             throw new NotSupportedException();
+        }
+
+        public virtual string GetString()
+        {
+            return Encoding.UTF8.GetString(GetByteArray());
         }
 
         public static implicit operator StackItem(int value)
