@@ -130,6 +130,7 @@
 
 
         // Exceptions
-        THROW = 0xF0
+        THROW = 0xF0,
+        THROWIFNOT = 0xF1
     }
 }

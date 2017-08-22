@@ -760,6 +760,19 @@ namespace Neo.VM
                             EvaluationStack.Push(new VM.Types.Struct(items));
                         }
                         break;
+
+                    // Exceptions
+                    case OpCode.THROW:
+                        State |= VMState.FAULT;
+                        return;
+                    case OpCode.THROWIFNOT:
+                        if (!EvaluationStack.Pop().GetBoolean())
+                        {
+                            State |= VMState.FAULT;
+                            return;
+                        }
+                        break;
+
                     default:
                         State |= VMState.FAULT;
                         return;
