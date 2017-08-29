@@ -46,7 +46,27 @@ namespace Neo.VM
             while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK))
                 StepInto();
         }
-
+        int CalcStringHash(string str)
+        {
+            if (str == null)
+                return 0;
+            var loc0 = -2128831035;
+            //var loc1 = 0;
+            //while(loc1<str.Length)
+            //{
+            //    var c = str[loc1];
+            //    var v = loc0 ^ c;
+            //    loc0 = loc0 * v;
+            //    loc1++;
+            //}
+            for (var i = 0; i < str.Length; i++)
+            {
+                var c = str[i];
+                var v = c ^ loc0;
+                loc0 = 16777619 * v;
+            }
+            return loc0;
+        }
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
         {
             if (opcode > OpCode.PUSH16 && opcode != OpCode.RET && context.PushOnly)
@@ -565,6 +585,12 @@ namespace Neo.VM
                         {
                             byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(Crypto.Hash256(x));
+                        }
+                        break;
+                    case OpCode.CSHARPSTRHASH32:
+                        {
+                            var item = EvaluationStack.Pop();
+                            EvaluationStack.Push(CalcStringHash(item.GetString()));
                         }
                         break;
                     case OpCode.CHECKSIG:

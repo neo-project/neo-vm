@@ -115,6 +115,8 @@
         SHA256 = 0xA8, // The input is hashed using SHA-256.
         HASH160 = 0xA9,
         HASH256 = 0xAA,
+        //因为这个hash函数可能仅仅是csharp 编译时专用的
+        CSHARPSTRHASH32 = 0xAB,
         CHECKSIG = 0xAC,
         CHECKMULTISIG = 0xAE,
 
