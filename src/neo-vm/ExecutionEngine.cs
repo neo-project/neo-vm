@@ -127,14 +127,37 @@ namespace Neo.VM
                                 return;
                             }
                             bool fValue = true;
-                            if (opcode > OpCode.JMP)
+                            if (opcode == OpCode.JMPIF)
                             {
                                 fValue = EvaluationStack.Pop().GetBoolean();
-                                if (opcode == OpCode.JMPIFNOT)
-                                    fValue = !fValue;
+                            }
+                            else if (opcode == OpCode.JMPIFNOT)
+                            {
+                                fValue = !EvaluationStack.Pop().GetBoolean();
                             }
                             if (fValue)
                                 context.InstructionPointer = offset;
+                        }
+                        break;
+                    case OpCode.SWITCH:
+                        {
+                            int index = (int)EvaluationStack.Pop().GetBigInteger();
+                            int count = context.OpReader.ReadInt16();
+                            Int16[] offsets = new Int16[count];
+                            for (var i = 0; i < count; i++)
+                            {
+                                offsets[i] = context.OpReader.ReadInt16();
+                            }
+                            int offset = offsets[index];
+                            //偏移地址要剪掉自己的长度
+                            offset = context.InstructionPointer + offset - (3 + count * 2);
+                            if (offset < 0 || offset > context.Script.Length)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
+                            context.InstructionPointer = offset;
                         }
                         break;
                     case OpCode.CALL:

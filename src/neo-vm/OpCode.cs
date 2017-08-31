@@ -130,6 +130,7 @@
         NEWARRAY = 0xC5, //用作引用類型
         NEWSTRUCT = 0xC6, //用作值類型
 
+        SWITCH = 0xD0,
 
         // Exceptions
         THROW = 0xF0,
