@@ -46,7 +46,44 @@ namespace Neo.VM
             while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK))
                 StepInto();
         }
+        int CalcStringHashIL(string str)
+        {
+            if (str == null)
+                return 0;
+            var loc0 = -2128831035;
+            //var loc1 = 0;
+            //while(loc1<str.Length)
+            //{
+            //    var c = str[loc1];
+            //    var v = loc0 ^ c;
+            //    loc0 = loc0 * v;
+            //    loc1++;
+            //}
+            for (var i = 0; i < str.Length; i++)
+            {
+                var c = str[i];
+                var v = c ^ loc0;
+                loc0 = 16777619 * v;
+            }
+            return loc0;
+        }
+        int CalcStringHashJVM(string str)
+        {
+            int hash = 0;
+            int h = hash;
 
+            if (h == 0 && str.Length > 0)
+            {
+
+                for (int i = 0; i < str.Length; i++)
+                {
+                    h = 31 * h + str[i];
+                }
+                hash = h;
+            }
+            return h;
+
+        }
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
         {
             if (opcode > OpCode.PUSH16 && opcode != OpCode.RET && context.PushOnly)
@@ -107,14 +144,43 @@ namespace Neo.VM
                                 return;
                             }
                             bool fValue = true;
-                            if (opcode > OpCode.JMP)
+                            if (opcode == OpCode.JMPIF)
                             {
                                 fValue = EvaluationStack.Pop().GetBoolean();
-                                if (opcode == OpCode.JMPIFNOT)
-                                    fValue = !fValue;
+                            }
+                            else if (opcode == OpCode.JMPIFNOT)
+                            {
+                                fValue = !EvaluationStack.Pop().GetBoolean();
                             }
                             if (fValue)
                                 context.InstructionPointer = offset;
+                        }
+                        break;
+                    case OpCode.SWITCH:
+                        {
+                            int index = (int)EvaluationStack.Pop().GetBigInteger();
+                            int count = context.OpReader.ReadInt16();
+
+                            System.Collections.Generic.Dictionary<int, Int16> addrs = new System.Collections.Generic.Dictionary<int, Int16>();
+
+                            for (var i = 0; i < count; i++)
+                            {
+                                var v = context.OpReader.ReadInt32();
+                                var t = context.OpReader.ReadInt16();
+                                addrs.Add(v, t);
+                            }
+                            if (addrs.ContainsKey(index))//如果有就jmp
+                            {
+                                int offset = addrs[index];
+                                //偏移地址要剪掉自己的长度
+                                offset = context.InstructionPointer + offset - (3 + count * 6);
+                                if (offset < 0 || offset > context.Script.Length)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                context.InstructionPointer = offset;
+                            }
                         }
                         break;
                     case OpCode.CALL:
@@ -565,6 +631,18 @@ namespace Neo.VM
                         {
                             byte[] x = EvaluationStack.Pop().GetByteArray();
                             EvaluationStack.Push(Crypto.Hash256(x));
+                        }
+                        break;
+                    case OpCode.CSHARPSTRHASH32:
+                        {
+                            var item = EvaluationStack.Pop();
+                            EvaluationStack.Push(CalcStringHashIL(item.GetString()));
+                        }
+                        break;
+                    case OpCode.JAVAHASH32:
+                        {
+                            var item = EvaluationStack.Pop();
+                            EvaluationStack.Push(CalcStringHashJVM(item.GetString()));
                         }
                         break;
                     case OpCode.CHECKSIG:
