@@ -46,7 +46,7 @@ namespace Neo.VM
             while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK))
                 StepInto();
         }
-        int CalcStringHash(string str)
+        int CalcStringHashIL(string str)
         {
             if (str == null)
                 return 0;
@@ -66,6 +66,23 @@ namespace Neo.VM
                 loc0 = 16777619 * v;
             }
             return loc0;
+        }
+        int CalcStringHashJVM(string str)
+        {
+            int hash = 0;
+            int h = hash;
+
+            if (h == 0 && str.Length > 0)
+            {
+
+                for (int i = 0; i < str.Length; i++)
+                {
+                    h = 31 * h + str[i];
+                }
+                hash = h;
+            }
+            return h;
+
         }
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
         {
@@ -143,21 +160,27 @@ namespace Neo.VM
                         {
                             int index = (int)EvaluationStack.Pop().GetBigInteger();
                             int count = context.OpReader.ReadInt16();
-                            Int16[] offsets = new Int16[count];
+
+                            System.Collections.Generic.Dictionary<int, Int16> addrs = new System.Collections.Generic.Dictionary<int, Int16>();
+
                             for (var i = 0; i < count; i++)
                             {
-                                offsets[i] = context.OpReader.ReadInt16();
+                                var v = context.OpReader.ReadInt32();
+                                var t = context.OpReader.ReadInt16();
+                                addrs.Add(v, t);
                             }
-                            int offset = offsets[index];
-                            //偏移地址要剪掉自己的长度
-                            offset = context.InstructionPointer + offset - (3 + count * 2);
-                            if (offset < 0 || offset > context.Script.Length)
+                            if (addrs.ContainsKey(index))//如果有就jmp
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                int offset = addrs[index];
+                                //偏移地址要剪掉自己的长度
+                                offset = context.InstructionPointer + offset - (3 + count * 6);
+                                if (offset < 0 || offset > context.Script.Length)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                context.InstructionPointer = offset;
                             }
-
-                            context.InstructionPointer = offset;
                         }
                         break;
                     case OpCode.CALL:
@@ -613,7 +636,13 @@ namespace Neo.VM
                     case OpCode.CSHARPSTRHASH32:
                         {
                             var item = EvaluationStack.Pop();
-                            EvaluationStack.Push(CalcStringHash(item.GetString()));
+                            EvaluationStack.Push(CalcStringHashIL(item.GetString()));
+                        }
+                        break;
+                    case OpCode.JAVAHASH32:
+                        {
+                            var item = EvaluationStack.Pop();
+                            EvaluationStack.Push(CalcStringHashJVM(item.GetString()));
                         }
                         break;
                     case OpCode.CHECKSIG:

@@ -117,6 +117,9 @@
         HASH256 = 0xAA,
         //因为这个hash函数可能仅仅是csharp 编译时专用的
         CSHARPSTRHASH32 = 0xAB,
+        //这个是JAVA专用的
+        JAVAHASH32 = 0xAD,
+
         CHECKSIG = 0xAC,
         CHECKMULTISIG = 0xAE,
 
