@@ -29,9 +29,22 @@ namespace Neo.VM
             this.service = service ?? new InteropService();
         }
 
+        /// <summary>
+        /// Add BreakPoint
+        /// </summary>
+        /// <param name="position">Position</param>
         public void AddBreakPoint(uint position)
         {
-            CurrentContext.BreakPoints.Add(position);
+            CurrentContext.AddBreakPoint(position);
+        }
+        /// <summary>
+        /// Remove breakpoint
+        /// </summary>
+        /// <param name="position">Position</param>
+        public bool RemoveBreakPoint(uint position)
+        {
+            if (InvocationStack.Count == 0) return false;
+            return CurrentContext.RemoveBreakPoint(position);
         }
 
         public void Dispose()
@@ -777,9 +790,11 @@ namespace Neo.VM
                         State |= VMState.FAULT;
                         return;
                 }
-            if (!State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
+
+            // Check BreakPoints
+            if (CurrentContext.HaveBreakPoints && !State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
             {
-                if (CurrentContext.BreakPoints.Contains((uint)CurrentContext.InstructionPointer))
+                if (CurrentContext.ContainsBreakPoint((uint)CurrentContext.InstructionPointer))
                     State |= VMState.BREAK;
             }
         }
@@ -787,12 +802,6 @@ namespace Neo.VM
         public void LoadScript(byte[] script, bool push_only = false)
         {
             InvocationStack.Push(new ExecutionContext(this, script, push_only));
-        }
-
-        public bool RemoveBreakPoint(uint position)
-        {
-            if (InvocationStack.Count == 0) return false;
-            return CurrentContext.BreakPoints.Remove(position);
         }
 
         public void StepInto()
