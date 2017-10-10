@@ -7,7 +7,7 @@ namespace Neo.VM
     public class ExecutionContext : IDisposable
     {
         /// <summary>
-        /// Return true if have any breakpoint
+        /// Contains if have any breakpoint
         /// </summary>
         internal bool HaveBreakPoints;
         private ExecutionEngine engine;
