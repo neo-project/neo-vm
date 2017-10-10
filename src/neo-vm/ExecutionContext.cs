@@ -6,17 +6,15 @@ namespace Neo.VM
 {
     public class ExecutionContext : IDisposable
     {
-        private bool _HaveBreakPoints;
+        /// <summary>
+        /// Return true if have any breakpoint
+        /// </summary>
+        internal bool HaveBreakPoints;
         private ExecutionEngine engine;
         public readonly byte[] Script;
         public readonly bool PushOnly;
         internal readonly BinaryReader OpReader;
         private HashSet<uint> BreakPoints;
-
-        /// <summary>
-        /// Return true if have any breakpoint
-        /// </summary>
-        public bool HaveBreakPoints { get { return _HaveBreakPoints; } }
 
         public int InstructionPointer
         {
@@ -50,7 +48,7 @@ namespace Neo.VM
             this.PushOnly = push_only;
             this.OpReader = new BinaryReader(new MemoryStream(script, false));
             this.BreakPoints = break_points ?? new HashSet<uint>();
-            this._HaveBreakPoints = this.BreakPoints != null && this.BreakPoints.Count > 0;
+            this.HaveBreakPoints = this.BreakPoints != null && this.BreakPoints.Count > 0;
         }
 
         /// <summary>
@@ -64,7 +62,7 @@ namespace Neo.VM
 
             // Add breakpoint
             BreakPoints.Add(position);
-            _HaveBreakPoints = BreakPoints != null && BreakPoints.Count > 0;
+            HaveBreakPoints = BreakPoints != null && BreakPoints.Count > 0;
         }
 
         /// <summary>
@@ -73,9 +71,9 @@ namespace Neo.VM
         /// <param name="position">Position</param>
         internal bool RemoveBreakPoint(uint position)
         {
-            if (_HaveBreakPoints && BreakPoints.Remove(position))
+            if (HaveBreakPoints && BreakPoints.Remove(position))
             {
-                _HaveBreakPoints = BreakPoints != null && BreakPoints.Count > 0;
+                HaveBreakPoints = BreakPoints != null && BreakPoints.Count > 0;
                 return true;
             }
             return false;
@@ -87,7 +85,7 @@ namespace Neo.VM
         /// <param name="position">Position</param>
         internal bool ContainsBreakPoint(uint position)
         {
-            return _HaveBreakPoints && BreakPoints.Contains(position);
+            return HaveBreakPoints && BreakPoints.Contains(position);
         }
 
         public ExecutionContext Clone()
