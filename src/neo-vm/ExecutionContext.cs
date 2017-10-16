@@ -56,9 +56,6 @@ namespace Neo.VM
         /// <param name="position">Position</param>
         internal void AddBreakPoint(uint position)
         {
-            // Check null
-            if (BreakPoints == null) BreakPoints = new HashSet<uint>();
-
             // Add breakpoint
             BreakPoints.Add(position);
         }
@@ -69,7 +66,7 @@ namespace Neo.VM
         /// <param name="position">Position</param>
         internal bool RemoveBreakPoint(uint position)
         {
-            return HaveBreakPoints && BreakPoints.Remove(position);
+            return BreakPoints.Remove(position);
         }
 
         /// <summary>
@@ -78,7 +75,7 @@ namespace Neo.VM
         /// <param name="position">Position</param>
         internal bool ContainsBreakPoint(uint position)
         {
-            return HaveBreakPoints && BreakPoints.Contains(position);
+            return BreakPoints.Contains(position);
         }
 
         public ExecutionContext Clone()
