@@ -14,7 +14,7 @@ namespace Neo.VM
         public readonly byte[] Script;
         public readonly bool PushOnly;
         internal readonly BinaryReader OpReader;
-        private HashSet<uint> BreakPoints;
+        private readonly HashSet<uint> BreakPoints;
 
         public int InstructionPointer
         {
