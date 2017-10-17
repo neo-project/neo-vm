@@ -35,6 +35,7 @@ namespace Neo.VM
         /// <param name="position">Position</param>
         public void AddBreakPoint(uint position)
         {
+            if (InvocationStack.Count == 0) return;
             CurrentContext.AddBreakPoint(position);
         }
         /// <summary>
@@ -792,9 +793,9 @@ namespace Neo.VM
                 }
 
             // Check BreakPoints
-            if (CurrentContext.HaveBreakPoints && !State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
+            if (context.HaveBreakPoints && !State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
             {
-                if (CurrentContext.ContainsBreakPoint((uint)CurrentContext.InstructionPointer))
+                if (context.ContainsBreakPoint((uint)context.InstructionPointer))
                     State |= VMState.BREAK;
             }
         }
