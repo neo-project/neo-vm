@@ -9,7 +9,7 @@ namespace Neo.VM
         /// <summary>
         /// Contains if have any breakpoint
         /// </summary>
-        internal bool HaveBreakPoints => BreakPoints.Count > 0;
+        internal bool HaveBreakPoints;
         private ExecutionEngine engine;
         public readonly byte[] Script;
         public readonly bool PushOnly;
@@ -48,6 +48,7 @@ namespace Neo.VM
             this.PushOnly = push_only;
             this.OpReader = new BinaryReader(new MemoryStream(script, false));
             this.BreakPoints = break_points ?? new HashSet<uint>();
+            this.HaveBreakPoints = this.BreakPoints.Count > 0;
         }
 
         /// <summary>
@@ -57,7 +58,8 @@ namespace Neo.VM
         internal void AddBreakPoint(uint position)
         {
             // Add breakpoint
-            BreakPoints.Add(position);
+            if (BreakPoints.Add(position))
+                HaveBreakPoints = true;
         }
 
         /// <summary>
@@ -66,7 +68,12 @@ namespace Neo.VM
         /// <param name="position">Position</param>
         internal bool RemoveBreakPoint(uint position)
         {
-            return BreakPoints.Remove(position);
+            if (BreakPoints.Remove(position))
+            {
+                this.HaveBreakPoints = this.BreakPoints.Count > 0;
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
