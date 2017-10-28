@@ -2,7 +2,7 @@
 
 namespace Neo.VM.Types
 {
-    internal class ByteArray : StackItem
+    public class ByteArray : StackItem
     {
         private byte[] value;
 

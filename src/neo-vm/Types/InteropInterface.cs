@@ -2,7 +2,7 @@
 
 namespace Neo.VM.Types
 {
-    internal class InteropInterface : StackItem
+    public class InteropInterface : StackItem
     {
         private IInteropInterface _object;
 

@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace Neo.VM.Types
 {
-    internal class Boolean : StackItem
+    public class Boolean : StackItem
     {
         private static readonly byte[] TRUE = { 1 };
         private static readonly byte[] FALSE = new byte[0];
