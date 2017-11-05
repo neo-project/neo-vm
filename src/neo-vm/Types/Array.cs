@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Neo.VM.Types
 {
-    internal class Array : StackItem
+    public class Array : StackItem
     {
         protected StackItem[] _array;
 
