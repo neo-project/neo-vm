@@ -850,7 +850,7 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// Check if the bigInteger is allowed for numeric operations
+        /// Check if the BigInteger is allowed for numeric operations
         /// </summary>
         /// <param name="value">Value</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
