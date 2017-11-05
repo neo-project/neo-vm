@@ -10,10 +10,13 @@ namespace Neo.VM
 {
     public abstract class StackItem : IEquatable<StackItem>
     {
+        /// <summary>
+        /// Set the max size allowed for convert from ByteArray to BigInteger
+        /// </summary>
+        const int MaxSizeForBigInteger = 32;
+
         public virtual bool IsArray => false;
         public virtual bool IsStruct => false;
-
-        public abstract bool Equals(StackItem other);
 
         public static StackItem FromInterface(IInteropInterface value)
         {
@@ -27,15 +30,18 @@ namespace Neo.VM
 
         public virtual BigInteger GetBigInteger()
         {
-            return new BigInteger(GetByteArray());
+            byte[] data = GetByteArray();
+
+            if (data == null || data.Length > MaxSizeForBigInteger)
+                throw new NotSupportedException();
+
+            return new BigInteger(data);
         }
 
         public virtual bool GetBoolean()
         {
             return GetByteArray().Any(p => p != 0);
         }
-
-        public abstract byte[] GetByteArray();
 
         public virtual T GetInterface<T>() where T : class, IInteropInterface
         {
@@ -47,6 +53,12 @@ namespace Neo.VM
             return Encoding.UTF8.GetString(GetByteArray());
         }
 
+        #region Abstract
+        public abstract bool Equals(StackItem other);
+        public abstract byte[] GetByteArray();
+        #endregion
+
+        #region Implicit conversions
         public static implicit operator StackItem(int value)
         {
             return (BigInteger)value;
@@ -86,5 +98,6 @@ namespace Neo.VM
         {
             return new Array(value);
         }
+        #endregion
     }
 }
