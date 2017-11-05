@@ -29,9 +29,23 @@ namespace Neo.VM
             this.service = service ?? new InteropService();
         }
 
+        /// <summary>
+        /// Add BreakPoint
+        /// </summary>
+        /// <param name="position">Position</param>
         public void AddBreakPoint(uint position)
         {
-            CurrentContext.BreakPoints.Add(position);
+            if (InvocationStack.Count == 0) return;
+            CurrentContext.AddBreakPoint(position);
+        }
+        /// <summary>
+        /// Remove breakpoint
+        /// </summary>
+        /// <param name="position">Position</param>
+        public bool RemoveBreakPoint(uint position)
+        {
+            if (InvocationStack.Count == 0) return false;
+            return CurrentContext.RemoveBreakPoint(position);
         }
 
         public void Dispose()
@@ -373,12 +387,26 @@ namespace Neo.VM
                     case OpCode.INC:
                         {
                             BigInteger x = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x + 1);
                         }
                         break;
                     case OpCode.DEC:
                         {
                             BigInteger x = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x - 1);
                         }
                         break;
@@ -416,6 +444,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 + x2);
                         }
                         break;
@@ -423,6 +458,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 - x2);
                         }
                         break;
@@ -430,6 +472,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 * x2);
                         }
                         break;
@@ -437,6 +486,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 / x2);
                         }
                         break;
@@ -444,6 +500,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 % x2);
                         }
                         break;
@@ -777,22 +840,31 @@ namespace Neo.VM
                         State |= VMState.FAULT;
                         return;
                 }
-            if (!State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
+
+            // Check BreakPoints
+            if (context.HaveBreakPoints && !State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
             {
-                if (CurrentContext.BreakPoints.Contains((uint)CurrentContext.InstructionPointer))
+                if (context.ContainsBreakPoint((uint)context.InstructionPointer))
                     State |= VMState.BREAK;
             }
+        }
+
+        /// <summary>
+        /// Check if the BigInteger is allowed for numeric operations
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <returns>Return True if are allowed, otherwise False</returns>
+        bool CheckBigIntegerSize(BigInteger value)
+        {
+            if (value == null) return false;
+
+            byte[] bx = value.ToByteArray();
+            return bx.Length <= StackItem.MaxSizeForBigInteger;
         }
 
         public void LoadScript(byte[] script, bool push_only = false)
         {
             InvocationStack.Push(new ExecutionContext(this, script, push_only));
-        }
-
-        public bool RemoveBreakPoint(uint position)
-        {
-            if (InvocationStack.Count == 0) return false;
-            return CurrentContext.BreakPoints.Remove(position);
         }
 
         public void StepInto()

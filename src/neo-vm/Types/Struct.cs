@@ -2,7 +2,7 @@
 
 namespace Neo.VM.Types
 {
-    internal class Struct : Array
+    public class Struct : Array
     {
         public override bool IsStruct => true;
 
