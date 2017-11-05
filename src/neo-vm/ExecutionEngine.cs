@@ -387,12 +387,26 @@ namespace Neo.VM
                     case OpCode.INC:
                         {
                             BigInteger x = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x + 1);
                         }
                         break;
                     case OpCode.DEC:
                         {
                             BigInteger x = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x - 1);
                         }
                         break;
@@ -430,6 +444,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 + x2);
                         }
                         break;
@@ -437,6 +458,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 - x2);
                         }
                         break;
@@ -444,6 +472,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 * x2);
                         }
                         break;
@@ -451,6 +486,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 / x2);
                         }
                         break;
@@ -458,6 +500,13 @@ namespace Neo.VM
                         {
                             BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
+
+                            if (!CheckBigIntegerSize(x2) || !CheckBigIntegerSize(x1))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             EvaluationStack.Push(x1 % x2);
                         }
                         break;
@@ -798,6 +847,19 @@ namespace Neo.VM
                 if (context.ContainsBreakPoint((uint)context.InstructionPointer))
                     State |= VMState.BREAK;
             }
+        }
+
+        /// <summary>
+        /// Check if the bigInteger is allowed for numeric operations
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <returns>Return True if are allowed, otherwise False</returns>
+        bool CheckBigIntegerSize(BigInteger value)
+        {
+            if (value == null) return false;
+
+            byte[] bx = value.ToByteArray();
+            return bx.Length <= StackItem.MaxSizeForBigInteger;
         }
 
         public void LoadScript(byte[] script, bool push_only = false)

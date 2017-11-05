@@ -13,7 +13,7 @@ namespace Neo.VM
         /// <summary>
         /// Set the max size allowed for convert from ByteArray to BigInteger
         /// </summary>
-        const int MaxSizeForBigInteger = 32;
+        public const int MaxSizeForBigInteger = 32;
 
         public virtual bool IsArray => false;
         public virtual bool IsStruct => false;
