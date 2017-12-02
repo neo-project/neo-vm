@@ -8,7 +8,7 @@ namespace Neo.VM
 {
     public class ExecutionEngine : IDisposable
     {
-        private readonly IScriptTable table;
+        protected readonly IScriptTable table;
         private readonly InteropService service;
 
         public IScriptContainer ScriptContainer { get; }
@@ -129,13 +129,31 @@ namespace Neo.VM
                         break;
                     case OpCode.APPCALL:
                     case OpCode.TAILCALL:
+                    case OpCode.DYNAMICCALL:
                         {
                             if (table == null)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            byte[] script_hash = context.OpReader.ReadBytes(20);
+
+                            byte[] script_hash = null;
+
+                            if (opcode == OpCode.DYNAMICCALL)
+                            {
+                                script_hash = EvaluationStack.Pop().GetByteArray();
+
+                                if( script_hash.Length != 20) 
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                script_hash = context.OpReader.ReadBytes(20);
+                            }
+
                             byte[] script = table.GetScript(script_hash);
                             if (script == null)
                             {

@@ -131,6 +131,8 @@
 
         // Exceptions
         THROW = 0xF0,
-        THROWIFNOT = 0xF1
+        THROWIFNOT = 0xF1,
+
+        DYNAMICCALL = 0xFA // For dynamic application invocations
     }
 }
