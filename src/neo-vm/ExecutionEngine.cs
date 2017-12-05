@@ -136,6 +136,22 @@ namespace Neo.VM
                                 return;
                             }
                             byte[] script_hash = context.OpReader.ReadBytes(20);
+
+                            //dynamic scripthash
+                            bool allzero = true;
+                            for (var i = 0; i < script_hash.Length; i++)
+                            {
+                                if (script_hash[i] > 0)
+                                {
+                                    allzero = false;
+                                    break;
+                                }
+                            }
+                            if (allzero)
+                            {
+                                script_hash = EvaluationStack.Pop().GetByteArray();
+                            }
+
                             byte[] script = table.GetScript(script_hash);
                             if (script == null)
                             {
