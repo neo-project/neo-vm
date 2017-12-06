@@ -8,7 +8,7 @@ namespace Neo.VM
 {
     public class ExecutionEngine : IDisposable
     {
-        private readonly IScriptTable table;
+        protected readonly IScriptTable table;
         private readonly InteropService service;
 
         public IScriptContainer ScriptContainer { get; }
