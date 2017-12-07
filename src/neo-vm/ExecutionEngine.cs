@@ -135,7 +135,13 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+                            
                             byte[] script_hash = context.OpReader.ReadBytes(20);
+                            if (script_hash.All(p => p == 0))
+                            {
+                                script_hash = EvaluationStack.Pop().GetByteArray();
+                            }
+
                             byte[] script = table.GetScript(script_hash);
                             if (script == null)
                             {
