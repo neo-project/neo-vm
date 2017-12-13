@@ -127,7 +127,8 @@
         SETITEM = 0xC4,
         NEWARRAY = 0xC5, //用作引用類型
         NEWSTRUCT = 0xC6, //用作值類型
-
+        APPEND = 0xC8,
+        REVERSE = 0xC9,
 
         // Exceptions
         THROW = 0xF0,

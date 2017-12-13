@@ -1,5 +1,6 @@
 ﻿using Neo.VM.Types;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -20,7 +21,7 @@ namespace Neo.VM
             return new InteropInterface(value);
         }
 
-        public virtual StackItem[] GetArray()
+        public virtual IList<StackItem> GetArray()
         {
             throw new NotSupportedException();
         }
@@ -83,6 +84,11 @@ namespace Neo.VM
         }
 
         public static implicit operator StackItem(StackItem[] value)
+        {
+            return new Array(value);
+        }
+
+        public static implicit operator StackItem(List<StackItem> value)
         {
             return new Array(value);
         }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Neo.VM.Types
 {
@@ -6,22 +7,22 @@ namespace Neo.VM.Types
     {
         public override bool IsStruct => true;
 
-        public Struct(StackItem[] value) : base(value)
+        public Struct(IEnumerable<StackItem> value) : base(value)
         {
         }
 
         public StackItem Clone()
         {
-            StackItem[] newArray = new StackItem[this._array.Length];
-            for (var i = 0; i < _array.Length; i++)
+            List<StackItem> newArray = new List<StackItem>(this._array.Count);
+            for (var i = 0; i < _array.Count; i++)
             {
-                if (_array[i].IsStruct)
+                if (_array[i] is Struct s)
                 {
-                    newArray[i] = (_array[i] as Struct).Clone();
+                    newArray.Add(s.Clone());
                 }
                 else
                 {
-                    newArray[i] = _array[i]; //array = 是引用
+                    newArray.Add(_array[i]); //array = 是引用
                                              //其他的由于是固定值类型，不会改内部值，所以虽然需要复制，直接= 就行
                 }
             }

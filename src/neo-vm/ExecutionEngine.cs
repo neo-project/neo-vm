@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
@@ -135,7 +136,7 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            
+
                             byte[] script_hash = context.OpReader.ReadBytes(20);
                             if (script_hash.All(p => p == 0))
                             {
@@ -667,7 +668,7 @@ namespace Neo.VM
                             if (!item.IsArray)
                                 EvaluationStack.Push(item.GetByteArray().Length);
                             else
-                                EvaluationStack.Push(item.GetArray().Length);
+                                EvaluationStack.Push(item.GetArray().Count);
                         }
                         break;
                     case OpCode.PACK:
@@ -678,9 +679,9 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem[] items = new StackItem[size];
+                            List<StackItem> items = new List<StackItem>(size);
                             for (int i = 0; i < size; i++)
-                                items[i] = EvaluationStack.Pop();
+                                items.Add(EvaluationStack.Pop());
                             EvaluationStack.Push(items);
                         }
                         break;
@@ -692,10 +693,10 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem[] items = item.GetArray();
-                            for (int i = items.Length - 1; i >= 0; i--)
+                            IList<StackItem> items = item.GetArray();
+                            for (int i = items.Count - 1; i >= 0; i--)
                                 EvaluationStack.Push(items[i]);
-                            EvaluationStack.Push(items.Length);
+                            EvaluationStack.Push(items.Count);
                         }
                         break;
                     case OpCode.PICKITEM:
@@ -712,8 +713,8 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem[] items = item.GetArray();
-                            if (index >= items.Length)
+                            IList<StackItem> items = item.GetArray();
+                            if (index >= items.Count)
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -724,9 +725,9 @@ namespace Neo.VM
                     case OpCode.SETITEM:
                         {
                             StackItem newItem = EvaluationStack.Pop();
-                            if (newItem.IsStruct)
+                            if (newItem is Types.Struct s)
                             {
-                                newItem = (newItem as Types.Struct).Clone();
+                                newItem = s.Clone();
                             }
                             int index = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem arrItem = EvaluationStack.Pop();
@@ -735,8 +736,8 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem[] items = arrItem.GetArray();
-                            if (index < 0 || index >= items.Length)
+                            IList<StackItem> items = arrItem.GetArray();
+                            if (index < 0 || index >= items.Count)
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -747,10 +748,10 @@ namespace Neo.VM
                     case OpCode.NEWARRAY:
                         {
                             int count = (int)EvaluationStack.Pop().GetBigInteger();
-                            StackItem[] items = new StackItem[count];
+                            List<StackItem> items = new List<StackItem>(count);
                             for (var i = 0; i < count; i++)
                             {
-                                items[i] = false;
+                                items.Add(false);
                             }
                             EvaluationStack.Push(new Types.Array(items));
                         }
@@ -758,12 +759,41 @@ namespace Neo.VM
                     case OpCode.NEWSTRUCT:
                         {
                             int count = (int)EvaluationStack.Pop().GetBigInteger();
-                            StackItem[] items = new StackItem[count];
+                            List<StackItem> items = new List<StackItem>(count);
                             for (var i = 0; i < count; i++)
                             {
-                                items[i] = false;
+                                items.Add(false);
                             }
                             EvaluationStack.Push(new VM.Types.Struct(items));
+                        }
+                        break;
+                    case OpCode.APPEND:
+                        {
+                            StackItem newItem = EvaluationStack.Pop();
+                            if (newItem is Types.Struct s)
+                            {
+                                newItem = s.Clone();
+                            }
+                            StackItem arrItem = EvaluationStack.Pop();
+                            if (!arrItem.IsArray)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            IList<StackItem> items = arrItem.GetArray();
+                            items.Add(newItem);
+                        }
+                        break;
+
+                    case OpCode.REVERSE:
+                        {
+                            StackItem arrItem = EvaluationStack.Pop();
+                            if (!arrItem.IsArray)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            ((Types.Array)arrItem).Reverse();
                         }
                         break;
 

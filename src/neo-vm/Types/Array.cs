@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Neo.VM.Types
 {
     internal class Array : StackItem
     {
-        protected StackItem[] _array;
+        protected readonly List<StackItem> _array;
 
         public override bool IsArray => true;
 
-        public Array(StackItem[] value)
+        public Array(IEnumerable<StackItem> value)
         {
-            this._array = value;
+            this._array = value as List<StackItem> ?? value.ToList();
         }
 
         public override bool Equals(StackItem other)
@@ -25,19 +26,24 @@ namespace Neo.VM.Types
                 return _array.SequenceEqual(a._array);
         }
 
-        public override StackItem[] GetArray()
+        public override IList<StackItem> GetArray()
         {
             return _array;
         }
 
         public override bool GetBoolean()
         {
-            return _array.Length > 0;
+            return _array.Count > 0;
         }
 
         public override byte[] GetByteArray()
         {
             throw new NotSupportedException();
+        }
+
+        public void Reverse()
+        {
+            _array.Reverse();
         }
     }
 }
