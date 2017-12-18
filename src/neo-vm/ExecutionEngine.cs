@@ -606,7 +606,7 @@ namespace Neo.VM
                             else
                             {
                                 n = (int)item.GetBigInteger();
-                                if (n < 1)
+                                if (n < 1 || n > EvaluationStack.Count)
                                 {
                                     State |= VMState.FAULT;
                                     return;
@@ -631,7 +631,7 @@ namespace Neo.VM
                             else
                             {
                                 m = (int)item.GetBigInteger();
-                                if (m < 1 || m > n)
+                                if (m < 1 || m > n || m > EvaluationStack.Count)
                                 {
                                     State |= VMState.FAULT;
                                     return;
