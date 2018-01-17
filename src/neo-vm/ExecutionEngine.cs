@@ -784,7 +784,6 @@ namespace Neo.VM
                             items.Add(newItem);
                         }
                         break;
-
                     case OpCode.REVERSE:
                         {
                             StackItem arrItem = EvaluationStack.Pop();
@@ -794,6 +793,24 @@ namespace Neo.VM
                                 return;
                             }
                             ((Types.Array)arrItem).Reverse();
+                        }
+                        break;
+                    case OpCode.REMOVE:
+                        {
+                            int index = (int)EvaluationStack.Pop().GetBigInteger();
+                            StackItem arrItem = EvaluationStack.Pop();
+                            if (!arrItem.IsArray)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            IList<StackItem> items = arrItem.GetArray();
+                            if (index < 0 || index >= items.Count)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            items.RemoveAt(index);
                         }
                         break;
 

@@ -129,6 +129,7 @@
         NEWSTRUCT = 0xC6, //用作值類型
         APPEND = 0xC8,
         REVERSE = 0xC9,
+        REMOVE = 0xCA,
 
         // Exceptions
         THROW = 0xF0,
