@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
+using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
 {
@@ -593,9 +594,9 @@ namespace Neo.VM
                             int n;
                             byte[][] pubkeys;
                             StackItem item = EvaluationStack.Pop();
-                            if (item.IsArray)
+                            if (item is VMArray array1)
                             {
-                                pubkeys = item.GetArray().Select(p => p.GetByteArray()).ToArray();
+                                pubkeys = array1.Select(p => p.GetByteArray()).ToArray();
                                 n = pubkeys.Length;
                                 if (n == 0)
                                 {
@@ -618,9 +619,9 @@ namespace Neo.VM
                             int m;
                             byte[][] signatures;
                             item = EvaluationStack.Pop();
-                            if (item.IsArray)
+                            if (item is VMArray array2)
                             {
-                                signatures = item.GetArray().Select(p => p.GetByteArray()).ToArray();
+                                signatures = array2.Select(p => p.GetByteArray()).ToArray();
                                 m = signatures.Length;
                                 if (m == 0 || m > n)
                                 {
@@ -665,10 +666,10 @@ namespace Neo.VM
                     case OpCode.ARRAYSIZE:
                         {
                             StackItem item = EvaluationStack.Pop();
-                            if (!item.IsArray)
-                                EvaluationStack.Push(item.GetByteArray().Length);
+                            if (item is VMArray array)
+                                EvaluationStack.Push(array.Count);
                             else
-                                EvaluationStack.Push(item.GetArray().Count);
+                                EvaluationStack.Push(item.GetByteArray().Length);
                         }
                         break;
                     case OpCode.PACK:
@@ -688,15 +689,17 @@ namespace Neo.VM
                     case OpCode.UNPACK:
                         {
                             StackItem item = EvaluationStack.Pop();
-                            if (!item.IsArray)
+                            if (item is VMArray array)
+                            {
+                                for (int i = array.Count - 1; i >= 0; i--)
+                                    EvaluationStack.Push(array[i]);
+                                EvaluationStack.Push(array.Count);
+                            }
+                            else
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            IList<StackItem> items = item.GetArray();
-                            for (int i = items.Count - 1; i >= 0; i--)
-                                EvaluationStack.Push(items[i]);
-                            EvaluationStack.Push(items.Count);
                         }
                         break;
                     case OpCode.PICKITEM:
@@ -708,18 +711,20 @@ namespace Neo.VM
                                 return;
                             }
                             StackItem item = EvaluationStack.Pop();
-                            if (!item.IsArray)
+                            if (item is VMArray array)
+                            {
+                                if (index >= array.Count)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                EvaluationStack.Push(array[index]);
+                            }
+                            else
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            IList<StackItem> items = item.GetArray();
-                            if (index >= items.Count)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            EvaluationStack.Push(items[index]);
                         }
                         break;
                     case OpCode.SETITEM:
@@ -731,18 +736,20 @@ namespace Neo.VM
                             }
                             int index = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem arrItem = EvaluationStack.Pop();
-                            if (!arrItem.IsArray)
+                            if (arrItem is VMArray array)
+                            {
+                                if (index < 0 || index >= array.Count)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                array[index] = newItem;
+                            }
+                            else
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            IList<StackItem> items = arrItem.GetArray();
-                            if (index < 0 || index >= items.Count)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            items[index] = newItem;
                         }
                         break;
                     case OpCode.NEWARRAY:
@@ -775,42 +782,49 @@ namespace Neo.VM
                                 newItem = s.Clone();
                             }
                             StackItem arrItem = EvaluationStack.Pop();
-                            if (!arrItem.IsArray)
+                            if (arrItem is VMArray array)
+                            {
+                                array.Add(newItem);
+                            }
+                            else
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            IList<StackItem> items = arrItem.GetArray();
-                            items.Add(newItem);
                         }
                         break;
                     case OpCode.REVERSE:
                         {
                             StackItem arrItem = EvaluationStack.Pop();
-                            if (!arrItem.IsArray)
+                            if (arrItem is VMArray array)
+                            {
+                                array.Reverse();
+                            }
+                            else
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            ((Types.Array)arrItem).Reverse();
                         }
                         break;
                     case OpCode.REMOVE:
                         {
                             int index = (int)EvaluationStack.Pop().GetBigInteger();
                             StackItem arrItem = EvaluationStack.Pop();
-                            if (!arrItem.IsArray)
+                            if (arrItem is VMArray array)
+                            {
+                                if (index < 0 || index >= array.Count)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                array.RemoveAt(index);
+                            }
+                            else
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            IList<StackItem> items = arrItem.GetArray();
-                            if (index < 0 || index >= items.Count)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            items.RemoveAt(index);
                         }
                         break;
 

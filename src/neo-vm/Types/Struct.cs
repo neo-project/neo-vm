@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace Neo.VM.Types
 {
-    internal class Struct : Array
+    public class Struct : Array
     {
-        public override bool IsStruct => true;
+        public Struct() : this(new List<StackItem>()) { }
 
         public Struct(IEnumerable<StackItem> value) : base(value)
         {

@@ -11,19 +11,11 @@ namespace Neo.VM
 {
     public abstract class StackItem : IEquatable<StackItem>
     {
-        public virtual bool IsArray => false;
-        public virtual bool IsStruct => false;
-
         public abstract bool Equals(StackItem other);
 
         public static StackItem FromInterface(IInteropInterface value)
         {
             return new InteropInterface(value);
-        }
-
-        public virtual IList<StackItem> GetArray()
-        {
-            throw new NotSupportedException();
         }
 
         public virtual BigInteger GetBigInteger()
@@ -37,11 +29,6 @@ namespace Neo.VM
         }
 
         public abstract byte[] GetByteArray();
-
-        public virtual T GetInterface<T>() where T : class, IInteropInterface
-        {
-            throw new NotSupportedException();
-        }
 
         public virtual string GetString()
         {
