@@ -68,7 +68,7 @@ namespace Neo.VM.Types
 
         public override bool Equals(StackItem other)
         {
-            return false;
+            return ReferenceEquals(this, other);
         }
 
         public override bool GetBoolean()

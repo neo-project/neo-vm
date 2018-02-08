@@ -56,13 +56,7 @@ namespace Neo.VM.Types
 
         public override bool Equals(StackItem other)
         {
-            if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
-            Array a = other as Array;
-            if (a == null)
-                return false;
-            else
-                return _array.SequenceEqual(a._array);
+            return ReferenceEquals(this, other);
         }
 
         public override bool GetBoolean()
