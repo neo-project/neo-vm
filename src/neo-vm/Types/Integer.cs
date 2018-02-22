@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace Neo.VM.Types
 {
-    internal class Integer : StackItem
+    public class Integer : StackItem
     {
         private BigInteger value;
 

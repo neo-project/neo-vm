@@ -2,7 +2,7 @@
 
 namespace Neo.VM.Types
 {
-    internal class InteropInterface : StackItem
+    public class InteropInterface : StackItem
     {
         private IInteropInterface _object;
 
@@ -30,7 +30,7 @@ namespace Neo.VM.Types
             throw new NotSupportedException();
         }
 
-        public override T GetInterface<T>()
+        public T GetInterface<T>() where T : class, IInteropInterface
         {
             return _object as T;
         }
