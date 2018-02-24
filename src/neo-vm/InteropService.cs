@@ -5,7 +5,9 @@ namespace Neo.VM
 {
     public class InteropService
     {
-        private Dictionary<string, Func<ExecutionEngine, bool>> dictionary = new Dictionary<string, Func<ExecutionEngine, bool>>();
+        public delegate bool delInterop(ExecutionEngine engine);
+
+        private Dictionary<string, delInterop> dictionary = new Dictionary<string, delInterop>();
 
         public InteropService()
         {
@@ -15,15 +17,15 @@ namespace Neo.VM
             Register("System.ExecutionEngine.GetEntryScriptHash", GetEntryScriptHash);
         }
 
-        protected void Register(string method, Func<ExecutionEngine, bool> handler)
+        protected void Register(string method, delInterop handler)
         {
             dictionary[method] = handler;
         }
 
         internal bool Invoke(string method, ExecutionEngine engine)
         {
-            if (!dictionary.ContainsKey(method)) return false;
-            return dictionary[method](engine);
+            if (!dictionary.TryGetValue(method, out delInterop func)) return false;
+            return func(engine);
         }
 
         private static bool GetScriptContainer(ExecutionEngine engine)
