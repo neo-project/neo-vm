@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Neo.VM.Types;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -666,8 +668,8 @@ namespace Neo.VM
                     case OpCode.ARRAYSIZE:
                         {
                             StackItem item = EvaluationStack.Pop();
-                            if (item is VMArray array)
-                                EvaluationStack.Push(array.Count);
+                            if (item is ICollection collection)
+                                EvaluationStack.Push(collection.Count);
                             else
                                 EvaluationStack.Push(item.GetByteArray().Length);
                         }
@@ -704,51 +706,67 @@ namespace Neo.VM
                         break;
                     case OpCode.PICKITEM:
                         {
-                            int index = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (index < 0)
+                            StackItem key = EvaluationStack.Pop();
+                            if (key is ICollection)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            StackItem item = EvaluationStack.Pop();
-                            if (item is VMArray array)
+                            switch (EvaluationStack.Pop())
                             {
-                                if (index >= array.Count)
-                                {
+                                case VMArray array:
+                                    int index = (int)key.GetBigInteger();
+                                    if (index < 0 || index >= array.Count)
+                                    {
+                                        State |= VMState.FAULT;
+                                        return;
+                                    }
+                                    EvaluationStack.Push(array[index]);
+                                    break;
+                                case Map map:
+                                    if (map.TryGetValue(key, out StackItem value))
+                                    {
+                                        EvaluationStack.Push(value);
+                                    }
+                                    else
+                                    {
+                                        State |= VMState.FAULT;
+                                        return;
+                                    }
+                                    break;
+                                default:
                                     State |= VMState.FAULT;
                                     return;
-                                }
-                                EvaluationStack.Push(array[index]);
-                            }
-                            else
-                            {
-                                State |= VMState.FAULT;
-                                return;
                             }
                         }
                         break;
                     case OpCode.SETITEM:
                         {
-                            StackItem newItem = EvaluationStack.Pop();
-                            if (newItem is Types.Struct s)
-                            {
-                                newItem = s.Clone();
-                            }
-                            int index = (int)EvaluationStack.Pop().GetBigInteger();
-                            StackItem arrItem = EvaluationStack.Pop();
-                            if (arrItem is VMArray array)
-                            {
-                                if (index < 0 || index >= array.Count)
-                                {
-                                    State |= VMState.FAULT;
-                                    return;
-                                }
-                                array[index] = newItem;
-                            }
-                            else
+                            StackItem value = EvaluationStack.Pop();
+                            if (value is Struct s) value = s.Clone();
+                            StackItem key = EvaluationStack.Pop();
+                            if (key is ICollection)
                             {
                                 State |= VMState.FAULT;
                                 return;
+                            }
+                            switch (EvaluationStack.Pop())
+                            {
+                                case VMArray array:
+                                    int index = (int)key.GetBigInteger();
+                                    if (index < 0 || index >= array.Count)
+                                    {
+                                        State |= VMState.FAULT;
+                                        return;
+                                    }
+                                    array[index] = value;
+                                    break;
+                                case Map map:
+                                    map[key] = value;
+                                    break;
+                                default:
+                                    State |= VMState.FAULT;
+                                    return;
                             }
                         }
                         break;
@@ -773,6 +791,9 @@ namespace Neo.VM
                             }
                             EvaluationStack.Push(new VM.Types.Struct(items));
                         }
+                        break;
+                    case OpCode.NEWMAP:
+                        EvaluationStack.Push(new Map());
                         break;
                     case OpCode.APPEND:
                         {
@@ -809,22 +830,93 @@ namespace Neo.VM
                         break;
                     case OpCode.REMOVE:
                         {
-                            int index = (int)EvaluationStack.Pop().GetBigInteger();
-                            StackItem arrItem = EvaluationStack.Pop();
-                            if (arrItem is VMArray array)
-                            {
-                                if (index < 0 || index >= array.Count)
-                                {
-                                    State |= VMState.FAULT;
-                                    return;
-                                }
-                                array.RemoveAt(index);
-                            }
-                            else
+                            StackItem key = EvaluationStack.Pop();
+                            if (key is ICollection)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
+                            switch (EvaluationStack.Pop())
+                            {
+                                case VMArray array:
+                                    int index = (int)key.GetBigInteger();
+                                    if (index < 0 || index >= array.Count)
+                                    {
+                                        State |= VMState.FAULT;
+                                        return;
+                                    }
+                                    array.RemoveAt(index);
+                                    break;
+                                case Map map:
+                                    map.Remove(key);
+                                    break;
+                                default:
+                                    State |= VMState.FAULT;
+                                    return;
+                            }
+                        }
+                        break;
+                    case OpCode.HASKEY:
+                        {
+                            StackItem key = EvaluationStack.Pop();
+                            if (key is ICollection)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            switch (EvaluationStack.Pop())
+                            {
+                                case VMArray array:
+                                    int index = (int)key.GetBigInteger();
+                                    if (index < 0)
+                                    {
+                                        State |= VMState.FAULT;
+                                        return;
+                                    }
+                                    EvaluationStack.Push(index < array.Count);
+                                    break;
+                                case Map map:
+                                    EvaluationStack.Push(map.ContainsKey(key));
+                                    break;
+                                default:
+                                    State |= VMState.FAULT;
+                                    return;
+                            }
+                        }
+                        break;
+                    case OpCode.KEYS:
+                        switch (EvaluationStack.Pop())
+                        {
+                            case Map map:
+                                EvaluationStack.Push(new VMArray(map.Keys));
+                                break;
+                            default:
+                                State |= VMState.FAULT;
+                                return;
+                        }
+                        break;
+                    case OpCode.VALUES:
+                        {
+                            ICollection<StackItem> values;
+                            switch (EvaluationStack.Pop())
+                            {
+                                case VMArray array:
+                                    values = array;
+                                    break;
+                                case Map map:
+                                    values = map.Values;
+                                    break;
+                                default:
+                                    State |= VMState.FAULT;
+                                    return;
+                            }
+                            List<StackItem> newArray = new List<StackItem>(values.Count);
+                            foreach (StackItem item in values)
+                                if (item is Struct s)
+                                    newArray.Add(s.Clone());
+                                else
+                                    newArray.Add(item);
+                            EvaluationStack.Push(new VMArray(newArray));
                         }
                         break;
 

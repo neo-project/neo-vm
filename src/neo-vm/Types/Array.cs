@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Neo.VM.Types
 {
-    public class Array : StackItem, IList<StackItem>
+    public class Array : StackItem, ICollection, IList<StackItem>
     {
         protected readonly List<StackItem> _array;
 
@@ -17,6 +17,9 @@ namespace Neo.VM.Types
 
         public int Count => _array.Count;
         public bool IsReadOnly => false;
+
+        bool ICollection.IsSynchronized => false;
+        object ICollection.SyncRoot => _array;
 
         public Array() : this(new List<StackItem>()) { }
 
@@ -45,20 +48,20 @@ namespace Neo.VM.Types
             _array.CopyTo(array, arrayIndex);
         }
 
+        void ICollection.CopyTo(System.Array array, int index)
+        {
+            foreach (StackItem item in _array)
+                array.SetValue(item, index++);
+        }
+
         public override bool Equals(StackItem other)
         {
-            if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
-            Array a = other as Array;
-            if (a == null)
-                return false;
-            else
-                return _array.SequenceEqual(a._array);
+            return ReferenceEquals(this, other);
         }
 
         public override bool GetBoolean()
         {
-            return _array.Count > 0;
+            return true;
         }
 
         public override byte[] GetByteArray()

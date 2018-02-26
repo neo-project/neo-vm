@@ -13,6 +13,15 @@ namespace Neo.VM
     {
         public abstract bool Equals(StackItem other);
 
+        public sealed override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (obj == this) return true;
+            if (obj is StackItem other)
+                return Equals(other);
+            return false;
+        }
+
         public static StackItem FromInterface(IInteropInterface value)
         {
             return new InteropInterface(value);
@@ -29,6 +38,17 @@ namespace Neo.VM
         }
 
         public abstract byte[] GetByteArray();
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                foreach (byte element in GetByteArray())
+                    hash = hash * 31 + element;
+                return hash;
+            }
+        }
 
         public virtual string GetString()
         {
