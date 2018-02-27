@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Neo.VM
 {
     public class InteropService
     {
-        public delegate bool delInterop(ExecutionEngine engine);
-
-        private Dictionary<string, delInterop> dictionary = new Dictionary<string, delInterop>();
+        private Dictionary<string, Func<ExecutionEngine, bool>> dictionary = new Dictionary<string, Func<ExecutionEngine, bool>>();
 
         public InteropService()
         {
@@ -16,14 +15,14 @@ namespace Neo.VM
             Register("System.ExecutionEngine.GetEntryScriptHash", GetEntryScriptHash);
         }
 
-        protected void Register(string method, delInterop handler)
+        protected void Register(string method, Func<ExecutionEngine, bool> handler)
         {
             dictionary[method] = handler;
         }
 
         internal bool Invoke(string method, ExecutionEngine engine)
         {
-            if (!dictionary.TryGetValue(method, out delInterop func)) return false;
+            if (!dictionary.TryGetValue(method, out Func<ExecutionEngine, bool> func)) return false;
             return func(engine);
         }
 
