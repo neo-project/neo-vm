@@ -105,7 +105,7 @@ namespace Neo.VM
                         {
                             int offset = context.OpReader.ReadInt16();
                             offset = context.InstructionPointer + offset - 3;
-                            if (offset < 0 || offset > context.Script.Length)
+                            if (offset < 0 || offset >= context.Script.Length)
                             {
                                 State |= VMState.FAULT;
                                 return;
