@@ -47,8 +47,11 @@ namespace Neo.VM
         public void Execute()
         {
             State &= ~VMState.BREAK;
-            while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK))
+            do
+            {
                 StepInto();
+            }
+            while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK));
         }
 
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
