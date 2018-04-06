@@ -17,7 +17,7 @@ namespace Neo.VM.Types
             if (ReferenceEquals(this, other)) return true;
             if (ReferenceEquals(null, other)) return false;
             
-            return value == other.GetBigInteger;
+            return value == other.GetBigInteger();
         }
 
         public override BigInteger GetBigInteger()
