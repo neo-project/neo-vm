@@ -16,11 +16,8 @@ namespace Neo.VM.Types
         {
             if (ReferenceEquals(this, other)) return true;
             if (ReferenceEquals(null, other)) return false;
-            Integer i = other as Integer;
-            if (i == null)
-                return GetByteArray().SequenceEqual(other.GetByteArray());
-            else
-                return value == i.value;
+            
+            return value == other.GetBigInteger;
         }
 
         public override BigInteger GetBigInteger()
