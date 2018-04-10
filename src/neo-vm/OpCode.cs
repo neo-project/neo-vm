@@ -116,6 +116,7 @@
         HASH160 = 0xA9,
         HASH256 = 0xAA,
         CHECKSIG = 0xAC,
+        VERIFY = 0xAD,
         CHECKMULTISIG = 0xAE,
 
 
