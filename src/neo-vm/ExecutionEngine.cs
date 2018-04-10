@@ -591,6 +591,21 @@ namespace Neo.VM
                             }
                         }
                         break;
+                    case OpCode.VERIFY:
+                        {
+                            byte[] pubkey = EvaluationStack.Pop().GetByteArray();
+                            byte[] signature = EvaluationStack.Pop().GetByteArray();
+                            byte[] message = EvaluationStack.Pop().GetByteArray();
+                            try
+                            {
+                                EvaluationStack.Push(Crypto.VerifySignature(message, signature, pubkey));
+                            }
+                            catch (ArgumentException)
+                            {
+                                EvaluationStack.Push(false);
+                            }
+                        }
+                        break;
                     case OpCode.CHECKMULTISIG:
                         {
                             int n;
