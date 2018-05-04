@@ -12,6 +12,9 @@ namespace Neo.VM
         internal readonly BinaryReader OpReader;
         internal readonly HashSet<uint> BreakPoints;
 
+        public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
+        public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
+
         public int InstructionPointer
         {
             get

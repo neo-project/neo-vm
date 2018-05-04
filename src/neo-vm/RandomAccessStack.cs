@@ -15,6 +15,11 @@ namespace Neo.VM
             list.Clear();
         }
 
+        public void CopyTo(RandomAccessStack<T> stack)
+        {
+            stack.list.AddRange(list);
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             return list.GetEnumerator();
@@ -34,7 +39,10 @@ namespace Neo.VM
         public T Peek(int index = 0)
         {
             if (index >= list.Count) throw new InvalidOperationException();
-            return list[list.Count - 1 - index];
+            if (index < 0) index += list.Count;
+            if (index < 0) throw new InvalidOperationException();
+            index = list.Count - index - 1;
+            return list[index];
         }
 
         public T Pop()
@@ -50,15 +58,21 @@ namespace Neo.VM
         public T Remove(int index)
         {
             if (index >= list.Count) throw new InvalidOperationException();
-            T item = list[list.Count - index - 1];
-            list.RemoveAt(list.Count - index - 1);
+            if (index < 0) index += list.Count;
+            if (index < 0) throw new InvalidOperationException();
+            index = list.Count - index - 1;
+            T item = list[index];
+            list.RemoveAt(index);
             return item;
         }
 
         public void Set(int index, T item)
         {
             if (index >= list.Count) throw new InvalidOperationException();
-            list[list.Count - index - 1] = item;
+            if (index < 0) index += list.Count;
+            if (index < 0) throw new InvalidOperationException();
+            index = list.Count - index - 1;
+            list[index] = item;
         }
     }
 }
