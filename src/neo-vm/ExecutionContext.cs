@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Neo.VM
@@ -10,7 +9,6 @@ namespace Neo.VM
         public readonly byte[] Script;
         public readonly bool PushOnly;
         internal readonly BinaryReader OpReader;
-        internal readonly HashSet<uint> BreakPoints;
 
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
@@ -40,18 +38,17 @@ namespace Neo.VM
             }
         }
 
-        internal ExecutionContext(ExecutionEngine engine, byte[] script, bool push_only, HashSet<uint> break_points = null)
+        internal ExecutionContext(ExecutionEngine engine, byte[] script, bool push_only)
         {
             this.engine = engine;
             this.Script = script;
             this.PushOnly = push_only;
             this.OpReader = new BinaryReader(new MemoryStream(script, false));
-            this.BreakPoints = break_points ?? new HashSet<uint>();
         }
 
         public ExecutionContext Clone()
         {
-            return new ExecutionContext(engine, Script, PushOnly, BreakPoints)
+            return new ExecutionContext(engine, Script, PushOnly)
             {
                 InstructionPointer = InstructionPointer
             };

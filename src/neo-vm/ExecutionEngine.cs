@@ -14,6 +14,7 @@ namespace Neo.VM
     {
         private readonly IScriptTable table;
         private readonly InteropService service;
+        private readonly Dictionary<byte[], HashSet<uint>> break_points = new Dictionary<byte[], HashSet<uint>>(new HashComparer());
 
         public IScriptContainer ScriptContainer { get; }
         public ICrypto Crypto { get; }
@@ -32,9 +33,14 @@ namespace Neo.VM
             this.service = service ?? new InteropService();
         }
 
-        public void AddBreakPoint(uint position)
+        public void AddBreakPoint(byte[] script_hash, uint position)
         {
-            CurrentContext.BreakPoints.Add(position);
+            if (!break_points.TryGetValue(script_hash, out HashSet<uint> hashset))
+            {
+                hashset = new HashSet<uint>();
+                break_points.Add(script_hash, hashset);
+            }
+            hashset.Add(position);
         }
 
         public void Dispose()
@@ -955,7 +961,7 @@ namespace Neo.VM
                 }
             if (!State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
             {
-                if (CurrentContext.BreakPoints.Contains((uint)CurrentContext.InstructionPointer))
+                if (break_points.TryGetValue(CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)CurrentContext.InstructionPointer))
                     State |= VMState.BREAK;
             }
         }
@@ -967,10 +973,15 @@ namespace Neo.VM
             return context;
         }
 
-        public bool RemoveBreakPoint(uint position)
+        public bool RemoveBreakPoint(byte[] script_hash, uint position)
         {
-            if (InvocationStack.Count == 0) return false;
-            return CurrentContext.BreakPoints.Remove(position);
+            if (!break_points.TryGetValue(script_hash, out HashSet<uint> hashset))
+                return false;
+            if (!hashset.Remove(position))
+                return false;
+            if (hashset.Count == 0)
+                break_points.Remove(script_hash);
+            return true;
         }
 
         public void StepInto()
