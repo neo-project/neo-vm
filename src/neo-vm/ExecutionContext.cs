@@ -7,7 +7,6 @@ namespace Neo.VM
     {
         private ExecutionEngine engine;
         public readonly byte[] Script;
-        public readonly bool PushOnly;
         internal readonly BinaryReader OpReader;
 
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
@@ -38,17 +37,16 @@ namespace Neo.VM
             }
         }
 
-        internal ExecutionContext(ExecutionEngine engine, byte[] script, bool push_only)
+        internal ExecutionContext(ExecutionEngine engine, byte[] script)
         {
             this.engine = engine;
             this.Script = script;
-            this.PushOnly = push_only;
             this.OpReader = new BinaryReader(new MemoryStream(script, false));
         }
 
         public ExecutionContext Clone()
         {
-            return new ExecutionContext(engine, Script, PushOnly)
+            return new ExecutionContext(engine, Script)
             {
                 InstructionPointer = InstructionPointer
             };

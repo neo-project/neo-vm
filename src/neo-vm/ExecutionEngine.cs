@@ -58,11 +58,6 @@ namespace Neo.VM
 
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
         {
-            if (opcode > OpCode.PUSH16 && opcode != OpCode.RET && context.PushOnly)
-            {
-                State |= VMState.FAULT;
-                return;
-            }
             if (opcode >= OpCode.PUSHBYTES1 && opcode <= OpCode.PUSHBYTES75)
                 context.EvaluationStack.Push(context.OpReader.ReadBytes((byte)opcode));
             else
@@ -966,9 +961,9 @@ namespace Neo.VM
             }
         }
 
-        public ExecutionContext LoadScript(byte[] script, bool push_only = false)
+        public ExecutionContext LoadScript(byte[] script)
         {
-            ExecutionContext context = new ExecutionContext(this, script, push_only);
+            ExecutionContext context = new ExecutionContext(this, script);
             InvocationStack.Push(context);
             return context;
         }
