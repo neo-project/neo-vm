@@ -44,14 +44,6 @@ namespace Neo.VM
             this.OpReader = new BinaryReader(new MemoryStream(script, false));
         }
 
-        public ExecutionContext Clone()
-        {
-            return new ExecutionContext(engine, Script)
-            {
-                InstructionPointer = InstructionPointer
-            };
-        }
-
         public void Dispose()
         {
             OpReader.Dispose();

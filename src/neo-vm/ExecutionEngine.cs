@@ -123,14 +123,14 @@ namespace Neo.VM
                         break;
                     case OpCode.CALL:
                         {
-                            ExecutionContext context_clone = context.Clone();
-                            context.EvaluationStack.CopyTo(context_clone.EvaluationStack);
-                            context.AltStack.CopyTo(context_clone.AltStack);
-                            InvocationStack.Push(context_clone);
+                            ExecutionContext context_call = LoadScript(context.Script);
+                            context.EvaluationStack.CopyTo(context_call.EvaluationStack);
+                            context.AltStack.CopyTo(context_call.AltStack);
+                            context_call.InstructionPointer = context.InstructionPointer;
                             context.EvaluationStack.Clear();
                             context.AltStack.Clear();
                             context.InstructionPointer += 2;
-                            ExecuteOp(OpCode.JMP, context_clone);
+                            ExecuteOp(OpCode.JMP, context_call);
                         }
                         break;
                     case OpCode.RET:
