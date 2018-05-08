@@ -936,6 +936,73 @@ namespace Neo.VM
                         }
                         break;
 
+                    // Stack isolation
+                    case OpCode.CALL_I:
+                        {
+                            byte signature = context.OpReader.ReadByte();
+                            int rvcount = signature >> 7;
+                            int pcount = signature & 0x7f;
+                            if (context.EvaluationStack.Count < pcount)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            ExecutionContext context_call = LoadScript(context.Script, rvcount);
+                            context.EvaluationStack.CopyTo(context_call.EvaluationStack, pcount);
+                            context_call.InstructionPointer = context.InstructionPointer;
+                            for (int i = 0; i < pcount; i++)
+                                context.EvaluationStack.Pop();
+                            context.InstructionPointer += 2;
+                            ExecuteOp(OpCode.JMP, context_call);
+                        }
+                        break;
+                    case OpCode.CALL_E:
+                    case OpCode.CALL_ED:
+                    case OpCode.CALL_ET:
+                    case OpCode.CALL_EDT:
+                        {
+                            if (table == null)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            byte signature = context.OpReader.ReadByte();
+                            int rvcount = signature >> 7;
+                            int pcount = signature & 0x7f;
+                            if (context.EvaluationStack.Count < pcount)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            if (opcode == OpCode.CALL_ET || opcode == OpCode.CALL_EDT)
+                            {
+                                if (context.RVCount != rvcount)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                            }
+                            byte[] script_hash;
+                            if (opcode == OpCode.CALL_ED || opcode == OpCode.CALL_EDT)
+                                script_hash = context.EvaluationStack.Pop().GetByteArray();
+                            else
+                                script_hash = context.OpReader.ReadBytes(20);
+                            byte[] script = table.GetScript(script_hash);
+                            if (script == null)
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+                            ExecutionContext context_new = LoadScript(script, rvcount);
+                            context.EvaluationStack.CopyTo(context_new.EvaluationStack, pcount);
+                            if (opcode == OpCode.CALL_ET || opcode == OpCode.CALL_EDT)
+                                InvocationStack.Remove(1).Dispose();
+                            else
+                                for (int i = 0; i < pcount; i++)
+                                    context.EvaluationStack.Pop();
+                        }
+                        break;
+
                     // Exceptions
                     case OpCode.THROW:
                         State |= VMState.FAULT;

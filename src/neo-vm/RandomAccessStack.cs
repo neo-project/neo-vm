@@ -18,6 +18,7 @@ namespace Neo.VM
 
         public void CopyTo(RandomAccessStack<T> stack, int count = -1)
         {
+            if (count == 0) return;
             if (count == -1)
                 stack.list.AddRange(list);
             else
