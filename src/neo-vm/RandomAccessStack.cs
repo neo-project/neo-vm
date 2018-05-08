@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Neo.VM
 {
@@ -15,9 +16,12 @@ namespace Neo.VM
             list.Clear();
         }
 
-        public void CopyTo(RandomAccessStack<T> stack)
+        public void CopyTo(RandomAccessStack<T> stack, int count = -1)
         {
-            stack.list.AddRange(list);
+            if (count == -1)
+                stack.list.AddRange(list);
+            else
+                stack.list.AddRange(list.Skip(list.Count - count));
         }
 
         public IEnumerator<T> GetEnumerator()

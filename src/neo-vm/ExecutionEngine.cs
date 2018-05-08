@@ -134,18 +134,25 @@ namespace Neo.VM
                     case OpCode.RET:
                         using (ExecutionContext context_pop = InvocationStack.Pop())
                         {
-                            RandomAccessStack<StackItem> stack_eval;
-                            if (InvocationStack.Count == 0)
+                            int rvcount = context_pop.RVCount;
+                            if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
+                            if (rvcount > 0)
                             {
-                                stack_eval = ResultStack;
-                                State |= VMState.HALT;
+                                if (context_pop.EvaluationStack.Count < rvcount)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                RandomAccessStack<StackItem> stack_eval;
+                                if (InvocationStack.Count == 0)
+                                    stack_eval = ResultStack;
+                                else
+                                    stack_eval = CurrentContext.EvaluationStack;
+                                context_pop.EvaluationStack.CopyTo(stack_eval, rvcount);
                             }
-                            else
-                            {
-                                stack_eval = CurrentContext.EvaluationStack;
-                            }
-                            context_pop.EvaluationStack.CopyTo(stack_eval);
                         }
+                        if (InvocationStack.Count == 0)
+                            State |= VMState.HALT;
                         break;
                     case OpCode.APPCALL:
                     case OpCode.TAILCALL:
@@ -952,9 +959,9 @@ namespace Neo.VM
             }
         }
 
-        public ExecutionContext LoadScript(byte[] script)
+        public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(this, script);
+            ExecutionContext context = new ExecutionContext(this, script, rvcount);
             InvocationStack.Push(context);
             return context;
         }

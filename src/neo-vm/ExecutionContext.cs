@@ -6,6 +6,7 @@ namespace Neo.VM
     public class ExecutionContext : IDisposable
     {
         public readonly byte[] Script;
+        internal readonly int RVCount;
         internal readonly BinaryReader OpReader;
         private readonly ICrypto crypto;
 
@@ -37,9 +38,10 @@ namespace Neo.VM
             }
         }
 
-        internal ExecutionContext(ExecutionEngine engine, byte[] script)
+        internal ExecutionContext(ExecutionEngine engine, byte[] script, int rvcount)
         {
             this.Script = script;
+            this.RVCount = rvcount;
             this.OpReader = new BinaryReader(new MemoryStream(script, false));
             this.crypto = engine.Crypto;
         }
