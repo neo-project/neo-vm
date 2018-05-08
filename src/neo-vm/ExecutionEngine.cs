@@ -125,10 +125,8 @@ namespace Neo.VM
                         {
                             ExecutionContext context_call = LoadScript(context.Script);
                             context.EvaluationStack.CopyTo(context_call.EvaluationStack);
-                            context.AltStack.CopyTo(context_call.AltStack);
                             context_call.InstructionPointer = context.InstructionPointer;
                             context.EvaluationStack.Clear();
-                            context.AltStack.Clear();
                             context.InstructionPointer += 2;
                             ExecuteOp(OpCode.JMP, context_call);
                         }
@@ -145,7 +143,6 @@ namespace Neo.VM
                             else
                             {
                                 stack_eval = CurrentContext.EvaluationStack;
-                                context_pop.AltStack.CopyTo(CurrentContext.AltStack);
                             }
                             context_pop.EvaluationStack.CopyTo(stack_eval);
                         }
@@ -174,17 +171,11 @@ namespace Neo.VM
 
                             ExecutionContext context_new = LoadScript(script);
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack);
-                            context.AltStack.CopyTo(context_new.AltStack);
 
                             if (opcode == OpCode.TAILCALL)
-                            {
                                 InvocationStack.Remove(1).Dispose();
-                            }
                             else
-                            {
                                 context.EvaluationStack.Clear();
-                                context.AltStack.Clear();
-                            }
                         }
                         break;
                     case OpCode.SYSCALL:
