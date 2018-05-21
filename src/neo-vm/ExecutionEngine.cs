@@ -939,9 +939,8 @@ namespace Neo.VM
                     // Stack isolation
                     case OpCode.CALL_I:
                         {
-                            byte signature = context.OpReader.ReadByte();
-                            int rvcount = signature >> 7;
-                            int pcount = signature & 0x7f;
+                            int rvcount = context.OpReader.ReadByte();
+                            int pcount = context.OpReader.ReadByte();
                             if (context.EvaluationStack.Count < pcount)
                             {
                                 State |= VMState.FAULT;
@@ -966,9 +965,8 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            byte signature = context.OpReader.ReadByte();
-                            int rvcount = signature >> 7;
-                            int pcount = signature & 0x7f;
+                            int rvcount = context.OpReader.ReadByte();
+                            int pcount = context.OpReader.ReadByte();
                             if (context.EvaluationStack.Count < pcount)
                             {
                                 State |= VMState.FAULT;
