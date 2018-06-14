@@ -43,7 +43,7 @@ namespace Neo.VM
             hashset.Add(position);
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             while (InvocationStack.Count > 0)
                 InvocationStack.Pop().Dispose();
