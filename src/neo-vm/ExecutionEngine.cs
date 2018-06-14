@@ -13,10 +13,10 @@ namespace Neo.VM
     public class ExecutionEngine : IDisposable
     {
         private readonly IScriptTable table;
-        private readonly InteropService service;
 
         public IScriptContainer ScriptContainer { get; }
         public ICrypto Crypto { get; }
+        public InteropService Service { get; }
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
@@ -30,7 +30,7 @@ namespace Neo.VM
             this.ScriptContainer = container;
             this.Crypto = crypto;
             this.table = table;
-            this.service = service ?? new InteropService();
+            this.Service = service ?? new InteropService();
         }
 
         public void AddBreakPoint(uint position)
@@ -158,7 +158,7 @@ namespace Neo.VM
                         }
                         break;
                     case OpCode.SYSCALL:
-                        if (!service.Invoke(Encoding.ASCII.GetString(context.OpReader.ReadVarBytes(252)), this))
+                        if (!Service.Invoke(Encoding.ASCII.GetString(context.OpReader.ReadVarBytes(252)), this))
                             State |= VMState.FAULT;
                         break;
 
