@@ -1,4 +1,4 @@
-﻿namespace Neo.VM
+namespace Neo.VM
 {
     public enum OpCode : byte
     {
@@ -32,23 +32,23 @@
 
         // Flow control
         NOP = 0x61, // Does nothing.
-        JMP = 0x62,
-        JMPIF = 0x63,
-        JMPIFNOT = 0x64,
-        CALL = 0x65,
-        RET = 0x66,
-        APPCALL = 0x67,
-        SYSCALL = 0x68,
-        TAILCALL = 0x69,
+        JMP = 0x62, // Reads a 2-byte value n and a jump is performed to relative position n-3.
+        JMPIF = 0x63, // A boolean value b is taken from main stack and reads a 2-byte value n, if b is True then a jump is performed to relative position n-3.
+        JMPIFNOT = 0x64, // A boolean value b is taken from main stack and reads a 2-byte value n, if b is False then a jump is performed to relative position n-3.
+        CALL = 0x65, // Current context is copied to the invocation stack. Reads a 2-byte value n and a jump is performed to relative position n-3.
+        RET = 0x66, // Stops the execution if invocation stack is empty.
+        APPCALL = 0x67, // Reads a scripthash and executes the corresponding contract.
+        SYSCALL = 0x68, // Reads a string and executes the corresponding operation.
+        TAILCALL = 0x69, // Reads a scripthash and executes the corresponding contract. Disposes the top item on invocation stack.
 
 
         // Stack
-        DUPFROMALTSTACK = 0x6A,
+        DUPFROMALTSTACK = 0x6A, // Duplicates the item on top of alt stack and put it on top of main stack.
         TOALTSTACK = 0x6B, // Puts the input onto the top of the alt stack. Removes it from the main stack.
         FROMALTSTACK = 0x6C, // Puts the input onto the top of the main stack. Removes it from the alt stack.
-        XDROP = 0x6D,
-        XSWAP = 0x72,
-        XTUCK = 0x73,
+        XDROP = 0x6D, // The item n back in the main stack is removed.
+        XSWAP = 0x72, // The item n back in the main stack in swapped with top stack item.
+        XTUCK = 0x73, // The item on top of the main stack is copied and inserted to the position n in the main stack.
         DEPTH = 0x74, // Puts the number of stack items onto the stack.
         DROP = 0x75, // Removes the top stack item.
         DUP = 0x76, // Duplicates the top stack item.
@@ -84,7 +84,7 @@
         // Note: Arithmetic inputs are limited to signed 32-bit integers, but may overflow their output.
         INC = 0x8B, // 1 is added to the input.
         DEC = 0x8C, // 1 is subtracted from the input.
-        SIGN = 0x8D,
+        SIGN = 0x8D, // Puts the sign of top stack item on top of the main stack. If value is negative, put -1; if positive, put 1; if value is zero, put 0.
         NEGATE = 0x8F, // The sign of the input is flipped.
         ABS = 0x90, // The input is made positive.
         NOT = 0x91, // If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
@@ -113,31 +113,31 @@
         //RIPEMD160 = 0xA6, // The input is hashed using RIPEMD-160.
         SHA1 = 0xA7, // The input is hashed using SHA-1.
         SHA256 = 0xA8, // The input is hashed using SHA-256.
-        HASH160 = 0xA9,
-        HASH256 = 0xAA,
-        CHECKSIG = 0xAC,
-        VERIFY = 0xAD,
-        CHECKMULTISIG = 0xAE,
+        HASH160 = 0xA9, // The input is hashed using Hash160: first with SHA-256 and then with RIPEMD-160.
+        HASH256 = 0xAA, // The input is hashed using Hash256: twice with SHA-256.
+        CHECKSIG = 0xAC, // The publickey and signature are taken from main stack. Verifies if transaction was signed by given publickey and a boolean output is put on top of the main stack.
+        VERIFY = 0xAD,  // The publickey, signature and message are taken from main stack. Verifies if given message was signed by given publickey and a boolean output is put on top of the main stack.
+        CHECKMULTISIG = 0xAE, // A set of n public keys (an array or value n followed by n pubkeys) is validated against a set of m signatures (an array or value m followed by m signatures). Verify transaction as multisig and a boolean output is put on top of the main stack.
 
 
         // Array
-        ARRAYSIZE = 0xC0,
-        PACK = 0xC1,
-        UNPACK = 0xC2,
-        PICKITEM = 0xC3,
-        SETITEM = 0xC4,
-        NEWARRAY = 0xC5, //用作引用類型
-        NEWSTRUCT = 0xC6, //用作值類型
-        NEWMAP = 0xC7,
-        APPEND = 0xC8,
-        REVERSE = 0xC9,
-        REMOVE = 0xCA,
-        HASKEY = 0xCB,
-        KEYS = 0xCC,
-        VALUES = 0xCD,
+        ARRAYSIZE = 0xC0, // An array is removed from top of the main stack. Its size is put on top of the main stack.
+        PACK = 0xC1, // A value n is taken from top of main stack. The next n items on main stack are removed, put inside n-sized array and this array is put on top of the main stack.
+        UNPACK = 0xC2, // An array is removed from top of the main stack. Its elements are put on top of the main stack (in reverse order) and the array size is also put on main stack.
+        PICKITEM = 0xC3, // An input index n (or key) and an array (or map) are taken from main stack. Element array[n] (or map[n]) is put on top of the main stack.
+        SETITEM = 0xC4, // A value v, index n (or key) and an array (or map) are taken from main stack. Attribution array[n]=v (or map[n]=v) is performed.
+        NEWARRAY = 0xC5, //用作引用類型  en: A value n is taken from top of main stack. A zero-filled array type with size n is put on top of the main stack.
+        NEWSTRUCT = 0xC6, //用作值類型 en: A value n is taken from top of main stack. A zero-filled struct type with size n is put on top of the main stack.
+        NEWMAP = 0xC7, // A Map is created and put on top of the main stack.
+        APPEND = 0xC8, // The item on top of main stack is removed and appended to the second item on top of the main stack.
+        REVERSE = 0xC9, // An array is removed from the top of the main stack and its elements are reversed.
+        REMOVE = 0xCA, // An input index n (or key) and an array (or map) are removed from the top of the main stack. Element array[n] (or map[n]) is removed.
+        HASKEY = 0xCB, // An input index n (or key) and an array (or map) are removed from the top of the main stack. Puts True on top of main stack if array[n] (or map[n]) exist, and False otherwise.
+        KEYS = 0xCC, // A map is taken from top of the main stack. The keys of this map are put on top of the main stack.
+        VALUES = 0xCD, // A map is taken from top of the main stack. The values of this map are put on top of the main stack.
 
         // Exceptions
-        THROW = 0xF0,
-        THROWIFNOT = 0xF1
+        THROW = 0xF0, // Halts the execution of the vm by setting VMState.FAULT.
+        THROWIFNOT = 0xF1  // Removes top stack item n, and halts the execution of the vm by setting VMState.FAULT only if n is False.
     }
 }
