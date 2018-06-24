@@ -28,25 +28,25 @@ namespace Neo.VM
 
         private static bool GetScriptContainer(ExecutionEngine engine)
         {
-            engine.EvaluationStack.Push(StackItem.FromInterface(engine.ScriptContainer));
+            engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(engine.ScriptContainer));
             return true;
         }
 
         private static bool GetExecutingScriptHash(ExecutionEngine engine)
         {
-            engine.EvaluationStack.Push(engine.CurrentContext.ScriptHash);
+            engine.CurrentContext.EvaluationStack.Push(engine.CurrentContext.ScriptHash);
             return true;
         }
 
         private static bool GetCallingScriptHash(ExecutionEngine engine)
         {
-            engine.EvaluationStack.Push(engine.CallingContext.ScriptHash);
+            engine.CurrentContext.EvaluationStack.Push(engine.CallingContext.ScriptHash);
             return true;
         }
 
         private static bool GetEntryScriptHash(ExecutionEngine engine)
         {
-            engine.EvaluationStack.Push(engine.EntryContext.ScriptHash);
+            engine.CurrentContext.EvaluationStack.Push(engine.EntryContext.ScriptHash);
             return true;
         }
     }
