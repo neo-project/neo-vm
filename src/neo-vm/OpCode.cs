@@ -2,10 +2,6 @@ namespace Neo.VM
 {
     public enum OpCode : byte
     {
-      /// <summary>
-      ///
-      /// </summary>
-
         // Constants
         /// <summary>
         /// An empty array of bytes is pushed onto the stack.
