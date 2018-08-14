@@ -150,6 +150,10 @@ namespace Neo.VM
                                     stack_eval = CurrentContext.EvaluationStack;
                                 context_pop.EvaluationStack.CopyTo(stack_eval, rvcount);
                             }
+                            if (context_pop.RVCount == -1 && InvocationStack.Count > 0)
+                            {
+                                context_pop.AltStack.CopyTo(CurrentContext.AltStack);
+                            }
                         }
                         if (InvocationStack.Count == 0)
                             State |= VMState.HALT;
