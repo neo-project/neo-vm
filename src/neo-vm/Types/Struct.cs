@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Neo.VM.Types
 {
@@ -11,33 +10,61 @@ namespace Neo.VM.Types
         {
         }
 
-        public StackItem Clone()
+        public Struct Clone()
         {
-            List<StackItem> newArray = new List<StackItem>(this._array.Count);
-            for (var i = 0; i < _array.Count; i++)
+            Struct @struct = new Struct();
+            Queue<Struct> queue = new Queue<Struct>();
+            queue.Enqueue(@struct);
+            queue.Enqueue(this);
+            while (queue.Count > 0)
             {
-                if (_array[i] is Struct s)
+                Struct a = queue.Dequeue();
+                Struct b = queue.Dequeue();
+                foreach (StackItem item in b)
                 {
-                    newArray.Add(s.Clone());
-                }
-                else
-                {
-                    newArray.Add(_array[i]); //array = 是引用
-                                             //其他的由于是固定值类型，不会改内部值，所以虽然需要复制，直接= 就行
+                    if (item is Struct sb)
+                    {
+                        Struct sa = new Struct();
+                        a.Add(sa);
+                        queue.Enqueue(sa);
+                        queue.Enqueue(sb);
+                    }
+                    else
+                    {
+                        a.Add(item);
+                    }
                 }
             }
-            return new Struct(newArray);
+            return @struct;
         }
 
         public override bool Equals(StackItem other)
         {
-            if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
-            Struct a = other as Struct;
-            if (a == null)
-                return false;
-            else
-                return _array.SequenceEqual(a._array);
+            if (other is null) return false;
+            Stack<StackItem> stack1 = new Stack<StackItem>();
+            Stack<StackItem> stack2 = new Stack<StackItem>();
+            stack1.Push(this);
+            stack2.Push(other);
+            while (stack1.Count > 0)
+            {
+                StackItem a = stack1.Pop();
+                StackItem b = stack2.Pop();
+                if (a is Struct sa)
+                {
+                    if (ReferenceEquals(a, b)) continue;
+                    if (!(b is Struct sb)) return false;
+                    if (sa.Count != sb.Count) return false;
+                    foreach (StackItem item in sa)
+                        stack1.Push(item);
+                    foreach (StackItem item in sb)
+                        stack2.Push(item);
+                }
+                else
+                {
+                    if (!a.Equals(b)) return false;
+                }
+            }
+            return true;
         }
     }
 }
