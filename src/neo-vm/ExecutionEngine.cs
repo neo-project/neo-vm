@@ -732,6 +732,7 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+                            StackItem item;
                             switch (context.EvaluationStack.Pop())
                             {
                                 case VMArray array:
@@ -741,14 +742,10 @@ namespace Neo.VM
                                         State |= VMState.FAULT;
                                         return;
                                     }
-                                    context.EvaluationStack.Push(array[index]);
+                                    item = array[index];
                                     break;
                                 case Map map:
-                                    if (map.TryGetValue(key, out StackItem value))
-                                    {
-                                        context.EvaluationStack.Push(value);
-                                    }
-                                    else
+                                    if (!map.TryGetValue(key, out item))
                                     {
                                         State |= VMState.FAULT;
                                         return;
@@ -758,6 +755,8 @@ namespace Neo.VM
                                     State |= VMState.FAULT;
                                     return;
                             }
+                            if (item is Struct s) item = s.Clone();
+                            CurrentContext.EvaluationStack.Push(item);
                         }
                         break;
                     case OpCode.SETITEM:
