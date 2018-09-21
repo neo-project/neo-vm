@@ -90,6 +90,11 @@ namespace Neo.VM
             return new ByteArray(value);
         }
 
+        public static implicit operator StackItem(string value)
+        {
+            return new ByteArray(Encoding.UTF8.GetBytes(value));
+        }
+
         public static implicit operator StackItem(StackItem[] value)
         {
             return new Array(value);
