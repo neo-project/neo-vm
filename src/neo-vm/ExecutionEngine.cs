@@ -585,7 +585,18 @@ namespace Neo.VM
                     case OpCode.CHECKSIG:
                         {
                             byte[] pubkey = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] signature = context.EvaluationStack.Pop().GetByteArray();
+                            StackItem item = context.EvaluationStack.Pop();
+                            byte[] signature = item.GetByteArray();
+                            if (item is VMArray array1)
+                            {
+                                byte[][] pubkeys = array1.Select(p => p.GetByteArray()).ToArray();
+                                if (pubkeys.Length == 0)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                signature = pubkeys[0];
+                            }
                             try
                             {
                                 context.EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature, pubkey));
