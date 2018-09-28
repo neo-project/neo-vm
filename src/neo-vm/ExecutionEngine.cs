@@ -589,13 +589,13 @@ namespace Neo.VM
                             byte[] signature = item.GetByteArray();
                             if (item is VMArray array1)
                             {
-                                byte[][] pubkeys = array1.Select(p => p.GetByteArray()).ToArray();
-                                if (pubkeys.Length == 0)
+                                byte[][] signatures = array1.Select(p => p.GetByteArray()).ToArray();
+                                if (signatures.Length == 0)
                                 {
                                     State |= VMState.FAULT;
                                     return;
                                 }
-                                signature = pubkeys[0];
+                                signature = signatures[0];
                             }
                             try
                             {
