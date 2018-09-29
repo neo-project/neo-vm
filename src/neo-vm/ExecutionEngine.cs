@@ -597,6 +597,21 @@ namespace Neo.VM
                                 }
                                 signature = signatures[0];
                             }
+                            // preparing CHECKSIG for Neo 3.0 format: expects "verify" (0x766572696679)
+                            if(signature.Equals(new byte[]{0x76,0x65,0x72,0x69,0x66,0x79}) && context.EvaluationStack.Length > 0)
+                            {
+                                StackItem item2 = context.EvaluationStack.Peek();
+                                if (item2 is VMArray array2)
+                                {
+                                    byte[][] signatures = array2.Select(p => p.GetByteArray()).ToArray();
+                                    if (signatures.Length != 1)
+                                    {
+                                        State |= VMState.FAULT;
+                                        return;
+                                    }
+                                    signature = signatures[0];
+                                }                
+                            }
                             try
                             {
                                 context.EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature, pubkey));
