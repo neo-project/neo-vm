@@ -590,7 +590,7 @@ namespace Neo.VM
                             if (item is VMArray array1)
                             {
                                 byte[][] signatures = array1.Select(p => p.GetByteArray()).ToArray();
-                                if (signatures.Length == 0)
+                                if (signatures.Length != 1)
                                 {
                                     State |= VMState.FAULT;
                                     return;
