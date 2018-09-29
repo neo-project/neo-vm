@@ -604,12 +604,11 @@ namespace Neo.VM
                                 if (item2 is VMArray array2)
                                 {
                                     byte[][] signatures = array2.Select(p => p.GetByteArray()).ToArray();
-                                    if (signatures.Length != 1)
+                                    if (signatures.Length == 1)
                                     {
-                                        State |= VMState.FAULT;
-                                        return;
+                                        signature = signatures[0];
+                                        context.EvaluationStack.Pop();
                                     }
-                                    signature = signatures[0];
                                 }                
                             }
                             try
