@@ -603,10 +603,10 @@ namespace Neo.VM
                                 StackItem item2 = context.EvaluationStack.Peek();
                                 if (item2 is VMArray array2)
                                 {
-                                    byte[][] signatures = array2.Select(p => p.GetByteArray()).ToArray();
-                                    if (signatures.Length == 1)
+                                    byte[][] parameters = array2.Select(p => p.GetByteArray()).ToArray();
+                                    if (parameters.Length > 0)
                                     {
-                                        signature = signatures[0];
+                                        signature = parameters[parameters.Length-1];
                                         context.EvaluationStack.Pop();
                                     }
                                 }                
