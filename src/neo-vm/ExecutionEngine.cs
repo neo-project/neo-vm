@@ -843,8 +843,9 @@ namespace Neo.VM
                             }
                             else
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                byte[] byteArrayItem = arrItem.GetByteArray();
+                                byte[] reversed = byteArrayItem.Reverse().ToArray();
+                                context.EvaluationStack.Push(reversed);
                             }
                         }
                         break;
