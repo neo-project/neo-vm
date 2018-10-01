@@ -843,9 +843,7 @@ namespace Neo.VM
                             }
                             else
                             {
-                                byte[] byteArrayItem = arrItem.GetByteArray();
-                                byte[] reversed = byteArrayItem.Reverse().ToArray();
-                                context.EvaluationStack.Push(reversed);
+                                context.EvaluationStack.Push(arrItem.GetByteArray().Reverse().ToArray());
                             }
                         }
                         break;
