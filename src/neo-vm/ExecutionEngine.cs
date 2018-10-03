@@ -696,22 +696,40 @@ namespace Neo.VM
                         break;
                     case OpCode.PACK:
                         {
-                            int size = (int)context.EvaluationStack.Pop().GetBigInteger();
-                            if (size < 0 || size > context.EvaluationStack.Count)
+                            StackItem item = context.EvaluationStack.Pop();
+                            if (item is VMArray array)
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                byte[] ba = new byte[array.Count];
+                                for (int i = 0; i < array.Count; i++)
+                                    ba[i] = (byte)array[i];
+                                context.EvaluationStack.Push(ba);
                             }
-                            List<StackItem> items = new List<StackItem>(size);
-                            for (int i = 0; i < size; i++)
-                                items.Add(context.EvaluationStack.Pop());
-                            context.EvaluationStack.Push(items);
+                            else
+                            {
+                                int size = (int)item.GetBigInteger();
+                                if (size < 0 || size > context.EvaluationStack.Count)
+                                {
+                                    State |= VMState.FAULT;
+                                    return;
+                                }
+                                List<StackItem> items = new List<StackItem>(size);
+                                for (int i = 0; i < size; i++)
+                                    items.Add(context.EvaluationStack.Pop());
+                                context.EvaluationStack.Push(items);
+                            }
                         }
                         break;
                     case OpCode.UNPACK:
                         {
                             StackItem item = context.EvaluationStack.Pop();
-                            if (item is VMArray array)
+                            if (item is byte[] ba)
+                            {
+                                List<byte> items = new List<byte>(ba.Length);
+                                for (int i = 0; i < ba.Length; i++)
+                                    items.Add(ba[i]);
+                                context.EvaluationStack.Push(items);
+                            }
+                            else if (item is VMArray array)
                             {
                                 for (int i = array.Count - 1; i >= 0; i--)
                                     context.EvaluationStack.Push(array[i]);
