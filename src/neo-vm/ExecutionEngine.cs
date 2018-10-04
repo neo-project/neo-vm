@@ -699,9 +699,10 @@ namespace Neo.VM
                             StackItem item = context.EvaluationStack.Pop();
                             if (item is VMArray array)
                             {
-                                byte[] ba = new byte[array.Count];
+                                var nba = new ArrayList<byte>();
                                 for (int i = 0; i < array.Count; i++)
-                                    ba[i] = (byte)array[i];
+                                    nba.AddRange(array[i].GetByteArray());
+                                byte[] ba = nba.ToArray();
                                 context.EvaluationStack.Push(ba);
                             }
                             else
