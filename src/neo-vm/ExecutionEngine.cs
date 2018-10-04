@@ -699,7 +699,7 @@ namespace Neo.VM
                             StackItem item = context.EvaluationStack.Pop();
                             if (item is VMArray array)
                             {
-                                var nba = new ArrayList<byte>();
+                                List<byte> nba = new List<byte>();
                                 for (int i = 0; i < array.Count; i++)
                                     nba.AddRange(array[i].GetByteArray());
                                 byte[] ba = nba.ToArray();
@@ -726,9 +726,9 @@ namespace Neo.VM
                             if (item is ByteArray iba)
                             {
                                 byte[] ba = iba.GetByteArray();
-                                List<byte> items = new List<byte>(ba.Length);
+                                List<StackItem> items = new List<StackItem>(ba.Length);
                                 for (int i = 0; i < ba.Length; i++)
-                                    items.Add(ba[i]);
+                                    items.Add(new ByteArray(new byte[]{ba[i]}));
                                 context.EvaluationStack.Push(items);
                             }
                             else if (item is VMArray array)
