@@ -722,8 +722,9 @@ namespace Neo.VM
                     case OpCode.UNPACK:
                         {
                             StackItem item = context.EvaluationStack.Pop();
-                            if (item is byte[] ba)
+                            if (item is ByteArray iba)
                             {
+                                byte[] ba = iba.GetByteArray();
                                 List<byte> items = new List<byte>(ba.Length);
                                 for (int i = 0; i < ba.Length; i++)
                                     items.Add(ba[i]);
