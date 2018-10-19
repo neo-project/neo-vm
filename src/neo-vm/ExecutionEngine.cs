@@ -191,9 +191,9 @@ namespace Neo.VM
                         break;
                     case OpCode.SYSCALL:
                         byte[] ba = context.OpReader.ReadVarBytes(252);
-                        if(ba.Length == 4)
+                        if (ba.Length == 4)
                         {
-                            if (!Service.Invoke(ba.ToUInt32(0)), this))
+                            if (!Service.Invoke(BitConverter.ToUInt32(ba, 0), this))
                                 State |= VMState.FAULT;
                         }
                         else if (!Service.Invoke(Encoding.ASCII.GetString(ba), this))
