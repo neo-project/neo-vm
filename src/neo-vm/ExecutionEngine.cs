@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
-using System.Text;
 using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
@@ -190,13 +189,7 @@ namespace Neo.VM
                         }
                         break;
                     case OpCode.SYSCALL:
-                        byte[] ba = context.OpReader.ReadVarBytes(252);
-                        if (ba.Length == 4)
-                        {
-                            if (!Service.Invoke(BitConverter.ToUInt32(ba, 0), this))
-                                State |= VMState.FAULT;
-                        }
-                        else if (!Service.Invoke(Encoding.ASCII.GetString(ba), this))
+                        if (!Service.Invoke(context.OpReader.ReadVarBytes(252), this))
                             State |= VMState.FAULT;
                         break;
 

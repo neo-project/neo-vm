@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Neo.VM
 {
@@ -18,19 +17,15 @@ namespace Neo.VM
 
         protected void Register(string method, Func<ExecutionEngine, bool> handler)
         {
-            uint key = Crypto.Default.Hash256(Encoding.ASCII.GetBytes(method)).ToUInt32(0);
-            dictionary[key] = handler;
+            dictionary[method.ToInteropMethodHash()] = handler;
         }
 
-        internal bool Invoke(string method, ExecutionEngine engine)
+        internal bool Invoke(byte[] method, ExecutionEngine engine)
         {
-            uint key = Crypto.Default.Hash256(Encoding.ASCII.GetBytes(method)).ToUInt32(0);
-            return Invoke(key, engine);
-        }
-
-        internal bool Invoke(uint key, ExecutionEngine engine)
-        {
-            if (!dictionary.TryGetValue(key, out Func<ExecutionEngine, bool> func)) return false;
+            uint hash = method.Length == 4
+                ? BitConverter.ToUInt32(method, 0)
+                : method.ToInteropMethodHash();
+            if (!dictionary.TryGetValue(hash, out Func<ExecutionEngine, bool> func)) return false;
             return func(engine);
         }
 
