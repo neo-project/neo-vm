@@ -8,6 +8,11 @@ namespace Neo.VM
         private Dictionary<uint, Func<ExecutionEngine, bool>> dictionary = new Dictionary<uint, Func<ExecutionEngine, bool>>();
         private Dictionary<string, uint> dictionaryStr = new Dictionary<string, uint>();
 
+        public uint InteropHash(string method)
+        {
+            return dictionaryStr[method];
+        }
+
         public InteropService()
         {
             Register("System.ExecutionEngine.GetScriptContainer", GetScriptContainer);
@@ -18,7 +23,7 @@ namespace Neo.VM
 
         protected void Register(string method, Func<ExecutionEngine, bool> handler)
         {
-            uint hash = method.ToInteropMethodHash(); 
+            uint hash = method.ToInteropMethodHash();
             dictionary[hash] = handler;
             dictionaryStr[method] = hash;
         }
