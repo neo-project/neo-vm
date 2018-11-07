@@ -6,12 +6,6 @@ namespace Neo.VM
     public class InteropService
     {
         private Dictionary<uint, Func<ExecutionEngine, bool>> dictionary = new Dictionary<uint, Func<ExecutionEngine, bool>>();
-        private Dictionary<string, uint> dictionaryStr = new Dictionary<string, uint>();
-
-        public uint InteropHash(string method)
-        {
-            return dictionaryStr[method];
-        }
 
         public InteropService()
         {
@@ -23,16 +17,14 @@ namespace Neo.VM
 
         protected void Register(string method, Func<ExecutionEngine, bool> handler)
         {
-            uint hash = method.ToInteropMethodHash();
-            dictionary[hash] = handler;
-            dictionaryStr[method] = hash;
+            dictionary[method.ToInteropMethodHash()] = handler;
         }
 
         internal bool Invoke(byte[] method, ExecutionEngine engine)
         {
             uint hash = method.Length == 4
                 ? BitConverter.ToUInt32(method, 0)
-                : dictionaryStr[method];
+                : method.ToInteropMethodHash();
             if (!dictionary.TryGetValue(hash, out Func<ExecutionEngine, bool> func)) return false;
             return func(engine);
         }

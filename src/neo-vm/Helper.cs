@@ -2,11 +2,14 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Neo.VM
 {
     public static class Helper
     {
+        private static Dictionary<byte[], uint> dictionary = new Dictionary<byte[], uint>();
+
         internal static byte[] ReadVarBytes(this BinaryReader reader, int max = 0X7fffffc7)
         {
             return reader.ReadBytes((int)reader.ReadVarInt((ulong)max));
@@ -40,10 +43,14 @@ namespace Neo.VM
 
         public static uint ToInteropMethodHash(this byte[] method)
         {
-            using (SHA256 sha = SHA256.Create())
+            if(!dictionary.ContainsKey(method))
             {
-                return BitConverter.ToUInt32(sha.ComputeHash(method), 0);
+                using (SHA256 sha = SHA256.Create())
+                {
+                    dictionary[method] = BitConverter.ToUInt32(sha.ComputeHash(method), 0);
+                }
             }
+            return dictionary[method];
         }
 
         internal static void WriteVarBytes(this BinaryWriter writer, byte[] value)
