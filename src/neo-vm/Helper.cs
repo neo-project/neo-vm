@@ -40,17 +40,12 @@ namespace Neo.VM
         {
             if (method_hashes.TryGetValue(method, out uint hash))
                 return hash;
-            hash = ToInteropMethodHash(Encoding.ASCII.GetBytes(method));
-            method_hashes[method] = hash;
-            return hash;
-        }
-
-        public static uint ToInteropMethodHash(this byte[] method)
-        {
             using (SHA256 sha = SHA256.Create())
             {
-                return BitConverter.ToUInt32(sha.ComputeHash(method), 0);
+                hash = BitConverter.ToUInt32(sha.ComputeHash(Encoding.ASCII.GetBytes(method)), 0);
             }
+            method_hashes[method] = hash;
+            return hash;
         }
 
         internal static void WriteVarBytes(this BinaryWriter writer, byte[] value)
