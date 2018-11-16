@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Neo.VM
 {
@@ -24,7 +25,7 @@ namespace Neo.VM
         {
             uint hash = method.Length == 4
                 ? BitConverter.ToUInt32(method, 0)
-                : method.ToInteropMethodHash();
+                : Encoding.ASCII.GetString(method).ToInteropMethodHash();
             if (!dictionary.TryGetValue(hash, out Func<ExecutionEngine, bool> func)) return false;
             return func(engine);
         }
