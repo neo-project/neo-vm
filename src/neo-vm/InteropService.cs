@@ -16,12 +16,12 @@ namespace Neo.VM
             Register("System.ExecutionEngine.GetEntryScriptHash", GetEntryScriptHash);
         }
 
-        protected void Register(string method, Func<ExecutionEngine, bool> handler)
+        protected virtual void Register(string method, Func<ExecutionEngine, bool> handler)
         {
             dictionary[method.ToInteropMethodHash()] = handler;
         }
 
-        internal bool Invoke(byte[] method, ExecutionEngine engine)
+        protected virtual bool Invoke(byte[] method, ExecutionEngine engine)
         {
             uint hash = method.Length == 4
                 ? BitConverter.ToUInt32(method, 0)
