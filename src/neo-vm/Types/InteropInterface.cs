@@ -34,5 +34,10 @@ namespace Neo.VM.Types
         {
             return _object as T;
         }
+        
+        public object GetInterface()
+        {
+            return _object;
+        }
     }
 }
