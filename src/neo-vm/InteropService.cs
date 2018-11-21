@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Neo.VM
 {
-    public class InteropService
+    public class InteropService : IInteropService
     {
         private Dictionary<uint, Func<ExecutionEngine, bool>> dictionary = new Dictionary<uint, Func<ExecutionEngine, bool>>();
 
@@ -16,12 +16,12 @@ namespace Neo.VM
             Register("System.ExecutionEngine.GetEntryScriptHash", GetEntryScriptHash);
         }
 
-        protected virtual void Register(string method, Func<ExecutionEngine, bool> handler)
+        public void Register(string method, Func<ExecutionEngine, bool> handler)
         {
             dictionary[method.ToInteropMethodHash()] = handler;
         }
 
-        protected virtual bool Invoke(byte[] method, ExecutionEngine engine)
+        public bool Invoke(byte[] method, ExecutionEngine engine)
         {
             uint hash = method.Length == 4
                 ? BitConverter.ToUInt32(method, 0)
