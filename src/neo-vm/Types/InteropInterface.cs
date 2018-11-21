@@ -2,11 +2,12 @@
 
 namespace Neo.VM.Types
 {
-    public class InteropInterface : StackItem
+    public class InteropInterface<T> : StackItem
+        where T : class
     {
-        private IInteropInterface _object;
+        private T _object;
 
-        public InteropInterface(IInteropInterface value)
+        public InteropInterface(T value)
         {
             this._object = value;
         }
@@ -14,9 +15,8 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
-            InteropInterface i = other as InteropInterface;
-            if (i == null) return false;
+            if (other is null) return false;
+            if (!(other is InteropInterface<T> i)) return false;
             return _object.Equals(i._object);
         }
 
@@ -30,9 +30,9 @@ namespace Neo.VM.Types
             throw new NotSupportedException();
         }
 
-        public T GetInterface<T>() where T : class, IInteropInterface
+        public static implicit operator T(InteropInterface<T> @interface)
         {
-            return _object as T;
+            return @interface._object;
         }
     }
 }
