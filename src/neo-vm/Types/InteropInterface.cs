@@ -2,7 +2,15 @@
 
 namespace Neo.VM.Types
 {
-    public class InteropInterface<T> : StackItem
+    public abstract class InteropInterface : StackItem
+    {
+        public override byte[] GetByteArray()
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public class InteropInterface<T> : InteropInterface
         where T : class
     {
         private T _object;
@@ -23,11 +31,6 @@ namespace Neo.VM.Types
         public override bool GetBoolean()
         {
             return _object != null;
-        }
-
-        public override byte[] GetByteArray()
-        {
-            throw new NotSupportedException();
         }
 
         public static implicit operator T(InteropInterface<T> @interface)
