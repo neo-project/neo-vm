@@ -1,21 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Neo.VM
 {
-    public static class Helper
+    internal static class Helper
     {
-        private static Dictionary<string, uint> method_hashes = new Dictionary<string, uint>();
-
-        internal static byte[] ReadVarBytes(this BinaryReader reader, int max = 0X7fffffc7)
+        public static byte[] ReadVarBytes(this BinaryReader reader, int max = 0X7fffffc7)
         {
             return reader.ReadBytes((int)reader.ReadVarInt((ulong)max));
         }
 
-        internal static ulong ReadVarInt(this BinaryReader reader, ulong max = ulong.MaxValue)
+        public static ulong ReadVarInt(this BinaryReader reader, ulong max = ulong.MaxValue)
         {
             byte fb = reader.ReadByte();
             ulong value;
@@ -29,59 +24,6 @@ namespace Neo.VM
                 value = fb;
             if (value > max) throw new FormatException();
             return value;
-        }
-
-        internal static string ReadVarString(this BinaryReader reader)
-        {
-            return Encoding.UTF8.GetString(reader.ReadVarBytes());
-        }
-
-        public static uint ToInteropMethodHash(this string method)
-        {
-            if (method_hashes.TryGetValue(method, out uint hash))
-                return hash;
-            using (SHA256 sha = SHA256.Create())
-            {
-                hash = BitConverter.ToUInt32(sha.ComputeHash(Encoding.ASCII.GetBytes(method)), 0);
-            }
-            method_hashes[method] = hash;
-            return hash;
-        }
-
-        internal static void WriteVarBytes(this BinaryWriter writer, byte[] value)
-        {
-            writer.WriteVarInt(value.Length);
-            writer.Write(value);
-        }
-
-        internal static void WriteVarInt(this BinaryWriter writer, long value)
-        {
-            if (value < 0)
-                throw new ArgumentOutOfRangeException();
-            if (value < 0xFD)
-            {
-                writer.Write((byte)value);
-            }
-            else if (value <= 0xFFFF)
-            {
-                writer.Write((byte)0xFD);
-                writer.Write((ushort)value);
-            }
-            else if (value <= 0xFFFFFFFF)
-            {
-                writer.Write((byte)0xFE);
-                writer.Write((uint)value);
-            }
-            else
-            {
-                writer.Write((byte)0xFF);
-                writer.Write(value);
-            }
-        }
-
-        internal static void WriteVarString(this BinaryWriter writer, string value)
-        {
-            writer.WriteVarBytes(Encoding.UTF8.GetBytes(value));
         }
     }
 }

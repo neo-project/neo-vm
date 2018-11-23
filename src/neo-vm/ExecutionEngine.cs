@@ -16,7 +16,7 @@ namespace Neo.VM
 
         public IScriptContainer ScriptContainer { get; }
         public ICrypto Crypto { get; }
-        public InteropService Service { get; }
+        public IInteropService Service { get; }
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
         public ExecutionContext CurrentContext => InvocationStack.Peek();
@@ -24,12 +24,12 @@ namespace Neo.VM
         public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
         public VMState State { get; protected set; } = VMState.BREAK;
 
-        public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, InteropService service = null)
+        public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, IInteropService service = null)
         {
             this.ScriptContainer = container;
             this.Crypto = crypto;
             this.table = table;
-            this.Service = service ?? new InteropService();
+            this.Service = service;
         }
 
         public void AddBreakPoint(byte[] script_hash, uint position)
@@ -189,7 +189,7 @@ namespace Neo.VM
                         }
                         break;
                     case OpCode.SYSCALL:
-                        if (!Service.Invoke(context.OpReader.ReadVarBytes(252), this))
+                        if (Service?.Invoke(context.OpReader.ReadVarBytes(252), this) != true)
                             State |= VMState.FAULT;
                         break;
 

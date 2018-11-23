@@ -1,6 +1,6 @@
 ﻿namespace Neo.VM
 {
-    public interface IScriptContainer : IInteropInterface
+    public interface IScriptContainer
     {
         byte[] GetMessage();
     }

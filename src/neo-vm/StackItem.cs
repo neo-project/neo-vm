@@ -22,9 +22,10 @@ namespace Neo.VM
             return false;
         }
 
-        public static StackItem FromInterface(IInteropInterface value)
+        public static StackItem FromInterface<T>(T value)
+            where T : class
         {
-            return new InteropInterface(value);
+            return new InteropInterface<T>(value);
         }
 
         public virtual BigInteger GetBigInteger()
