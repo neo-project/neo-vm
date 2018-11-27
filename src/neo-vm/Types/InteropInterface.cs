@@ -8,6 +8,8 @@ namespace Neo.VM.Types
         {
             throw new NotSupportedException();
         }
+
+        public abstract T GetInterface<T>() where T : class;
     }
 
     public class InteropInterface<T> : InteropInterface
@@ -31,6 +33,11 @@ namespace Neo.VM.Types
         public override bool GetBoolean()
         {
             return _object != null;
+        }
+
+        public override I GetInterface<I>()
+        {
+            return _object as I;
         }
 
         public static implicit operator T(InteropInterface<T> @interface)
