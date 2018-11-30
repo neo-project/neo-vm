@@ -35,6 +35,7 @@ namespace Neo.VM
                 return (OpCode)Script[position];
             }
         }
+        
         private byte[] _script_hash = null;
         public byte[] ScriptHash
         {
