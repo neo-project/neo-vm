@@ -30,7 +30,7 @@ namespace Neo.VM
             get
             {
                 var position = OpReader.BaseStream.Position;
-                if (position>= Script.Length) return OpCode.RET;
+                if (position >= Script.Length) return OpCode.RET;
                 
                 return (OpCode)Script[position];
             }
