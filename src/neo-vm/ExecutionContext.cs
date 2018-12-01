@@ -25,8 +25,17 @@ namespace Neo.VM
             }
         }
 
-        public OpCode NextInstruction => (OpCode)Script[OpReader.BaseStream.Position];
-
+        public OpCode NextInstruction
+        {
+            get
+            {
+                var position = OpReader.BaseStream.Position;
+                if (position >= Script.Length) return OpCode.RET;
+                
+                return (OpCode)Script[position];
+            }
+        }
+        
         private byte[] _script_hash = null;
         public byte[] ScriptHash
         {
