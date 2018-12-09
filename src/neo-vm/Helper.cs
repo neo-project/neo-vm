@@ -9,7 +9,7 @@ namespace Neo.VM
         {
             if((max > 0x1000000) || (!reader.BaseStream.CanSeek) || (reader.BaseStream.Length - reader.BaseStream.Position) < max))
                 throw new FormatException;
-            return reader.reader.ReadBytes(max);
+            return reader.ReadBytes(max);
         }
     }
 }

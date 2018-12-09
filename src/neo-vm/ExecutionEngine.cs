@@ -58,7 +58,7 @@ namespace Neo.VM
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
         {
             if (opcode >= OpCode.PUSHBYTES1 && opcode <= OpCode.PUSHBYTES75)
-                context.EvaluationStack.Push(context.OpReader.ReadBytes((byte)opcode));
+                context.EvaluationStack.Push(context.OpReader.SafeReadBytes((byte)opcode));
             else
                 switch (opcode)
                 {
@@ -67,13 +67,13 @@ namespace Neo.VM
                         context.EvaluationStack.Push(new byte[0]);
                         break;
                     case OpCode.PUSHDATA1:
-                        context.EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadByte()));
+                        context.EvaluationStack.Push(context.OpReader.SafeReadBytes(context.OpReader.ReadByte()));
                         break;
                     case OpCode.PUSHDATA2:
-                        context.EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadUInt16()));
+                        context.EvaluationStack.Push(context.OpReader.SafeReadBytes(context.OpReader.ReadUInt16()));
                         break;
                     case OpCode.PUSHDATA4:
-                        context.EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadInt32()));
+                        context.EvaluationStack.Push(context.OpReader.SafeReadBytes(context.OpReader.ReadInt32()));
                         break;
                     case OpCode.PUSHM1:
                     case OpCode.PUSH1:
@@ -166,7 +166,7 @@ namespace Neo.VM
                                 return;
                             }
 
-                            byte[] script_hash = context.OpReader.ReadBytes(20);
+                            byte[] script_hash = context.OpReader.SafeReadBytes(20);
                             if (script_hash.All(p => p == 0))
                             {
                                 script_hash = context.EvaluationStack.Pop().GetByteArray();
@@ -988,7 +988,7 @@ namespace Neo.VM
                             if (opcode == OpCode.CALL_ED || opcode == OpCode.CALL_EDT)
                                 script_hash = context.EvaluationStack.Pop().GetByteArray();
                             else
-                                script_hash = context.OpReader.ReadBytes(20);
+                                script_hash = context.OpReader.SafeReadBytes(20);
                             byte[] script = table.GetScript(script_hash);
                             if (script == null)
                             {
