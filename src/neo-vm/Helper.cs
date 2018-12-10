@@ -5,7 +5,7 @@ namespace Neo.VM
 {
     internal static class Helper
     {
-        public static byte[] ReadVarBytes(this BinaryReader reader, int max = 0X7fffffc7)
+        public static byte[] ReadVarBytes(this BinaryReader reader, int max = 0x10000000)
         {
             return reader.SafeReadBytes((int)reader.ReadVarInt((ulong)max));
         }
