@@ -5,9 +5,9 @@ namespace Neo.VM
 {
     internal static class Helper
     {
-        public static byte[] ReadVarBytes(this BinaryReader reader, int max = 0X7fffffc7)
+        public static byte[] ReadVarBytes(this BinaryReader reader, int max = 0x10000000)
         {
-            return reader.ReadBytes((int)reader.ReadVarInt((ulong)max));
+            return reader.SafeReadBytes((int)reader.ReadVarInt((ulong)max));
         }
 
         public static ulong ReadVarInt(this BinaryReader reader, ulong max = ulong.MaxValue)
@@ -24,6 +24,14 @@ namespace Neo.VM
                 value = fb;
             if (value > max) throw new FormatException();
             return value;
+        }
+
+        public static byte[] SafeReadBytes(this BinaryReader reader, int count)
+        {
+            byte[] data = reader.ReadBytes(count);
+            if (data.Length < count)
+                throw new FormatException();
+            return data;
         }
     }
 }
