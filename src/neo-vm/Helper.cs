@@ -26,11 +26,12 @@ namespace Neo.VM
             return value;
         }
 
-        public static byte[] SafeReadBytes(this BinaryReader reader, int max = 0x1000000)
+        public static byte[] SafeReadBytes(this BinaryReader reader, int count)
         {
-            if (max > 0x1000000 || !reader.BaseStream.CanSeek || reader.BaseStream.Length - reader.BaseStream.Position < max)
+            byte[] data = reader.ReadBytes(count);
+            if (data.Length < count)
                 throw new FormatException();
-            return reader.ReadBytes(max);
+            return data;
         }
     }
 }
