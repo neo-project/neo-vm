@@ -189,8 +189,7 @@ namespace Neo.VM
                         }
                         break;
                     case OpCode.SYSCALL:
-                        int length = context.OpReader.ReadByte();
-                        if ((length > 252) || (Service?.Invoke(context.OpReader.SafeReadBytes(length), this) != true))
+                        if (Service?.Invoke(context.OpReader.ReadVarBytes(252), this) != true)
                             State |= VMState.FAULT;
                         break;
 
