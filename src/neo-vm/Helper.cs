@@ -7,7 +7,7 @@ namespace Neo.VM
     {
         public static byte[] ReadVarBytes(this BinaryReader reader, int max = 0X7fffffc7)
         {
-            return reader.ReadBytes((int)reader.ReadVarInt((ulong)max));
+            return reader.SafeReadBytes((int)reader.ReadVarInt((ulong)max));
         }
 
         public static ulong ReadVarInt(this BinaryReader reader, ulong max = ulong.MaxValue)
