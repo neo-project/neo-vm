@@ -19,13 +19,11 @@ namespace Neo.VM
         /// </summary>
         static ExecutionEngine()
         {
-            var opcodes = JumpTable.Init().ToArray();
-
             // Fill with all available opcodes
 
             _jumpTable = new JumpTable[255];
 
-            foreach (var opcode in opcodes)
+            foreach (var opcode in JumpTable.Init())
             {
                 _jumpTable[(byte)opcode.OpCode] = opcode;
             }
