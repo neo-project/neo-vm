@@ -331,6 +331,7 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
                             context.EvaluationStack.Remove(n);
                             break;
                         }
@@ -344,7 +345,9 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
                             if (n == 0) break;
+
                             StackItem xn = context.EvaluationStack.Peek(n);
                             context.EvaluationStack.Set(n, context.EvaluationStack.Peek());
                             context.EvaluationStack.Set(0, xn);
@@ -358,6 +361,7 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
                             context.EvaluationStack.Insert(n, context.EvaluationStack.Peek());
                             break;
                         }
@@ -368,6 +372,7 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
                             context.EvaluationStack.Push(context.EvaluationStack.Count);
                             break;
                         }
@@ -427,6 +432,7 @@ namespace Neo.VM
                                 return;
                             }
                             if (n == 0) break;
+
                             context.EvaluationStack.Push(context.EvaluationStack.Remove(n));
                             break;
                         }
@@ -483,6 +489,7 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
                             context.EvaluationStack.Push(x.Skip(index).Take(count).ToArray());
                             break;
@@ -497,6 +504,7 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
                             context.EvaluationStack.Push(x.Take(count).ToArray());
                             break;
@@ -517,6 +525,7 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
                             context.EvaluationStack.Push(x.Skip(x.Length - count).ToArray());
                             break;
                         }
@@ -1091,8 +1100,8 @@ namespace Neo.VM
                                     State |= VMState.FAULT;
                                     return;
                             }
+                            break;
                         }
-                        break;
                     case OpCode.SETITEM:
                         {
                             if (!Limits.CheckStackSize(this, false, int.MaxValue))
@@ -1138,8 +1147,8 @@ namespace Neo.VM
                                         return;
                                     }
                             }
+                            break;
                         }
-                        break;
                     case OpCode.NEWARRAY:
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
@@ -1344,8 +1353,8 @@ namespace Neo.VM
                                 else
                                     newArray.Add(item);
                             context.EvaluationStack.Push(new VMArray(newArray));
+                            break;
                         }
-                        break;
 
                     // Stack isolation
                     case OpCode.CALL_I:
