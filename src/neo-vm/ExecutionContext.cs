@@ -5,10 +5,9 @@ namespace Neo.VM
 {
     public class ExecutionContext : IDisposable
     {
-        public readonly byte[] Script;
+        public readonly Script Script;
         internal readonly int RVCount;
         internal readonly BinaryReader OpReader;
-        private readonly ICrypto crypto;
 
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
@@ -31,28 +30,18 @@ namespace Neo.VM
             {
                 var position = OpReader.BaseStream.Position;
                 if (position >= Script.Length) return OpCode.RET;
-                
-                return (OpCode)Script[position];
-            }
-        }
-        
-        private byte[] _script_hash = null;
-        public byte[] ScriptHash
-        {
-            get
-            {
-                if (_script_hash == null)
-                    _script_hash = crypto.Hash160(Script);
-                return _script_hash;
+
+                return (OpCode)Script.Value[position];
             }
         }
 
-        internal ExecutionContext(ExecutionEngine engine, byte[] script, int rvcount)
+        public byte[] ScriptHash => Script.ScriptHash;
+
+        internal ExecutionContext(Script script, int rvcount)
         {
-            this.Script = script;
             this.RVCount = rvcount;
-            this.OpReader = new BinaryReader(new MemoryStream(script, false));
-            this.crypto = engine.Crypto;
+            this.Script = script;
+            this.OpReader = new BinaryReader(new MemoryStream(script.Value, false));
         }
 
         public void Dispose()

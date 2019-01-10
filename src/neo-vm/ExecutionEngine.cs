@@ -1,10 +1,10 @@
-﻿using Neo.VM.Types;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
+using Neo.VM.Types;
 using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
@@ -1029,7 +1029,14 @@ namespace Neo.VM
 
         public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(this, script, rvcount);
+            ExecutionContext context = new ExecutionContext(new Script(Crypto, script), rvcount);
+            InvocationStack.Push(context);
+            return context;
+        }
+
+        private ExecutionContext LoadScript(Script script, int rvcount = -1)
+        {
+            ExecutionContext context = new ExecutionContext(script, rvcount);
             InvocationStack.Push(context);
             return context;
         }
