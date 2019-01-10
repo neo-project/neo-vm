@@ -1,5 +1,9 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
+using Neo.VM.Types;
 
 namespace Neo.VM
 {
@@ -86,5 +90,114 @@ namespace Neo.VM
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckShift(int shift) => shift <= Max_SHL_SHR && shift >= Min_SHL_SHR;
+
+        /// <summary>
+        /// Check if the is possible to overflow the MaxStackSize
+        /// </summary>
+        /// <param name="engine">Engine</param>
+        /// <param name="stackitem_count">Stack item count</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool CheckStackSize(ExecutionEngine engine, int stackitem_count = 1)
+        {
+            engine.stackitem_count += stackitem_count;
+
+            if (engine.stackitem_count <= MaxStackSize) return true;
+            if (engine.is_stackitem_count_strict) return false;
+            engine.stackitem_count = GetItemCount(engine.InvocationStack.SelectMany(p => p.EvaluationStack.Concat(p.AltStack)));
+            if (engine.stackitem_count > MaxStackSize) return false;
+            engine.is_stackitem_count_strict = true;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Check if the is possible to overflow the MaxStackSize
+        /// </summary>
+        /// <param name="engine">Engine</param>
+        /// <param name="stackitem_count">Stack item count</param>
+        /// <param name="is_stackitem_count_strict">Is stack count strict?</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool CheckStackSize(ExecutionEngine engine, bool is_stackitem_count_strict, int stackitem_count = 1)
+        {
+            engine.stackitem_count += stackitem_count;
+            engine.is_stackitem_count_strict = is_stackitem_count_strict;
+
+            if (engine.stackitem_count <= MaxStackSize) return true;
+            if (engine.is_stackitem_count_strict) return false;
+            engine.stackitem_count = GetItemCount(engine.InvocationStack.SelectMany(p => p.EvaluationStack.Concat(p.AltStack)));
+            if (engine.stackitem_count > MaxStackSize) return false;
+            engine.is_stackitem_count_strict = true;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Decrease stack item count, without strict count
+        /// </summary>
+        /// <param name="engine">Engine</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DecreaseStackItemWithoutStrict(ExecutionEngine engine)
+        {
+            engine.stackitem_count -= 1;
+            engine.is_stackitem_count_strict = false;
+        }
+
+        /// <summary>
+        /// Decrease stack item count
+        /// </summary>
+        /// <param name="engine">Engine</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DecreaseStackItem(ExecutionEngine engine, int count = 1)
+        {
+            engine.stackitem_count -= count;
+        }
+
+        /// <summary>
+        /// Decrease stack item count without strict
+        /// </summary>
+        /// <param name="engine">Engine</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DecreaseStackItemWithoutStrict(ExecutionEngine engine, int count)
+        {
+            engine.stackitem_count -= count;
+            engine.is_stackitem_count_strict = false;
+        }
+
+        /// <summary>
+        /// Get item count
+        /// </summary>
+        /// <param name="items">Items</param>
+        /// <returns>Return the number of items</returns>
+        private static int GetItemCount(IEnumerable<StackItem> items)
+        {
+            Queue<StackItem> queue = new Queue<StackItem>(items);
+            List<StackItem> counted = new List<StackItem>();
+            int count = 0;
+            while (queue.Count > 0)
+            {
+                StackItem item = queue.Dequeue();
+                count++;
+                switch (item)
+                {
+                    case Neo.VM.Types.Array array:
+                        if (counted.Any(p => ReferenceEquals(p, array)))
+                            continue;
+                        counted.Add(array);
+                        foreach (StackItem subitem in array)
+                            queue.Enqueue(subitem);
+                        break;
+                    case Map map:
+                        if (counted.Any(p => ReferenceEquals(p, map)))
+                            continue;
+                        counted.Add(map);
+                        foreach (StackItem subitem in map.Values)
+                            queue.Enqueue(subitem);
+                        break;
+                }
+            }
+            return count;
+        }
     }
 }
