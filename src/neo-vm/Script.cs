@@ -40,6 +40,7 @@ namespace Neo.VM
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="crypto">Crypto</param>
         /// <param name="script">Script</param>
         public Script(ICrypto crypto, byte[] script)
         {
