@@ -134,17 +134,6 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// Decrease stack item count, without strict count
-        /// </summary>
-        /// <param name="engine">Engine</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DecreaseStackItemWithoutStrict(ExecutionEngine engine)
-        {
-            engine.stackitem_count -= 1;
-            engine.is_stackitem_count_strict = false;
-        }
-
-        /// <summary>
         /// Decrease stack item count
         /// </summary>
         /// <param name="engine">Engine</param>
@@ -159,7 +148,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="engine">Engine</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DecreaseStackItemWithoutStrict(ExecutionEngine engine, int count)
+        public void DecreaseStackItemWithoutStrict(ExecutionEngine engine, int count = 1)
         {
             engine.stackitem_count -= count;
             engine.is_stackitem_count_strict = false;
@@ -181,20 +170,24 @@ namespace Neo.VM
                 count++;
                 switch (item)
                 {
-                    case Neo.VM.Types.Array array:
-                        if (counted.Any(p => ReferenceEquals(p, array)))
-                            continue;
-                        counted.Add(array);
-                        foreach (StackItem subitem in array)
-                            queue.Enqueue(subitem);
-                        break;
+                    case Types.Array array:
+                        {
+                            if (counted.Any(p => ReferenceEquals(p, array)))
+                                continue;
+                            counted.Add(array);
+                            foreach (StackItem subitem in array)
+                                queue.Enqueue(subitem);
+                            break;
+                        }
                     case Map map:
-                        if (counted.Any(p => ReferenceEquals(p, map)))
-                            continue;
-                        counted.Add(map);
-                        foreach (StackItem subitem in map.Values)
-                            queue.Enqueue(subitem);
-                        break;
+                        {
+                            if (counted.Any(p => ReferenceEquals(p, map)))
+                                continue;
+                            counted.Add(map);
+                            foreach (StackItem subitem in map.Values)
+                                queue.Enqueue(subitem);
+                            break;
+                        }
                 }
             }
             return count;
