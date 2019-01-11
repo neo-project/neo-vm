@@ -1,16 +1,14 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
     public class Script
     {
-        private readonly ICrypto _crypto;
         private byte[] _scriptHash = null;
 
-        /// <summary>
-        /// Script
-        /// </summary>
-        public readonly byte[] Value;
+        private readonly byte[] _value;
+        private readonly ICrypto _crypto;
 
         /// <summary>
         /// Cached script hash
@@ -20,7 +18,7 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (_scriptHash == null) _scriptHash = _crypto.Hash160(Value);
+                if (_scriptHash == null) _scriptHash = _crypto.Hash160(_value);
                 return _scriptHash;
             }
         }
@@ -33,8 +31,32 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return Value.Length;
+                return _value.Length;
             }
+        }
+
+        /// <summary>
+        /// Get opcode
+        /// </summary>
+        /// <param name="index">Index</param>
+        /// <returns>Returns the opcode</returns>
+        public OpCode this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return (OpCode)_value[index];
+            }
+        }
+
+        /// <summary>
+        /// Get Binary reader
+        /// </summary>
+        /// <returns>Returns the binary reader of the script</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public BinaryReader GetBinaryReader()
+        {
+            return new BinaryReader(new MemoryStream(_value, false));
         }
 
         /// <summary>
@@ -45,13 +67,18 @@ namespace Neo.VM
         public Script(ICrypto crypto, byte[] script)
         {
             _crypto = crypto;
-            Value = script;
+            _value = script;
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="hash">Hash</param>
+        /// <param name="script">Script</param>
         internal Script(byte[] hash, byte[] script)
         {
             _scriptHash = hash;
-            Value = script;
+            _value = script;
         }
     }
 }
