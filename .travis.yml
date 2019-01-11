@@ -1,0 +1,19 @@
+language: csharp
+
+os:
+ - linux
+ - osx
+
+dist: trusty
+osx_image: xcode9.1
+
+mono: none
+dotnet: 2.1.300
+
+before_install:
+  - cd tests/neo-vm.Tests
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ulimit -n 2048; fi
+
+script:
+ - dotnet restore
+ - dotnet test
