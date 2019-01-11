@@ -3,11 +3,11 @@ using Xunit;
 
 namespace Neo.Test
 {
-    public class StructTest
+    public class UtStruct
     {
         private readonly Struct @struct;
 
-        public StructTest()
+        public UtStruct()
         {
             @struct = new Struct { 1 };
             for (int i = 0; i < 20000; i++)
