@@ -18,26 +18,32 @@ namespace Neo.VM
         /// Max value for SHL and SHR
         /// </summary>
         public int Max_SHL_SHR = ushort.MaxValue;
+
         /// <summary>
         /// Min value for SHL and SHR
         /// </summary>
         public int Min_SHL_SHR = -ushort.MaxValue;
+
         /// <summary>
         /// Set the max size allowed size for BigInteger
         /// </summary>
         public int MaxSizeForBigInteger = 32;
+
         /// <summary>
         /// Set the max Stack Size
         /// </summary>
         public uint MaxStackSize = 2 * 1024;
+
         /// <summary>
         /// Set Max Item Size
         /// </summary>
         public uint MaxItemSize = 1024 * 1024;
+
         /// <summary>
         /// Set Max Invocation Stack Size
         /// </summary>
         public uint MaxInvocationStackSize = 1024;
+
         /// <summary>
         /// Set Max Array Size
         /// </summary>
@@ -96,19 +102,14 @@ namespace Neo.VM
         /// </summary>
         /// <param name="engine">Engine</param>
         /// <param name="stackitem_count">Stack item count</param>
+        /// <param name="is_stackitem_count_strict">Is stack count strict?</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckStackSize(ExecutionEngine engine, int stackitem_count = 1)
+        public bool CheckStackSize(ExecutionEngine engine, bool is_stackitem_count_strict, int stackitem_count = 1)
         {
-            engine.stackitem_count += stackitem_count;
+            engine.is_stackitem_count_strict = is_stackitem_count_strict;
 
-            if (engine.stackitem_count <= MaxStackSize) return true;
-            if (engine.is_stackitem_count_strict) return false;
-            engine.stackitem_count = GetItemCount(engine.InvocationStack.SelectMany(p => p.EvaluationStack.Concat(p.AltStack)));
-            if (engine.stackitem_count > MaxStackSize) return false;
-            engine.is_stackitem_count_strict = true;
-
-            return true;
+            return CheckStackSize(engine, stackitem_count);
         }
 
         /// <summary>
@@ -116,13 +117,11 @@ namespace Neo.VM
         /// </summary>
         /// <param name="engine">Engine</param>
         /// <param name="stackitem_count">Stack item count</param>
-        /// <param name="is_stackitem_count_strict">Is stack count strict?</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckStackSize(ExecutionEngine engine, bool is_stackitem_count_strict, int stackitem_count = 1)
+        public bool CheckStackSize(ExecutionEngine engine, int stackitem_count = 1)
         {
             engine.stackitem_count += stackitem_count;
-            engine.is_stackitem_count_strict = is_stackitem_count_strict;
 
             if (engine.stackitem_count <= MaxStackSize) return true;
             if (engine.is_stackitem_count_strict) return false;
