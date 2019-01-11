@@ -1,63 +1,94 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
     public class ExecutionContext : IDisposable
     {
-        public readonly byte[] Script;
+        /// <summary>
+        /// Number of items to be returned
+        /// </summary>
         internal readonly int RVCount;
-        internal readonly BinaryReader OpReader;
-        private readonly ICrypto crypto;
 
+        /// <summary>
+        /// Binary Reader of the script
+        /// </summary>
+        internal readonly BinaryReader OpReader;
+
+        /// <summary>
+        /// Script
+        /// </summary>
+        public readonly Script Script;
+
+        /// <summary>
+        /// Evaluation stack
+        /// </summary>
         public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
+
+        /// <summary>
+        /// Alternative stack
+        /// </summary>
         public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
 
+        /// <summary>
+        /// Instruction pointer
+        /// </summary>
         public int InstructionPointer
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return (int)OpReader.BaseStream.Position;
             }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
                 OpReader.BaseStream.Seek(value, SeekOrigin.Begin);
             }
         }
 
+        /// <summary>
+        /// Next instruction
+        /// </summary>
         public OpCode NextInstruction
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                var position = OpReader.BaseStream.Position;
-                if (position >= Script.Length) return OpCode.RET;
-                
-                return (OpCode)Script[position];
+                var position = (int)OpReader.BaseStream.Position;
+
+                return position >= Script.Length ? OpCode.RET : Script[position];
             }
         }
-        
-        private byte[] _script_hash = null;
+
+        /// <summary>
+        /// Cached script hash
+        /// </summary>
         public byte[] ScriptHash
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (_script_hash == null)
-                    _script_hash = crypto.Hash160(Script);
-                return _script_hash;
+                return Script.ScriptHash;
             }
         }
 
-        internal ExecutionContext(ExecutionEngine engine, byte[] script, int rvcount)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="script">Script</param>
+        /// <param name="rvcount">Number of items to be returned</param>
+        internal ExecutionContext(Script script, int rvcount)
         {
-            this.Script = script;
             this.RVCount = rvcount;
-            this.OpReader = new BinaryReader(new MemoryStream(script, false));
-            this.crypto = engine.Crypto;
+            this.Script = script;
+            this.OpReader = script.GetBinaryReader();
         }
 
-        public void Dispose()
-        {
-            OpReader.Dispose();
-        }
+        /// <summary>
+        /// Free resources
+        /// </summary>
+        public void Dispose() => OpReader.Dispose();
     }
 }
