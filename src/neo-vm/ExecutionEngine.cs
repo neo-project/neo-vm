@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Neo.VM.Types;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
-using Neo.VM.Types;
 using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
@@ -160,28 +160,20 @@ namespace Neo.VM
                     case OpCode.APPCALL:
                     case OpCode.TAILCALL:
                         {
-                            if (table == null)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-
                             byte[] script_hash = context.OpReader.SafeReadBytes(20);
                             if (script_hash.All(p => p == 0))
                             {
                                 script_hash = context.EvaluationStack.Pop().GetByteArray();
                             }
 
-                            byte[] script = table.GetScript(script_hash);
-                            if (script == null)
+                            ExecutionContext context_new = LoadScriptByHash(script_hash);
+                            if (context_new == null)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
 
-                            ExecutionContext context_new = LoadScript(script);
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack);
-
                             if (opcode == OpCode.TAILCALL)
                                 InvocationStack.Remove(1).Dispose();
                             else
@@ -963,11 +955,6 @@ namespace Neo.VM
                     case OpCode.CALL_ET:
                     case OpCode.CALL_EDT:
                         {
-                            if (table == null)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
                             int rvcount = context.OpReader.ReadByte();
                             int pcount = context.OpReader.ReadByte();
                             if (context.EvaluationStack.Count < pcount)
@@ -988,13 +975,12 @@ namespace Neo.VM
                                 script_hash = context.EvaluationStack.Pop().GetByteArray();
                             else
                                 script_hash = context.OpReader.SafeReadBytes(20);
-                            byte[] script = table.GetScript(script_hash);
-                            if (script == null)
+                            ExecutionContext context_new = LoadScriptByHash(script_hash, rvcount);
+                            if (context_new == null)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            ExecutionContext context_new = LoadScript(script, rvcount);
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack, pcount);
                             if (opcode == OpCode.CALL_ET || opcode == OpCode.CALL_EDT)
                                 InvocationStack.Remove(1).Dispose();
@@ -1037,6 +1023,16 @@ namespace Neo.VM
         private ExecutionContext LoadScript(Script script, int rvcount = -1)
         {
             ExecutionContext context = new ExecutionContext(script, rvcount);
+            InvocationStack.Push(context);
+            return context;
+        }
+
+        private ExecutionContext LoadScriptByHash(byte[] hash, int rvcount = -1)
+        {
+            if (table == null) return null;
+            byte[] script = table.GetScript(hash);
+            if (script == null) return null;
+            ExecutionContext context = new ExecutionContext(new Script(hash, script), rvcount);
             InvocationStack.Push(context);
             return context;
         }

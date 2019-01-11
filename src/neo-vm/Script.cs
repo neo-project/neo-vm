@@ -47,5 +47,11 @@ namespace Neo.VM
             _crypto = crypto;
             Value = script;
         }
+
+        internal Script(byte[] hash, byte[] script)
+        {
+            _scriptHash = hash;
+            Value = script;
+        }
     }
 }
