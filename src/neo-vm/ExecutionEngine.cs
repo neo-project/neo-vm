@@ -109,7 +109,7 @@ namespace Neo.VM
         /// <param name="stack">Stack</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckMaxInvocationStack(ExecutionEngine stack) => stack.InvocationStack.Count < MaxInvocationStackSize;
+        public bool CheckMaxInvocationStack() => InvocationStack.Count < MaxInvocationStackSize;
 
         /// <summary>
         /// Check if the BigInteger is allowed for numeric operations
@@ -365,7 +365,7 @@ namespace Neo.VM
                         }
                     case OpCode.CALL:
                         {
-                            if (!CheckMaxInvocationStack(this))
+                            if (!CheckMaxInvocationStack())
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -415,7 +415,7 @@ namespace Neo.VM
                         {
                             is_stackitem_count_strict = false;
 
-                            if (table == null || opcode == OpCode.APPCALL && !CheckMaxInvocationStack(this))
+                            if (table == null || opcode == OpCode.APPCALL && !CheckMaxInvocationStack())
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -1516,7 +1516,7 @@ namespace Neo.VM
                     // Stack isolation
                     case OpCode.CALL_I:
                         {
-                            if (!CheckMaxInvocationStack(this))
+                            if (!CheckMaxInvocationStack())
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -1568,7 +1568,7 @@ namespace Neo.VM
                             }
                             else
                             {
-                                if (!CheckMaxInvocationStack(this))
+                                if (!CheckMaxInvocationStack())
                                 {
                                     State |= VMState.FAULT;
                                     return;
