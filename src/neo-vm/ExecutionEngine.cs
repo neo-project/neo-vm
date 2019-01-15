@@ -147,7 +147,7 @@ namespace Neo.VM
         /// <param name="byteLength">Value</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckBigIntegerBitLength(int byteLength) => byteLength <= MaxSizeForBigInteger;
+        public bool CheckBigIntegerByteLength(int byteLength) => byteLength <= MaxSizeForBigInteger;
 
         /// <summary>
         /// Check if the number is allowed from SHL and SHR
@@ -160,7 +160,6 @@ namespace Neo.VM
         /// <summary>
         /// Check if the is possible to overflow the MaxStackSize
         /// </summary>
-        /// <param name="engine">Engine</param>
         /// <param name="stackitem_count">Stack item count</param>
         /// <param name="is_stackitem_count_strict">Is stack count strict?</param>
         /// <returns></returns>
@@ -175,7 +174,6 @@ namespace Neo.VM
         /// <summary>
         /// Check if the is possible to overflow the MaxStackSize
         /// </summary>
-        /// <param name="engine">Engine</param>
         /// <param name="stackitem_count">Stack item count</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -195,7 +193,6 @@ namespace Neo.VM
         /// <summary>
         /// Decrease stack item count
         /// </summary>
-        /// <param name="engine">Engine</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DecreaseStackItem(int count = 1)
         {
@@ -205,7 +202,6 @@ namespace Neo.VM
         /// <summary>
         /// Decrease stack item count without strict
         /// </summary>
-        /// <param name="engine">Engine</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DecreaseStackItemWithoutStrict(int count = 1)
         {
@@ -862,7 +858,7 @@ namespace Neo.VM
 
                             int lx1 = x1.ToByteArray().Length;
 
-                            if (!CheckBigIntegerBitLength(lx1))
+                            if (!CheckBigIntegerByteLength(lx1))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -870,7 +866,7 @@ namespace Neo.VM
 
                             int lx2 = x2.ToByteArray().Length;
 
-                            if (!CheckBigIntegerBitLength(lx1 + lx2))
+                            if (!CheckBigIntegerByteLength(lx1 + lx2))
                             {
                                 State |= VMState.FAULT;
                                 return;
