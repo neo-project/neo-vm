@@ -1311,9 +1311,10 @@ namespace Neo.VM
                                     }
                                 case Map map:
                                     {
-                                        if (!CheckArraySize(map.Count + 1))
+                                        if (!map.ContainsKey(key) && !CheckArraySize(map.Count + 1))
                                         {
                                             State |= VMState.FAULT;
+                                            return;
                                         }
 
                                         map[key] = value;
