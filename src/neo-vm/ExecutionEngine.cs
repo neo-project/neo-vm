@@ -12,7 +12,7 @@ namespace Neo.VM
 {
     public class ExecutionEngine : IDisposable
     {
-        #region Limmits Variables
+        #region Limits Variables
 
         /// <summary>
         /// Max value for SHL and SHR
