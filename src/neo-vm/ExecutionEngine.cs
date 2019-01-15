@@ -17,37 +17,37 @@ namespace Neo.VM
         /// <summary>
         /// Max value for SHL and SHR
         /// </summary>
-        public virtual int Max_SHL_SHR { get; } = ushort.MaxValue;
+        public virtual int Max_SHL_SHR => ushort.MaxValue;
 
         /// <summary>
         /// Min value for SHL and SHR
         /// </summary>
-        public virtual int Min_SHL_SHR { get; } = -ushort.MaxValue;
+        public virtual int Min_SHL_SHR => -ushort.MaxValue;
 
         /// <summary>
         /// Set the max size in bytes allowed size for BigInteger
         /// </summary>
-        public virtual int MaxSizeForBigInteger { get; } = 32;
+        public virtual int MaxSizeForBigInteger => 32;
 
         /// <summary>
         /// Set the max Stack Size
         /// </summary>
-        public virtual uint MaxStackSize { get; } = 2 * 1024;
+        public virtual uint MaxStackSize => 2 * 1024;
 
         /// <summary>
         /// Set Max Item Size
         /// </summary>
-        public virtual uint MaxItemSize { get; } = 1024 * 1024;
+        public virtual uint MaxItemSize => 1024 * 1024;
 
         /// <summary>
         /// Set Max Invocation Stack Size
         /// </summary>
-        public virtual uint MaxInvocationStackSize { get; } = 1024;
+        public virtual uint MaxInvocationStackSize => 1024;
 
         /// <summary>
         /// Set Max Array Size
         /// </summary>
-        public virtual uint MaxArraySize { get; } = 1024;
+        public virtual uint MaxArraySize => 1024;
 
         #endregion
 
