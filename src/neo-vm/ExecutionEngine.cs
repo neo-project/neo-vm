@@ -55,7 +55,7 @@ namespace Neo.VM
         private bool is_stackitem_count_strict = true;
 
         private readonly IScriptTable table;
-        private Dictionary<byte[], HashSet<uint>> break_points;
+        private readonly Dictionary<byte[], HashSet<uint>> break_points = new Dictionary<byte[], HashSet<uint>>(new HashComparer());
 
         public IScriptContainer ScriptContainer { get; }
         public ICrypto Crypto { get; }
@@ -75,15 +75,8 @@ namespace Neo.VM
             this.Service = service;
         }
 
-        #region Break points
-
         public void AddBreakPoint(byte[] script_hash, uint position)
         {
-            if (break_points == null)
-            {
-                break_points = new Dictionary<byte[], HashSet<uint>>(new HashComparer());
-            }
-
             if (!break_points.TryGetValue(script_hash, out HashSet<uint> hashset))
             {
                 hashset = new HashSet<uint>();
@@ -91,21 +84,6 @@ namespace Neo.VM
             }
             hashset.Add(position);
         }
-
-        public bool RemoveBreakPoint(byte[] script_hash, uint position)
-        {
-            if (break_points == null)
-                return false;
-            if (!break_points.TryGetValue(script_hash, out HashSet<uint> hashset))
-                return false;
-            if (!hashset.Remove(position))
-                return false;
-            if (hashset.Count == 0)
-                break_points.Remove(script_hash);
-            return true;
-        }
-
-        #endregion
 
         #region Limits
 
@@ -1649,7 +1627,7 @@ namespace Neo.VM
                 }
             if (!State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
             {
-                if (break_points != null && break_points.TryGetValue(CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)CurrentContext.InstructionPointer))
+                if (break_points.TryGetValue(CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)CurrentContext.InstructionPointer))
                     State |= VMState.BREAK;
             }
         }
@@ -1676,6 +1654,17 @@ namespace Neo.VM
             ExecutionContext context = new ExecutionContext(new Script(hash, script), rvcount);
             InvocationStack.Push(context);
             return context;
+        }
+
+        public bool RemoveBreakPoint(byte[] script_hash, uint position)
+        {
+            if (!break_points.TryGetValue(script_hash, out HashSet<uint> hashset))
+                return false;
+            if (!hashset.Remove(position))
+                return false;
+            if (hashset.Count == 0)
+                break_points.Remove(script_hash);
+            return true;
         }
 
         public void StepInto()
