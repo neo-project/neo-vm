@@ -110,7 +110,7 @@ namespace Neo.VM
         #region Limits
 
         /// <summary>
-        /// Check if the is possible to overflow the MaxArraySize
+        /// Check if it is possible to overflow the MaxArraySize
         /// </summary>
         /// <param name="length">Length</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
