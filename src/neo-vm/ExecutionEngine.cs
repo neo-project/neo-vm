@@ -25,7 +25,7 @@ namespace Neo.VM
         public virtual int Min_SHL_SHR { get; } = -ushort.MaxValue;
 
         /// <summary>
-        /// Set the max size allowed size for BigInteger
+        /// Set the max size in bytes allowed size for BigInteger
         /// </summary>
         public virtual int MaxSizeForBigInteger { get; } = 32;
 
@@ -75,7 +75,7 @@ namespace Neo.VM
             this.Service = service;
         }
 
-        #region Break pints
+        #region Break points
 
         public void AddBreakPoint(byte[] script_hash, uint position)
         {
