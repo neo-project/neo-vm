@@ -138,26 +138,24 @@ namespace Neo.VM
         /// <summary>
         /// Check if the is possible to overflow the MaxStackSize
         /// </summary>
-        /// <param name="stackitem_count">Stack item count</param>
-        /// <param name="is_stackitem_count_strict">Is stack count strict?</param>
+        /// <param name="isStackitemCountStrict">Is stack count strict?</param>
+        /// <param name="count">Stack item count</param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckStackSize(bool is_stackitem_count_strict, int stackitem_count = 1)
+        public bool CheckStackSize(bool isStackitemCountStrict, int count = 1)
         {
-            this.is_stackitem_count_strict = is_stackitem_count_strict;
+            this.is_stackitem_count_strict = isStackitemCountStrict;
 
-            return CheckStackSize(stackitem_count);
+            return CheckStackSize(count);
         }
 
         /// <summary>
         /// Check if the is possible to overflow the MaxStackSize
         /// </summary>
         /// <param name="stackitem_count">Stack item count</param>
-        /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckStackSize(int stackitem_count = 1)
+        public bool CheckStackSize(int count = 1)
         {
-            stackitem_count += stackitem_count;
+            stackitem_count += count;
 
             if (stackitem_count <= MaxStackSize) return true;
             if (is_stackitem_count_strict) return false;
