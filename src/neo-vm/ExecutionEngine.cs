@@ -143,15 +143,14 @@ namespace Neo.VM
         /// <returns></returns>
         public bool CheckStackSize(bool isStackitemCountStrict, int count = 1)
         {
-            this.is_stackitem_count_strict = isStackitemCountStrict;
-
+            is_stackitem_count_strict = isStackitemCountStrict;
             return CheckStackSize(count);
         }
 
         /// <summary>
         /// Check if the is possible to overflow the MaxStackSize
         /// </summary>
-        /// <param name="stackitem_count">Stack item count</param>
+        /// <param name="count">Stack item count</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckStackSize(int count = 1)
         {
@@ -167,17 +166,29 @@ namespace Neo.VM
         }
 
         /// <summary>
+        /// Increase stack item count
+        /// </summary>
+        /// <param name="count">Stack item count</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IncreaseStackItemWithoutStrict(int count = 1)
+        {
+            stackitem_count += count;
+            if (stackitem_count <= MaxStackSize) return true;
+
+            return false;
+        }
+
+        /// <summary>
         /// Decrease stack item count
         /// </summary>
+        /// <param name="count">Stack item count</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DecreaseStackItem(int count = 1)
-        {
-            stackitem_count -= count;
-        }
+        public void DecreaseStackItem(int count = 1) => stackitem_count -= count;
 
         /// <summary>
         /// Decrease stack item count without strict
         /// </summary>
+        /// <param name="count">Stack item count</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DecreaseStackItemWithoutStrict(int count = 1)
         {
@@ -243,7 +254,7 @@ namespace Neo.VM
         {
             if (opcode >= OpCode.PUSHBYTES1 && opcode <= OpCode.PUSHBYTES75)
             {
-                if (!CheckStackSize())
+                if (!IncreaseStackItemWithoutStrict())
                 {
                     State |= VMState.FAULT;
                     return;
@@ -251,13 +262,12 @@ namespace Neo.VM
 
                 context.EvaluationStack.Push(context.OpReader.SafeReadBytes((byte)opcode));
             }
-            else
-                switch (opcode)
+            else switch (opcode)
                 {
                     // Push value
                     case OpCode.PUSH0:
                         {
-                            if (!CheckStackSize())
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -268,7 +278,7 @@ namespace Neo.VM
                         }
                     case OpCode.PUSHDATA1:
                         {
-                            if (!CheckStackSize())
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -279,7 +289,7 @@ namespace Neo.VM
                         }
                     case OpCode.PUSHDATA2:
                         {
-                            if (!CheckStackSize())
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -290,7 +300,7 @@ namespace Neo.VM
                         }
                     case OpCode.PUSHDATA4:
                         {
-                            if (!CheckStackSize())
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -325,7 +335,7 @@ namespace Neo.VM
                     case OpCode.PUSH15:
                     case OpCode.PUSH16:
                         {
-                            if (!CheckStackSize())
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -521,7 +531,7 @@ namespace Neo.VM
                         }
                     case OpCode.DEPTH:
                         {
-                            if (!CheckStackSize())
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -1342,7 +1352,7 @@ namespace Neo.VM
                         }
                     case OpCode.NEWMAP:
                         {
-                            if (!CheckStackSize())
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
