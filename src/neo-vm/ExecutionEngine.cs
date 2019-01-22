@@ -459,6 +459,7 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
                             break;
                         }
                     case OpCode.SYSCALL:
@@ -474,13 +475,13 @@ namespace Neo.VM
                     // Stack ops
                     case OpCode.DUPFROMALTSTACK:
                         {
-                            if (!CheckStackSize())
+                            context.EvaluationStack.Push(context.AltStack.Peek());
+
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-
-                            context.EvaluationStack.Push(context.AltStack.Peek());
                             break;
                         }
                     case OpCode.TOALTSTACK:
@@ -539,13 +540,13 @@ namespace Neo.VM
                         }
                     case OpCode.DEPTH:
                         {
+                            context.EvaluationStack.Push(context.EvaluationStack.Count);
+
                             if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-
-                            context.EvaluationStack.Push(context.EvaluationStack.Count);
                             break;
                         }
                     case OpCode.DROP:
@@ -556,13 +557,13 @@ namespace Neo.VM
                         }
                     case OpCode.DUP:
                         {
-                            if (!CheckStackSize())
+                            context.EvaluationStack.Push(context.EvaluationStack.Peek());
+
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-
-                            context.EvaluationStack.Push(context.EvaluationStack.Peek());
                             break;
                         }
                     case OpCode.NIP:
@@ -573,13 +574,13 @@ namespace Neo.VM
                         }
                     case OpCode.OVER:
                         {
-                            if (!CheckStackSize())
+                            context.EvaluationStack.Push(context.EvaluationStack.Peek(1));
+
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-
-                            context.EvaluationStack.Push(context.EvaluationStack.Peek(1));
                             break;
                         }
                     case OpCode.PICK:
@@ -620,13 +621,13 @@ namespace Neo.VM
                         }
                     case OpCode.TUCK:
                         {
-                            if (!CheckStackSize())
+                            context.EvaluationStack.Insert(2, context.EvaluationStack.Peek());
+
+                            if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-
-                            context.EvaluationStack.Insert(2, context.EvaluationStack.Peek());
                             break;
                         }
                     case OpCode.CAT:
@@ -799,10 +800,15 @@ namespace Neo.VM
                         }
                     case OpCode.NOT:
                         {
-                            is_stackitem_count_strict = false;
-
                             bool x = context.EvaluationStack.Pop().GetBoolean();
                             context.EvaluationStack.Push(!x);
+
+                            if (!CheckStackSize(false, 0))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             break;
                         }
                     case OpCode.NZ:
@@ -1186,13 +1192,18 @@ namespace Neo.VM
                     // Array
                     case OpCode.ARRAYSIZE:
                         {
-                            is_stackitem_count_strict = false;
-
                             StackItem item = context.EvaluationStack.Pop();
                             if (item is ICollection collection)
                                 context.EvaluationStack.Push(collection.Count);
                             else
                                 context.EvaluationStack.Push(item.GetByteArray().Length);
+
+                            if (!CheckStackSize(false, 0))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             break;
                         }
                     case OpCode.PACK:
@@ -1215,15 +1226,16 @@ namespace Neo.VM
                             StackItem item = context.EvaluationStack.Pop();
                             if (item is VMArray array)
                             {
+                                for (int i = array.Count - 1; i >= 0; i--)
+                                    context.EvaluationStack.Push(array[i]);
+
+                                context.EvaluationStack.Push(array.Count);
+
                                 if (!CheckStackSize(false, array.Count))
                                 {
                                     State |= VMState.FAULT;
                                     return;
                                 }
-
-                                for (int i = array.Count - 1; i >= 0; i--)
-                                    context.EvaluationStack.Push(array[i]);
-                                context.EvaluationStack.Push(array.Count);
                             }
                             else
                             {
@@ -1234,12 +1246,6 @@ namespace Neo.VM
                         }
                     case OpCode.PICKITEM:
                         {
-                            if (!CheckStackSize(false, int.MaxValue))
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-
                             StackItem key = context.EvaluationStack.Pop();
                             if (key is ICollection)
                             {
@@ -1272,16 +1278,17 @@ namespace Neo.VM
                                     State |= VMState.FAULT;
                                     return;
                             }
-                            break;
-                        }
-                    case OpCode.SETITEM:
-                        {
+
                             if (!CheckStackSize(false, int.MaxValue))
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
 
+                            break;
+                        }
+                    case OpCode.SETITEM:
+                        {
                             StackItem value = context.EvaluationStack.Pop();
                             if (value is Struct s) value = s.Clone();
                             StackItem key = context.EvaluationStack.Pop();
@@ -1320,13 +1327,22 @@ namespace Neo.VM
                                         return;
                                     }
                             }
+
+                            if (!CheckStackSize(false, int.MaxValue))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             break;
                         }
                     case OpCode.NEWARRAY:
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
 
-                            if (!CheckArraySize(count) || !CheckStackSize(false, count))
+                            // count + 1 because we have the array, and the bool + 1
+
+                            if (!CheckArraySize(count) || !CheckStackSize(false, count + 1))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -1344,7 +1360,9 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
 
-                            if (!CheckArraySize(count) || !CheckStackSize(false, count))
+                            // count + 1 because we have the struct, and the bool + 1
+
+                            if (!CheckArraySize(count) || !CheckStackSize(false, count + 1))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -1360,23 +1378,17 @@ namespace Neo.VM
                         }
                     case OpCode.NEWMAP:
                         {
+                            context.EvaluationStack.Push(new Map());
+
                             if (!IncreaseStackItemWithoutStrict())
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-
-                            context.EvaluationStack.Push(new Map());
                             break;
                         }
                     case OpCode.APPEND:
                         {
-                            if (!CheckStackSize(false, int.MaxValue))
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-
                             StackItem newItem = context.EvaluationStack.Pop();
                             if (newItem is Types.Struct s)
                             {
@@ -1398,6 +1410,13 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
+                            if (!CheckStackSize(false, int.MaxValue))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             break;
                         }
                     case OpCode.REVERSE:
@@ -1482,13 +1501,13 @@ namespace Neo.VM
                             {
                                 case Map map:
                                     {
+                                        context.EvaluationStack.Push(new VMArray(map.Keys));
+
                                         if (!CheckStackSize(false, map.Count))
                                         {
                                             State |= VMState.FAULT;
                                             return;
                                         }
-
-                                        context.EvaluationStack.Push(new VMArray(map.Keys));
                                         break;
                                     }
                                 default:
@@ -1501,12 +1520,6 @@ namespace Neo.VM
                         }
                     case OpCode.VALUES:
                         {
-                            if (!CheckStackSize(false, int.MaxValue))
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-
                             ICollection<StackItem> values;
                             switch (context.EvaluationStack.Pop())
                             {
@@ -1527,6 +1540,13 @@ namespace Neo.VM
                                 else
                                     newArray.Add(item);
                             context.EvaluationStack.Push(new VMArray(newArray));
+
+                            if (!CheckStackSize(false, int.MaxValue))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             break;
                         }
 
