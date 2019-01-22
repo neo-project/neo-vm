@@ -389,8 +389,6 @@ namespace Neo.VM
                         }
                     case OpCode.RET:
                         {
-                            is_stackitem_count_strict = false;
-
                             using (ExecutionContext context_pop = InvocationStack.Pop())
                             {
                                 int rvcount = context_pop.RVCount;
@@ -414,8 +412,18 @@ namespace Neo.VM
                                     context_pop.AltStack.CopyTo(CurrentContext.AltStack);
                                 }
                             }
+
+                            if (!CheckStackSize(false, 0))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
                             if (InvocationStack.Count == 0)
+                            {
                                 State |= VMState.HALT;
+                            }
+
                             break;
                         }
                     case OpCode.APPCALL:
