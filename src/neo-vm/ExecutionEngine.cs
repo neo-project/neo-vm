@@ -423,7 +423,7 @@ namespace Neo.VM
                         {
                             is_stackitem_count_strict = false;
 
-                            if (table == null || opcode == OpCode.APPCALL && !CheckMaxInvocationStack())
+                            if (table == null || (opcode == OpCode.APPCALL && !CheckMaxInvocationStack()))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -1380,6 +1380,7 @@ namespace Neo.VM
                                 if (!CheckArraySize(array.Count + 1))
                                 {
                                     State |= VMState.FAULT;
+                                    return;
                                 }
 
                                 array.Add(newItem);
