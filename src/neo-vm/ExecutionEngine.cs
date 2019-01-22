@@ -429,8 +429,6 @@ namespace Neo.VM
                     case OpCode.APPCALL:
                     case OpCode.TAILCALL:
                         {
-                            is_stackitem_count_strict = false;
-
                             if (table == null || (opcode == OpCode.APPCALL && !CheckMaxInvocationStack()))
                             {
                                 State |= VMState.FAULT;
@@ -456,18 +454,20 @@ namespace Neo.VM
                             else
                                 context.EvaluationStack.Clear();
 
-                            break;
-                        }
-                    case OpCode.SYSCALL:
-                        {
-                            if (!CheckStackSize(false, int.MaxValue))
+                            if (!CheckStackSize(false, 0))
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-
-                            if (Service?.Invoke(context.OpReader.ReadVarBytes(252), this) != true)
+                            break;
+                        }
+                    case OpCode.SYSCALL:
+                        {
+                            if (Service?.Invoke(context.OpReader.ReadVarBytes(252), this) != true || !CheckStackSize(false, int.MaxValue))
+                            {
                                 State |= VMState.FAULT;
+                                return;
+                            }
                             break;
                         }
 
