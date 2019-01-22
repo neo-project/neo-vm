@@ -143,7 +143,7 @@ namespace Neo.VM
         /// <returns></returns>
         public bool CheckStackSize(bool isStackitemCountStrict, int count = 1)
         {
-            is_stackitem_count_strict = isStackitemCountStrict;
+            is_stackitem_count_strict &= isStackitemCountStrict;
             return CheckStackSize(count);
         }
 
