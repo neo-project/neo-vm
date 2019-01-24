@@ -146,7 +146,7 @@ namespace Neo.VM
         {
             is_stackitem_count_strict &= strict;
             stackitem_count += count;
-
+            if (stackitem_count < 0) stackitem_count = int.MaxValue;
             if (stackitem_count <= MaxStackSize) return true;
             if (is_stackitem_count_strict) return false;
             stackitem_count = GetItemCount(InvocationStack.SelectMany(p => p.EvaluationStack.Concat(p.AltStack)));
