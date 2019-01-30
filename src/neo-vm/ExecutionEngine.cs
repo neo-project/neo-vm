@@ -142,10 +142,11 @@ namespace Neo.VM
         /// <param name="strict">Is stack count strict?</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckStackSize(bool strict, int count)
+        public bool CheckStackSize(bool strict, int count = 1)
         {
             is_stackitem_count_strict &= strict;
             stackitem_count += count;
+
             if (stackitem_count < 0) stackitem_count = int.MaxValue;
             if (stackitem_count <= MaxStackSize) return true;
             if (is_stackitem_count_strict) return false;
@@ -154,19 +155,6 @@ namespace Neo.VM
             is_stackitem_count_strict = true;
 
             return true;
-        }
-
-        /// <summary>
-        /// Increase stack item count
-        /// </summary>
-        /// <param name="count">Stack item count</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IncreaseStackItemWithoutStrict(int count = 1)
-        {
-            stackitem_count += count;
-            if (stackitem_count <= MaxStackSize) return true;
-
-            return false;
         }
 
         /// <summary>
@@ -245,7 +233,7 @@ namespace Neo.VM
         {
             if (opcode >= OpCode.PUSHBYTES1 && opcode <= OpCode.PUSHBYTES75)
             {
-                if (!IncreaseStackItemWithoutStrict())
+                if (!CheckStackSize(is_stackitem_count_strict))
                 {
                     State |= VMState.FAULT;
                     return;
@@ -258,7 +246,7 @@ namespace Neo.VM
                     // Push value
                     case OpCode.PUSH0:
                         {
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -269,7 +257,7 @@ namespace Neo.VM
                         }
                     case OpCode.PUSHDATA1:
                         {
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -280,7 +268,7 @@ namespace Neo.VM
                         }
                     case OpCode.PUSHDATA2:
                         {
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -291,7 +279,7 @@ namespace Neo.VM
                         }
                     case OpCode.PUSHDATA4:
                         {
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -326,7 +314,7 @@ namespace Neo.VM
                     case OpCode.PUSH15:
                     case OpCode.PUSH16:
                         {
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -468,7 +456,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(context.AltStack.Peek());
 
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -533,7 +521,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(context.EvaluationStack.Count);
 
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -550,7 +538,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(context.EvaluationStack.Peek());
 
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -567,7 +555,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(context.EvaluationStack.Peek(1));
 
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -614,7 +602,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Insert(2, context.EvaluationStack.Peek());
 
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -1371,7 +1359,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(new Map());
 
-                            if (!IncreaseStackItemWithoutStrict())
+                            if (!CheckStackSize(is_stackitem_count_strict))
                             {
                                 State |= VMState.FAULT;
                                 return;
