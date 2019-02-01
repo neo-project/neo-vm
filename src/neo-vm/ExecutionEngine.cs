@@ -161,17 +161,6 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// Decrease stack item count without strict
-        /// </summary>
-        /// <param name="count">Stack item count</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DecreaseStackItemWithoutStrict(int count = 1)
-        {
-            stackitem_count -= count;
-            is_stackitem_count_strict = false;
-        }
-
-        /// <summary>
         /// Get item count
         /// </summary>
         /// <param name="items">Items</param>
@@ -336,7 +325,7 @@ namespace Neo.VM
                             bool fValue = true;
                             if (opcode > OpCode.JMP)
                             {
-                                DecreaseStackItemWithoutStrict();
+                                CheckStackSize(false, -1);
                                 fValue = context.EvaluationStack.Pop().GetBoolean();
 
                                 if (opcode == OpCode.JMPIFNOT)
@@ -471,7 +460,7 @@ namespace Neo.VM
                         }
                     case OpCode.XDROP:
                         {
-                            DecreaseStackItemWithoutStrict(2);
+                            CheckStackSize(false, -2);
 
                             int n = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (n < 0)
@@ -526,7 +515,7 @@ namespace Neo.VM
                         }
                     case OpCode.DROP:
                         {
-                            DecreaseStackItemWithoutStrict();
+                            CheckStackSize(false, -1);
                             context.EvaluationStack.Pop();
                             break;
                         }
@@ -543,7 +532,7 @@ namespace Neo.VM
                         }
                     case OpCode.NIP:
                         {
-                            DecreaseStackItemWithoutStrict();
+                            CheckStackSize(false, -1);
                             context.EvaluationStack.Remove(1);
                             break;
                         }
@@ -720,7 +709,7 @@ namespace Neo.VM
                         }
                     case OpCode.EQUAL:
                         {
-                            DecreaseStackItemWithoutStrict();
+                            CheckStackSize(false, -1);
 
                             StackItem x2 = context.EvaluationStack.Pop();
                             StackItem x1 = context.EvaluationStack.Pop();
@@ -930,7 +919,7 @@ namespace Neo.VM
                         }
                     case OpCode.BOOLAND:
                         {
-                            DecreaseStackItemWithoutStrict();
+                            CheckStackSize(false, -1);
 
                             bool x2 = context.EvaluationStack.Pop().GetBoolean();
                             bool x1 = context.EvaluationStack.Pop().GetBoolean();
@@ -939,7 +928,7 @@ namespace Neo.VM
                         }
                     case OpCode.BOOLOR:
                         {
-                            DecreaseStackItemWithoutStrict();
+                            CheckStackSize(false, -1);
 
                             bool x2 = context.EvaluationStack.Pop().GetBoolean();
                             bool x1 = context.EvaluationStack.Pop().GetBoolean();
@@ -1091,7 +1080,7 @@ namespace Neo.VM
                         }
                     case OpCode.CHECKMULTISIG:
                         {
-                            DecreaseStackItemWithoutStrict();
+                            CheckStackSize(false, -1);
 
                             int n;
                             byte[][] pubkeys;
@@ -1396,7 +1385,7 @@ namespace Neo.VM
                         }
                     case OpCode.REVERSE:
                         {
-                            DecreaseStackItemWithoutStrict();
+                            CheckStackSize(false, -1);
 
                             StackItem arrItem = context.EvaluationStack.Pop();
                             if (arrItem is VMArray array)
@@ -1412,7 +1401,7 @@ namespace Neo.VM
                         }
                     case OpCode.REMOVE:
                         {
-                            DecreaseStackItemWithoutStrict(2);
+                            CheckStackSize(false, -2);
 
                             StackItem key = context.EvaluationStack.Pop();
                             if (key is ICollection)
@@ -1442,7 +1431,7 @@ namespace Neo.VM
                         }
                     case OpCode.HASKEY:
                         {
-                            DecreaseStackItemWithoutStrict();
+                            CheckStackSize(false, -1);
 
                             StackItem key = context.EvaluationStack.Pop();
                             if (key is ICollection)
@@ -1622,7 +1611,7 @@ namespace Neo.VM
                         }
                     case OpCode.THROWIFNOT:
                         {
-                            DecreaseStackItemWithoutStrict();
+                            CheckStackSize(false, -1);
 
                             if (!context.EvaluationStack.Pop().GetBoolean())
                             {
