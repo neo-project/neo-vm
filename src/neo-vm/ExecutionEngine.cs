@@ -325,7 +325,7 @@ namespace Neo.VM
                             bool fValue = true;
                             if (opcode > OpCode.JMP)
                             {
-                                CheckStackSize(true, -1);
+                                CheckStackSize(false, -1);
                                 fValue = context.EvaluationStack.Pop().GetBoolean();
 
                                 if (opcode == OpCode.JMPIFNOT)
