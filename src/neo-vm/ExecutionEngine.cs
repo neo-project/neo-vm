@@ -1467,7 +1467,7 @@ namespace Neo.VM
                                     return;
                             }
 
-                            CheckStackSize(true, -1);
+                            CheckStackSize(false, -1);
                             break;
                         }
                     case OpCode.KEYS:
