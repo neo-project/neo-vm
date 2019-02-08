@@ -877,7 +877,15 @@ namespace Neo.VM
                                 return;
                             }
 
-                            context.EvaluationStack.Push(x << shift);
+                            x = x << shift;
+
+                            if (!CheckBigInteger(x))
+                            {
+                                State |= VMState.FAULT;
+                                return;
+                            }
+
+                            context.EvaluationStack.Push(x);
                             CheckStackSize(true, -1);
                             break;
                         }
