@@ -707,7 +707,7 @@ namespace Neo.VM
                             StackItem x2 = context.EvaluationStack.Pop();
                             StackItem x1 = context.EvaluationStack.Pop();
                             context.EvaluationStack.Push(x1.Equals(x2));
-                            CheckStackSize(true, -1);
+                            CheckStackSize(false, -1);
                             break;
                         }
 
