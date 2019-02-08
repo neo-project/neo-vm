@@ -1394,7 +1394,7 @@ namespace Neo.VM
                     case OpCode.REVERSE:
                         {
                             StackItem arrItem = context.EvaluationStack.Pop();
-                            CheckStackSize(true, -1);
+                            CheckStackSize(false, -1);
 
                             if (arrItem is VMArray array)
                             {
