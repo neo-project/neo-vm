@@ -1069,7 +1069,7 @@ namespace Neo.VM
                             {
                                 context.EvaluationStack.Push(false);
                             }
-                            CheckStackSize(false, -2);
+                            CheckStackSize(true, -2);
                             break;
                         }
                     case OpCode.CHECKMULTISIG:
