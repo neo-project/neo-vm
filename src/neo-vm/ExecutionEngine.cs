@@ -1341,7 +1341,7 @@ namespace Neo.VM
                             }
                             context.EvaluationStack.Push(new VM.Types.Struct(items));
 
-                            if (!CheckStackSize(false, count + 1))
+                            if (!CheckStackSize(true, count + 1))
                             {
                                 State |= VMState.FAULT;
                                 return;
