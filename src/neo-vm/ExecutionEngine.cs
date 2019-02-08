@@ -1144,7 +1144,7 @@ namespace Neo.VM
                                 fSuccess = false;
                             }
                             context.EvaluationStack.Push(fSuccess);
-                            CheckStackSize(true, -1);
+                            CheckStackSize(false, -1);
                             break;
                         }
 
