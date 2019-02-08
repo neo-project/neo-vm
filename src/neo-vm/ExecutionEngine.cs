@@ -917,7 +917,7 @@ namespace Neo.VM
                             bool x1 = context.EvaluationStack.Pop().GetBoolean();
 
                             context.EvaluationStack.Push(x1 && x2);
-                            CheckStackSize(true, -1);
+                            CheckStackSize(false, -1);
                             break;
                         }
                     case OpCode.BOOLOR:
