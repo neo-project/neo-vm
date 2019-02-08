@@ -220,7 +220,7 @@ namespace Neo.VM
             {
                 context.EvaluationStack.Push(context.OpReader.SafeReadBytes((byte)opcode));
 
-                if (!CheckStackSize(is_stackitem_count_strict))
+                if (!CheckStackSize(true))
                 {
                     State |= VMState.FAULT;
                     return;
@@ -233,7 +233,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(new byte[0]);
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -244,7 +244,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(context.OpReader.SafeReadBytes(context.OpReader.ReadByte()));
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -255,7 +255,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(context.OpReader.SafeReadBytes(context.OpReader.ReadUInt16()));
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -274,7 +274,7 @@ namespace Neo.VM
 
                             context.EvaluationStack.Push(context.OpReader.SafeReadBytes(length));
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -301,7 +301,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push((int)opcode - (int)OpCode.PUSH1 + 1);
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -325,7 +325,7 @@ namespace Neo.VM
                             bool fValue = true;
                             if (opcode > OpCode.JMP)
                             {
-                                CheckStackSize(false, -1);
+                                CheckStackSize(true, -1);
                                 fValue = context.EvaluationStack.Pop().GetBoolean();
 
                                 if (opcode == OpCode.JMPIFNOT)
@@ -441,7 +441,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(context.AltStack.Peek());
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -480,7 +480,7 @@ namespace Neo.VM
                                 return;
                             }
 
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             if (n == 0) break;
 
                             StackItem xn = context.EvaluationStack.Peek(n);
@@ -504,7 +504,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(context.EvaluationStack.Count);
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -514,14 +514,14 @@ namespace Neo.VM
                     case OpCode.DROP:
                         {
                             context.EvaluationStack.Pop();
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.DUP:
                         {
                             context.EvaluationStack.Push(context.EvaluationStack.Peek());
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -531,14 +531,14 @@ namespace Neo.VM
                     case OpCode.NIP:
                         {
                             context.EvaluationStack.Remove(1);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.OVER:
                         {
                             context.EvaluationStack.Push(context.EvaluationStack.Peek(1));
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -565,10 +565,11 @@ namespace Neo.VM
                                 State |= VMState.FAULT;
                                 return;
                             }
+
+                            CheckStackSize(true, -1);
                             if (n == 0) break;
 
                             context.EvaluationStack.Push(context.EvaluationStack.Remove(n));
-                            CheckStackSize(false, -1);
                             break;
                         }
                     case OpCode.ROT:
@@ -585,7 +586,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Insert(2, context.EvaluationStack.Peek());
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -604,7 +605,7 @@ namespace Neo.VM
                             }
 
                             context.EvaluationStack.Push(x1.Concat(x2).ToArray());
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.SUBSTR:
@@ -640,7 +641,7 @@ namespace Neo.VM
 
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
                             context.EvaluationStack.Push(x.Take(count).ToArray());
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.RIGHT:
@@ -660,7 +661,7 @@ namespace Neo.VM
                             }
 
                             context.EvaluationStack.Push(x.Skip(x.Length - count).ToArray());
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.SIZE:
@@ -682,7 +683,7 @@ namespace Neo.VM
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
                             context.EvaluationStack.Push(x1 & x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.OR:
@@ -690,7 +691,7 @@ namespace Neo.VM
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
                             context.EvaluationStack.Push(x1 | x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.XOR:
@@ -698,7 +699,7 @@ namespace Neo.VM
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
                             context.EvaluationStack.Push(x1 ^ x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.EQUAL:
@@ -706,7 +707,7 @@ namespace Neo.VM
                             StackItem x2 = context.EvaluationStack.Pop();
                             StackItem x1 = context.EvaluationStack.Pop();
                             context.EvaluationStack.Push(x1.Equals(x2));
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
 
@@ -785,7 +786,7 @@ namespace Neo.VM
                             }
 
                             context.EvaluationStack.Push(x1 + x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.SUB:
@@ -800,7 +801,7 @@ namespace Neo.VM
                             }
 
                             context.EvaluationStack.Push(x1 - x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.MUL:
@@ -825,7 +826,7 @@ namespace Neo.VM
                             }
 
                             context.EvaluationStack.Push(x1 * x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.DIV:
@@ -840,7 +841,7 @@ namespace Neo.VM
                             }
 
                             context.EvaluationStack.Push(x1 / x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.MOD:
@@ -855,7 +856,7 @@ namespace Neo.VM
                             }
 
                             context.EvaluationStack.Push(x1 % x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.SHL:
@@ -877,7 +878,7 @@ namespace Neo.VM
                             }
 
                             context.EvaluationStack.Push(x << shift);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.SHR:
@@ -899,7 +900,7 @@ namespace Neo.VM
                             }
 
                             context.EvaluationStack.Push(x >> shift);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.BOOLAND:
@@ -908,7 +909,7 @@ namespace Neo.VM
                             bool x1 = context.EvaluationStack.Pop().GetBoolean();
 
                             context.EvaluationStack.Push(x1 && x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.BOOLOR:
@@ -917,7 +918,7 @@ namespace Neo.VM
                             bool x1 = context.EvaluationStack.Pop().GetBoolean();
 
                             context.EvaluationStack.Push(x1 || x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.NUMEQUAL:
@@ -926,7 +927,7 @@ namespace Neo.VM
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
 
                             context.EvaluationStack.Push(x1 == x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.NUMNOTEQUAL:
@@ -935,7 +936,7 @@ namespace Neo.VM
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
 
                             context.EvaluationStack.Push(x1 != x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.LT:
@@ -944,7 +945,7 @@ namespace Neo.VM
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
 
                             context.EvaluationStack.Push(x1 < x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.GT:
@@ -953,7 +954,7 @@ namespace Neo.VM
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
 
                             context.EvaluationStack.Push(x1 > x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.LTE:
@@ -962,7 +963,7 @@ namespace Neo.VM
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
 
                             context.EvaluationStack.Push(x1 <= x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.GTE:
@@ -971,7 +972,7 @@ namespace Neo.VM
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
 
                             context.EvaluationStack.Push(x1 >= x2);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.MIN:
@@ -980,7 +981,7 @@ namespace Neo.VM
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
 
                             context.EvaluationStack.Push(BigInteger.Min(x1, x2));
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.MAX:
@@ -989,7 +990,7 @@ namespace Neo.VM
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
 
                             context.EvaluationStack.Push(BigInteger.Max(x1, x2));
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.WITHIN:
@@ -1043,7 +1044,7 @@ namespace Neo.VM
                             {
                                 context.EvaluationStack.Push(false);
                             }
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.VERIFY:
@@ -1135,7 +1136,7 @@ namespace Neo.VM
                                 fSuccess = false;
                             }
                             context.EvaluationStack.Push(fSuccess);
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
 
@@ -1343,7 +1344,7 @@ namespace Neo.VM
                         {
                             context.EvaluationStack.Push(new Map());
 
-                            if (!CheckStackSize(is_stackitem_count_strict))
+                            if (!CheckStackSize(true))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -1385,7 +1386,7 @@ namespace Neo.VM
                     case OpCode.REVERSE:
                         {
                             StackItem arrItem = context.EvaluationStack.Pop();
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
 
                             if (arrItem is VMArray array)
                             {
@@ -1458,7 +1459,7 @@ namespace Neo.VM
                                     return;
                             }
 
-                            CheckStackSize(false, -1);
+                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.KEYS:
@@ -1582,7 +1583,7 @@ namespace Neo.VM
                             if (opcode == OpCode.CALL_ED || opcode == OpCode.CALL_EDT)
                             {
                                 script_hash = context.EvaluationStack.Pop().GetByteArray();
-                                CheckStackSize(false, -1);
+                                CheckStackSize(true, -1);
                             }
                             else
                             {
@@ -1612,7 +1613,7 @@ namespace Neo.VM
                         }
                     case OpCode.THROWIFNOT:
                         {
-                            if (!context.EvaluationStack.Pop().GetBoolean() || CheckStackSize(false, -1))
+                            if (!context.EvaluationStack.Pop().GetBoolean() || CheckStackSize(true, -1))
                             {
                                 State |= VMState.FAULT;
                                 return;
