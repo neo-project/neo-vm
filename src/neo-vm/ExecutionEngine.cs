@@ -1008,7 +1008,7 @@ namespace Neo.VM
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
 
                             context.EvaluationStack.Push(a <= x && x < b);
-                            CheckStackSize(false, -2);
+                            CheckStackSize(true, -2);
                             break;
                         }
 
