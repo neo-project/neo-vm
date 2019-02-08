@@ -531,7 +531,7 @@ namespace Neo.VM
                     case OpCode.NIP:
                         {
                             context.EvaluationStack.Remove(1);
-                            CheckStackSize(true, -1);
+                            CheckStackSize(false, -1);
                             break;
                         }
                     case OpCode.OVER:
