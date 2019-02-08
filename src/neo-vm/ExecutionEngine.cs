@@ -514,7 +514,7 @@ namespace Neo.VM
                     case OpCode.DROP:
                         {
                             context.EvaluationStack.Pop();
-                            CheckStackSize(true, -1);
+                            CheckStackSize(false, -1);
                             break;
                         }
                     case OpCode.DUP:
