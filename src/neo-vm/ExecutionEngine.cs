@@ -626,7 +626,7 @@ namespace Neo.VM
 
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
                             context.EvaluationStack.Push(x.Skip(index).Take(count).ToArray());
-                            CheckStackSize(false, -2);
+                            CheckStackSize(true, -2);
                             break;
                         }
                     case OpCode.LEFT:
