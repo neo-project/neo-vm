@@ -101,7 +101,7 @@ namespace Neo.VM
         /// <param name="length">Length</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckMaxItemSize(int length) => length <= MaxItemSize;
+        public bool CheckMaxItemSize(int length) => length >= 0 && length <= MaxItemSize;
 
         /// <summary>
         /// Check if the is possible to overflow the MaxInvocationStack
