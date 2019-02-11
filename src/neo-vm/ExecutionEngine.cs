@@ -377,11 +377,7 @@ namespace Neo.VM
                                 }
                             }
 
-                            if (!CheckStackSize(false, 0))
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
+                            CheckStackSize(false, 0);
 
                             if (InvocationStack.Count == 0)
                             {
@@ -418,11 +414,7 @@ namespace Neo.VM
                             else
                                 context.EvaluationStack.Clear();
 
-                            if (!CheckStackSize(false, 0))
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
+                            CheckStackSize(false, 0);
 
                             break;
                         }
@@ -760,12 +752,7 @@ namespace Neo.VM
                         {
                             bool x = context.EvaluationStack.Pop().GetBoolean();
                             context.EvaluationStack.Push(!x);
-
-                            if (!CheckStackSize(false, 0))
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
+                            CheckStackSize(false, 0);
                             break;
                         }
                     case OpCode.NZ:
@@ -1160,11 +1147,7 @@ namespace Neo.VM
                             else
                                 context.EvaluationStack.Push(item.GetByteArray().Length);
 
-                            if (!CheckStackSize(false, 0))
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
+                            CheckStackSize(false, 0);
 
                             break;
                         }
