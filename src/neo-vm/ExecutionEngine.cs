@@ -1143,12 +1143,15 @@ namespace Neo.VM
                         {
                             StackItem item = context.EvaluationStack.Pop();
                             if (item is ICollection collection)
+                            {
                                 context.EvaluationStack.Push(collection.Count);
+                                CheckStackSize(false, 0);
+                            }
                             else
+                            {
                                 context.EvaluationStack.Push(item.GetByteArray().Length);
-
-                            CheckStackSize(false, 0);
-
+                                CheckStackSize(true, 0);
+                            }
                             break;
                         }
                     case OpCode.PACK:
