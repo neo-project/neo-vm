@@ -1288,8 +1288,6 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
 
-                            // count + 1 because we have the array, and the bool + 1
-
                             if (!CheckArraySize(count))
                             {
                                 State |= VMState.FAULT;
@@ -1304,7 +1302,7 @@ namespace Neo.VM
 
                             context.EvaluationStack.Push(new Types.Array(items));
 
-                            if (!CheckStackSize(true, count + 1))
+                            if (!CheckStackSize(true, count))
                             {
                                 State |= VMState.FAULT;
                                 return;
@@ -1314,8 +1312,6 @@ namespace Neo.VM
                     case OpCode.NEWSTRUCT:
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
-
-                            // count + 1 because we have the struct, and the bool + 1
 
                             if (!CheckArraySize(count))
                             {
@@ -1330,7 +1326,7 @@ namespace Neo.VM
                             }
                             context.EvaluationStack.Push(new VM.Types.Struct(items));
 
-                            if (!CheckStackSize(true, count + 1))
+                            if (!CheckStackSize(true, count))
                             {
                                 State |= VMState.FAULT;
                                 return;
