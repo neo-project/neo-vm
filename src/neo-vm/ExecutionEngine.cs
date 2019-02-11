@@ -1087,6 +1087,7 @@ namespace Neo.VM
                                     State |= VMState.FAULT;
                                     return;
                                 }
+                                CheckStackSize(false, -1);
                             }
                             else
                             {
@@ -1099,6 +1100,7 @@ namespace Neo.VM
                                 pubkeys = new byte[n][];
                                 for (int i = 0; i < n; i++)
                                     pubkeys[i] = context.EvaluationStack.Pop().GetByteArray();
+                                CheckStackSize(true, -n - 1);
                             }
 
                             int m;
@@ -1113,6 +1115,7 @@ namespace Neo.VM
                                     State |= VMState.FAULT;
                                     return;
                                 }
+                                CheckStackSize(false, -1);
                             }
                             else
                             {
@@ -1125,6 +1128,7 @@ namespace Neo.VM
                                 signatures = new byte[m][];
                                 for (int i = 0; i < m; i++)
                                     signatures[i] = context.EvaluationStack.Pop().GetByteArray();
+                                CheckStackSize(true, -m - 1);
                             }
                             byte[] message = ScriptContainer.GetMessage();
                             bool fSuccess = true;
@@ -1144,7 +1148,6 @@ namespace Neo.VM
                                 fSuccess = false;
                             }
                             context.EvaluationStack.Push(fSuccess);
-                            CheckStackSize(false, -1);
                             break;
                         }
 
