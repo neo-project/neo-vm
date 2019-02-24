@@ -1,5 +1,4 @@
 ﻿using System;
-using Neo.Test.Types;
 using Neo.VM;
 using Newtonsoft.Json;
 
