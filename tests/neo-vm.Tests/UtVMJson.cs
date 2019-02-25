@@ -8,10 +8,11 @@ namespace Neo.Test
 {
     public class UtVMJson : VMJsonTestBase
     {
-        [Fact]
-        public void TestJson()
+        [Theory]
+        [InlineData("./Tests/Others")]
+        public void TestJson(string path)
         {
-            foreach (var file in Directory.GetFiles("./Tests/", "*.json", SearchOption.AllDirectories))
+            foreach (var file in Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
             {
                 var json = File.ReadAllText(file, Encoding.UTF8);
                 var ut = json.DeserializeJson<VMUT>();
