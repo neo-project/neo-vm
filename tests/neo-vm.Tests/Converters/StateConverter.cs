@@ -19,7 +19,7 @@ namespace Neo.Test.Converters
 
             foreach (var split in str.Split("|", StringSplitOptions.RemoveEmptyEntries))
             {
-                ret |= Enum.Parse<VMState>(split.Trim());
+                ret |= Enum.Parse<VMState>(split.Trim().ToUpperInvariant());
             }
 
             return ret;
