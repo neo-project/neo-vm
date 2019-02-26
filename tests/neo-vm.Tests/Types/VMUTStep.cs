@@ -11,6 +11,6 @@ namespace Neo.Test.Types
         public VMUTActionType[] Actions { get; set; }
 
         [JsonProperty]
-        public VMUTExecutionEngineState State { get; set; }
+        public VMUTExecutionEngineState Result { get; set; }
     }
 }

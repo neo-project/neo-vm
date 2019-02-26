@@ -10,9 +10,12 @@
             "steps":
             [
                 {
-                    "state":
+                    "result":
                     {
-                        "state": "Break",
+                        "state":
+                        [
+                            "Break"
+                        ],
                         "invocationStack":
                         [
                             {
@@ -36,9 +39,13 @@
                     [
                         "StepInto"
                     ],
-                    "state":
+                    "result":
                     {
-                        "state": "Break|Halt"
+                        "state":
+                        [
+                            "Break",
+                            "Halt"
+                        ]
                     }
                 }
             ]

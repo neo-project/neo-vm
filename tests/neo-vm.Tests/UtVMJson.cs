@@ -10,6 +10,7 @@ namespace Neo.Test
     {
         [Theory]
         [InlineData("./Tests/Others")]
+        [InlineData("./Tests/OpCodes/Stack")]
         public void TestJson(string path)
         {
             foreach (var file in Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))

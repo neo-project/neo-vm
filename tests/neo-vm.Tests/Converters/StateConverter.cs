@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Neo.VM;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Neo.Test.Converters
 {
@@ -13,13 +15,13 @@ namespace Neo.Test.Converters
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            if (!(reader.Value is string str)) throw new FormatException();
+            if (reader.TokenType != JsonToken.StartArray) throw new FormatException();
 
             VMState ret = VMState.NONE;
 
-            foreach (var split in str.Split("|", StringSplitOptions.RemoveEmptyEntries))
+            foreach (var split in JArray.ReadFrom(reader))
             {
-                ret |= Enum.Parse<VMState>(split.Trim().ToUpperInvariant());
+                ret |= Enum.Parse<VMState>(split.Value<string>().Trim().ToUpperInvariant());
             }
 
             return ret;
@@ -29,7 +31,16 @@ namespace Neo.Test.Converters
         {
             if (value is VMState data)
             {
-                writer.WriteValue(data.ToString().Replace(" ", ""));
+                var list = new List<string>();
+
+                foreach(VMState item in Enum.GetValues(typeof(VMState)))
+                {
+                    if (!data.HasFlag(item)) continue;
+
+                    list.Add(item.ToString());
+                }
+
+                writer.WriteValue(list.ToArray());
             }
             else
             {

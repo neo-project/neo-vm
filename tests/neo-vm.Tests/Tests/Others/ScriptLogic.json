@@ -14,9 +14,12 @@
                     [
                         "StepInto"
                     ],
-                    "state":
+                    "result":
                     {
-                        "state": "Break",
+                        "state":
+                        [
+                            "Break"
+                        ],
                         "invocationStack":
                         [
                             {
@@ -39,9 +42,12 @@
                     [
                         "StepInto"
                     ],
-                    "state":
+                    "result":
                     {
-                        "state": "Break",
+                        "state":
+                        [
+                            "Break"
+                        ],
                         "invocationStack":
                         [
                             {
@@ -64,9 +70,12 @@
                     [
                         "StepInto"
                     ],
-                    "state":
+                    "result":
                     {
-                        "state": "Break",
+                        "state":
+                        [
+                            "Break"
+                        ],
                         "invocationStack":
                         [
                             {
@@ -89,9 +98,12 @@
                     [
                         "StepInto"
                     ],
-                    "state":
+                    "result":
                     {
-                        "state": "Break",
+                        "state":
+                        [
+                            "Break"
+                        ],
                         "invocationStack":
                         [
                             {
@@ -107,9 +119,13 @@
                     [
                         "StepInto"
                     ],
-                    "state":
+                    "result":
                     {
-                        "state": "Halt|Break"
+                        "state":
+                        [
+                            "Halt",
+                            "Break"
+                        ]
                     }
                 }
             ]

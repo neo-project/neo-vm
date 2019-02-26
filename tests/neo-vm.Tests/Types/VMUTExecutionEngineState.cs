@@ -6,7 +6,7 @@ namespace Neo.Test.Types
 {
     public class VMUTExecutionEngineState
     {
-        [JsonProperty,JsonConverter(typeof(StateConverter))]
+        [JsonProperty, JsonConverter(typeof(StateConverter))]
         public VMState State { get; set; }
 
         [JsonProperty]
