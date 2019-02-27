@@ -1,0 +1,36 @@
+﻿{
+    "category": "Exceptions",
+    "name": "THROW",
+    "tests":
+    [
+        {
+            "script": "0xF0",
+            "trigger": "Application",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault",
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x639095273057429f0475642a711b0ff24bee5f7d",
+                                "instructionPointer": 1,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
