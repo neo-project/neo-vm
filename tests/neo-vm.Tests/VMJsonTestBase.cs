@@ -75,7 +75,7 @@ namespace Neo.Test
 
                             var add = string.IsNullOrEmpty(step.Name) ? "" : "-" + step.Name;
 
-                            AssertResult(engine, step.Result, $"{ut.Category}-{ut.Name}{add}: ");
+                            AssertResult(engine, step.Result, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
                         }
                     }
                 }
