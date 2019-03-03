@@ -1606,7 +1606,7 @@ namespace Neo.VM
                         }
                     case OpCode.THROWIFNOT:
                         {
-                            if (!context.EvaluationStack.Pop().GetBoolean() || CheckStackSize(false, -1))
+                            if (!context.EvaluationStack.Pop().GetBoolean() || !CheckStackSize(false, -1))
                             {
                                 State |= VMState.FAULT;
                                 return;
