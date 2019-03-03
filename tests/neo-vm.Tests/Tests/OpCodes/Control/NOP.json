@@ -1,0 +1,133 @@
+﻿{
+    "category": "Control",
+    "name": "NOP",
+    "tests":
+    [
+        {
+            "name": "Real test",
+            "script": "0x6161616161",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
+                                "instructionPointer": 1,
+                                "nextInstruction": "NOP"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
+                                "instructionPointer": 2,
+                                "nextInstruction": "NOP"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
+                                "instructionPointer": 3,
+                                "nextInstruction": "NOP"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
+                                "instructionPointer": 4,
+                                "nextInstruction": "NOP"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
+                                "instructionPointer": 5,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Halt",
+                            "Break"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
