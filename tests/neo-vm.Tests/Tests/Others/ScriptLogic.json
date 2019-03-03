@@ -6,7 +6,6 @@
         {
             "name": "Script logic",
             "script": "0x00919175",
-            "trigger": "Application",
             "steps":
             [
                 {

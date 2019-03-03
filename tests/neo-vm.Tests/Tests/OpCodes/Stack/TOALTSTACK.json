@@ -6,7 +6,6 @@
         {
             "name": "Without push",
             "script": "0x6B",
-            "trigger": "Application",
             "steps":
             [
                 {
@@ -36,7 +35,6 @@
         {
             "name": "Real test",
             "script": "0x556B",
-            "trigger": "Application",
             "steps":
             [
                 {

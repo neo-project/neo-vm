@@ -5,7 +5,6 @@
     [
         {
             "script": "0x0091F1",
-            "trigger": "Application",
             "name": "Without throw exception",
             "steps":
             [
@@ -50,7 +49,6 @@
         },
         {
             "script": "0x00F1",
-            "trigger": "Application",
             "name": "Throw exception (with PUSH)",
             "steps":
             [
@@ -79,7 +77,6 @@
         },
         {
             "script": "0xF1",
-            "trigger": "Application",
             "name": "Throw exception (without PUSH - FAULT)",
             "steps":
             [
