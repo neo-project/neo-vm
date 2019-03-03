@@ -1,0 +1,90 @@
+﻿{
+    "category": "Push",
+    "name": "PUSHDATA4",
+    "tests":
+    [
+        {
+            "name": "Check limit (MaxItemSize = 1024 * 1024)",
+            "script": "0x4E0010000101020304",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x3F2007756ADA6E9A013D34D0CF5F3253EAC15060",
+                                "instructionPointer": 5,
+                                "nextInstruction": "PUSHBYTES1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Good definition",
+            "script": "0x4E0400000001020304",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Halt"
+                        ],
+                        "resultStack":
+                        [
+                            {
+                                "type": "ByteArray",
+                                "value": "0x01020304"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Without enough length",
+            "script": "0x4E0500000001020304",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x7437F66E9C9EC44FE92AEB5CE8813439FD8464AF",
+                                "instructionPointer": 9,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
