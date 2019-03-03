@@ -12,6 +12,7 @@ namespace Neo.Test
         [InlineData("./Tests/Others")]
         [InlineData("./Tests/OpCodes/Stack")]
         [InlineData("./Tests/OpCodes/Splice")]
+        [InlineData("./Tests/OpCodes/Control")]
         [InlineData("./Tests/OpCodes/Exceptions")]
         public void TestJson(string path)
         {
