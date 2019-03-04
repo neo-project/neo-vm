@@ -1,0 +1,173 @@
+﻿{
+    "category": "Arrays",
+    "name": "NEWSTRUCT",
+    "tests":
+    [
+        {
+            "name": "Without push",
+            "script": "0xC6",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault",
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xC8A63BAE0868372409D7CAB99E21950214D13136",
+                                "instructionPointer": 1,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "With wrong type",
+            "script": "0xC7C6",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault",
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xE626BC07AED784E35302B2EF046E454EF0F5B11A",
+                                "instructionPointer": 2,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "With negative push",
+            "script": "0x4FC6",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault",
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x657E59B5BDE2440B057B86B432A958F5BFAA5E0B",
+                                "instructionPointer": 2,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test",
+            "script": "0x52C6",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x66DE1F510C099B46CC3BE92CC5D5AFCB9D9105AF",
+                                "instructionPointer": 2,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Struct",
+                                        "value":
+                                        [
+                                            {
+                                                "type": "Boolean",
+                                                "value": false
+                                            },
+                                            {
+                                                "type": "Boolean",
+                                                "value": false
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Halt",
+                            "Break"
+                        ],
+                        "resultStack":
+                        [
+                            {
+                                "type": "Struct",
+                                "value":
+                                [
+                                    {
+                                        "type": "Boolean",
+                                        "value": false
+                                    },
+                                    {
+                                        "type": "Boolean",
+                                        "value": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
