@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
-using System.Text;
 using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
@@ -17,7 +16,7 @@ namespace Neo.VM
 
         public IScriptContainer ScriptContainer { get; }
         public ICrypto Crypto { get; }
-        public InteropService Service { get; }
+        public IInteropService Service { get; }
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
         public ExecutionContext CurrentContext => InvocationStack.Peek();
@@ -25,12 +24,12 @@ namespace Neo.VM
         public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
         public VMState State { get; protected set; } = VMState.BREAK;
 
-        public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, InteropService service = null)
+        public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, IInteropService service = null)
         {
             this.ScriptContainer = container;
             this.Crypto = crypto;
             this.table = table;
-            this.Service = service ?? new InteropService();
+            this.Service = service;
         }
 
         public void AddBreakPoint(byte[] script_hash, uint position)
@@ -59,7 +58,7 @@ namespace Neo.VM
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
         {
             if (opcode >= OpCode.PUSHBYTES1 && opcode <= OpCode.PUSHBYTES75)
-                context.EvaluationStack.Push(context.OpReader.ReadBytes((byte)opcode));
+                context.EvaluationStack.Push(context.OpReader.SafeReadBytes((byte)opcode));
             else
                 switch (opcode)
                 {
@@ -68,13 +67,13 @@ namespace Neo.VM
                         context.EvaluationStack.Push(new byte[0]);
                         break;
                     case OpCode.PUSHDATA1:
-                        context.EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadByte()));
+                        context.EvaluationStack.Push(context.OpReader.SafeReadBytes(context.OpReader.ReadByte()));
                         break;
                     case OpCode.PUSHDATA2:
-                        context.EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadUInt16()));
+                        context.EvaluationStack.Push(context.OpReader.SafeReadBytes(context.OpReader.ReadUInt16()));
                         break;
                     case OpCode.PUSHDATA4:
-                        context.EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadInt32()));
+                        context.EvaluationStack.Push(context.OpReader.SafeReadBytes(context.OpReader.ReadInt32()));
                         break;
                     case OpCode.PUSHM1:
                     case OpCode.PUSH1:
@@ -161,28 +160,20 @@ namespace Neo.VM
                     case OpCode.APPCALL:
                     case OpCode.TAILCALL:
                         {
-                            if (table == null)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-
-                            byte[] script_hash = context.OpReader.ReadBytes(20);
+                            byte[] script_hash = context.OpReader.SafeReadBytes(20);
                             if (script_hash.All(p => p == 0))
                             {
                                 script_hash = context.EvaluationStack.Pop().GetByteArray();
                             }
 
-                            byte[] script = table.GetScript(script_hash);
-                            if (script == null)
+                            ExecutionContext context_new = LoadScriptByHash(script_hash);
+                            if (context_new == null)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
 
-                            ExecutionContext context_new = LoadScript(script);
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack);
-
                             if (opcode == OpCode.TAILCALL)
                                 InvocationStack.Remove(1).Dispose();
                             else
@@ -190,7 +181,7 @@ namespace Neo.VM
                         }
                         break;
                     case OpCode.SYSCALL:
-                        if (!Service.Invoke(Encoding.ASCII.GetString(context.OpReader.ReadVarBytes(252)), this))
+                        if (Service?.Invoke(context.OpReader.ReadVarBytes(252), this) != true)
                             State |= VMState.FAULT;
                         break;
 
@@ -975,11 +966,6 @@ namespace Neo.VM
                     case OpCode.CALL_ET:
                     case OpCode.CALL_EDT:
                         {
-                            if (table == null)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
                             int rvcount = context.OpReader.ReadByte();
                             int pcount = context.OpReader.ReadByte();
                             if (context.EvaluationStack.Count < pcount)
@@ -999,14 +985,13 @@ namespace Neo.VM
                             if (opcode == OpCode.CALL_ED || opcode == OpCode.CALL_EDT)
                                 script_hash = context.EvaluationStack.Pop().GetByteArray();
                             else
-                                script_hash = context.OpReader.ReadBytes(20);
-                            byte[] script = table.GetScript(script_hash);
-                            if (script == null)
+                                script_hash = context.OpReader.SafeReadBytes(20);
+                            ExecutionContext context_new = LoadScriptByHash(script_hash, rvcount);
+                            if (context_new == null)
                             {
                                 State |= VMState.FAULT;
                                 return;
                             }
-                            ExecutionContext context_new = LoadScript(script, rvcount);
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack, pcount);
                             if (opcode == OpCode.CALL_ET || opcode == OpCode.CALL_EDT)
                                 InvocationStack.Remove(1).Dispose();
@@ -1041,7 +1026,24 @@ namespace Neo.VM
 
         public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(this, script, rvcount);
+            ExecutionContext context = new ExecutionContext(new Script(Crypto, script), rvcount);
+            InvocationStack.Push(context);
+            return context;
+        }
+
+        private ExecutionContext LoadScript(Script script, int rvcount = -1)
+        {
+            ExecutionContext context = new ExecutionContext(script, rvcount);
+            InvocationStack.Push(context);
+            return context;
+        }
+
+        private ExecutionContext LoadScriptByHash(byte[] hash, int rvcount = -1)
+        {
+            if (table == null) return null;
+            byte[] script = table.GetScript(hash);
+            if (script == null) return null;
+            ExecutionContext context = new ExecutionContext(new Script(hash, script), rvcount);
             InvocationStack.Push(context);
             return context;
         }

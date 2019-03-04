@@ -1,0 +1,134 @@
+﻿{
+    "category": "Others",
+    "name": "ScriptLogic",
+    "tests":
+    [
+        {
+            "name": "Script logic",
+            "script": "0x00919175",
+            "trigger": "Application",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xB99002CE752F200C872C34E0A040A08BCE1BE2AB",
+                                "instructionPointer": 1,
+                                "nextInstruction": "NOT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xB99002CE752F200C872C34E0A040A08BCE1BE2AB",
+                                "instructionPointer": 2,
+                                "nextInstruction": "NOT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Boolean",
+                                        "value": true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xB99002CE752F200C872C34E0A040A08BCE1BE2AB",
+                                "instructionPointer": 3,
+                                "nextInstruction": "DROP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Boolean",
+                                        "value": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xB99002CE752F200C872C34E0A040A08BCE1BE2AB",
+                                "instructionPointer": 4,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Halt",
+                            "Break"
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

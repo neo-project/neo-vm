@@ -121,7 +121,7 @@ namespace Neo.VM
         /// </summary>
         RET = 0x66,
         /// <summary>
-        /// Reads a scripthash and executes the corresponding contract.
+        /// Reads a scripthash and executes the corresponding contract. If scripthash is zero, performs dynamic invoke by taking scripthash from main stack.
         /// </summary>
         APPCALL = 0x67,
         /// <summary>
@@ -129,7 +129,7 @@ namespace Neo.VM
         /// </summary>
         SYSCALL = 0x68,
         /// <summary>
-        /// Reads a scripthash and executes the corresponding contract. Disposes the top item on invocation stack.
+        /// Reads a scripthash and executes the corresponding contract. If scripthash is zero, performs dynamic invoke by taking scripthash from main stack. Disposes the top item on invocation stack.
         /// </summary>
         TAILCALL = 0x69,
 
@@ -446,10 +446,25 @@ namespace Neo.VM
 
 
         // Stack isolation
+        /// <summary>
+        /// Current context is copied to the invocation stack (similar to CALL). Read return count (1-byte), parameter count (1-byte) and a 2-byte value n for jump to be performed.
+        /// </summary>
         CALL_I = 0xE0,
+        /// <summary>
+        /// Reads a scripthash and executes the corresponding contract (similar to APPCALL). Read return count (1-byte), parameter count (1-byte) and a 20-byte scripthash.
+        /// </summary>
         CALL_E = 0xE1,
+        /// <summary>
+        /// Reads a scripthash and executes the corresponding contract (similar to dynamic invoke APPCALL). Read return count (1-byte) and parameter count (1-byte). The 20-byte scripthash is pop from main stack.
+        /// </summary>
         CALL_ED = 0xE2,
+        /// <summary>
+        /// Reads a scripthash and executes the corresponding contract (similar to TAILCALL). Read return count (1-byte), parameter count (1-byte) and a 20-byte scripthash. Disposes the top item on invocation stack.
+        /// </summary>
         CALL_ET = 0xE3,
+        /// <summary>
+        /// Reads a scripthash and executes the corresponding contract (similar to dynamic invoke TAILCALL). Read return count (1-byte) and parameter count (1-byte). The 20-byte scripthash is pop from main stack. Disposes the top item on invocation stack.
+        /// </summary>
         CALL_EDT = 0xE4,
 
 

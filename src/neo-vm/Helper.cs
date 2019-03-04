@@ -1,14 +1,13 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 
 namespace Neo.VM
 {
     internal static class Helper
     {
-        public static byte[] ReadVarBytes(this BinaryReader reader, int max = 0X7fffffc7)
+        public static byte[] ReadVarBytes(this BinaryReader reader, int max = 0x10000000)
         {
-            return reader.ReadBytes((int)reader.ReadVarInt((ulong)max));
+            return reader.SafeReadBytes((int)reader.ReadVarInt((ulong)max));
         }
 
         public static ulong ReadVarInt(this BinaryReader reader, ulong max = ulong.MaxValue)
@@ -27,45 +26,12 @@ namespace Neo.VM
             return value;
         }
 
-        public static string ReadVarString(this BinaryReader reader)
+        public static byte[] SafeReadBytes(this BinaryReader reader, int count)
         {
-            return Encoding.UTF8.GetString(reader.ReadVarBytes());
-        }
-
-        public static void WriteVarBytes(this BinaryWriter writer, byte[] value)
-        {
-            writer.WriteVarInt(value.Length);
-            writer.Write(value);
-        }
-
-        public static void WriteVarInt(this BinaryWriter writer, long value)
-        {
-            if (value < 0)
-                throw new ArgumentOutOfRangeException();
-            if (value < 0xFD)
-            {
-                writer.Write((byte)value);
-            }
-            else if (value <= 0xFFFF)
-            {
-                writer.Write((byte)0xFD);
-                writer.Write((ushort)value);
-            }
-            else if (value <= 0xFFFFFFFF)
-            {
-                writer.Write((byte)0xFE);
-                writer.Write((uint)value);
-            }
-            else
-            {
-                writer.Write((byte)0xFF);
-                writer.Write(value);
-            }
-        }
-
-        public static void WriteVarString(this BinaryWriter writer, string value)
-        {
-            writer.WriteVarBytes(Encoding.UTF8.GetBytes(value));
+            byte[] data = reader.ReadBytes(count);
+            if (data.Length < count)
+                throw new FormatException();
+            return data;
         }
     }
 }
