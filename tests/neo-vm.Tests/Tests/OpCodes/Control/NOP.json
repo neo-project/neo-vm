@@ -1,11 +1,11 @@
 ﻿{
-    "category": "Others",
-    "name": "ScriptLogic",
+    "category": "Control",
+    "name": "NOP",
     "tests":
     [
         {
-            "name": "Script logic",
-            "script": "0x00919175",
+            "name": "Real test",
+            "script": "0x6161616161",
             "steps":
             [
                 {
@@ -22,16 +22,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xB99002CE752F200C872C34E0A040A08BCE1BE2AB",
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
                                 "instructionPointer": 1,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
+                                "nextInstruction": "NOP"
                             }
                         ]
                     }
@@ -50,16 +43,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xB99002CE752F200C872C34E0A040A08BCE1BE2AB",
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
                                 "instructionPointer": 2,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
+                                "nextInstruction": "NOP"
                             }
                         ]
                     }
@@ -78,16 +64,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xB99002CE752F200C872C34E0A040A08BCE1BE2AB",
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
                                 "instructionPointer": 3,
-                                "nextInstruction": "DROP",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
+                                "nextInstruction": "NOP"
                             }
                         ]
                     }
@@ -106,8 +85,29 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xB99002CE752F200C872C34E0A040A08BCE1BE2AB",
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
                                 "instructionPointer": 4,
+                                "nextInstruction": "NOP"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x348151EF5AED313C4987C01B0A74771BEB7F1BB3",
+                                "instructionPointer": 5,
                                 "nextInstruction": "RET"
                             }
                         ]

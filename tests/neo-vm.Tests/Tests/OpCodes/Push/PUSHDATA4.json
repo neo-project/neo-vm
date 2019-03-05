@@ -1,55 +1,11 @@
 ﻿{
-    "category": "Exceptions",
-    "name": "THROWIFNOT",
+    "category": "Push",
+    "name": "PUSHDATA4",
     "tests":
     [
         {
-            "script": "0x0091F1",
-            "name": "Without throw exception",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state":
-                        [
-                            "Break"
-                        ],
-                        "invocationStack":
-                        [
-                            {
-                                "scriptHash": "0xB596C875BC46FB5E2DFA4C74071B6BF965D740DE",
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state":
-                        [
-                            "Halt",
-                            "Break"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "script": "0x00F1",
-            "name": "Throw exception (with PUSH)",
+            "name": "Check limit (MaxItemSize = 1024 * 1024)",
+            "script": "0x4E0010000101020304",
             "steps":
             [
                 {
@@ -66,9 +22,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x58B88C67B9F19BB9BB4C2C418B44A398D722DF54",
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET"
+                                "scriptHash": "0x3F2007756ADA6E9A013D34D0CF5F3253EAC15060",
+                                "instructionPointer": 5,
+                                "nextInstruction": "PUSHBYTES1"
                             }
                         ]
                     }
@@ -76,8 +32,35 @@
             ]
         },
         {
-            "script": "0xF1",
-            "name": "Throw exception (without PUSH - FAULT)",
+            "name": "Good definition",
+            "script": "0x4E0400000001020304",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Halt"
+                        ],
+                        "resultStack":
+                        [
+                            {
+                                "type": "ByteArray",
+                                "value": "0x01020304"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Without enough length",
+            "script": "0x4E0500000001020304",
             "steps":
             [
                 {
@@ -94,8 +77,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x52C8881BB60A00778972B84150C43B25A19C766E",
-                                "instructionPointer": 1,
+                                "scriptHash": "0x7437F66E9C9EC44FE92AEB5CE8813439FD8464AF",
+                                "instructionPointer": 9,
                                 "nextInstruction": "RET"
                             }
                         ]

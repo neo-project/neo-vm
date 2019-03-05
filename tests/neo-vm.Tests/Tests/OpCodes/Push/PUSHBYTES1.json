@@ -1,18 +1,16 @@
 ﻿{
-    "category": "Exceptions",
-    "name": "THROWIFNOT",
+    "category": "Push",
+    "name": "PUSHBYTES1",
     "tests":
     [
         {
-            "script": "0x0091F1",
-            "name": "Without throw exception",
+            "name": "Good definition",
+            "script": "0x0100",
             "steps":
             [
                 {
                     "actions":
                     [
-                        "StepInto",
-                        "StepInto",
                         "StepInto"
                     ],
                     "result":
@@ -24,9 +22,16 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xB596C875BC46FB5E2DFA4C74071B6BF965D740DE",
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET"
+                                "scriptHash": "0xFBC22D517F38E7612798ECE8E5957CF6C41D8CAF",
+                                "instructionPointer": 2,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x00"
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -42,33 +47,12 @@
                         [
                             "Halt",
                             "Break"
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "script": "0x00F1",
-            "name": "Throw exception (with PUSH)",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state":
-                        [
-                            "Fault"
                         ],
-                        "invocationStack":
+                        "resultStack":
                         [
                             {
-                                "scriptHash": "0x58B88C67B9F19BB9BB4C2C418B44A398D722DF54",
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET"
+                                "type": "ByteArray",
+                                "value": "0x00"
                             }
                         ]
                     }
@@ -76,25 +60,26 @@
             ]
         },
         {
-            "script": "0xF1",
-            "name": "Throw exception (without PUSH - FAULT)",
+            "name": "Wrong definition (without enough length)",
+            "script": "0x01",
             "steps":
             [
                 {
                     "actions":
                     [
-                        "Execute"
+                        "StepInto"
                     ],
                     "result":
                     {
                         "state":
                         [
-                            "Fault"
+                            "Fault",
+                            "Break"
                         ],
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x52C8881BB60A00778972B84150C43B25A19C766E",
+                                "scriptHash": "0xC51B66BCED5E4491001BD702669770DCCF440982",
                                 "instructionPointer": 1,
                                 "nextInstruction": "RET"
                             }

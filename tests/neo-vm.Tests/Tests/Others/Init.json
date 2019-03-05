@@ -6,7 +6,6 @@
         {
             "name": "Init script",
             "script": "0x66",
-            "trigger": "Application",
             "steps":
             [
                 {
@@ -31,7 +30,6 @@
         {
             "name": "Init script",
             "script": "0x66",
-            "trigger": "Application",
             "steps":
             [
                 {
