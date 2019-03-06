@@ -4,7 +4,7 @@ using Neo.VM;
 
 namespace Neo.Test.Types
 {
-    public class ManualScriptTable : IScriptTable
+    public class ScriptTable : IScriptTable
     {
         private Dictionary<string, byte[]> _data = new Dictionary<string, byte[]>();
 
