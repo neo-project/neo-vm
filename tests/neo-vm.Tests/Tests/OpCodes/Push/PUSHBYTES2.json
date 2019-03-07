@@ -1,0 +1,92 @@
+﻿{
+    "category": "Push",
+    "name": "PUSHBYTES2",
+    "tests":
+    [
+        {
+            "name": "Good definition",
+            "script": "0x020001",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x70514ECE2861C1FA30325ACA43C139FEDBCF6D4E",
+                                "instructionPointer": 3,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x0001"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Halt",
+                            "Break"
+                        ],
+                        "resultStack":
+                        [
+                            {
+                                "type": "ByteArray",
+                                "value": "0x0001"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Wrong definition (without enough length)",
+            "script": "0x0200",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault",
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x2DFFE6985B066C4A37DA765149E3F5A06E1626C6",
+                                "instructionPointer": 2,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -20,7 +20,7 @@ namespace Neo.Test
             {
                 // Interop service
 
-                IInteropService service = null;
+                IInteropService service = new InteropService();
 
                 // Message provider
 
@@ -28,17 +28,17 @@ namespace Neo.Test
 
                 if (test.Message != null)
                 {
-                    scriptContainer = new ManualMessageProvider(test.Message);
+                    scriptContainer = new MessageProvider(test.Message);
                 }
 
 
                 // Script table
 
-                ManualScriptTable scriptTable = null;
+                ScriptTable scriptTable = null;
 
                 if (test.ScriptTable != null)
                 {
-                    scriptTable = new ManualScriptTable();
+                    scriptTable = new ScriptTable();
 
                     foreach (var script in test.ScriptTable)
                     {
@@ -247,7 +247,7 @@ namespace Neo.Test
                         type = "Interop";
                         var obj = v.GetInterface<object>();
 
-                        value = obj.GetType().ToString();
+                        value = obj.GetType().Name.ToString();
                         break;
                     }
                 default: throw new NotImplementedException();

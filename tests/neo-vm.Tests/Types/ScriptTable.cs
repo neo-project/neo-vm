@@ -6,7 +6,7 @@ using Neo.VM;
 
 namespace Neo.Test.Types
 {
-    public class ManualScriptTable : IScriptTable
+    public class ScriptTable : IScriptTable
     {
         class ByteArrayComparable : IEqualityComparer<byte[]>
         {
