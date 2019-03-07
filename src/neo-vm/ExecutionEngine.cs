@@ -1664,7 +1664,9 @@ namespace Neo.VM
             if (InvocationStack.Count == 0) State |= VMState.HALT;
             if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
 
-            if (CurrentContext.Script.IsNative)//native contract
+            // Check if is a Native contract
+            
+            if (CurrentContext.Script.IsNative)
             {
                 CurrentContext.Script.RunNative(this, CurrentContext);
             }
