@@ -8,14 +8,13 @@ namespace Neo.Test.Types
     {
         private Dictionary<string, byte[]> _data = new Dictionary<string, byte[]>();
 
-        public byte[] GetScript(byte[] script_hash)
+        public IScript GetScript(byte[] script_hash)
         {
             if (!_data.TryGetValue(script_hash.ToHexString(), out var ret))
             {
                 return null;
             }
-
-            return ret;
+            return new Script(script_hash, ret);
         }
 
         public void Add(byte[] script)

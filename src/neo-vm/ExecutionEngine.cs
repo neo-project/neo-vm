@@ -1627,12 +1627,14 @@ namespace Neo.VM
             }
         }
 
-        public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
+        public ExecutionContext LoadScript(byte[] _script, int rvcount = -1)
         {
-            return LoadScript(new Script(Crypto, script), rvcount);
+            var _hash = Crypto.Hash160(_script);
+            IScript script = new Script(_hash, _script);
+            return LoadScript(script, rvcount);
         }
 
-        protected virtual ExecutionContext LoadScript(Script script, int rvcount = -1)
+        protected virtual ExecutionContext LoadScript(IScript script, int rvcount = -1)
         {
             ExecutionContext context = new ExecutionContext(script, rvcount);
             InvocationStack.Push(context);
@@ -1642,9 +1644,9 @@ namespace Neo.VM
         private ExecutionContext LoadScriptByHash(byte[] hash, int rvcount = -1)
         {
             if (table == null) return null;
-            byte[] script = table.GetScript(hash);
+            IScript script = table.GetScript(hash);
             if (script == null) return null;
-            return LoadScript(new Script(hash, script), rvcount);
+            return LoadScript(script, rvcount);
         }
 
         public bool RemoveBreakPoint(byte[] script_hash, uint position)
@@ -1662,14 +1664,22 @@ namespace Neo.VM
         {
             if (InvocationStack.Count == 0) State |= VMState.HALT;
             if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
-            OpCode opcode = CurrentContext.InstructionPointer >= CurrentContext.Script.Length ? OpCode.RET : (OpCode)CurrentContext.OpReader.ReadByte();
-            try
+
+            if (CurrentContext.Script.IsNative)//native contract
             {
-                ExecuteOp(opcode, CurrentContext);
+                CurrentContext.Script.RunNative(this, CurrentContext);
             }
-            catch
+            else
             {
-                State |= VMState.FAULT;
+                OpCode opcode = CurrentContext.InstructionPointer >= CurrentContext.Script.Length ? OpCode.RET : (OpCode)CurrentContext.OpReader.ReadByte();
+                try
+                {
+                    ExecuteOp(opcode, CurrentContext);
+                }
+                catch
+                {
+                    State |= VMState.FAULT;
+                }
             }
         }
 

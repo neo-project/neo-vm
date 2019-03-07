@@ -19,7 +19,7 @@ namespace Neo.VM
         /// <summary>
         /// Script
         /// </summary>
-        public readonly Script Script;
+        public readonly IScript Script;
 
         /// <summary>
         /// Evaluation stack
@@ -79,7 +79,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="script">Script</param>
         /// <param name="rvcount">Number of items to be returned</param>
-        internal ExecutionContext(Script script, int rvcount)
+        internal ExecutionContext(IScript script, int rvcount)
         {
             this.RVCount = rvcount;
             this.Script = script;
@@ -89,6 +89,12 @@ namespace Neo.VM
         /// <summary>
         /// Free resources
         /// </summary>
-        public void Dispose() => OpReader.Dispose();
+        public void Dispose()
+        {
+            if (OpReader != null)
+            {
+                OpReader.Dispose();
+            }
+        }
     }
 }
