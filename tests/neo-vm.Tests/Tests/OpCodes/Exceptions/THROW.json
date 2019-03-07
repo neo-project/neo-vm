@@ -14,11 +14,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Fault",
-                            "Break"
-                        ],
+                        "state": "Fault",
                         "invocationStack":
                         [
                             {

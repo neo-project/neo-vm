@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Neo.VM;
+﻿using Neo.VM;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace Neo.Test.Converters
 {
@@ -15,32 +14,16 @@ namespace Neo.Test.Converters
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType != JsonToken.StartArray) throw new FormatException();
+            if (reader.TokenType != JsonToken.String) throw new FormatException();
 
-            VMState ret = VMState.NONE;
-
-            foreach (var split in JArray.ReadFrom(reader))
-            {
-                ret |= Enum.Parse<VMState>(split.Value<string>().Trim().ToUpperInvariant());
-            }
-
-            return ret;
+            return Enum.Parse<VMState>(JToken.ReadFrom(reader).Value<string>().Trim().ToUpperInvariant());
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value is VMState data)
             {
-                var list = new List<string>();
-
-                foreach(VMState item in Enum.GetValues(typeof(VMState)))
-                {
-                    if (!data.HasFlag(item)) continue;
-
-                    list.Add(item.ToString());
-                }
-
-                writer.WriteValue(list.ToArray());
+                writer.WriteValue(data.ToString());
             }
             else
             {

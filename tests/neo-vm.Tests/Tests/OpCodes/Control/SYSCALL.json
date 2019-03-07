@@ -15,10 +15,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Fault"
-                        ],
+                        "state": "Fault",
                         "invocationStack":
                         [
                             {
@@ -43,11 +40,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Fault",
-                            "Break"
-                        ],
+                        "state": "Fault",
                         "invocationStack":
                         [
                             {
@@ -73,10 +66,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Break"
-                        ],
+                        "state": "Break",
                         "invocationStack":
                         [
                             {
@@ -101,11 +91,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Halt",
-                            "Break"
-                        ],
+                        "state": "Halt",
                         "resultStack":
                         [
                             {
@@ -129,11 +115,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Fault",
-                            "Break"
-                        ],
+                        "state": "Fault",
                         "invocationStack":
                         [
                             {
@@ -158,11 +140,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Fault",
-                            "Break"
-                        ],
+                        "state": "Fault",
                         "invocationStack":
                         [
                             {
@@ -187,11 +165,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Fault",
-                            "Break"
-                        ],
+                        "state": "Fault",
                         "invocationStack":
                         [
                             {

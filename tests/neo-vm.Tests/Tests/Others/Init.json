@@ -11,10 +11,7 @@
                 {
                     "result":
                     {
-                        "state":
-                        [
-                            "Break"
-                        ],
+                        "state": "Break",
                         "invocationStack":
                         [
                             {
@@ -39,11 +36,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Break",
-                            "Halt"
-                        ]
+                        "state": "Halt"
                     }
                 }
             ]

@@ -15,10 +15,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Fault"
-                        ],
+                        "state": "Fault",
                         "invocationStack":
                         [
                             {
@@ -43,10 +40,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Halt"
-                        ],
+                        "state": "Halt",
                         "resultStack":
                         [
                             {
@@ -70,10 +64,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Fault"
-                        ],
+                        "state": "Fault",
                         "invocationStack":
                         [
                             {
