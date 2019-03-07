@@ -1627,11 +1627,10 @@ namespace Neo.VM
             }
         }
 
-        public ExecutionContext LoadScript(byte[] _script, int rvcount = -1)
+        public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
-            var _hash = Crypto.Hash160(_script);
-            IScript script = new Script(_hash, _script);
-            return LoadScript(script, rvcount);
+            var hash = Crypto.Hash160(script);
+            return LoadScript(new Script(hash, script), rvcount);
         }
 
         protected virtual ExecutionContext LoadScript(IScript script, int rvcount = -1)
