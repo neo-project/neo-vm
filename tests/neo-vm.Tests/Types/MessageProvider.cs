@@ -2,7 +2,7 @@
 
 namespace Neo.Test.Types
 {
-    public class ManualMessageProvider : IScriptContainer
+    public class MessageProvider : IScriptContainer
     {
         private readonly byte[] _messageData;
 
@@ -10,7 +10,7 @@ namespace Neo.Test.Types
         /// Constructor
         /// </summary>
         /// <param name="messageData">Message</param>
-        public ManualMessageProvider(byte[] messageData)
+        public MessageProvider(byte[] messageData)
         {
             _messageData = messageData;
         }
