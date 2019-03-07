@@ -90,6 +90,5 @@ namespace Neo.VM
         /// Free resources
         /// </summary>
         public void Dispose() => OpReader?.Dispose();
-        }
     }
 }
