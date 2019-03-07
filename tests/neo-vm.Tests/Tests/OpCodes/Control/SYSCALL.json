@@ -4,6 +4,63 @@
     "tests":
     [
         {
+            "name": "Syscall that does not exist",
+            "script": "0x6800",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x572E5D73B53675DA9D45227AD65DF4DA53C1E826",
+                                "instructionPointer": 2,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Wrong script",
+            "script": "0x682A53797374656D2E457865637574696F6E456E67696E652E476574536372697074436F6E7461696E6572",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault",
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x5B8661F73D3828ECB71D343FF49BF883EF02428D",
+                                "instructionPointer": 43,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
             "name": "Real test [IMessageProvider]",
             "script": "0x682953797374656D2E457865637574696F6E456E67696E652E476574536372697074436F6E7461696E6572",
             "message": "0x00",
@@ -54,35 +111,6 @@
                             {
                                 "type": "Interop",
                                 "value": "MessageProvider"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong script",
-            "script": "0x682A53797374656D2E457865637574696F6E456E67696E652E476574536372697074436F6E7461696E6572",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state":
-                        [
-                            "Fault",
-                            "Break"
-                        ],
-                        "invocationStack":
-                        [
-                            {
-                                "scriptHash": "0x5B8661F73D3828ECB71D343FF49BF883EF02428D",
-                                "instructionPointer": 43,
-                                "nextInstruction": "RET"
                             }
                         ]
                     }
