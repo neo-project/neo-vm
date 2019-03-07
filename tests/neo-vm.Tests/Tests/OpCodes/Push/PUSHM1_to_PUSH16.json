@@ -1,0 +1,214 @@
+﻿{
+    "category": "Push",
+    "name": "From PUSHM1 to PUSH16 [-1 to 16]",
+    "tests":
+    [
+        {
+            "script": "0x4F005152535455565758595A5B5C5D5E5F6066",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x5B68E1C8A52CD16AE011984E26BE6D637E72ECD5",
+                                "instructionPointer": 18,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 16
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 15
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 14
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 13
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 12
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 11
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 10
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 9
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 8
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 7
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 6
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 4
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": -1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Halt"
+                        ],
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 16
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 15
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 14
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 13
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 12
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 11
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 10
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 9
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 8
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 7
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 6
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 5
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 4
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 3
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 2
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 1
+                            },
+                            {
+                                "type": "ByteArray",
+                                "value": ""
+                            },
+                            {
+                                "type": "Integer",
+                                "value": -1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

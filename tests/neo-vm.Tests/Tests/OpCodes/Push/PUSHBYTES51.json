@@ -1,0 +1,92 @@
+﻿{
+    "category": "Push",
+    "name": "PUSHBYTES51",
+    "tests":
+    [
+        {
+            "name": "Good definition",
+            "script": "0x33000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F303132",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x7E82918F1D8901A6BE591A0DDAD9413D7815BFA6",
+                                "instructionPointer": 52,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F303132"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Halt",
+                            "Break"
+                        ],
+                        "resultStack":
+                        [
+                            {
+                                "type": "ByteArray",
+                                "value": "0x000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F303132"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Wrong definition (without enough length)",
+            "script": "0x33000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F3031",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault",
+                            "Break"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x8E90FCF67AA647C50CCEBE17E49084730AD2086E",
+                                "instructionPointer": 51,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

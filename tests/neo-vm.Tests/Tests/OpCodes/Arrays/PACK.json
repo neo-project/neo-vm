@@ -1,0 +1,191 @@
+﻿{
+    "category": "Arrays",
+    "name": "PACK",
+    "tests":
+    [
+        {
+            "name": "Real test",
+            "script": "0x555652C1",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Halt"
+                        ],
+                        "resultStack":
+                        [
+                            {
+                                "type": "Array",
+                                "value":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 6
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Not enough size",
+            "script": "0x5552C1",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x57F027B5483A45745850DF838E2C8F69A8BC0E69",
+                                "instructionPointer": 3,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Wrong type [Map]",
+            "script": "0xC7C1",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x209F6B9AF6D55821798884B1BC6BB65C0834D261",
+                                "instructionPointer": 2,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Wrong type [Array]",
+            "script": "0x51C5C1",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xFF319A1F63D3CECF18828A5BE9CADFBDFBEC4EB1",
+                                "instructionPointer": 3,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Wrong type [Struct]",
+            "script": "0x51C6C1",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x6ECBE80E7DD8A6AD769305072D6798B6003D44EE",
+                                "instructionPointer": 3,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Without items",
+            "script": "0xC1",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state":
+                        [
+                            "Fault"
+                        ],
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x19ED2626667516B032174A7C65501C89CD337FB4",
+                                "instructionPointer": 1,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

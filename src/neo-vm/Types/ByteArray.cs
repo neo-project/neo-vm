@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Neo.VM.Types
 {
-    internal class ByteArray : StackItem
+    public class ByteArray : StackItem
     {
         private byte[] value;
 
@@ -15,7 +16,16 @@ namespace Neo.VM.Types
         {
             if (ReferenceEquals(this, other)) return true;
             if (ReferenceEquals(null, other)) return false;
-            return value.SequenceEqual(other.GetByteArray());
+            byte[] bytes_other;
+            try
+            {
+                bytes_other = other.GetByteArray();
+            }
+            catch (NotSupportedException)
+            {
+                return false;
+            }
+            return value.SequenceEqual(bytes_other);
         }
 
         public override byte[] GetByteArray()

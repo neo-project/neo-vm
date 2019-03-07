@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Neo.VM
 {
@@ -13,6 +14,15 @@ namespace Neo.VM
         public void Clear()
         {
             list.Clear();
+        }
+
+        public void CopyTo(RandomAccessStack<T> stack, int count = -1)
+        {
+            if (count == 0) return;
+            if (count == -1)
+                stack.list.AddRange(list);
+            else
+                stack.list.AddRange(list.Skip(list.Count - count));
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -34,7 +44,10 @@ namespace Neo.VM
         public T Peek(int index = 0)
         {
             if (index >= list.Count) throw new InvalidOperationException();
-            return list[list.Count - 1 - index];
+            if (index < 0) index += list.Count;
+            if (index < 0) throw new InvalidOperationException();
+            index = list.Count - index - 1;
+            return list[index];
         }
 
         public T Pop()
@@ -50,15 +63,21 @@ namespace Neo.VM
         public T Remove(int index)
         {
             if (index >= list.Count) throw new InvalidOperationException();
-            T item = list[list.Count - index - 1];
-            list.RemoveAt(list.Count - index - 1);
+            if (index < 0) index += list.Count;
+            if (index < 0) throw new InvalidOperationException();
+            index = list.Count - index - 1;
+            T item = list[index];
+            list.RemoveAt(index);
             return item;
         }
 
         public void Set(int index, T item)
         {
             if (index >= list.Count) throw new InvalidOperationException();
-            list[list.Count - index - 1] = item;
+            if (index < 0) index += list.Count;
+            if (index < 0) throw new InvalidOperationException();
+            index = list.Count - index - 1;
+            list[index] = item;
         }
     }
 }
