@@ -1629,12 +1629,10 @@ namespace Neo.VM
 
         public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(new Script(Crypto, script), rvcount);
-            InvocationStack.Push(context);
-            return context;
+            return LoadScript(new Script(Crypto, script), rvcount);
         }
 
-        private ExecutionContext LoadScript(Script script, int rvcount = -1)
+        protected virtual ExecutionContext LoadScript(Script script, int rvcount = -1)
         {
             ExecutionContext context = new ExecutionContext(script, rvcount);
             InvocationStack.Push(context);
@@ -1646,9 +1644,7 @@ namespace Neo.VM
             if (table == null) return null;
             byte[] script = table.GetScript(hash);
             if (script == null) return null;
-            ExecutionContext context = new ExecutionContext(new Script(hash, script), rvcount);
-            InvocationStack.Push(context);
-            return context;
+            return LoadScript(new Script(hash, script), rvcount);
         }
 
         public bool RemoveBreakPoint(byte[] script_hash, uint position)
