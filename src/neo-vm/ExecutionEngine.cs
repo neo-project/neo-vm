@@ -211,7 +211,32 @@ namespace Neo.VM
         {
             State &= ~VMState.BREAK;
             while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK))
-                StepInto();
+                ExecuteNext();
+        }
+
+        protected void ExecuteNext()
+        {
+            if (InvocationStack.Count == 0)
+            {
+                State = VMState.HALT;
+            }
+            else
+            {
+                OpCode opcode = CurrentContext.InstructionPointer >= CurrentContext.Script.Length ? OpCode.RET : (OpCode)CurrentContext.OpReader.ReadByte();
+                try
+                {
+                    ExecuteOp(opcode, CurrentContext);
+                }
+                catch
+                {
+                    State = VMState.FAULT;
+                }
+                if (State == VMState.NONE && InvocationStack.Count > 0)
+                {
+                    if (break_points.TryGetValue(CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)CurrentContext.InstructionPointer))
+                        State = VMState.BREAK;
+                }
+            }
         }
 
         private void ExecuteOp(OpCode opcode, ExecutionContext context)
@@ -222,7 +247,7 @@ namespace Neo.VM
 
                 if (!CheckStackSize(true))
                 {
-                    State |= VMState.FAULT;
+                    State = VMState.FAULT;
                     return;
                 }
             }
@@ -235,7 +260,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -246,7 +271,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -257,7 +282,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -268,7 +293,7 @@ namespace Neo.VM
 
                             if (!CheckMaxItemSize(length))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -276,7 +301,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -303,7 +328,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -319,7 +344,7 @@ namespace Neo.VM
                             offset = context.InstructionPointer + offset - 3;
                             if (offset < 0 || offset > context.Script.Length)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             bool fValue = true;
@@ -339,7 +364,7 @@ namespace Neo.VM
                         {
                             if (!CheckMaxInvocationStack())
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -361,7 +386,7 @@ namespace Neo.VM
                                 {
                                     if (context_pop.EvaluationStack.Count < rvcount)
                                     {
-                                        State |= VMState.FAULT;
+                                        State = VMState.FAULT;
                                         return;
                                     }
                                     RandomAccessStack<StackItem> stack_eval;
@@ -381,7 +406,7 @@ namespace Neo.VM
 
                             if (InvocationStack.Count == 0)
                             {
-                                State |= VMState.HALT;
+                                State = VMState.HALT;
                             }
 
                             break;
@@ -391,7 +416,7 @@ namespace Neo.VM
                         {
                             if (table == null || (opcode == OpCode.APPCALL && !CheckMaxInvocationStack()))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -404,7 +429,7 @@ namespace Neo.VM
                             ExecutionContext context_new = LoadScriptByHash(script_hash);
                             if (context_new == null)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -422,7 +447,7 @@ namespace Neo.VM
                         {
                             if (Service?.Invoke(context.OpReader.ReadVarBytes(252), this) != true || !CheckStackSize(false, int.MaxValue))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -435,7 +460,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -455,7 +480,7 @@ namespace Neo.VM
                             int n = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (n < 0)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -468,7 +493,7 @@ namespace Neo.VM
                             int n = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (n < 0)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -485,7 +510,7 @@ namespace Neo.VM
                             int n = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (n <= 0)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -498,7 +523,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -515,7 +540,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -532,7 +557,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -542,7 +567,7 @@ namespace Neo.VM
                             int n = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (n < 0)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             context.EvaluationStack.Push(context.EvaluationStack.Peek(n));
@@ -554,7 +579,7 @@ namespace Neo.VM
 
                             if (n < 0)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -580,7 +605,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -592,7 +617,7 @@ namespace Neo.VM
 
                             if (!CheckMaxItemSize(x1.Length + x2.Length))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -606,13 +631,13 @@ namespace Neo.VM
 
                             if (count < 0)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             int index = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (index < 0)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -627,7 +652,7 @@ namespace Neo.VM
 
                             if (count < 0)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -642,13 +667,13 @@ namespace Neo.VM
 
                             if (count < 0)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
                             if (x.Length < count)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -710,7 +735,7 @@ namespace Neo.VM
 
                             if (!CheckBigInteger(x) || !CheckBigInteger(x + 1))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -723,7 +748,7 @@ namespace Neo.VM
 
                             if (!CheckBigInteger(x) || (x.Sign <= 0 && !CheckBigInteger(x - 1)))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -768,7 +793,7 @@ namespace Neo.VM
 
                             if (!CheckBigInteger(x2) || !CheckBigInteger(x1) || !CheckBigInteger(x1 + x2))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -783,7 +808,7 @@ namespace Neo.VM
 
                             if (!CheckBigInteger(x2) || !CheckBigInteger(x1) || !CheckBigInteger(x1 - x2))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -800,7 +825,7 @@ namespace Neo.VM
 
                             if (!CheckBigIntegerByteLength(lx1))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -808,7 +833,7 @@ namespace Neo.VM
 
                             if (!CheckBigIntegerByteLength(lx1 + lx2))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -823,7 +848,7 @@ namespace Neo.VM
 
                             if (!CheckBigInteger(x2) || !CheckBigInteger(x1))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -838,7 +863,7 @@ namespace Neo.VM
 
                             if (!CheckBigInteger(x2) || !CheckBigInteger(x1))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -852,7 +877,7 @@ namespace Neo.VM
 
                             if (!CheckShift(shift))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -860,7 +885,7 @@ namespace Neo.VM
 
                             if (!CheckBigInteger(x))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -868,7 +893,7 @@ namespace Neo.VM
 
                             if (!CheckBigInteger(x))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -882,7 +907,7 @@ namespace Neo.VM
 
                             if (!CheckShift(shift))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -890,7 +915,7 @@ namespace Neo.VM
 
                             if (!CheckBigInteger(x))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1071,7 +1096,7 @@ namespace Neo.VM
                                 n = pubkeys.Length;
                                 if (n == 0)
                                 {
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                                 }
                                 CheckStackSize(false, -1);
@@ -1081,7 +1106,7 @@ namespace Neo.VM
                                 n = (int)item.GetBigInteger();
                                 if (n < 1 || n > context.EvaluationStack.Count)
                                 {
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                                 }
                                 pubkeys = new byte[n][];
@@ -1099,7 +1124,7 @@ namespace Neo.VM
                                 m = signatures.Length;
                                 if (m == 0 || m > n)
                                 {
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                                 }
                                 CheckStackSize(false, -1);
@@ -1109,7 +1134,7 @@ namespace Neo.VM
                                 m = (int)item.GetBigInteger();
                                 if (m < 1 || m > n || m > context.EvaluationStack.Count)
                                 {
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                                 }
                                 signatures = new byte[m][];
@@ -1159,7 +1184,7 @@ namespace Neo.VM
                             int size = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (size < 0 || size > context.EvaluationStack.Count || !CheckArraySize(size))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1181,13 +1206,13 @@ namespace Neo.VM
 
                                 if (!CheckStackSize(false, array.Count))
                                 {
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                                 }
                             }
                             else
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -1197,7 +1222,7 @@ namespace Neo.VM
                             StackItem key = context.EvaluationStack.Pop();
                             if (key is ICollection)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             switch (context.EvaluationStack.Pop())
@@ -1206,7 +1231,7 @@ namespace Neo.VM
                                     int index = (int)key.GetBigInteger();
                                     if (index < 0 || index >= array.Count)
                                     {
-                                        State |= VMState.FAULT;
+                                        State = VMState.FAULT;
                                         return;
                                     }
                                     context.EvaluationStack.Push(array[index]);
@@ -1218,18 +1243,18 @@ namespace Neo.VM
                                     }
                                     else
                                     {
-                                        State |= VMState.FAULT;
+                                        State = VMState.FAULT;
                                         return;
                                     }
                                     break;
                                 default:
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                             }
 
                             if (!CheckStackSize(false, int.MaxValue))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1242,7 +1267,7 @@ namespace Neo.VM
                             StackItem key = context.EvaluationStack.Pop();
                             if (key is ICollection)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             switch (context.EvaluationStack.Pop())
@@ -1252,7 +1277,7 @@ namespace Neo.VM
                                         int index = (int)key.GetBigInteger();
                                         if (index < 0 || index >= array.Count)
                                         {
-                                            State |= VMState.FAULT;
+                                            State = VMState.FAULT;
                                             return;
                                         }
                                         array[index] = value;
@@ -1262,7 +1287,7 @@ namespace Neo.VM
                                     {
                                         if (!map.ContainsKey(key) && !CheckArraySize(map.Count + 1))
                                         {
-                                            State |= VMState.FAULT;
+                                            State = VMState.FAULT;
                                             return;
                                         }
 
@@ -1271,14 +1296,14 @@ namespace Neo.VM
                                     }
                                 default:
                                     {
-                                        State |= VMState.FAULT;
+                                        State = VMState.FAULT;
                                         return;
                                     }
                             }
 
                             if (!CheckStackSize(false, int.MaxValue))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1290,7 +1315,7 @@ namespace Neo.VM
 
                             if (!CheckArraySize(count))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1304,7 +1329,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true, count))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                         }
@@ -1315,7 +1340,7 @@ namespace Neo.VM
 
                             if (!CheckArraySize(count))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1328,7 +1353,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true, count))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -1339,7 +1364,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(true))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -1356,7 +1381,7 @@ namespace Neo.VM
                             {
                                 if (!CheckArraySize(array.Count + 1))
                                 {
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                                 }
 
@@ -1364,13 +1389,13 @@ namespace Neo.VM
                             }
                             else
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
                             if (!CheckStackSize(false, int.MaxValue))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1387,7 +1412,7 @@ namespace Neo.VM
                             }
                             else
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             break;
@@ -1397,7 +1422,7 @@ namespace Neo.VM
                             StackItem key = context.EvaluationStack.Pop();
                             if (key is ICollection)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1410,7 +1435,7 @@ namespace Neo.VM
                                     int index = (int)key.GetBigInteger();
                                     if (index < 0 || index >= array.Count)
                                     {
-                                        State |= VMState.FAULT;
+                                        State = VMState.FAULT;
                                         return;
                                     }
                                     array.RemoveAt(index);
@@ -1419,7 +1444,7 @@ namespace Neo.VM
                                     map.Remove(key);
                                     break;
                                 default:
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                             }
                             break;
@@ -1429,7 +1454,7 @@ namespace Neo.VM
                             StackItem key = context.EvaluationStack.Pop();
                             if (key is ICollection)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1439,7 +1464,7 @@ namespace Neo.VM
                                     int index = (int)key.GetBigInteger();
                                     if (index < 0)
                                     {
-                                        State |= VMState.FAULT;
+                                        State = VMState.FAULT;
                                         return;
                                     }
                                     context.EvaluationStack.Push(index < array.Count);
@@ -1448,7 +1473,7 @@ namespace Neo.VM
                                     context.EvaluationStack.Push(map.ContainsKey(key));
                                     break;
                                 default:
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                             }
 
@@ -1465,14 +1490,14 @@ namespace Neo.VM
 
                                         if (!CheckStackSize(false, map.Count))
                                         {
-                                            State |= VMState.FAULT;
+                                            State = VMState.FAULT;
                                             return;
                                         }
                                         break;
                                     }
                                 default:
                                     {
-                                        State |= VMState.FAULT;
+                                        State = VMState.FAULT;
                                         return;
                                     }
                             }
@@ -1490,7 +1515,7 @@ namespace Neo.VM
                                     values = map.Values;
                                     break;
                                 default:
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                             }
                             List<StackItem> newArray = new List<StackItem>(values.Count);
@@ -1503,7 +1528,7 @@ namespace Neo.VM
 
                             if (!CheckStackSize(false, int.MaxValue))
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1515,7 +1540,7 @@ namespace Neo.VM
                         {
                             if (!CheckMaxInvocationStack())
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1523,7 +1548,7 @@ namespace Neo.VM
                             int pcount = context.OpReader.ReadByte();
                             if (context.EvaluationStack.Count < pcount)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             ExecutionContext context_call = LoadScript(context.Script, rvcount);
@@ -1542,7 +1567,7 @@ namespace Neo.VM
                         {
                             if (table == null)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1551,7 +1576,7 @@ namespace Neo.VM
 
                             if (context.EvaluationStack.Count < pcount)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
 
@@ -1559,7 +1584,7 @@ namespace Neo.VM
                             {
                                 if (context.RVCount != rvcount)
                                 {
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                                 }
                             }
@@ -1567,7 +1592,7 @@ namespace Neo.VM
                             {
                                 if (!CheckMaxInvocationStack())
                                 {
-                                    State |= VMState.FAULT;
+                                    State = VMState.FAULT;
                                     return;
                                 }
                             }
@@ -1586,7 +1611,7 @@ namespace Neo.VM
                             ExecutionContext context_new = LoadScriptByHash(script_hash, rvcount);
                             if (context_new == null)
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack, pcount);
@@ -1601,14 +1626,14 @@ namespace Neo.VM
                     // Exceptions
                     case OpCode.THROW:
                         {
-                            State |= VMState.FAULT;
+                            State = VMState.FAULT;
                             return;
                         }
                     case OpCode.THROWIFNOT:
                         {
                             if (!context.EvaluationStack.Pop().GetBoolean())
                             {
-                                State |= VMState.FAULT;
+                                State = VMState.FAULT;
                                 return;
                             }
                             CheckStackSize(false, -1);
@@ -1616,15 +1641,10 @@ namespace Neo.VM
                         }
                     default:
                         {
-                            State |= VMState.FAULT;
+                            State = VMState.FAULT;
                             return;
                         }
                 }
-            if (!State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
-            {
-                if (break_points.TryGetValue(CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)CurrentContext.InstructionPointer))
-                    State |= VMState.BREAK;
-            }
         }
 
         public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
@@ -1660,17 +1680,10 @@ namespace Neo.VM
 
         public void StepInto()
         {
-            if (InvocationStack.Count == 0) State |= VMState.HALT;
             if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
-            OpCode opcode = CurrentContext.InstructionPointer >= CurrentContext.Script.Length ? OpCode.RET : (OpCode)CurrentContext.OpReader.ReadByte();
-            try
-            {
-                ExecuteOp(opcode, CurrentContext);
-            }
-            catch
-            {
-                State |= VMState.FAULT;
-            }
+            ExecuteNext();
+            if (State == VMState.NONE)
+                State = VMState.BREAK;
         }
 
         public void StepOut()
@@ -1678,7 +1691,9 @@ namespace Neo.VM
             State &= ~VMState.BREAK;
             int c = InvocationStack.Count;
             while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK) && InvocationStack.Count >= c)
-                StepInto();
+                ExecuteNext();
+            if (State == VMState.NONE)
+                State = VMState.BREAK;
         }
 
         public void StepOver()
@@ -1688,8 +1703,10 @@ namespace Neo.VM
             int c = InvocationStack.Count;
             do
             {
-                StepInto();
+                ExecuteNext();
             } while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK) && InvocationStack.Count > c);
+            if (State == VMState.NONE)
+                State = VMState.BREAK;
         }
     }
 }

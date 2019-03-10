@@ -15,11 +15,7 @@
                     ],
                     "result":
                     {
-                        "state":
-                        [
-                            "Halt",
-                            "Break"
-                        ]
+                        "state": "Halt"
                     }
                 }
             ]
