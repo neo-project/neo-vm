@@ -443,6 +443,10 @@ namespace Neo.VM
         /// A map is taken from top of the main stack. The values of this map are put on top of the main stack.
         /// </summary>
         VALUES = 0xCD,
+        /// <summary>
+        /// A struct is removed from top of the main stack. Its elements are put on top of the main stack (in reverse order) and the struct size is also put on main stack.
+        /// </summary>
+        PACKSTRUCT = 0xCE,
 
 
         // Stack isolation

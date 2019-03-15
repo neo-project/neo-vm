@@ -1534,6 +1534,20 @@ namespace Neo.VM
 
                             break;
                         }
+                    case OpCode.PACKSTRUCT:
+                        {
+                            int size = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (size < 0 || size > context.EvaluationStack.Count) {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            List<StackItem> items = new List<StackItem>(size);
+                            for (int i = 0; i < size; i++)
+                                items.Add(context.EvaluationStack.Pop());
+                            context.EvaluationStack.Push(new VM.Types.Struct(items));
+                            break;
+                        }
 
                     // Stack isolation
                     case OpCode.CALL_I:
