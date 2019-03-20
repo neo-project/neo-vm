@@ -25,9 +25,9 @@ namespace Neo.VM
         public virtual int Min_SHL_SHR => -ushort.MaxValue;
 
         /// <summary>
-        /// Set the max size in bytes allowed size for BigInteger
+        /// The max size in bytes allowed size for BigInteger
         /// </summary>
-        public virtual int MaxSizeForBigInteger => 32;
+        public const int MaxSizeForBigInteger = 32;
 
         /// <summary>
         /// Set the max Stack Size

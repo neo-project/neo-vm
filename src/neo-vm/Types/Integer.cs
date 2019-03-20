@@ -37,7 +37,7 @@ namespace Neo.VM.Types
 
         public override bool GetBoolean()
         {
-            return value != BigInteger.Zero;
+            return !value.IsZero;
         }
 
         public override byte[] GetByteArray()
