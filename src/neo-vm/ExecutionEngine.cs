@@ -1537,7 +1537,8 @@ namespace Neo.VM
                     case OpCode.PACKSTRUCT:
                         {
                             int size = (int)context.EvaluationStack.Pop().GetBigInteger();
-                            if (size < 0 || size > context.EvaluationStack.Count) {
+                            if (size < 0 || size > context.EvaluationStack.Count || !CheckArraySize(size))
+                            {
                                 State = VMState.FAULT;
                                 return;
                             }
