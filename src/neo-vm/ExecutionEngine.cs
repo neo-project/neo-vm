@@ -1312,6 +1312,11 @@ namespace Neo.VM
                     case OpCode.NEWARRAY:
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (count < 0)
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             if (!CheckArraySize(count))
                             {
