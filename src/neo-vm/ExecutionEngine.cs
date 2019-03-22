@@ -1313,7 +1313,7 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
 
-                            if (!CheckArraySize(count))
+                            if (count < 0 || !CheckArraySize(count))
                             {
                                 State = VMState.FAULT;
                                 return;
@@ -1338,7 +1338,7 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
 
-                            if (!CheckArraySize(count))
+                            if (count < 0 || !CheckArraySize(count))
                             {
                                 State = VMState.FAULT;
                                 return;
