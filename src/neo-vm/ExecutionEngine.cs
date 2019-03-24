@@ -1310,48 +1310,43 @@ namespace Neo.VM
                             break;
                         }
                     case OpCode.NEWARRAY:
-                        {
-                            int count = (int)context.EvaluationStack.Pop().GetBigInteger();
-
-                            if (count < 0 || !CheckArraySize(count))
-                            {
-                                State = VMState.FAULT;
-                                return;
-                            }
-
-                            List<StackItem> items = new List<StackItem>(count);
-                            for (var i = 0; i < count; i++)
-                            {
-                                items.Add(false);
-                            }
-
-                            context.EvaluationStack.Push(new Types.Array(items));
-
-                            if (!CheckStackSize(true, count))
-                            {
-                                State = VMState.FAULT;
-                                return;
-                            }
-                        }
-                        break;
                     case OpCode.NEWSTRUCT:
                         {
-                            int count = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            List<StackItem> items;
+                            var item = context.EvaluationStack.Pop();
 
-                            if (count < 0 || !CheckArraySize(count))
+                            if (item is VMArray array)
                             {
-                                State = VMState.FAULT;
-                                return;
+                                // Allow to convert between array and struct
+
+                                items = new List<StackItem>(array.Count);
+
+                                for (var i = 0; i < array.Count; i++)
+                                {
+                                    items.Add(array[i]);
+                                }
+                            }
+                            else
+                            {
+                                int count = (int)item.GetBigInteger();
+
+                                if (count < 0 || !CheckArraySize(count))
+                                {
+                                    State = VMState.FAULT;
+                                    return;
+                                }
+
+                                items = new List<StackItem>(count);
+
+                                for (var i = 0; i < count; i++)
+                                {
+                                    items.Add(false);
+                                }
                             }
 
-                            List<StackItem> items = new List<StackItem>(count);
-                            for (var i = 0; i < count; i++)
-                            {
-                                items.Add(false);
-                            }
-                            context.EvaluationStack.Push(new VM.Types.Struct(items));
+                            context.EvaluationStack.Push(opcode == OpCode.NEWARRAY ? new VMArray(items) : new Types.Struct(items));
 
-                            if (!CheckStackSize(true, count))
+                            if (!CheckStackSize(true, items.Count))
                             {
                                 State = VMState.FAULT;
                                 return;

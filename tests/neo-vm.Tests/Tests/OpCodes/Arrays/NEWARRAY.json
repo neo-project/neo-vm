@@ -149,6 +149,103 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "Real test [Clone Struct to Array]",
+            "script": "0x51C6760055C4C5",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x3FEC4E71B9A12CFF3738BFDDD6F3B4A7851BF555",
+                                "instructionPointer": 6,
+                                "nextInstruction": "NEWARRAY",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Struct",
+                                        "value":
+                                        [
+                                            {
+                                                "type": "Integer",
+                                                "value": 5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x3FEC4E71B9A12CFF3738BFDDD6F3B4A7851BF555",
+                                "instructionPointer": 7,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Array",
+                                        "value":
+                                        [
+                                            {
+                                                "type": "Integer",
+                                                "value": 5
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Array",
+                                "value":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }
