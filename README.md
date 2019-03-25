@@ -1,3 +1,19 @@
+<p align="center">
+<img
+    src="https://neo-cdn.azureedge.net/images/neo_logo.svg"
+    width="250px">
+</p>
+
+<p align="center">      
+  <a href="https://travis-ci.org/neo-project/neo-vm">
+    <img src="https://travis-ci.org/neo-project/neo-vm.svg?branch=master">
+  </a>
+  <a href="https://github.com/neo-project/neo-vm/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg">
+  </a>
+
+</p>
+
 # NEO Virtual Machine
 
 This is the virtual machine of NEO: **NeoVM**.
