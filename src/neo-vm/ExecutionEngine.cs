@@ -1361,7 +1361,7 @@ namespace Neo.VM
 
                                 context.EvaluationStack.Push(result);
 
-                                if (!CheckStackSize(true, items.Count))
+                                if (!CheckStackSize(true, count))
                                 {
                                     State = VMState.FAULT;
                                     return;
