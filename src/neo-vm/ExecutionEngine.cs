@@ -1312,19 +1312,31 @@ namespace Neo.VM
                     case OpCode.NEWARRAY:
                     case OpCode.NEWSTRUCT:
                         {
-                            List<StackItem> items;
                             var item = context.EvaluationStack.Pop();
 
                             if (item is VMArray array)
                             {
                                 // Allow to convert between array and struct
 
-                                items = new List<StackItem>(array.Count);
+                                VMArray result = null;
 
-                                for (var i = 0; i < array.Count; i++)
+                                if (array is Struct)
                                 {
-                                    items.Add(array[i]);
+                                    if (opcode == OpCode.NEWSTRUCT)
+                                        result = array;
                                 }
+                                else
+                                {
+                                    if (opcode == OpCode.NEWARRAY)
+                                        result = array;
+                                }
+
+                                if (result is null)
+                                    result = opcode == OpCode.NEWARRAY
+                                        ? new VMArray(array)
+                                        : new Struct(array);
+
+                                context.EvaluationStack.Push(result);
                             }
                             else
                             {
@@ -1336,20 +1348,24 @@ namespace Neo.VM
                                     return;
                                 }
 
-                                items = new List<StackItem>(count);
+                                List<StackItem> items = new List<StackItem>(count);
 
                                 for (var i = 0; i < count; i++)
                                 {
                                     items.Add(false);
                                 }
-                            }
 
-                            context.EvaluationStack.Push(opcode == OpCode.NEWARRAY ? new VMArray(items) : new Types.Struct(items));
+                                VMArray result = opcode == OpCode.NEWARRAY
+                                    ? new VMArray(items)
+                                    : new Struct(items);
 
-                            if (!CheckStackSize(true, items.Count))
-                            {
-                                State = VMState.FAULT;
-                                return;
+                                context.EvaluationStack.Push(result);
+
+                                if (!CheckStackSize(true, items.Count))
+                                {
+                                    State = VMState.FAULT;
+                                    return;
+                                }
                             }
                             break;
                         }
