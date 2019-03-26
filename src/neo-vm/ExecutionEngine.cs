@@ -122,14 +122,6 @@ namespace Neo.VM
         public bool CheckBigInteger(BigInteger value) => value.ToByteArray().Length <= MaxSizeForBigInteger;
 
         /// <summary>
-        /// Check if the BigInteger is allowed for numeric operations
-        /// </summary>
-        /// <param name="byteLength">Value</param>
-        /// <returns>Return True if are allowed, otherwise False</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckBigIntegerByteLength(int byteLength) => byteLength <= MaxSizeForBigInteger;
-
-        /// <summary>
         /// Check if the number is allowed from SHL and SHR
         /// </summary>
         /// <param name="shift">Shift</param>
