@@ -479,7 +479,7 @@
             ]
         },
         {
-            "name": "Real test [ByteArray - OutOfBounds with -1]",
+            "name": "OutOfBounds with -1 [ByteArray]",
             "script": "0x0201024FC3",
             "steps":
             [
@@ -534,7 +534,7 @@
             ]
         },
         {
-            "name": "Real test [ByteArray - OutOfBounds with more than length]",
+            "name": "OutOfBounds with more than length [ByteArray]",
             "script": "0x02010254C3",
             "steps":
             [
