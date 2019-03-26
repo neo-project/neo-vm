@@ -1310,51 +1310,62 @@ namespace Neo.VM
                             break;
                         }
                     case OpCode.NEWARRAY:
-                        {
-                            int count = (int)context.EvaluationStack.Pop().GetBigInteger();
-
-                            if (count < 0 || !CheckArraySize(count))
-                            {
-                                State = VMState.FAULT;
-                                return;
-                            }
-
-                            List<StackItem> items = new List<StackItem>(count);
-                            for (var i = 0; i < count; i++)
-                            {
-                                items.Add(false);
-                            }
-
-                            context.EvaluationStack.Push(new Types.Array(items));
-
-                            if (!CheckStackSize(true, count))
-                            {
-                                State = VMState.FAULT;
-                                return;
-                            }
-                        }
-                        break;
                     case OpCode.NEWSTRUCT:
                         {
-                            int count = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            var item = context.EvaluationStack.Pop();
 
-                            if (count < 0 || !CheckArraySize(count))
+                            if (item is VMArray array)
                             {
-                                State = VMState.FAULT;
-                                return;
+                                // Allow to convert between array and struct
+
+                                VMArray result = null;
+
+                                if (array is Struct)
+                                {
+                                    if (opcode == OpCode.NEWSTRUCT)
+                                        result = array;
+                                }
+                                else
+                                {
+                                    if (opcode == OpCode.NEWARRAY)
+                                        result = array;
+                                }
+
+                                if (result is null)
+                                    result = opcode == OpCode.NEWARRAY
+                                        ? new VMArray(array)
+                                        : new Struct(array);
+
+                                context.EvaluationStack.Push(result);
                             }
-
-                            List<StackItem> items = new List<StackItem>(count);
-                            for (var i = 0; i < count; i++)
+                            else
                             {
-                                items.Add(false);
-                            }
-                            context.EvaluationStack.Push(new VM.Types.Struct(items));
+                                int count = (int)item.GetBigInteger();
 
-                            if (!CheckStackSize(true, count))
-                            {
-                                State = VMState.FAULT;
-                                return;
+                                if (count < 0 || !CheckArraySize(count))
+                                {
+                                    State = VMState.FAULT;
+                                    return;
+                                }
+
+                                List<StackItem> items = new List<StackItem>(count);
+
+                                for (var i = 0; i < count; i++)
+                                {
+                                    items.Add(false);
+                                }
+
+                                VMArray result = opcode == OpCode.NEWARRAY
+                                    ? new VMArray(items)
+                                    : new Struct(items);
+
+                                context.EvaluationStack.Push(result);
+
+                                if (!CheckStackSize(true, count))
+                                {
+                                    State = VMState.FAULT;
+                                    return;
+                                }
                             }
                             break;
                         }
