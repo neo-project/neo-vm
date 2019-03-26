@@ -1242,7 +1242,7 @@ namespace Neo.VM
                                             State = VMState.FAULT;
                                             return;
                                         }
-                                    break;
+                                        break;
                                     }
                                 case Map map:
                                     {
@@ -1273,8 +1273,8 @@ namespace Neo.VM
                                         }
                                         context.EvaluationStack.Push((int)byteArray[index]);
                                         CheckStackSize(false, -1);
+                                        break;
                                     }
-                                    break;
                             }
                             break;
                         }
