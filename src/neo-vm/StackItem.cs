@@ -36,6 +36,11 @@ namespace Neo.VM
 
         public abstract byte[] GetByteArray();
 
+        public virtual int GetByteLength()
+        {
+            return GetByteArray().Length;
+        }
+
         public override int GetHashCode()
         {
             unchecked
