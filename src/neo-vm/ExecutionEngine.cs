@@ -225,7 +225,9 @@ namespace Neo.VM
                 OpCode opcode = CurrentContext.InstructionPointer >= CurrentContext.Script.Length ? OpCode.RET : (OpCode)CurrentContext.OpReader.ReadByte();
                 try
                 {
-                    ExecuteOp(opcode, CurrentContext);
+                    PreExecuteInstruction(opcode);
+                    ExecuteInstruction(opcode, CurrentContext);
+                    PostExecuteInstruction(opcode);
                 }
                 catch
                 {
@@ -239,7 +241,7 @@ namespace Neo.VM
             }
         }
 
-        private void ExecuteOp(OpCode opcode, ExecutionContext context)
+        private void ExecuteInstruction(OpCode opcode, ExecutionContext context)
         {
             if (opcode >= OpCode.PUSHBYTES1 && opcode <= OpCode.PUSHBYTES75)
             {
@@ -373,7 +375,7 @@ namespace Neo.VM
                             context_call.InstructionPointer = context.InstructionPointer;
                             context.EvaluationStack.Clear();
                             context.InstructionPointer += 2;
-                            ExecuteOp(OpCode.JMP, context_call);
+                            ExecuteInstruction(OpCode.JMP, context_call);
                             break;
                         }
                     case OpCode.RET:
@@ -1568,7 +1570,7 @@ namespace Neo.VM
                             for (int i = 0; i < pcount; i++)
                                 context.EvaluationStack.Pop();
                             context.InstructionPointer += 2;
-                            ExecuteOp(OpCode.JMP, context_call);
+                            ExecuteInstruction(OpCode.JMP, context_call);
                             break;
                         }
                     case OpCode.CALL_E:
@@ -1676,6 +1678,14 @@ namespace Neo.VM
             byte[] script = table.GetScript(hash);
             if (script == null) return null;
             return LoadScript(new Script(hash, script), rvcount);
+        }
+
+        protected virtual void PostExecuteInstruction(OpCode opcode)
+        {
+        }
+
+        protected virtual void PreExecuteInstruction(OpCode opcode)
+        {
         }
 
         public bool RemoveBreakPoint(byte[] script_hash, uint position)
