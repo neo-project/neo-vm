@@ -69,7 +69,7 @@ namespace Neo.VM
         /// <summary>
         /// Convert byte array to int32
         /// </summary>
-        /// <param name="value">Value (must be a checked before this call)</param>
+        /// <param name="value">Value (must be checked before this call)</param>
         /// <param name="startIndex">Start index</param>
         /// <returns>Integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
