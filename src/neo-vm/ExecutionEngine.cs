@@ -1244,24 +1244,26 @@ namespace Neo.VM
                                             State = VMState.FAULT;
                                             return;
                                         }
+                                        break;
                                     }
-                                    break;
                                 case Map map:
-                                    if (map.TryGetValue(key, out StackItem value))
                                     {
-                                        context.EvaluationStack.Push(value);
-                                        if (!CheckStackSize(false, int.MaxValue))
+                                        if (map.TryGetValue(key, out StackItem value))
+                                        {
+                                            context.EvaluationStack.Push(value);
+                                            if (!CheckStackSize(false, int.MaxValue))
+                                            {
+                                                State = VMState.FAULT;
+                                                return;
+                                            }
+                                        }
+                                        else
                                         {
                                             State = VMState.FAULT;
                                             return;
                                         }
+                                        break;
                                     }
-                                    else
-                                    {
-                                        State = VMState.FAULT;
-                                        return;
-                                    }
-                                    break;
                                 default:
                                     {
                                         byte[] byteArray = item.GetByteArray();
@@ -1273,8 +1275,8 @@ namespace Neo.VM
                                         }
                                         context.EvaluationStack.Push((int)byteArray[index]);
                                         CheckStackSize(false, -1);
+                                        break;
                                     }
-                                    break;
                             }
                             break;
                         }
