@@ -20,8 +20,8 @@
                         [
                             {
                                 "scriptHash": "0xFFE12A1A4B38AA3A0F147BF4E57E41FC82A17206",
-                                "instructionPointer": 1,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "TOALTSTACK"
                             }
                         ]
                     }

@@ -50,8 +50,8 @@
                         [
                             {
                                 "scriptHash": "0x2C9BA6F08FFCCB999A3FB8636A485A0D12BD2E54",
-                                "instructionPointer": 5,
-                                "nextInstruction": "RET",
+                                "instructionPointer": 4,
+                                "nextInstruction": "SHL",
                                 "evaluationStack":
                                 [
                                     {
@@ -112,8 +112,8 @@
                         [
                             {
                                 "scriptHash": "0x29351D375C5FEB0E1ED756CDEF8AB48260E8FCA9",
-                                "instructionPointer": 5,
-                                "nextInstruction": "RET",
+                                "instructionPointer": 4,
+                                "nextInstruction": "SHL",
                                 "evaluationStack":
                                 [
                                     {

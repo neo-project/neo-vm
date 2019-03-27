@@ -35,6 +35,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         unsafe public static void MemoryCopy(byte[] src, int srcOffset, byte[] dst, int dstOffset, int count)
         {
+            if (count == 0) return;
             fixed (byte* sp = &src[srcOffset], dp = &dst[dstOffset])
             {
                 Buffer.MemoryCopy(sp, dp, dst.Length - dstOffset, count);
@@ -78,6 +79,15 @@ namespace Neo.VM
             fixed (byte* pbyte = &value[startIndex])
             {
                 return *(int*)pbyte;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        unsafe public static ushort ToUInt16(byte[] value, int startIndex)
+        {
+            fixed (byte* pbyte = &value[startIndex])
+            {
+                return *(ushort*)pbyte;
             }
         }
     }

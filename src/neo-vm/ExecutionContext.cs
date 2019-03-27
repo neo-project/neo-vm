@@ -1,25 +1,21 @@
-﻿using System;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    public class ExecutionContext : IDisposable
+    public class ExecutionContext
     {
+        private readonly Dictionary<int, Instruction> instructions = new Dictionary<int, Instruction>();
+
         /// <summary>
         /// Number of items to be returned
         /// </summary>
-        internal readonly int RVCount;
-
-        /// <summary>
-        /// Binary Reader of the script
-        /// </summary>
-        internal readonly BinaryReader OpReader;
+        internal int RVCount { get; }
 
         /// <summary>
         /// Script
         /// </summary>
-        public readonly Script Script;
+        public Script Script { get; }
 
         /// <summary>
         /// Evaluation stack
@@ -34,31 +30,24 @@ namespace Neo.VM
         /// <summary>
         /// Instruction pointer
         /// </summary>
-        public int InstructionPointer
+        public int InstructionPointer { get; set; }
+
+        public Instruction CurrentInstruction
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return (int)OpReader.BaseStream.Position;
-            }
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set
-            {
-                OpReader.BaseStream.Seek(value, SeekOrigin.Begin);
+                return GetInstruction(InstructionPointer);
             }
         }
 
         /// <summary>
         /// Next instruction
         /// </summary>
-        public OpCode NextInstruction
+        public Instruction NextInstruction
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                var position = (int)OpReader.BaseStream.Position;
-
-                return position >= Script.Length ? OpCode.RET : Script[position];
+                return GetInstruction(InstructionPointer + CurrentInstruction.Size);
             }
         }
 
@@ -83,12 +72,23 @@ namespace Neo.VM
         {
             this.RVCount = rvcount;
             this.Script = script;
-            this.OpReader = script.GetBinaryReader();
         }
 
-        /// <summary>
-        /// Free resources
-        /// </summary>
-        public void Dispose() => OpReader.Dispose();
+        private Instruction GetInstruction(int ip)
+        {
+            if (ip >= Script.Length) return Instruction.RET;
+            if (!instructions.TryGetValue(ip, out Instruction instruction))
+            {
+                instruction = new Instruction(Script, ip);
+                instructions.Add(ip, instruction);
+            }
+            return instruction;
+        }
+
+        internal bool MoveNext()
+        {
+            InstructionPointer += CurrentInstruction.Size;
+            return InstructionPointer < Script.Length;
+        }
     }
 }

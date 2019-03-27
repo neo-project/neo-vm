@@ -20,8 +20,8 @@
                         [
                             {
                                 "scriptHash": "0xC3042E466B276668349B7EB49E91196765C10538",
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 2,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }
@@ -45,8 +45,8 @@
                         [
                             {
                                 "scriptHash": "0xF2BBC7F52CD3E77E88CA882CDCD91705C1DD4EF4",
-                                "instructionPointer": 1,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }
@@ -109,8 +109,8 @@
                         [
                             {
                                 "scriptHash": "0x0C4843D61AC914CD49B63DD993AABDBECFA151F5",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET",
+                                "instructionPointer": 3,
+                                "nextInstruction": "PICKITEM",
                                 "evaluationStack":
                                 [
                                     {
@@ -188,8 +188,8 @@
                         [
                             {
                                 "scriptHash": "0xDAF9667399D9787D5D17733453C4727CC74A6C93",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 3,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }
@@ -254,8 +254,8 @@
                         [
                             {
                                 "scriptHash": "0x9668C991205C1A87BA1E797239079B297BF40B15",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 3,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }
@@ -525,8 +525,8 @@
                         [
                             {
                                 "scriptHash": "0x028E848C42CA39B4EF2DD634F352D380F7825572",
-                                "instructionPointer": 5,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }
@@ -580,8 +580,8 @@
                         [
                             {
                                 "scriptHash": "0x2B5D0CD30209A1285CC519D99A42EA727E652195",
-                                "instructionPointer": 5,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }

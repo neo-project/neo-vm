@@ -20,8 +20,8 @@
                         [
                             {
                                 "scriptHash": "0xB66A36659EBA88C37D39694A8B9CCC483BEE3742",
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 1,
+                                "nextInstruction": "REMOVE"
                             }
                         ]
                     }
@@ -45,8 +45,8 @@
                         [
                             {
                                 "scriptHash": "0x6F109D4D88B4D870CC92C6067537A0EA639A3F3D",
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 2,
+                                "nextInstruction": "REMOVE"
                             }
                         ]
                     }
@@ -70,8 +70,8 @@
                         [
                             {
                                 "scriptHash": "0xAB0D6DACF54FD316EAE1517E8079C4938F483D6A",
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET",
+                                "instructionPointer": 2,
+                                "nextInstruction": "REMOVE",
                                 "evaluationStack":
                                 [
                                     {
@@ -102,8 +102,8 @@
                         [
                             {
                                 "scriptHash": "0xDE8D97DCE570B61BB1F538C31AEB9B45D7581890",
-                                "instructionPointer": 6,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 5,
+                                "nextInstruction": "REMOVE"
                             }
                         ]
                     }
