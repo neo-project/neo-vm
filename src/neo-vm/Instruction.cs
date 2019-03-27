@@ -10,18 +10,18 @@ namespace Neo.VM
         public readonly OpCode OpCode;
         public readonly byte[] Operand;
 
-        private static readonly int[] PrefixSizeTable = new int[256];
-        private static readonly int[] FixedOperandSizeTable = new int[256];
+        private static readonly int[] OperandSizePrefixTable = new int[256];
+        private static readonly int[] OperandSizeTable = new int[256];
 
         public int Size
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                int prefixSize = PrefixSizeTable[(int)OpCode];
+                int prefixSize = OperandSizePrefixTable[(int)OpCode];
                 return prefixSize > 0
                     ? 1 + prefixSize + Operand.Length
-                    : 1 + FixedOperandSizeTable[(int)OpCode];
+                    : 1 + OperandSizeTable[(int)OpCode];
             }
         }
 
@@ -43,23 +43,23 @@ namespace Neo.VM
 
         static Instruction()
         {
-            PrefixSizeTable[(int)OpCode.PUSHDATA1] = 1;
-            PrefixSizeTable[(int)OpCode.PUSHDATA2] = 2;
-            PrefixSizeTable[(int)OpCode.PUSHDATA4] = 4;
-            PrefixSizeTable[(int)OpCode.SYSCALL] = 1;
+            OperandSizePrefixTable[(int)OpCode.PUSHDATA1] = 1;
+            OperandSizePrefixTable[(int)OpCode.PUSHDATA2] = 2;
+            OperandSizePrefixTable[(int)OpCode.PUSHDATA4] = 4;
+            OperandSizePrefixTable[(int)OpCode.SYSCALL] = 1;
             for (int i = (int)OpCode.PUSHBYTES1; i <= (int)OpCode.PUSHBYTES75; i++)
-                FixedOperandSizeTable[i] = i;
-            FixedOperandSizeTable[(int)OpCode.JMP] = 2;
-            FixedOperandSizeTable[(int)OpCode.JMPIF] = 2;
-            FixedOperandSizeTable[(int)OpCode.JMPIFNOT] = 2;
-            FixedOperandSizeTable[(int)OpCode.CALL] = 2;
-            FixedOperandSizeTable[(int)OpCode.APPCALL] = 20;
-            FixedOperandSizeTable[(int)OpCode.TAILCALL] = 20;
-            FixedOperandSizeTable[(int)OpCode.CALL_I] = 4;
-            FixedOperandSizeTable[(int)OpCode.CALL_E] = 22;
-            FixedOperandSizeTable[(int)OpCode.CALL_ED] = 2;
-            FixedOperandSizeTable[(int)OpCode.CALL_ET] = 22;
-            FixedOperandSizeTable[(int)OpCode.CALL_EDT] = 2;
+                OperandSizeTable[i] = i;
+            OperandSizeTable[(int)OpCode.JMP] = 2;
+            OperandSizeTable[(int)OpCode.JMPIF] = 2;
+            OperandSizeTable[(int)OpCode.JMPIFNOT] = 2;
+            OperandSizeTable[(int)OpCode.CALL] = 2;
+            OperandSizeTable[(int)OpCode.APPCALL] = 20;
+            OperandSizeTable[(int)OpCode.TAILCALL] = 20;
+            OperandSizeTable[(int)OpCode.CALL_I] = 4;
+            OperandSizeTable[(int)OpCode.CALL_E] = 22;
+            OperandSizeTable[(int)OpCode.CALL_ED] = 2;
+            OperandSizeTable[(int)OpCode.CALL_ET] = 22;
+            OperandSizeTable[(int)OpCode.CALL_EDT] = 2;
         }
 
         private Instruction(OpCode opcode)
@@ -71,10 +71,10 @@ namespace Neo.VM
         {
             this.OpCode = (OpCode)script[ip++];
             int operandSize = 0;
-            switch (PrefixSizeTable[(int)OpCode])
+            switch (OperandSizePrefixTable[(int)OpCode])
             {
                 case 0:
-                    operandSize = FixedOperandSizeTable[(int)OpCode];
+                    operandSize = OperandSizeTable[(int)OpCode];
                     break;
                 case 1:
                     operandSize = ReadByte(script, ref ip);
