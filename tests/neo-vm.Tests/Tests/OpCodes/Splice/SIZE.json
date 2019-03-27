@@ -20,8 +20,8 @@
                         [
                             {
                                 "scriptHash": "0x199D36C1A12C52C0BB6A4BBA08416B6A4882AB03",
-                                "instructionPointer": 1,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "SIZE"
                             }
                         ]
                     }
@@ -272,8 +272,8 @@
                         [
                             {
                                 "scriptHash": "0x6325A13B672E260A92B9A970FBCA307174BC5F88",
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 1,
+                                "nextInstruction": "SIZE"
                             }
                         ]
                     }
@@ -329,8 +329,8 @@
                         [
                             {
                                 "scriptHash": "0xFDF69EAC8E9D2F72E18A79DBD115C1D67C07AC66",
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 2,
+                                "nextInstruction": "SIZE"
                             }
                         ]
                     }
@@ -386,8 +386,8 @@
                         [
                             {
                                 "scriptHash": "0x2B5AAE9E01537EFE3070F1863CBBE6AFB4F1CABB",
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 2,
+                                "nextInstruction": "SIZE"
                             }
                         ]
                     }
@@ -437,8 +437,8 @@
                         [
                             {
                                 "scriptHash": "0x767813581E20207A133CAB14CBF34AFF8D5CF476",
-                                "instructionPointer": 44,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 43,
+                                "nextInstruction": "SIZE"
                             }
                         ]
                     }

@@ -20,8 +20,8 @@
                         [
                             {
                                 "scriptHash": "0x572E5D73B53675DA9D45227AD65DF4DA53C1E826",
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "SYSCALL"
                             }
                         ]
                     }
@@ -45,8 +45,8 @@
                         [
                             {
                                 "scriptHash": "0x5B8661F73D3828ECB71D343FF49BF883EF02428D",
-                                "instructionPointer": 43,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "SYSCALL"
                             }
                         ]
                     }
@@ -120,8 +120,8 @@
                         [
                             {
                                 "scriptHash": "0xD990D17A9E649D836D78DCF8ADDB3B3BCC4C00AC",
-                                "instructionPointer": 4,
-                                "nextInstruction": "PUSH0"
+                                "instructionPointer": 0,
+                                "nextInstruction": "SYSCALL"
                             }
                         ]
                     }
@@ -145,8 +145,8 @@
                         [
                             {
                                 "scriptHash": "0x50F8F9FEC057277A6826B993401FB0807CC60609",
-                                "instructionPointer": 6,
-                                "nextInstruction": "PUSH0"
+                                "instructionPointer": 0,
+                                "nextInstruction": "SYSCALL"
                             }
                         ]
                     }
@@ -170,8 +170,8 @@
                         [
                             {
                                 "scriptHash": "0x6FD417DDF3451019516D933222FB3BC8EAE5F4E6",
-                                "instructionPointer": 10,
-                                "nextInstruction": "PUSH0"
+                                "instructionPointer": 0,
+                                "nextInstruction": "SYSCALL"
                             }
                         ]
                     }

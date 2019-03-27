@@ -109,9 +109,10 @@ namespace Neo.Test
             for (int x = 0, max = stack.Count; x < max; x++)
             {
                 var context = stack.Peek(x);
+                var opcode = context.InstructionPointer >= context.Script.Length ? OpCode.RET : context.Script[context.InstructionPointer];
 
                 AssertAreEqual(context.ScriptHash.ToHexString().ToUpper(), result[x].ScriptHash.ToHexString().ToUpper(), message + "Script hash is different");
-                AssertAreEqual(context.NextInstruction, result[x].NextInstruction, message + "Next instruction is different");
+                AssertAreEqual(opcode, result[x].NextInstruction, message + "Next instruction is different");
                 AssertAreEqual(context.InstructionPointer, result[x].InstructionPointer, message + "Instruction pointer is different");
 
                 AssertResult(context.EvaluationStack, result[x].EvaluationStack, message + " [EvaluationStack]");

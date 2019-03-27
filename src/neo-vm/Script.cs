@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
@@ -47,16 +46,6 @@ namespace Neo.VM
             {
                 return (OpCode)_value[index];
             }
-        }
-
-        /// <summary>
-        /// Get Binary reader
-        /// </summary>
-        /// <returns>Returns the binary reader of the script</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BinaryReader GetBinaryReader()
-        {
-            return new BinaryReader(new MemoryStream(_value, false));
         }
 
         /// <summary>

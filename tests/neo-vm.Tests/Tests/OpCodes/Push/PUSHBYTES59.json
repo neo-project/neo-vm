@@ -69,8 +69,8 @@
                         [
                             {
                                 "scriptHash": "0x5282E86B9AD6B9F094B39E099ED3818AA2AEDD83",
-                                "instructionPointer": 59,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "59"
                             }
                         ]
                     }
