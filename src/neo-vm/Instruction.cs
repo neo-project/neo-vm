@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
@@ -8,7 +9,21 @@ namespace Neo.VM
 
         public readonly OpCode OpCode;
         public readonly byte[] Operand;
-        public readonly int Size;
+
+        private static readonly int[] PrefixSizeTable = new int[256];
+        private static readonly int[] FixedOperandSizeTable = new int[256];
+
+        public int Size
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                int prefixSize = PrefixSizeTable[(int)OpCode];
+                return prefixSize > 0
+                    ? 1 + prefixSize + Operand.Length
+                    : 1 + FixedOperandSizeTable[(int)OpCode];
+            }
+        }
 
         public short TokenI16
         {
@@ -26,71 +41,53 @@ namespace Neo.VM
             }
         }
 
+        static Instruction()
+        {
+            PrefixSizeTable[(int)OpCode.PUSHDATA1] = 1;
+            PrefixSizeTable[(int)OpCode.PUSHDATA2] = 2;
+            PrefixSizeTable[(int)OpCode.PUSHDATA4] = 4;
+            PrefixSizeTable[(int)OpCode.SYSCALL] = 1;
+            for (int i = (int)OpCode.PUSHBYTES1; i <= (int)OpCode.PUSHBYTES75; i++)
+                FixedOperandSizeTable[i] = i;
+            FixedOperandSizeTable[(int)OpCode.JMP] = 2;
+            FixedOperandSizeTable[(int)OpCode.JMPIF] = 2;
+            FixedOperandSizeTable[(int)OpCode.JMPIFNOT] = 2;
+            FixedOperandSizeTable[(int)OpCode.CALL] = 2;
+            FixedOperandSizeTable[(int)OpCode.APPCALL] = 20;
+            FixedOperandSizeTable[(int)OpCode.TAILCALL] = 20;
+            FixedOperandSizeTable[(int)OpCode.CALL_I] = 4;
+            FixedOperandSizeTable[(int)OpCode.CALL_E] = 22;
+            FixedOperandSizeTable[(int)OpCode.CALL_ED] = 2;
+            FixedOperandSizeTable[(int)OpCode.CALL_ET] = 22;
+            FixedOperandSizeTable[(int)OpCode.CALL_EDT] = 2;
+        }
+
         private Instruction(OpCode opcode)
         {
             this.OpCode = opcode;
-            this.Size = 1;
         }
 
         internal Instruction(byte[] script, int ip)
         {
             this.OpCode = (OpCode)script[ip++];
-            this.Size = 1;
-            if (OpCode >= OpCode.PUSHBYTES1 && OpCode <= OpCode.PUSHBYTES75)
+            int operandSize = 0;
+            switch (PrefixSizeTable[(int)OpCode])
             {
-                int length = (int)OpCode;
-                Size += length;
-                Operand = ReadBytes(script, ref ip, length);
+                case 0:
+                    operandSize = FixedOperandSizeTable[(int)OpCode];
+                    break;
+                case 1:
+                    operandSize = ReadByte(script, ref ip);
+                    break;
+                case 2:
+                    operandSize = ReadUInt16(script, ref ip);
+                    break;
+                case 4:
+                    operandSize = ReadInt32(script, ref ip);
+                    break;
             }
-            else
-                switch (OpCode)
-                {
-                    case OpCode.PUSHDATA1:
-                    case OpCode.SYSCALL:
-                        {
-                            int length = ReadByte(script, ref ip);
-                            Size += 1 + length;
-                            Operand = ReadBytes(script, ref ip, length);
-                            break;
-                        }
-                    case OpCode.PUSHDATA2:
-                        {
-                            int length = ReadUInt16(script, ref ip);
-                            Size += 2 + length;
-                            Operand = ReadBytes(script, ref ip, length);
-                            break;
-                        }
-                    case OpCode.PUSHDATA4:
-                        {
-                            int length = ReadInt32(script, ref ip);
-                            Size += 4 + length;
-                            Operand = ReadBytes(script, ref ip, length);
-                            break;
-                        }
-                    case OpCode.JMP:
-                    case OpCode.JMPIF:
-                    case OpCode.JMPIFNOT:
-                    case OpCode.CALL:
-                    case OpCode.CALL_ED:
-                    case OpCode.CALL_EDT:
-                        Operand = ReadBytes(script, ref ip, 2);
-                        Size += 2;
-                        break;
-                    case OpCode.APPCALL:
-                    case OpCode.TAILCALL:
-                        Operand = ReadBytes(script, ref ip, 20);
-                        Size += 20;
-                        break;
-                    case OpCode.CALL_I:
-                        Operand = ReadBytes(script, ref ip, 4);
-                        Size += 4;
-                        break;
-                    case OpCode.CALL_E:
-                    case OpCode.CALL_ET:
-                        Operand = ReadBytes(script, ref ip, 22);
-                        Size += 22;
-                        break;
-                }
+            if (operandSize > 0)
+                this.Operand = ReadBytes(script, ref ip, operandSize);
         }
 
         private static byte ReadByte(byte[] script, ref int ip)
