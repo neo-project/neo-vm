@@ -1227,39 +1227,57 @@ namespace Neo.VM
                                 State = VMState.FAULT;
                                 return;
                             }
-                            switch (context.EvaluationStack.Pop())
+                            StackItem item = context.EvaluationStack.Pop();
+                            switch (item)
                             {
                                 case VMArray array:
-                                    int index = (int)key.GetBigInteger();
-                                    if (index < 0 || index >= array.Count)
                                     {
-                                        State = VMState.FAULT;
-                                        return;
+                                        int index = (int)key.GetBigInteger();
+                                        if (index < 0 || index >= array.Count)
+                                        {
+                                            State = VMState.FAULT;
+                                            return;
+                                        }
+                                        context.EvaluationStack.Push(array[index]);
+                                        if (!CheckStackSize(false, int.MaxValue))
+                                        {
+                                            State = VMState.FAULT;
+                                            return;
+                                        }
+                                        break;
                                     }
-                                    context.EvaluationStack.Push(array[index]);
-                                    break;
                                 case Map map:
-                                    if (map.TryGetValue(key, out StackItem value))
                                     {
-                                        context.EvaluationStack.Push(value);
+                                        if (map.TryGetValue(key, out StackItem value))
+                                        {
+                                            context.EvaluationStack.Push(value);
+                                            if (!CheckStackSize(false, int.MaxValue))
+                                            {
+                                                State = VMState.FAULT;
+                                                return;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            State = VMState.FAULT;
+                                            return;
+                                        }
+                                        break;
                                     }
-                                    else
-                                    {
-                                        State = VMState.FAULT;
-                                        return;
-                                    }
-                                    break;
                                 default:
-                                    State = VMState.FAULT;
-                                    return;
+                                    {
+                                        byte[] byteArray = item.GetByteArray();
+                                        int index = (int)key.GetBigInteger();
+                                        if (index < 0 || index >= byteArray.Length)
+                                        {
+                                            State = VMState.FAULT;
+                                            return;
+                                        }
+                                        context.EvaluationStack.Push((int)byteArray[index]);
+                                        CheckStackSize(false, -1);
+                                        break;
+                                    }
                             }
-
-                            if (!CheckStackSize(false, int.MaxValue))
-                            {
-                                State = VMState.FAULT;
-                                return;
-                            }
-
                             break;
                         }
                     case OpCode.SETITEM:
