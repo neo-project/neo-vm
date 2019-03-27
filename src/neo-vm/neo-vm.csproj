@@ -6,7 +6,7 @@
     <Description>Neo.VM</Description>
     <Version>2.4.0</Version>
     <Authors>The Neo Project</Authors>
-    <TargetFrameworks>netstandard1.6;net461</TargetFrameworks>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>Neo.VM</AssemblyName>
     <PackageId>Neo.VM</PackageId>
     <PackageTags>NEO;AntShares;Blockchain;Smart Contract;VM</PackageTags>
@@ -17,11 +17,5 @@
     <RootNamespace>Neo.VM</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <Reference Include="System.Numerics" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
 
 </Project>
