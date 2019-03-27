@@ -477,6 +477,195 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "OutOfBounds with -1 [ByteArray]",
+            "script": "0x0201024FC3",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x028E848C42CA39B4EF2DD634F352D380F7825572",
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": -1
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x0102"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x028E848C42CA39B4EF2DD634F352D380F7825572",
+                                "instructionPointer": 5,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "OutOfBounds with more than length [ByteArray]",
+            "script": "0x02010254C3",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x2B5D0CD30209A1285CC519D99A42EA727E652195",
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 4
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x0102"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x2B5D0CD30209A1285CC519D99A42EA727E652195",
+                                "instructionPointer": 5,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test [ByteArray]",
+            "script": "0x02010200C3",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x045340F7DC4AB8C821BF3EF48B4ACA491E0754BD",
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x0102"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x045340F7DC4AB8C821BF3EF48B4ACA491E0754BD",
+                                "instructionPointer": 5,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 1
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }
