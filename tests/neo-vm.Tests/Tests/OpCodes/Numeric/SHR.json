@@ -1,0 +1,185 @@
+﻿{
+    "category": "Numeric",
+    "name": "SHR",
+    "tests":
+    [
+        {
+            "name": "Exception - Above the limit 0 >> 257",
+            "script": "0x0002010199",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x630746B0F60CA8E6304D1B0E408F81F5DDED6D30",
+                                "instructionPointer": 4,
+                                "nextInstruction": "SHR",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x0101"
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x630746B0F60CA8E6304D1B0E408F81F5DDED6D30",
+                                "instructionPointer": 5,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Exception - Below the limit 0 >> -257",
+            "script": "0x0002FFFE99",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x5A6B6669635678A89A431DF8DA8DA10040757401",
+                                "instructionPointer": 4,
+                                "nextInstruction": "SHR",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0xFFFE"
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x5A6B6669635678A89A431DF8DA8DA10040757401",
+                                "instructionPointer": 5,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test 0 >> 256",
+            "script": "0x0002000199",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x5BD16259EC43AD1842D577CE778357CC9A4D0756",
+                                "instructionPointer": 4,
+                                "nextInstruction": "SHR",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x0001"
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

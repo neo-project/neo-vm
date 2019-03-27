@@ -17,12 +17,12 @@ namespace Neo.VM
         /// <summary>
         /// Max value for SHL and SHR
         /// </summary>
-        public virtual int Max_SHL_SHR => ushort.MaxValue;
+        public virtual int Max_SHL_SHR => 256;
 
         /// <summary>
         /// Min value for SHL and SHR
         /// </summary>
-        public virtual int Min_SHL_SHR => -ushort.MaxValue;
+        public virtual int Min_SHL_SHR => -256;
 
         /// <summary>
         /// The max size in bytes allowed size for BigInteger
@@ -50,6 +50,8 @@ namespace Neo.VM
         public virtual uint MaxArraySize => 1024;
 
         #endregion
+
+        private static readonly byte[] EmptyBytes = new byte[0];
 
         private int stackitem_count = 0;
         private bool is_stackitem_count_strict = true;
@@ -118,14 +120,6 @@ namespace Neo.VM
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckBigInteger(BigInteger value) => value.ToByteArray().Length <= MaxSizeForBigInteger;
-
-        /// <summary>
-        /// Check if the BigInteger is allowed for numeric operations
-        /// </summary>
-        /// <param name="byteLength">Value</param>
-        /// <returns>Return True if are allowed, otherwise False</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckBigIntegerByteLength(int byteLength) => byteLength <= MaxSizeForBigInteger;
 
         /// <summary>
         /// Check if the number is allowed from SHL and SHR
@@ -258,7 +252,7 @@ namespace Neo.VM
                     // Push value
                     case OpCode.PUSH0:
                         {
-                            context.EvaluationStack.Push(new byte[0]);
+                            context.EvaluationStack.Push(EmptyBytes);
 
                             if (!CheckStackSize(true))
                             {
@@ -616,26 +610,31 @@ namespace Neo.VM
                         {
                             byte[] x2 = context.EvaluationStack.Pop().GetByteArray();
                             byte[] x1 = context.EvaluationStack.Pop().GetByteArray();
+                            int length = x1.Length + x2.Length;
 
-                            if (!CheckMaxItemSize(x1.Length + x2.Length))
+                            if (!CheckMaxItemSize(length))
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            context.EvaluationStack.Push(x1.Concat(x2).ToArray());
+                            byte[] buffer = new byte[length];
+                            Unsafe.MemoryCopy(x1, 0, buffer, 0, x1.Length);
+                            Unsafe.MemoryCopy(x2, 0, buffer, x1.Length, x2.Length);
+
+                            context.EvaluationStack.Push(buffer);
                             CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.SUBSTR:
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
-
                             if (count < 0)
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
+
                             int index = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (index < 0)
                             {
@@ -644,14 +643,23 @@ namespace Neo.VM
                             }
 
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(x.Skip(index).Take(count).ToArray());
+                            if (index > x.Length)
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            if (index + count > x.Length) count = x.Length - index;
+                            byte[] buffer = new byte[count];
+                            Unsafe.MemoryCopy(x, index, buffer, 0, count);
+
+                            context.EvaluationStack.Push(buffer);
                             CheckStackSize(true, -2);
                             break;
                         }
                     case OpCode.LEFT:
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
-
                             if (count < 0)
                             {
                                 State = VMState.FAULT;
@@ -659,34 +667,57 @@ namespace Neo.VM
                             }
 
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(x.Take(count).ToArray());
+
+                            byte[] buffer;
+                            if (count >= x.Length)
+                            {
+                                buffer = x;
+                            }
+                            else
+                            {
+                                buffer = new byte[count];
+                                Unsafe.MemoryCopy(x, 0, buffer, 0, count);
+                            }
+
+                            context.EvaluationStack.Push(buffer);
                             CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.RIGHT:
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
-
                             if (count < 0)
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
+
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            if (x.Length < count)
+                            if (count > x.Length)
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            context.EvaluationStack.Push(x.Skip(x.Length - count).ToArray());
+                            byte[] buffer;
+                            if (count == x.Length)
+                            {
+                                buffer = x;
+                            }
+                            else
+                            {
+                                buffer = new byte[count];
+                                Unsafe.MemoryCopy(x, x.Length - count, buffer, 0, count);
+                            }
+
+                            context.EvaluationStack.Push(buffer);
                             CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.SIZE:
                         {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(x.Length);
+                            StackItem x = context.EvaluationStack.Pop();
+                            context.EvaluationStack.Push(x.GetByteLength());
                             break;
                         }
 
@@ -694,13 +725,31 @@ namespace Neo.VM
                     case OpCode.INVERT:
                         {
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             context.EvaluationStack.Push(~x);
                             break;
                         }
                     case OpCode.AND:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             context.EvaluationStack.Push(x1 & x2);
                             CheckStackSize(true, -1);
                             break;
@@ -708,7 +757,19 @@ namespace Neo.VM
                     case OpCode.OR:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             context.EvaluationStack.Push(x1 | x2);
                             CheckStackSize(true, -1);
                             break;
@@ -716,7 +777,19 @@ namespace Neo.VM
                     case OpCode.XOR:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             context.EvaluationStack.Push(x1 ^ x2);
                             CheckStackSize(true, -1);
                             break;
@@ -734,44 +807,74 @@ namespace Neo.VM
                     case OpCode.INC:
                         {
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
-
-                            if (!CheckBigInteger(x) || !CheckBigInteger(x + 1))
+                            if (!CheckBigInteger(x))
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            context.EvaluationStack.Push(x + 1);
+                            x += 1;
+                            if (!CheckBigInteger(x))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            context.EvaluationStack.Push(x);
                             break;
                         }
                     case OpCode.DEC:
                         {
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
-
-                            if (!CheckBigInteger(x) || (x.Sign <= 0 && !CheckBigInteger(x - 1)))
+                            if (!CheckBigInteger(x))
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            context.EvaluationStack.Push(x - 1);
+                            x -= 1;
+                            if (!CheckBigInteger(x))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            context.EvaluationStack.Push(x);
                             break;
                         }
                     case OpCode.SIGN:
                         {
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             context.EvaluationStack.Push(x.Sign);
                             break;
                         }
                     case OpCode.NEGATE:
                         {
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             context.EvaluationStack.Push(-x);
                             break;
                         }
                     case OpCode.ABS:
                         {
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             context.EvaluationStack.Push(BigInteger.Abs(x));
                             break;
                         }
@@ -785,70 +888,107 @@ namespace Neo.VM
                     case OpCode.NZ:
                         {
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
-                            context.EvaluationStack.Push(x != BigInteger.Zero);
-                            break;
-                        }
-                    case OpCode.ADD:
-                        {
-                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
-
-                            if (!CheckBigInteger(x2) || !CheckBigInteger(x1) || !CheckBigInteger(x1 + x2))
+                            if (!CheckBigInteger(x))
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            context.EvaluationStack.Push(x1 + x2);
+                            context.EvaluationStack.Push(!x.IsZero);
+                            break;
+                        }
+                    case OpCode.ADD:
+                        {
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            BigInteger result = x1 + x2;
+                            if (!CheckBigInteger(result))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            context.EvaluationStack.Push(result);
                             CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.SUB:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
-
-                            if (!CheckBigInteger(x2) || !CheckBigInteger(x1) || !CheckBigInteger(x1 - x2))
+                            if (!CheckBigInteger(x2))
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            context.EvaluationStack.Push(x1 - x2);
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            BigInteger result = x1 - x2;
+                            if (!CheckBigInteger(result))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            context.EvaluationStack.Push(result);
                             CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.MUL:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
-
-                            int lx1 = x1.ToByteArray().Length;
-
-                            if (!CheckBigIntegerByteLength(lx1))
+                            if (!CheckBigInteger(x1))
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            int lx2 = x2.ToByteArray().Length;
-
-                            if (!CheckBigIntegerByteLength(lx1 + lx2))
+                            BigInteger result = x1 * x2;
+                            if (!CheckBigInteger(result))
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            context.EvaluationStack.Push(x1 * x2);
+                            context.EvaluationStack.Push(result);
                             CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.DIV:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
-                            if (!CheckBigInteger(x2) || !CheckBigInteger(x1))
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
                             {
                                 State = VMState.FAULT;
                                 return;
@@ -861,9 +1001,14 @@ namespace Neo.VM
                     case OpCode.MOD:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
-                            if (!CheckBigInteger(x2) || !CheckBigInteger(x1))
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
                             {
                                 State = VMState.FAULT;
                                 return;
@@ -876,7 +1021,6 @@ namespace Neo.VM
                     case OpCode.SHL:
                         {
                             int shift = (int)context.EvaluationStack.Pop().GetBigInteger();
-
                             if (!CheckShift(shift))
                             {
                                 State = VMState.FAULT;
@@ -884,15 +1028,13 @@ namespace Neo.VM
                             }
 
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
-
                             if (!CheckBigInteger(x))
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            x = x << shift;
-
+                            x <<= shift;
                             if (!CheckBigInteger(x))
                             {
                                 State = VMState.FAULT;
@@ -906,7 +1048,6 @@ namespace Neo.VM
                     case OpCode.SHR:
                         {
                             int shift = (int)context.EvaluationStack.Pop().GetBigInteger();
-
                             if (!CheckShift(shift))
                             {
                                 State = VMState.FAULT;
@@ -914,14 +1055,20 @@ namespace Neo.VM
                             }
 
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
-
                             if (!CheckBigInteger(x))
                             {
                                 State = VMState.FAULT;
                                 return;
                             }
 
-                            context.EvaluationStack.Push(x >> shift);
+                            x >>= shift;
+                            if (!CheckBigInteger(x))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
+                            context.EvaluationStack.Push(x);
                             CheckStackSize(true, -1);
                             break;
                         }
@@ -946,7 +1093,18 @@ namespace Neo.VM
                     case OpCode.NUMEQUAL:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             context.EvaluationStack.Push(x1 == x2);
                             CheckStackSize(true, -1);
@@ -955,7 +1113,18 @@ namespace Neo.VM
                     case OpCode.NUMNOTEQUAL:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             context.EvaluationStack.Push(x1 != x2);
                             CheckStackSize(true, -1);
@@ -964,7 +1133,18 @@ namespace Neo.VM
                     case OpCode.LT:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             context.EvaluationStack.Push(x1 < x2);
                             CheckStackSize(true, -1);
@@ -973,7 +1153,18 @@ namespace Neo.VM
                     case OpCode.GT:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             context.EvaluationStack.Push(x1 > x2);
                             CheckStackSize(true, -1);
@@ -982,7 +1173,18 @@ namespace Neo.VM
                     case OpCode.LTE:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             context.EvaluationStack.Push(x1 <= x2);
                             CheckStackSize(true, -1);
@@ -991,7 +1193,18 @@ namespace Neo.VM
                     case OpCode.GTE:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             context.EvaluationStack.Push(x1 >= x2);
                             CheckStackSize(true, -1);
@@ -1000,7 +1213,18 @@ namespace Neo.VM
                     case OpCode.MIN:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             context.EvaluationStack.Push(BigInteger.Min(x1, x2));
                             CheckStackSize(true, -1);
@@ -1009,7 +1233,18 @@ namespace Neo.VM
                     case OpCode.MAX:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             context.EvaluationStack.Push(BigInteger.Max(x1, x2));
                             CheckStackSize(true, -1);
@@ -1018,8 +1253,25 @@ namespace Neo.VM
                     case OpCode.WITHIN:
                         {
                             BigInteger b = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(b))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger a = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(a))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
+
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x))
+                            {
+                                State = VMState.FAULT;
+                                return;
+                            }
 
                             context.EvaluationStack.Push(a <= x && x < b);
                             CheckStackSize(true, -2);
@@ -1176,7 +1428,7 @@ namespace Neo.VM
                             }
                             else
                             {
-                                context.EvaluationStack.Push(item.GetByteArray().Length);
+                                context.EvaluationStack.Push(item.GetByteLength());
                                 CheckStackSize(true, 0);
                             }
                             break;

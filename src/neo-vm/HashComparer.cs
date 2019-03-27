@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Neo.VM
 {
@@ -8,12 +6,12 @@ namespace Neo.VM
     {
         public bool Equals(byte[] x, byte[] y)
         {
-            return x.SequenceEqual(y);
+            return Unsafe.Equals(x, y);
         }
 
         public int GetHashCode(byte[] obj)
         {
-            return BitConverter.ToInt32(obj, 0);
+            return Unsafe.ToInt32(obj, 0);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Copyright>2016-2017 The Neo Project</Copyright>
+    <Copyright>2016-2019 The Neo Project</Copyright>
     <AssemblyTitle>Neo.VM</AssemblyTitle>
     <Description>Neo.VM</Description>
     <Version>2.4.0</Version>
@@ -15,12 +15,7 @@
     <RepositoryUrl>https://github.com/neo-project/neo-vm.git</RepositoryUrl>
     <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.0</NetStandardImplicitPackageVersion>
     <RootNamespace>Neo.VM</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.6|AnyCPU'">
-    <DefineConstants>RELEASE;NETSTANDARD1_6</DefineConstants>
-    <DebugType>none</DebugType>
-    <DebugSymbols>False</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
