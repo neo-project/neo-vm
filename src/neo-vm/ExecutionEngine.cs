@@ -51,8 +51,6 @@ namespace Neo.VM
 
         #endregion
 
-        private static readonly byte[] EmptyBytes = new byte[0];
-
         private int stackitem_count = 0;
         private bool is_stackitem_count_strict = true;
 
@@ -119,7 +117,7 @@ namespace Neo.VM
         /// <param name="value">Value</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckBigInteger(BigInteger value) => value.ToByteArray().Length <= MaxSizeForBigInteger;
+        public bool CheckBigInteger(BigInteger value) => value.GetByteCount() <= MaxSizeForBigInteger;
 
         /// <summary>
         /// Check if the number is allowed from SHL and SHR
@@ -248,7 +246,7 @@ namespace Neo.VM
                     // Push value
                     case OpCode.PUSH0:
                         {
-                            context.EvaluationStack.Push(EmptyBytes);
+                            context.EvaluationStack.Push(ReadOnlyMemory<byte>.Empty);
                             if (!CheckStackSize(true)) return false;
                             break;
                         }
@@ -337,10 +335,10 @@ namespace Neo.VM
                         {
                             if (table == null || (instruction.OpCode == OpCode.APPCALL && !CheckMaxInvocationStack()))
                                 return false;
-                            byte[] script_hash = instruction.Operand;
+                            byte[] script_hash = instruction.Operand.ToArray();
                             if (!Unsafe.NotZero(script_hash))
                             {
-                                script_hash = context.EvaluationStack.Pop().GetByteArray();
+                                script_hash = context.EvaluationStack.Pop().GetByteArray().ToArray();
                             }
                             ExecutionContext context_new = LoadScriptByHash(script_hash);
                             if (context_new == null) return false;
@@ -355,7 +353,7 @@ namespace Neo.VM
                     case OpCode.SYSCALL:
                         {
                             if (instruction.Operand.Length > 252) return false;
-                            if (Service?.Invoke(instruction.Operand, this) != true || !CheckStackSize(false, int.MaxValue))
+                            if (Service?.Invoke(instruction.Operand.ToArray(), this) != true || !CheckStackSize(false, int.MaxValue))
                                 return false;
                             break;
                         }
@@ -467,14 +465,27 @@ namespace Neo.VM
                         }
                     case OpCode.CAT:
                         {
-                            byte[] x2 = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] x1 = context.EvaluationStack.Pop().GetByteArray();
-                            int length = x1.Length + x2.Length;
-                            if (!CheckMaxItemSize(length)) return false;
-                            byte[] buffer = new byte[length];
-                            Unsafe.MemoryCopy(x1, 0, buffer, 0, x1.Length);
-                            Unsafe.MemoryCopy(x2, 0, buffer, x1.Length, x2.Length);
-                            context.EvaluationStack.Push(buffer);
+                            ReadOnlyMemory<byte> x2 = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x1 = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> result;
+                            if (x1.IsEmpty)
+                            {
+                                result = x2;
+                            }
+                            else if (x2.IsEmpty)
+                            {
+                                result = x1;
+                            }
+                            else
+                            {
+                                int length = x1.Length + x2.Length;
+                                if (!CheckMaxItemSize(length)) return false;
+                                Memory<byte> buffer = new byte[length];
+                                x1.CopyTo(buffer);
+                                x2.CopyTo(buffer.Slice(x1.Length));
+                                result = buffer;
+                            }
+                            context.EvaluationStack.Push(result);
                             CheckStackSize(true, -1);
                             break;
                         }
@@ -484,12 +495,10 @@ namespace Neo.VM
                             if (count < 0) return false;
                             int index = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (index < 0) return false;
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
                             if (index > x.Length) return false;
                             if (index + count > x.Length) count = x.Length - index;
-                            byte[] buffer = new byte[count];
-                            Unsafe.MemoryCopy(x, index, buffer, 0, count);
-                            context.EvaluationStack.Push(buffer);
+                            context.EvaluationStack.Push(x.Slice(index, count));
                             CheckStackSize(true, -2);
                             break;
                         }
@@ -497,18 +506,9 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (count < 0) return false;
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] buffer;
-                            if (count >= x.Length)
-                            {
-                                buffer = x;
-                            }
-                            else
-                            {
-                                buffer = new byte[count];
-                                Unsafe.MemoryCopy(x, 0, buffer, 0, count);
-                            }
-                            context.EvaluationStack.Push(buffer);
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
+                            if (count < x.Length) x = x.Slice(0, count);
+                            context.EvaluationStack.Push(x);
                             CheckStackSize(true, -1);
                             break;
                         }
@@ -516,19 +516,10 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (count < 0) return false;
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
                             if (count > x.Length) return false;
-                            byte[] buffer;
-                            if (count == x.Length)
-                            {
-                                buffer = x;
-                            }
-                            else
-                            {
-                                buffer = new byte[count];
-                                Unsafe.MemoryCopy(x, x.Length - count, buffer, 0, count);
-                            }
-                            context.EvaluationStack.Push(buffer);
+                            if (count < x.Length) x = x.Slice(x.Length - count);
+                            context.EvaluationStack.Push(x);
                             CheckStackSize(true, -1);
                             break;
                         }
@@ -833,37 +824,49 @@ namespace Neo.VM
                     case OpCode.SHA1:
                         using (SHA1 sha = SHA1.Create())
                         {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(sha.ComputeHash(x));
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
+#if NETCOREAPP
+                            byte[] hash = new byte[sha.HashSize / 8];
+                            sha.TryComputeHash(x.Span, hash, out _);
+#else
+                            byte[] hash = sha.ComputeHash(x.ToArray());
+#endif
+                            context.EvaluationStack.Push(hash);
                             break;
                         }
                     case OpCode.SHA256:
                         using (SHA256 sha = SHA256.Create())
                         {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(sha.ComputeHash(x));
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
+#if NETCOREAPP
+                            byte[] hash = new byte[sha.HashSize / 8];
+                            sha.TryComputeHash(x.Span, hash, out _);
+#else
+                            byte[] hash = sha.ComputeHash(x.ToArray());
+#endif
+                            context.EvaluationStack.Push(hash);
                             break;
                         }
                     case OpCode.HASH160:
                         {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(Crypto.Hash160(x));
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
+                            context.EvaluationStack.Push(Crypto.Hash160(x.Span));
                             break;
                         }
                     case OpCode.HASH256:
                         {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(Crypto.Hash256(x));
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
+                            context.EvaluationStack.Push(Crypto.Hash256(x.Span));
                             break;
                         }
                     case OpCode.CHECKSIG:
                         {
-                            byte[] pubkey = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] signature = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> pubkey = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> signature = context.EvaluationStack.Pop().GetByteArray();
 
                             try
                             {
-                                context.EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature, pubkey));
+                                context.EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature.Span, pubkey.Span));
                             }
                             catch (ArgumentException)
                             {
@@ -874,13 +877,13 @@ namespace Neo.VM
                         }
                     case OpCode.VERIFY:
                         {
-                            byte[] pubkey = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] signature = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] message = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> pubkey = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> signature = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> message = context.EvaluationStack.Pop().GetByteArray();
 
                             try
                             {
-                                context.EvaluationStack.Push(Crypto.VerifySignature(message, signature, pubkey));
+                                context.EvaluationStack.Push(Crypto.VerifySignature(message.Span, signature.Span, pubkey.Span));
                             }
                             catch (ArgumentException)
                             {
@@ -892,7 +895,7 @@ namespace Neo.VM
                     case OpCode.CHECKMULTISIG:
                         {
                             int n;
-                            byte[][] pubkeys;
+                            ReadOnlyMemory<byte>[] pubkeys;
                             StackItem item = context.EvaluationStack.Pop();
 
                             if (item is VMArray array1)
@@ -906,14 +909,14 @@ namespace Neo.VM
                             {
                                 n = (int)item.GetBigInteger();
                                 if (n < 1 || n > context.EvaluationStack.Count) return false;
-                                pubkeys = new byte[n][];
+                                pubkeys = new ReadOnlyMemory<byte>[n];
                                 for (int i = 0; i < n; i++)
                                     pubkeys[i] = context.EvaluationStack.Pop().GetByteArray();
                                 CheckStackSize(true, -n - 1);
                             }
 
                             int m;
-                            byte[][] signatures;
+                            ReadOnlyMemory<byte>[] signatures;
                             item = context.EvaluationStack.Pop();
                             if (item is VMArray array2)
                             {
@@ -926,7 +929,7 @@ namespace Neo.VM
                             {
                                 m = (int)item.GetBigInteger();
                                 if (m < 1 || m > n || m > context.EvaluationStack.Count) return false;
-                                signatures = new byte[m][];
+                                signatures = new ReadOnlyMemory<byte>[m];
                                 for (int i = 0; i < m; i++)
                                     signatures[i] = context.EvaluationStack.Pop().GetByteArray();
                                 CheckStackSize(true, -m - 1);
@@ -937,7 +940,7 @@ namespace Neo.VM
                             {
                                 for (int i = 0, j = 0; fSuccess && i < m && j < n;)
                                 {
-                                    if (Crypto.VerifySignature(message, signatures[i], pubkeys[j]))
+                                    if (Crypto.VerifySignature(message, signatures[i].Span, pubkeys[j].Span))
                                         i++;
                                     j++;
                                     if (m - i > n - j)
@@ -1013,10 +1016,10 @@ namespace Neo.VM
                                     }
                                 default:
                                     {
-                                        byte[] byteArray = item.GetByteArray();
+                                        ReadOnlyMemory<byte> byteArray = item.GetByteArray();
                                         int index = (int)key.GetBigInteger();
                                         if (index < 0 || index >= byteArray.Length) return false;
-                                        context.EvaluationStack.Push((int)byteArray[index]);
+                                        context.EvaluationStack.Push((int)byteArray.Span[index]);
                                         CheckStackSize(false, -1);
                                         break;
                                     }
@@ -1208,8 +1211,8 @@ namespace Neo.VM
                     case OpCode.CALL_I:
                         {
                             if (!CheckMaxInvocationStack()) return false;
-                            int rvcount = instruction.Operand[0];
-                            int pcount = instruction.Operand[1];
+                            int rvcount = instruction.Operand.Span[0];
+                            int pcount = instruction.Operand.Span[1];
                             if (context.EvaluationStack.Count < pcount) return false;
                             ExecutionContext context_call = LoadScript(context.Script, rvcount);
                             context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16_1;
@@ -1225,8 +1228,8 @@ namespace Neo.VM
                     case OpCode.CALL_EDT:
                         {
                             if (table == null) return false;
-                            int rvcount = instruction.Operand[0];
-                            int pcount = instruction.Operand[1];
+                            int rvcount = instruction.Operand.Span[0];
+                            int pcount = instruction.Operand.Span[1];
                             if (context.EvaluationStack.Count < pcount) return false;
                             if (instruction.OpCode == OpCode.CALL_ET || instruction.OpCode == OpCode.CALL_EDT)
                             {
@@ -1240,12 +1243,12 @@ namespace Neo.VM
                             byte[] script_hash;
                             if (instruction.OpCode == OpCode.CALL_ED || instruction.OpCode == OpCode.CALL_EDT)
                             {
-                                script_hash = context.EvaluationStack.Pop().GetByteArray();
+                                script_hash = context.EvaluationStack.Pop().GetByteArray().ToArray();
                                 CheckStackSize(true, -1);
                             }
                             else
                             {
-                                script_hash = instruction.ReadBytes(2, 20);
+                                script_hash = instruction.Operand.Slice(2, 20).ToArray();
                             }
 
                             ExecutionContext context_new = LoadScriptByHash(script_hash, rvcount);
@@ -1293,7 +1296,7 @@ namespace Neo.VM
         private ExecutionContext LoadScriptByHash(byte[] hash, int rvcount = -1)
         {
             if (table == null) return null;
-            byte[] script = table.GetScript(hash);
+            byte[] script = table.GetScript(hash.ToArray());
             if (script == null) return null;
             return LoadScript(new Script(hash, script), rvcount);
         }

@@ -6,7 +6,7 @@ namespace Neo.VM
     {
         public bool Equals(byte[] x, byte[] y)
         {
-            return Unsafe.Equals(x, y);
+            return Unsafe.SpanEquals(x, y);
         }
 
         public int GetHashCode(byte[] obj)

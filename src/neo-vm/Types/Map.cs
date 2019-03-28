@@ -76,7 +76,7 @@ namespace Neo.VM.Types
             return true;
         }
 
-        public override byte[] GetByteArray()
+        public override ReadOnlyMemory<byte> GetByteArray()
         {
             throw new NotSupportedException();
         }
