@@ -46,8 +46,8 @@
                         [
                             {
                                 "scriptHash": "0xB8CE783B577DFDFBCDB6598C4B592AAB2C7EAD88",
-                                "instructionPointer": 44,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 43,
+                                "nextInstruction": "ARRAYSIZE"
                             }
                         ]
                     }
@@ -71,8 +71,8 @@
                         [
                             {
                                 "scriptHash": "0x0D37A6FE661C22C9A39E0404DC0306AFEFEC75BD",
-                                "instructionPointer": 1,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "ARRAYSIZE"
                             }
                         ]
                     }

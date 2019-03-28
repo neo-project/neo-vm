@@ -57,8 +57,8 @@
                         [
                             {
                                 "scriptHash": "0xA8D0D989428ACC4D0871A63867FB65C090D4C192",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET",
+                                "instructionPointer": 3,
+                                "nextInstruction": "SETITEM",
                                 "evaluationStack":
                                 [
                                     {
@@ -124,8 +124,8 @@
                         [
                             {
                                 "scriptHash": "0x0F72B9DC4389FB6D2FAC8F9954FF4174748F39BF",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 3,
+                                "nextInstruction": "SETITEM"
                             }
                         ]
                     }
@@ -149,8 +149,8 @@
                         [
                             {
                                 "scriptHash": "0x72BB72F41041A6D0E9AB5BB6F67EC3AF7BF6FA5F",
-                                "instructionPointer": 1,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "SETITEM"
                             }
                         ]
                     }
@@ -216,8 +216,8 @@
                         [
                             {
                                 "scriptHash": "0xD553A5EA4F28980DF7A29E353A776972D7699B3D",
-                                "instructionPointer": 5,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 4,
+                                "nextInstruction": "SETITEM"
                             }
                         ]
                     }
@@ -283,8 +283,8 @@
                         [
                             {
                                 "scriptHash": "0x4FABD5803C205E3DB0BEEF56D39C3940796BA4CF",
-                                "instructionPointer": 5,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 4,
+                                "nextInstruction": "SETITEM"
                             }
                         ]
                     }

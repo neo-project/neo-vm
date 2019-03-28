@@ -37,8 +37,8 @@
                         [
                             {
                                 "scriptHash": "0x5C3E0100543825E1F20488111E71D7FACB6AA546",
-                                "nextInstruction": "RET",
-                                "instructionPointer": 2049,
+                                "nextInstruction": "PUSH1",
+                                "instructionPointer": 2048,
                                 "evaluationStack":
                                 [
                                     {

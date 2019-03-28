@@ -20,8 +20,8 @@
                         [
                             {
                                 "scriptHash": "0x8D30AA74E444A0E3C0C5867F4F087A31D7AB7834",
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 1,
+                                "nextInstruction": "APPEND"
                             }
                         ]
                     }
@@ -45,8 +45,8 @@
                         [
                             {
                                 "scriptHash": "0x2622C347766417C6BE04A1138B870B2B01182419",
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 2,
+                                "nextInstruction": "APPEND"
                             }
                         ]
                     }

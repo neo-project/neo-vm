@@ -44,8 +44,8 @@
                         [
                             {
                                 "scriptHash": "0xDCFCBB55FCE2CD0B031A3690883E904F9ED75238",
-                                "instructionPointer": 7,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "PUSHDATA2"
                             }
                         ]
                     }
