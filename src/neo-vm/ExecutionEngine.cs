@@ -227,7 +227,7 @@ namespace Neo.VM
                 }
                 if (State == VMState.NONE && InvocationStack.Count > 0)
                 {
-                    if (break_points.TryGetValue(CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)CurrentContext.InstructionPointer))
+                    if (break_points.Count > 0 && break_points.TryGetValue(CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)CurrentContext.InstructionPointer))
                         State = VMState.BREAK;
                 }
             }
