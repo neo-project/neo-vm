@@ -66,7 +66,7 @@ namespace Neo.VM
         public ExecutionContext CurrentContext => InvocationStack.Peek();
         public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
         public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
-        public VMState State { get; protected set; } = VMState.BREAK;
+        public VMState State { get; internal protected set; } = VMState.BREAK;
 
         public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, IInteropService service = null)
         {
@@ -196,7 +196,7 @@ namespace Neo.VM
                 ExecuteNext();
         }
 
-        protected void ExecuteNext()
+        internal protected void ExecuteNext()
         {
             if (InvocationStack.Count == 0)
             {
@@ -1290,37 +1290,6 @@ namespace Neo.VM
         protected virtual bool PreExecuteInstruction()
         {
             return true;
-        }
-
-        public void StepInto()
-        {
-            if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
-            ExecuteNext();
-            if (State == VMState.NONE)
-                State = VMState.BREAK;
-        }
-
-        public void StepOut()
-        {
-            State &= ~VMState.BREAK;
-            int c = InvocationStack.Count;
-            while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK) && InvocationStack.Count >= c)
-                ExecuteNext();
-            if (State == VMState.NONE)
-                State = VMState.BREAK;
-        }
-
-        public void StepOver()
-        {
-            if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
-            State &= ~VMState.BREAK;
-            int c = InvocationStack.Count;
-            do
-            {
-                ExecuteNext();
-            } while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK) && InvocationStack.Count > c);
-            if (State == VMState.NONE)
-                State = VMState.BREAK;
         }
     }
 }
