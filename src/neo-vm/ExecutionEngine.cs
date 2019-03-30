@@ -57,7 +57,6 @@ namespace Neo.VM
         private bool is_stackitem_count_strict = true;
 
         private readonly IScriptTable table;
-        private readonly Dictionary<byte[], HashSet<uint>> break_points = new Dictionary<byte[], HashSet<uint>>(new HashComparer());
 
         public IScriptContainer ScriptContainer { get; }
         public ICrypto Crypto { get; }
@@ -67,7 +66,7 @@ namespace Neo.VM
         public ExecutionContext CurrentContext => InvocationStack.Peek();
         public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
         public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
-        public VMState State { get; protected set; } = VMState.BREAK;
+        public VMState State { get; internal protected set; } = VMState.BREAK;
 
         public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, IInteropService service = null)
         {
@@ -75,16 +74,6 @@ namespace Neo.VM
             this.Crypto = crypto;
             this.table = table;
             this.Service = service;
-        }
-
-        public void AddBreakPoint(byte[] script_hash, uint position)
-        {
-            if (!break_points.TryGetValue(script_hash, out HashSet<uint> hashset))
-            {
-                hashset = new HashSet<uint>();
-                break_points.Add(script_hash, hashset);
-            }
-            hashset.Add(position);
         }
 
         #region Limits
@@ -207,7 +196,7 @@ namespace Neo.VM
                 ExecuteNext();
         }
 
-        protected void ExecuteNext()
+        internal protected void ExecuteNext()
         {
             if (InvocationStack.Count == 0)
             {
@@ -224,11 +213,6 @@ namespace Neo.VM
                 catch
                 {
                     State = VMState.FAULT;
-                }
-                if (State == VMState.NONE && InvocationStack.Count > 0)
-                {
-                    if (break_points.Count > 0 && break_points.TryGetValue(CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)CurrentContext.InstructionPointer))
-                        State = VMState.BREAK;
                 }
             }
         }
@@ -1306,48 +1290,6 @@ namespace Neo.VM
         protected virtual bool PreExecuteInstruction()
         {
             return true;
-        }
-
-        public bool RemoveBreakPoint(byte[] script_hash, uint position)
-        {
-            if (!break_points.TryGetValue(script_hash, out HashSet<uint> hashset))
-                return false;
-            if (!hashset.Remove(position))
-                return false;
-            if (hashset.Count == 0)
-                break_points.Remove(script_hash);
-            return true;
-        }
-
-        public void StepInto()
-        {
-            if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
-            ExecuteNext();
-            if (State == VMState.NONE)
-                State = VMState.BREAK;
-        }
-
-        public void StepOut()
-        {
-            State &= ~VMState.BREAK;
-            int c = InvocationStack.Count;
-            while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK) && InvocationStack.Count >= c)
-                ExecuteNext();
-            if (State == VMState.NONE)
-                State = VMState.BREAK;
-        }
-
-        public void StepOver()
-        {
-            if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
-            State &= ~VMState.BREAK;
-            int c = InvocationStack.Count;
-            do
-            {
-                ExecuteNext();
-            } while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK) && InvocationStack.Count > c);
-            if (State == VMState.NONE)
-                State = VMState.BREAK;
         }
     }
 }
