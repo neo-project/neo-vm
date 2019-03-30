@@ -50,6 +50,7 @@ namespace Neo.Test
 
                 using (var engine = new ExecutionEngine(scriptContainer, Crypto.Default, scriptTable, service))
                 {
+                    Debugger debugger = new Debugger(engine);
                     engine.LoadScript(test.Script);
 
                     // Execute Steps
@@ -64,10 +65,10 @@ namespace Neo.Test
                                 {
                                     switch (run)
                                     {
-                                        case VMUTActionType.Execute: engine.Execute(); break;
-                                        case VMUTActionType.StepInto: engine.StepInto(); break;
-                                        case VMUTActionType.StepOut: engine.StepOut(); break;
-                                        case VMUTActionType.StepOver: engine.StepOver(); break;
+                                        case VMUTActionType.Execute: debugger.Execute(); break;
+                                        case VMUTActionType.StepInto: debugger.StepInto(); break;
+                                        case VMUTActionType.StepOut: debugger.StepOut(); break;
+                                        case VMUTActionType.StepOver: debugger.StepOver(); break;
                                     }
                                 }
 
