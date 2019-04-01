@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Neo.VM
 {
@@ -59,6 +60,44 @@ namespace Neo.VM
                     fixed (byte* pbyte = &Operand.Span[sizeof(short)])
                     {
                         return *(short*)pbyte;
+                    }
+                }
+#endif
+            }
+        }
+
+        public string TokenString
+        {
+            get
+            {
+#if NETCOREAPP
+                return Encoding.ASCII.GetString(Operand.Span);
+#else
+                unsafe
+                {
+                    fixed (byte* pbyte = Operand.Span)
+                    {
+                        return Encoding.ASCII.GetString(pbyte, Operand.Length);
+                    }
+                }
+#endif
+            }
+        }
+
+        public uint TokenU32
+        {
+            get
+            {
+#if NETCOREAPP
+                return BitConverter.ToUInt32(Operand.Span);
+#else
+                if (Operand.Length < sizeof(uint))
+                    throw new InvalidOperationException();
+                unsafe
+                {
+                    fixed (byte* pbyte = Operand.Span)
+                    {
+                        return *(uint*)pbyte;
                     }
                 }
 #endif

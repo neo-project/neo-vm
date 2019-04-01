@@ -3,10 +3,10 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    internal static class Unsafe
+    unsafe internal static class Unsafe
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        unsafe public static void MemoryCopy(byte[] src, int srcOffset, byte[] dst, int dstOffset, int count)
+        public static void MemoryCopy(byte[] src, int srcOffset, byte[] dst, int dstOffset, int count)
         {
             if (count == 0) return;
             fixed (byte* sp = &src[srcOffset], dp = &dst[dstOffset])
@@ -16,7 +16,7 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        unsafe public static bool NotZero(ReadOnlySpan<byte> x)
+        public static bool NotZero(ReadOnlySpan<byte> x)
         {
             int len = x.Length;
             if (len == 0) return false;
@@ -39,7 +39,7 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        unsafe public static bool SpanEquals(ReadOnlySpan<byte> x, ReadOnlySpan<byte> y)
+        public static bool SpanEquals(ReadOnlySpan<byte> x, ReadOnlySpan<byte> y)
         {
             if (x == y) return true;
             int len = x.Length;
@@ -71,7 +71,7 @@ namespace Neo.VM
         /// <param name="startIndex">Start index</param>
         /// <returns>Integer</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        unsafe public static int ToInt32(byte[] value, int startIndex)
+        public static int ToInt32(byte[] value, int startIndex)
         {
             fixed (byte* pbyte = &value[startIndex])
             {
