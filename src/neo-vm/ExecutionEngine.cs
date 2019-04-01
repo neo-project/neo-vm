@@ -1014,7 +1014,7 @@ namespace Neo.VM
                                         int index = (int)key.GetBigInteger();
                                         if (index < 0 || index >= byteArray.Length) return false;
                                         context.EvaluationStack.Push((int)byteArray[index]);
-                                        CheckStackSize(false, -1);
+                                        CheckStackSize(true, -1);
                                         break;
                                     }
                             }
