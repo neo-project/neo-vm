@@ -4,7 +4,7 @@ namespace Neo.VM.Types
 {
     public abstract class InteropInterface : StackItem
     {
-        public override ReadOnlyMemory<byte> GetByteArray()
+        public override byte[] GetByteArray()
         {
             throw new NotSupportedException();
         }

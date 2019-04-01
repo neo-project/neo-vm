@@ -29,16 +29,12 @@ namespace Neo.VM
 
         public virtual BigInteger GetBigInteger()
         {
-#if NETCOREAPP
-            return new BigInteger(GetByteArray().Span);
-#else
-            return new BigInteger(GetByteArray().ToArray());
-#endif
+            return new BigInteger(GetByteArray());
         }
 
         public abstract bool GetBoolean();
 
-        public abstract ReadOnlyMemory<byte> GetByteArray();
+        public abstract byte[] GetByteArray();
 
         public virtual int GetByteLength()
         {
@@ -50,7 +46,7 @@ namespace Neo.VM
             unchecked
             {
                 int hash = 17;
-                foreach (byte element in GetByteArray().Span)
+                foreach (byte element in GetByteArray())
                     hash = hash * 31 + element;
                 return hash;
             }
@@ -58,18 +54,7 @@ namespace Neo.VM
 
         public virtual string GetString()
         {
-#if NETCOREAPP
-            return Encoding.UTF8.GetString(GetByteArray().Span);
-#else
-            ReadOnlySpan<byte> span = GetByteArray().Span;
-            unsafe
-            {
-                fixed (byte* bp = span)
-                {
-                    return Encoding.UTF8.GetString(bp, span.Length);
-                }
-            }
-#endif
+            return Encoding.UTF8.GetString(GetByteArray());
         }
 
         public static implicit operator StackItem(int value)
@@ -103,11 +88,6 @@ namespace Neo.VM
         }
 
         public static implicit operator StackItem(byte[] value)
-        {
-            return new ByteArray(value);
-        }
-
-        public static implicit operator StackItem(ReadOnlyMemory<byte> value)
         {
             return new ByteArray(value);
         }

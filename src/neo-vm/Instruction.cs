@@ -9,7 +9,7 @@ namespace Neo.VM
         public static Instruction RET { get; } = new Instruction(OpCode.RET);
 
         public readonly OpCode OpCode;
-        public readonly ReadOnlyMemory<byte> Operand;
+        public readonly byte[] Operand;
 
         private static readonly int[] OperandSizePrefixTable = new int[256];
         private static readonly int[] OperandSizeTable = new int[256];
@@ -30,19 +30,7 @@ namespace Neo.VM
         {
             get
             {
-#if NETCOREAPP
-                return BitConverter.ToInt16(Operand.Span);
-#else
-                if (Operand.Length < sizeof(short))
-                    throw new InvalidOperationException();
-                unsafe
-                {
-                    fixed (byte* pbyte = Operand.Span)
-                    {
-                        return *(short*)pbyte;
-                    }
-                }
-#endif
+                return BitConverter.ToInt16(Operand, 0);
             }
         }
 
@@ -50,19 +38,7 @@ namespace Neo.VM
         {
             get
             {
-#if NETCOREAPP
-                return BitConverter.ToInt16(Operand.Span.Slice(2, 2));
-#else
-                if (Operand.Length < sizeof(short) * 2)
-                    throw new InvalidOperationException();
-                unsafe
-                {
-                    fixed (byte* pbyte = &Operand.Span[sizeof(short)])
-                    {
-                        return *(short*)pbyte;
-                    }
-                }
-#endif
+                return BitConverter.ToInt16(Operand, sizeof(short));
             }
         }
 
@@ -70,17 +46,7 @@ namespace Neo.VM
         {
             get
             {
-#if NETCOREAPP
-                return Encoding.ASCII.GetString(Operand.Span);
-#else
-                unsafe
-                {
-                    fixed (byte* pbyte = Operand.Span)
-                    {
-                        return Encoding.ASCII.GetString(pbyte, Operand.Length);
-                    }
-                }
-#endif
+                return Encoding.ASCII.GetString(Operand);
             }
         }
 
@@ -88,19 +54,7 @@ namespace Neo.VM
         {
             get
             {
-#if NETCOREAPP
-                return BitConverter.ToUInt32(Operand.Span);
-#else
-                if (Operand.Length < sizeof(uint))
-                    throw new InvalidOperationException();
-                unsafe
-                {
-                    fixed (byte* pbyte = Operand.Span)
-                    {
-                        return *(uint*)pbyte;
-                    }
-                }
-#endif
+                return BitConverter.ToUInt32(Operand, 0);
             }
         }
 
@@ -151,7 +105,22 @@ namespace Neo.VM
                     break;
             }
             if (operandSize > 0)
-                this.Operand = new ReadOnlyMemory<byte>(script, ip + operandSizePrefix, operandSize);
+            {
+                ip += operandSizePrefix;
+                this.Operand = new byte[operandSize];
+                if (ip + operandSize > script.Length)
+                    throw new InvalidOperationException();
+                Unsafe.MemoryCopy(script, ip, Operand, 0, operandSize);
+            }
+        }
+
+        public byte[] ReadBytes(int offset, int count)
+        {
+            if (offset + count > Operand.Length)
+                throw new InvalidOperationException();
+            byte[] buffer = new byte[count];
+            Unsafe.MemoryCopy(Operand, offset, buffer, 0, count);
+            return buffer;
         }
     }
 }

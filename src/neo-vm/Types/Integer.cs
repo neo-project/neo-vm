@@ -17,7 +17,7 @@ namespace Neo.VM.Types
             if (ReferenceEquals(this, other)) return true;
             if (ReferenceEquals(null, other)) return false;
             if (other is Integer i) return value == i.value;
-            ReadOnlyMemory<byte> bytes_other;
+            byte[] bytes_other;
             try
             {
                 bytes_other = other.GetByteArray();
@@ -26,7 +26,7 @@ namespace Neo.VM.Types
             {
                 return false;
             }
-            return Unsafe.SpanEquals(GetByteArray().Span, bytes_other.Span);
+            return Unsafe.MemoryEquals(GetByteArray(), bytes_other);
         }
 
         public override BigInteger GetBigInteger()
@@ -39,24 +39,17 @@ namespace Neo.VM.Types
             return !value.IsZero;
         }
 
-        public override ReadOnlyMemory<byte> GetByteArray()
+        public override byte[] GetByteArray()
         {
             return value.ToByteArray();
         }
 
-#if NETCOREAPP
-        public override int GetByteLength()
-        {
-            return value.GetByteCount();
-        }
-#else
         private int _length = -1;
         public override int GetByteLength()
         {
             if (_length == -1)
-                _length = value.GetByteCount();
+                _length = value.ToByteArray().Length;
             return _length;
         }
-#endif
     }
 }

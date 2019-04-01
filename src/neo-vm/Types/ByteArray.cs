@@ -4,9 +4,9 @@ namespace Neo.VM.Types
 {
     public class ByteArray : StackItem
     {
-        private ReadOnlyMemory<byte> value;
+        private byte[] value;
 
-        public ByteArray(ReadOnlyMemory<byte> value)
+        public ByteArray(byte[] value)
         {
             this.value = value;
         }
@@ -15,7 +15,7 @@ namespace Neo.VM.Types
         {
             if (ReferenceEquals(this, other)) return true;
             if (ReferenceEquals(null, other)) return false;
-            ReadOnlyMemory<byte> bytes_other;
+            byte[] bytes_other;
             try
             {
                 bytes_other = other.GetByteArray();
@@ -24,17 +24,17 @@ namespace Neo.VM.Types
             {
                 return false;
             }
-            return Unsafe.SpanEquals(value.Span, bytes_other.Span);
+            return Unsafe.MemoryEquals(value, bytes_other);
         }
 
         public override bool GetBoolean()
         {
             if (value.Length > ExecutionEngine.MaxSizeForBigInteger)
                 return true;
-            return Unsafe.NotZero(value.Span);
+            return Unsafe.NotZero(value);
         }
 
-        public override ReadOnlyMemory<byte> GetByteArray()
+        public override byte[] GetByteArray()
         {
             return value;
         }

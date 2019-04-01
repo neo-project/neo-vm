@@ -1,7 +1,8 @@
-﻿using Neo.Test.Extensions;
-using Neo.VM;
-using System;
+﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
+using Neo.Test.Extensions;
+using Neo.VM;
 
 namespace Neo.Test.Types
 {
@@ -9,41 +10,40 @@ namespace Neo.Test.Types
     {
         public static readonly Crypto Default = new Crypto();
 
-        public byte[] Hash160(ReadOnlySpan<byte> message)
+        public byte[] Hash160(byte[] message)
         {
-            return message.Sha256().RIPEMD160().ToArray();
+            return message.Sha256().RIPEMD160();
         }
 
-        public byte[] Hash256(ReadOnlySpan<byte> message)
+        public byte[] Hash256(byte[] message)
         {
-            return message.Sha256().Sha256().ToArray();
+            return message.Sha256().Sha256();
         }
 
-        public byte[] Sign(ReadOnlySpan<byte> message, ReadOnlySpan<byte> prikey, ReadOnlySpan<byte> pubkey)
+        public byte[] Sign(byte[] message, byte[] prikey, byte[] pubkey)
         {
             using (var ecdsa = ECDsa.Create(new ECParameters
             {
                 Curve = ECCurve.NamedCurves.nistP256,
-                D = prikey.ToArray(),
+                D = prikey,
                 Q = new ECPoint
                 {
-                    X = pubkey.Slice(0, 32).ToArray(),
-                    Y = pubkey.Slice(32).ToArray()
+                    X = pubkey.Take(32).ToArray(),
+                    Y = pubkey.Skip(32).ToArray()
                 }
             }))
             {
-                return ecdsa.SignData(message.ToArray(), HashAlgorithmName.SHA256);
+                return ecdsa.SignData(message, HashAlgorithmName.SHA256);
             }
         }
 
-        public bool VerifySignature(ReadOnlySpan<byte> message, ReadOnlySpan<byte> signature, ReadOnlySpan<byte> pubkey)
+        public bool VerifySignature(byte[] message, byte[] signature, byte[] pubkey)
         {
             if (pubkey.Length == 33 && (pubkey[0] == 0x02 || pubkey[0] == 0x03))
             {
                 try
                 {
-                    pubkey = Neo.Cryptography.ECC.ECPoint.DecodePoint(pubkey.ToArray(), Neo.Cryptography.ECC.ECCurve.Secp256r1).EncodePoint(false);
-                    pubkey = pubkey.Slice(1);
+                    pubkey = Neo.Cryptography.ECC.ECPoint.DecodePoint(pubkey, Neo.Cryptography.ECC.ECCurve.Secp256r1).EncodePoint(false).Skip(1).ToArray();
                 }
                 catch
                 {
@@ -52,7 +52,7 @@ namespace Neo.Test.Types
             }
             else if (pubkey.Length == 65 && pubkey[0] == 0x04)
             {
-                pubkey = pubkey.Slice(1);
+                pubkey = pubkey.Skip(1).ToArray();
             }
             else if (pubkey.Length != 64)
             {
@@ -63,8 +63,8 @@ namespace Neo.Test.Types
                 Curve = ECCurve.NamedCurves.nistP256,
                 Q = new ECPoint
                 {
-                    X = pubkey.Slice(0, 32).ToArray(),
-                    Y = pubkey.Slice(32).ToArray()
+                    X = pubkey.Take(32).ToArray(),
+                    Y = pubkey.Skip(32).ToArray()
                 }
             }))
             {

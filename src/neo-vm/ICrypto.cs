@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace Neo.VM
+﻿namespace Neo.VM
 {
     public interface ICrypto
     {
-        byte[] Hash160(ReadOnlySpan<byte> message);
+        byte[] Hash160(byte[] message);
 
-        byte[] Hash256(ReadOnlySpan<byte> message);
+        byte[] Hash256(byte[] message);
 
-        bool VerifySignature(ReadOnlySpan<byte> message, ReadOnlySpan<byte> signature, ReadOnlySpan<byte> pubkey);
+        bool VerifySignature(byte[] message, byte[] signature, byte[] pubkey);
     }
 }

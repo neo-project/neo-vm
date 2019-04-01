@@ -218,7 +218,7 @@ namespace Neo.Test
             {
                 case VM.Types.Boolean v: value = new JValue(v.GetBoolean()); break;
                 case VM.Types.Integer v: value = new JValue(v.GetBigInteger().ToString()); break;
-                case VM.Types.ByteArray v: value = new JValue(v.GetByteArray().ToArray()); break;
+                case VM.Types.ByteArray v: value = new JValue(v.GetByteArray()); break;
                 //case VM.Types.Struct v:
                 case VM.Types.Array v:
                     {
@@ -238,7 +238,7 @@ namespace Neo.Test
 
                         foreach (var entry in v)
                         {
-                            jdic.Add(entry.Key.GetByteArray().Span.ToHexString(), ItemToJson(entry.Value));
+                            jdic.Add(entry.Key.GetByteArray().ToHexString(), ItemToJson(entry.Value));
                         }
 
                         value = jdic;

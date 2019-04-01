@@ -5,8 +5,8 @@ namespace Neo.VM.Types
 {
     public class Boolean : StackItem
     {
-        private static readonly ReadOnlyMemory<byte> TRUE = new byte[] { 1 };
-        private static readonly ReadOnlyMemory<byte> FALSE = ReadOnlyMemory<byte>.Empty;
+        private static readonly byte[] TRUE = { 1 };
+        private static readonly byte[] FALSE = new byte[0];
 
         private bool value;
 
@@ -20,7 +20,7 @@ namespace Neo.VM.Types
             if (ReferenceEquals(this, other)) return true;
             if (ReferenceEquals(null, other)) return false;
             if (other is Boolean b) return value == b.value;
-            ReadOnlyMemory<byte> bytes_other;
+            byte[] bytes_other;
             try
             {
                 bytes_other = other.GetByteArray();
@@ -29,7 +29,7 @@ namespace Neo.VM.Types
             {
                 return false;
             }
-            return Unsafe.SpanEquals(GetByteArray().Span, bytes_other.Span);
+            return Unsafe.MemoryEquals(GetByteArray(), bytes_other);
         }
 
         public override BigInteger GetBigInteger()
@@ -42,7 +42,7 @@ namespace Neo.VM.Types
             return value;
         }
 
-        public override ReadOnlyMemory<byte> GetByteArray()
+        public override byte[] GetByteArray()
         {
             return value ? TRUE : FALSE;
         }
