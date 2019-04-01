@@ -998,14 +998,14 @@ namespace Neo.VM
                                         int index = (int)key.GetBigInteger();
                                         if (index < 0 || index >= array.Count) return false;
                                         context.EvaluationStack.Push(array[index]);
-                                        if (!CheckStackSize(false, int.MaxValue)) return false;
+                                        CheckStackSize(false, -1);
                                         break;
                                     }
                                 case Map map:
                                     {
                                         if (!map.TryGetValue(key, out StackItem value)) return false;
                                         context.EvaluationStack.Push(value);
-                                        if (!CheckStackSize(false, int.MaxValue)) return false;
+                                        CheckStackSize(false, -1);
                                         break;
                                     }
                                 default:
@@ -1014,7 +1014,7 @@ namespace Neo.VM
                                         int index = (int)key.GetBigInteger();
                                         if (index < 0 || index >= byteArray.Length) return false;
                                         context.EvaluationStack.Push((int)byteArray[index]);
-                                        CheckStackSize(false, -1);
+                                        CheckStackSize(true, -1);
                                         break;
                                     }
                             }
