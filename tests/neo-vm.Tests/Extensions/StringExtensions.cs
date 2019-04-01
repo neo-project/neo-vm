@@ -12,7 +12,12 @@ namespace Neo.Test.Extensions
         /// <returns>Return hex string</returns>
         public static string ToHexString(this byte[] data)
         {
-            if (data == null) return "";
+            return ToHexString((ReadOnlySpan<byte>)data);
+        }
+
+        public static string ToHexString(this ReadOnlySpan<byte> data)
+        {
+            if (data.IsEmpty) return "";
 
             var m = data.Length;
             if (m == 0) return "";

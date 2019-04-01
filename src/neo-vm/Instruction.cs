@@ -8,7 +8,7 @@ namespace Neo.VM
         public static Instruction RET { get; } = new Instruction(OpCode.RET);
 
         public readonly OpCode OpCode;
-        public readonly byte[] Operand;
+        public readonly ReadOnlyMemory<byte> Operand;
 
         private static readonly int[] OperandSizePrefixTable = new int[256];
         private static readonly int[] OperandSizeTable = new int[256];
@@ -29,7 +29,19 @@ namespace Neo.VM
         {
             get
             {
-                return BitConverter.ToInt16(Operand, 0);
+#if NETCOREAPP
+                return BitConverter.ToInt16(Operand.Span);
+#else
+                if (Operand.Length < sizeof(short))
+                    throw new InvalidOperationException();
+                unsafe
+                {
+                    fixed (byte* pbyte = Operand.Span)
+                    {
+                        return *(short*)pbyte;
+                    }
+                }
+#endif
             }
         }
 
@@ -37,7 +49,19 @@ namespace Neo.VM
         {
             get
             {
-                return BitConverter.ToInt16(Operand, sizeof(short));
+#if NETCOREAPP
+                return BitConverter.ToInt16(Operand.Span.Slice(2, 2));
+#else
+                if (Operand.Length < sizeof(short) * 2)
+                    throw new InvalidOperationException();
+                unsafe
+                {
+                    fixed (byte* pbyte = &Operand.Span[sizeof(short)])
+                    {
+                        return *(short*)pbyte;
+                    }
+                }
+#endif
             }
         }
 
@@ -70,68 +94,25 @@ namespace Neo.VM
         internal Instruction(byte[] script, int ip)
         {
             this.OpCode = (OpCode)script[ip++];
+            int operandSizePrefix = OperandSizePrefixTable[(int)OpCode];
             int operandSize = 0;
-            switch (OperandSizePrefixTable[(int)OpCode])
+            switch (operandSizePrefix)
             {
                 case 0:
                     operandSize = OperandSizeTable[(int)OpCode];
                     break;
                 case 1:
-                    operandSize = ReadByte(script, ref ip);
+                    operandSize = script[ip];
                     break;
                 case 2:
-                    operandSize = ReadUInt16(script, ref ip);
+                    operandSize = BitConverter.ToUInt16(script, ip);
                     break;
                 case 4:
-                    operandSize = ReadInt32(script, ref ip);
+                    operandSize = BitConverter.ToInt32(script, ip);
                     break;
             }
             if (operandSize > 0)
-                this.Operand = ReadBytes(script, ref ip, operandSize);
-        }
-
-        private static byte ReadByte(byte[] script, ref int ip)
-        {
-            if (ip + sizeof(byte) > script.Length)
-                throw new InvalidOperationException();
-            return script[ip++];
-        }
-
-        private static byte[] ReadBytes(byte[] script, ref int ip, int count)
-        {
-            if (ip + count > script.Length)
-                throw new InvalidOperationException();
-            byte[] buffer = new byte[count];
-            Unsafe.MemoryCopy(script, ip, buffer, 0, count);
-            ip += count;
-            return buffer;
-        }
-
-        public byte[] ReadBytes(int offset, int count)
-        {
-            if (offset + count > Operand.Length)
-                throw new InvalidOperationException();
-            byte[] buffer = new byte[count];
-            Unsafe.MemoryCopy(Operand, offset, buffer, 0, count);
-            return buffer;
-        }
-
-        private static int ReadInt32(byte[] script, ref int ip)
-        {
-            if (ip + sizeof(int) > script.Length)
-                throw new InvalidOperationException();
-            int value = Unsafe.ToInt32(script, ip);
-            ip += sizeof(int);
-            return value;
-        }
-
-        private static ushort ReadUInt16(byte[] script, ref int ip)
-        {
-            if (ip + sizeof(ushort) > script.Length)
-                throw new InvalidOperationException();
-            ushort value = Unsafe.ToUInt16(script, ip);
-            ip += sizeof(ushort);
-            return value;
+                this.Operand = new ReadOnlyMemory<byte>(script, ip + operandSizePrefix, operandSize);
         }
     }
 }
