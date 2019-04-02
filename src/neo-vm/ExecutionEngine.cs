@@ -278,6 +278,8 @@ namespace Neo.VM
                             }
                             if (fValue)
                                 context.InstructionPointer = offset;
+                            else
+                                context.InstructionPointer += 3;
                             return true;
                         }
                     case OpCode.CALL:
