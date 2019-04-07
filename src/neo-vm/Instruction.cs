@@ -28,6 +28,7 @@ namespace Neo.VM
 
         public short TokenI16
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return BitConverter.ToInt16(Operand, 0);
@@ -36,6 +37,7 @@ namespace Neo.VM
 
         public short TokenI16_1
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return BitConverter.ToInt16(Operand, sizeof(short));
@@ -44,6 +46,7 @@ namespace Neo.VM
 
         public string TokenString
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return Encoding.ASCII.GetString(Operand);
@@ -52,6 +55,7 @@ namespace Neo.VM
 
         public uint TokenU32
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return BitConverter.ToUInt32(Operand, 0);
