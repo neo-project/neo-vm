@@ -5,8 +5,8 @@
 </p>
 
 <p align="center">
-  <a href='https://coveralls.io/github/shargon/neo-vm?branch=shargon-master'>
-    <img src='https://coveralls.io/repos/github/shargon/neo-vm/badge.svg?branch=shargon-master' alt='Coverage Status' />
+  <a href='https://coveralls.io/github/neo-project/neo-vm?branch=master'>
+    <img src='https://coveralls.io/repos/github/neo-project/neo-vm/badge.svg?branch=master' alt='Coverage Status' />
   </a>
   <a href="https://travis-ci.org/neo-project/neo-vm">
     <img src="https://travis-ci.org/neo-project/neo-vm.svg?branch=master">
