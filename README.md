@@ -4,7 +4,10 @@
     width="250px">
 </p>
 
-<p align="center">      
+<p align="center">
+  <a href='https://coveralls.io/github/neo-project/neo-vm?branch=master'>
+    <img src='https://coveralls.io/repos/github/neo-project/neo-vm/badge.svg?branch=master' alt='Coverage Status' />
+  </a>
   <a href="https://travis-ci.org/neo-project/neo-vm">
     <img src="https://travis-ci.org/neo-project/neo-vm.svg?branch=master">
   </a>
