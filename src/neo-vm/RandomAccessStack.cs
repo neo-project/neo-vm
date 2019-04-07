@@ -44,10 +44,12 @@ namespace Neo.VM
         public T Peek(int index = 0)
         {
             if (index >= list.Count) throw new InvalidOperationException();
-            if (index < 0) index += list.Count;
-            if (index < 0) throw new InvalidOperationException();
-            index = list.Count - index - 1;
-            return list[index];
+            if (index < 0)
+            {
+                index += list.Count;
+                if (index < 0) throw new InvalidOperationException();
+            }
+            return list[(list.Count - index - 1)];
         }
 
         public T Pop()
@@ -63,8 +65,11 @@ namespace Neo.VM
         public T Remove(int index)
         {
             if (index >= list.Count) throw new InvalidOperationException();
-            if (index < 0) index += list.Count;
-            if (index < 0) throw new InvalidOperationException();
+            if (index < 0)
+            {
+                index += list.Count;
+                if (index < 0) throw new InvalidOperationException();
+            }
             index = list.Count - index - 1;
             T item = list[index];
             list.RemoveAt(index);
@@ -74,10 +79,12 @@ namespace Neo.VM
         public void Set(int index, T item)
         {
             if (index >= list.Count) throw new InvalidOperationException();
-            if (index < 0) index += list.Count;
-            if (index < 0) throw new InvalidOperationException();
-            index = list.Count - index - 1;
-            list[index] = item;
+            if (index < 0)
+            {
+                index += list.Count;
+                if (index < 0) throw new InvalidOperationException();
+            }
+            list[(list.Count - index - 1)] = item;
         }
     }
 }

@@ -34,6 +34,7 @@ namespace Neo.VM
 
         public Instruction CurrentInstruction
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return GetInstruction(InstructionPointer);
@@ -45,6 +46,7 @@ namespace Neo.VM
         /// </summary>
         public Instruction NextInstruction
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 return GetInstruction(InstructionPointer + CurrentInstruction.Size);
