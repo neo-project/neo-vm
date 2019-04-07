@@ -1,23 +1,39 @@
 using System.IO;
 using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.Test.Extensions;
 using Neo.Test.Types;
-using Xunit;
 
 namespace Neo.Test
 {
+    [TestClass]
     public class UtVMJson : VMJsonTestBase
     {
-        [Theory]
-        [InlineData("./Tests/Others")]
-        [InlineData("./Tests/OpCodes/Arrays")]
-        [InlineData("./Tests/OpCodes/Stack")]
-        [InlineData("./Tests/OpCodes/Splice")]
-        [InlineData("./Tests/OpCodes/Control")]
-        [InlineData("./Tests/OpCodes/Push")]
-        [InlineData("./Tests/OpCodes/Numeric")]
-        [InlineData("./Tests/OpCodes/Exceptions")]
-        public void TestJson(string path)
+        [TestMethod]
+        public void TestOthers() => TestJson("./Tests/Others");
+
+        [TestMethod]
+        public void TestOpCodesArrays() => TestJson("./Tests/OpCodes/Arrays");
+
+        [TestMethod]
+        public void TestOpCodesStack() => TestJson("./Tests/OpCodes/Stack");
+
+        [TestMethod]
+        public void TestOpCodesSplice() => TestJson("./Tests/OpCodes/Splice");
+
+        [TestMethod]
+        public void TestOpCodesControl() => TestJson("./Tests/OpCodes/Control");
+
+        [TestMethod]
+        public void TestOpCodesPush() => TestJson("./Tests/OpCodes/Push");
+
+        [TestMethod]
+        public void TestOpCodesNumeric() => TestJson("./Tests/OpCodes/Numeric");
+
+        [TestMethod]
+        public void TestOpCodesExceptions() => TestJson("./Tests/OpCodes/Exceptions");
+
+        private void TestJson(string path)
         {
             foreach (var file in Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
             {
