@@ -16,7 +16,10 @@ namespace Neo.Test
         {
             using (var script = new ScriptBuilder())
             {
+                Assert.AreEqual(0, script.Offset);
                 script.Emit(OpCode.NOP);
+                Assert.AreEqual(1, script.Offset);
+
                 CollectionAssert.AreEqual(new byte[] { 0x61 }, script.ToArray());
             }
 
