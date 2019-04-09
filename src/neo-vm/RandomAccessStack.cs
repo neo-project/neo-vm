@@ -32,7 +32,7 @@ namespace Neo.VM
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return list.GetEnumerator();
         }
 
         public void Insert(int index, T item)
