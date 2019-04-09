@@ -1,0 +1,417 @@
+﻿{
+    "category": "Control",
+    "name": "APPCALL",
+    "tests":
+    [
+        {
+            "name": "APPCALL Without params",
+            "script": "0x67",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xBBB49318F0DFB016194B90CACB362D74F20BE730",
+                                "instructionPointer": 0,
+                                "nextInstruction": "APPCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "APPCALL With Operand and Script",
+            "script": "0x67DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+            "scriptTable":
+            [
+                {
+                    "script": "0x51"
+                }
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+                                "instructionPointer": 0,
+                                "nextInstruction": "PUSH1"
+                            },
+                            {
+                                "scriptHash": "0x90864E0FC912D9233E40CE632499352147905090",
+                                "instructionPointer": 21,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+                                "instructionPointer": 1,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            },
+                            {
+                                "scriptHash": "0x90864E0FC912D9233E40CE632499352147905090",
+                                "instructionPointer": 21,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x90864E0FC912D9233E40CE632499352147905090",
+                                "instructionPointer": 21,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "APPCALL With Operand and Script, but without a valid script",
+            "script": "0x67DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+            "scriptTable":
+            [
+                {
+                    "script": "0x52"
+                }
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x90864E0FC912D9233E40CE632499352147905090",
+                                "instructionPointer": 0,
+                                "nextInstruction": "APPCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "APPCALL With Operand and without Script",
+            "script": "0x67DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+            "scriptTable":
+            [
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x90864E0FC912D9233E40CE632499352147905090",
+                                "instructionPointer": 0,
+                                "nextInstruction": "APPCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "APPCALL Without Operand and Script",
+            "script": "0x14DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B670000000000000000000000000000000000000000",
+            "scriptTable":
+            [
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x2BBCC65686B48D71111B73E6AAF7360D1D0AC616",
+                                "instructionPointer": 21,
+                                "nextInstruction": "APPCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x2BBCC65686B48D71111B73E6AAF7360D1D0AC616",
+                                "instructionPointer": 21,
+                                "nextInstruction": "APPCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "APPCALL Without ScriptTable",
+            "script": "0x14DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B670000000000000000000000000000000000000000",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x2BBCC65686B48D71111B73E6AAF7360D1D0AC616",
+                                "instructionPointer": 21,
+                                "nextInstruction": "APPCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x2BBCC65686B48D71111B73E6AAF7360D1D0AC616",
+                                "instructionPointer": 21,
+                                "nextInstruction": "APPCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "APPCALL Without Operand and wrong push [MAP]",
+            "script": "0xC7670000000000000000000000000000000000000000",
+            "scriptTable":
+            [
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x7E6D9793664E6FF5B5A4125B42264DA4076534B8",
+                                "instructionPointer": 1,
+                                "nextInstruction": "APPCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x7E6D9793664E6FF5B5A4125B42264DA4076534B8",
+                                "instructionPointer": 1,
+                                "nextInstruction": "APPCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "APPCALL Without Operand and wrong push [Integer=1]",
+            "script": "0x51670000000000000000000000000000000000000000",
+            "scriptTable":
+            [
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x6462F7B2629455BBA72B5E67ACA0384BF0D21895",
+                                "instructionPointer": 1,
+                                "nextInstruction": "APPCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x6462F7B2629455BBA72B5E67ACA0384BF0D21895",
+                                "instructionPointer": 1,
+                                "nextInstruction": "APPCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
