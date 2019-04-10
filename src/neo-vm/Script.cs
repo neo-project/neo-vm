@@ -9,7 +9,7 @@ namespace Neo.VM
 
         private readonly byte[] _value;
         private readonly ICrypto _crypto;
-        private readonly IDictionary<int, Instruction> instructions = new Dictionary<int, Instruction>();
+        private readonly IDictionary<int, Instruction> _instructions = new Dictionary<int, Instruction>();
 
         /// <summary>
         /// Cached script hash
@@ -75,10 +75,10 @@ namespace Neo.VM
         public Instruction GetInstruction(int ip)
         {
             if (ip >= Length) return Instruction.RET;
-            if (!instructions.TryGetValue(ip, out Instruction instruction))
+            if (!_instructions.TryGetValue(ip, out Instruction instruction))
             {
                 instruction = new Instruction(_value, ip);
-                instructions.Add(ip, instruction);
+                _instructions.Add(ip, instruction);
             }
             return instruction;
         }
