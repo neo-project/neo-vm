@@ -1,0 +1,382 @@
+﻿{
+    "category": "Control",
+    "name": "TAILCALL",
+    "tests":
+    [
+        {
+            "name": "TAILCALL Without params",
+            "script": "0x69",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xE97675E96A56A4207930165E30651FAFCB71BE44",
+                                "instructionPointer": 0,
+                                "nextInstruction": "TAILCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "TAILCALL With Operand and Script",
+            "script": "0x69DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+            "scriptTable":
+            [
+                {
+                    "script": "0x51"
+                }
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+                                "instructionPointer": 0,
+                                "nextInstruction": "PUSH1"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+                                "instructionPointer": 1,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "TAILCALL With Operand and Script, but without a valid script",
+            "script": "0x69DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+            "scriptTable":
+            [
+                {
+                    "script": "0x52"
+                }
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xF8B0BE10CC86D9C358B8A0FBBEFC147F11B90704",
+                                "instructionPointer": 0,
+                                "nextInstruction": "TAILCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "TAILCALL With Operand and without Script",
+            "script": "0x69DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B",
+            "scriptTable":
+            [
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xF8B0BE10CC86D9C358B8A0FBBEFC147F11B90704",
+                                "instructionPointer": 0,
+                                "nextInstruction": "TAILCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "TAILCALL Without Operand and Script",
+            "script": "0x14DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B690000000000000000000000000000000000000000",
+            "scriptTable":
+            [
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xFA683D49D68A197609CBAFC2B7589E6FE850F69C",
+                                "instructionPointer": 21,
+                                "nextInstruction": "TAILCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xFA683D49D68A197609CBAFC2B7589E6FE850F69C",
+                                "instructionPointer": 21,
+                                "nextInstruction": "TAILCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "TAILCALL Without ScriptTable",
+            "script": "0x14DA1745E9B549BD0BFA1A569971C77EBA30CD5A4B690000000000000000000000000000000000000000",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xFA683D49D68A197609CBAFC2B7589E6FE850F69C",
+                                "instructionPointer": 21,
+                                "nextInstruction": "TAILCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xFA683D49D68A197609CBAFC2B7589E6FE850F69C",
+                                "instructionPointer": 21,
+                                "nextInstruction": "TAILCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0xDA1745E9B549BD0BFA1A569971C77EBA30CD5A4B"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "TAILCALL Without Operand and wrong push [MAP]",
+            "script": "0xC7690000000000000000000000000000000000000000",
+            "scriptTable":
+            [
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x8A9100D16888F8C7E5763A124A05647924517317",
+                                "instructionPointer": 1,
+                                "nextInstruction": "TAILCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x8A9100D16888F8C7E5763A124A05647924517317",
+                                "instructionPointer": 1,
+                                "nextInstruction": "TAILCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "TAILCALL Without Operand and wrong push [Integer=1]",
+            "script": "0x51690000000000000000000000000000000000000000",
+            "scriptTable":
+            [
+            ],
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xE0DEFB3979EBFC4980F0275C89A1C007EE712135",
+                                "instructionPointer": 1,
+                                "nextInstruction": "TAILCALL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xE0DEFB3979EBFC4980F0275C89A1C007EE712135",
+                                "instructionPointer": 1,
+                                "nextInstruction": "TAILCALL"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
