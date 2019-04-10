@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
@@ -8,6 +9,7 @@ namespace Neo.VM
 
         private readonly byte[] _value;
         private readonly ICrypto _crypto;
+        private readonly IDictionary<int, Instruction> instructions = new Dictionary<int, Instruction>();
 
         /// <summary>
         /// Cached script hash
@@ -68,6 +70,17 @@ namespace Neo.VM
         {
             _scriptHash = hash;
             _value = script;
+        }
+
+        public Instruction GetInstruction(int ip)
+        {
+            if (ip >= Length) return Instruction.RET;
+            if (!instructions.TryGetValue(ip, out Instruction instruction))
+            {
+                instruction = new Instruction(_value, ip);
+                instructions.Add(ip, instruction);
+            }
+            return instruction;
         }
 
         public static implicit operator byte[](Script script)

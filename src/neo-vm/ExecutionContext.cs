@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
     public class ExecutionContext
     {
-        private readonly Dictionary<int, Instruction> instructions = new Dictionary<int, Instruction>();
-
         /// <summary>
         /// Number of items to be returned
         /// </summary>
-        internal int RVCount { get; }
+        public int RVCount { get; }
 
         /// <summary>
         /// Script
@@ -76,16 +73,8 @@ namespace Neo.VM
             this.Script = script;
         }
 
-        private Instruction GetInstruction(int ip)
-        {
-            if (ip >= Script.Length) return Instruction.RET;
-            if (!instructions.TryGetValue(ip, out Instruction instruction))
-            {
-                instruction = new Instruction(Script, ip);
-                instructions.Add(ip, instruction);
-            }
-            return instruction;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Instruction GetInstruction(int ip) => Script.GetInstruction(ip);
 
         internal bool MoveNext()
         {
