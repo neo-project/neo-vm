@@ -1,8 +1,8 @@
-﻿using Neo.Test.Cryptography;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
+using Neo.Test.Cryptography;
 
 namespace Neo.Test.Extensions
 {
@@ -19,11 +19,6 @@ namespace Neo.Test.Extensions
         public static byte[] Sha256(this IEnumerable<byte> value)
         {
             return _sha256.Value.ComputeHash(value.ToArray());
-        }
-
-        public static byte[] Sha256(this byte[] value, int offset, int count)
-        {
-            return _sha256.Value.ComputeHash(value, offset, count);
         }
     }
 }
