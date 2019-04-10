@@ -27,12 +27,7 @@ namespace Neo.VM
             engine.State &= ~VMState.BREAK;
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK))
             {
-                engine.ExecuteNext();
-                if (engine.State == VMState.NONE && engine.InvocationStack.Count > 0 && break_points.Count > 0)
-                {
-                    if (break_points.TryGetValue(engine.CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)engine.CurrentContext.InstructionPointer))
-                        engine.State = VMState.BREAK;
-                }
+                ExecuteNext();
             }
         }
 
@@ -44,10 +39,22 @@ namespace Neo.VM
             return true;
         }
 
+        void ExecuteNext()
+        {
+            engine.ExecuteNext();
+            if (engine.State == VMState.NONE && engine.InvocationStack.Count > 0 && break_points.Count > 0)
+            {
+                if (break_points.TryGetValue(engine.CurrentContext.ScriptHash, out HashSet<uint> hashset) && hashset.Contains((uint)engine.CurrentContext.InstructionPointer))
+                    engine.State = VMState.BREAK;
+            }
+        }
+
         public void StepInto()
         {
             if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT)) return;
-            engine.ExecuteNext();
+
+            ExecuteNext();
+
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
         }
@@ -57,7 +64,9 @@ namespace Neo.VM
             engine.State &= ~VMState.BREAK;
             int c = engine.InvocationStack.Count;
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count >= c)
-                engine.ExecuteNext();
+            {
+                ExecuteNext();
+            }
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
         }
@@ -69,8 +78,9 @@ namespace Neo.VM
             int c = engine.InvocationStack.Count;
             do
             {
-                engine.ExecuteNext();
-            } while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count > c);
+                ExecuteNext();
+            }
+            while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count > c);
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
         }
