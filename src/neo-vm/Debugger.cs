@@ -52,9 +52,7 @@ namespace Neo.VM
         public void StepInto()
         {
             if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT)) return;
-
             engine.ExecuteNext();
-
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
         }
