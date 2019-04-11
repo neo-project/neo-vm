@@ -739,6 +739,7 @@ namespace Neo.VM
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            // We can avoid CheckBigInteger because the comparison is very fast
                             context.EvaluationStack.Push(x1 == x2);
                             CheckStackSize(true, -1);
                             break;
@@ -747,6 +748,7 @@ namespace Neo.VM
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            // We can avoid CheckBigInteger because the comparison is very fast
                             context.EvaluationStack.Push(x1 != x2);
                             CheckStackSize(true, -1);
                             break;
