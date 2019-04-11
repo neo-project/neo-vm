@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
@@ -8,28 +8,6 @@ namespace Neo.VM
 
         private readonly byte[] _value;
         private readonly ICrypto _crypto;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="crypto">Crypto</param>
-        /// <param name="script">Script</param>
-        public Script(ICrypto crypto, byte[] script)
-        {
-            _crypto = crypto;
-            _value = script;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="hash">Hash</param>
-        /// <param name="script">Script</param>
-        internal Script(byte[] hash, byte[] script)
-        {
-            _scriptHash = hash;
-            _value = script;
-        }
 
         /// <summary>
         /// Cached script hash
@@ -68,6 +46,28 @@ namespace Neo.VM
             {
                 return (OpCode)_value[index];
             }
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="crypto">Crypto</param>
+        /// <param name="script">Script</param>
+        public Script(ICrypto crypto, byte[] script)
+        {
+            _crypto = crypto;
+            _value = script;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="hash">Hash</param>
+        /// <param name="script">Script</param>
+        internal Script(byte[] hash, byte[] script)
+        {
+            _scriptHash = hash;
+            _value = script;
         }
 
         public static implicit operator byte[](Script script)
