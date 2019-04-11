@@ -9,7 +9,7 @@ namespace Neo.VM
 
         private readonly byte[] _value;
         private readonly ICrypto _crypto;
-        private readonly IDictionary<int, Instruction> _instructions = new Dictionary<int, Instruction>();
+        private readonly Dictionary<int, Instruction> _instructions = new Dictionary<int, Instruction>();
 
         /// <summary>
         /// Cached script hash
