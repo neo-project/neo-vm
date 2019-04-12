@@ -1,0 +1,197 @@
+﻿{
+    "category": "Stack",
+    "name": "DUPFROMALTSTACK",
+    "tests":
+    [
+        {
+            "name": "Without push",
+            "script": "0x6A",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x41C98A140039816273E50DB317422C11C2BFCC88",
+                                "instructionPointer": 0,
+                                "nextInstruction": "DUPFROMALTSTACK"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test [BigInteger]",
+            "script": "0x556B6A",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x9E237DBCA467723350E01F8793EACE9AADD9E8EA",
+                                "instructionPointer": 2,
+                                "nextInstruction": "DUPFROMALTSTACK",
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x9E237DBCA467723350E01F8793EACE9AADD9E8EA",
+                                "instructionPointer": 3,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ],
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 5
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test [Interop]",
+            "script": "0x682953797374656D2E457865637574696F6E456E67696E652E476574536372697074436F6E7461696E65726B6A",
+            "message": "0x00",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xB70D49517C578FFF5006075EC2C5718D3E02E19B",
+                                "instructionPointer": 44,
+                                "nextInstruction": "DUPFROMALTSTACK",
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Interop",
+                                        "value": "MessageProvider"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xB70D49517C578FFF5006075EC2C5718D3E02E19B",
+                                "instructionPointer": 45,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Interop",
+                                        "value": "MessageProvider"
+                                    }
+                                ],
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Interop",
+                                        "value": "MessageProvider"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Interop",
+                                "value": "MessageProvider"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
