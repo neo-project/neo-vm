@@ -738,9 +738,7 @@ namespace Neo.VM
                     case OpCode.NUMEQUAL:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
-                            if (!CheckBigInteger(x2)) return false;
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
-                            if (!CheckBigInteger(x1)) return false;
                             context.EvaluationStack.Push(x1 == x2);
                             CheckStackSize(true, -1);
                             break;
@@ -748,9 +746,7 @@ namespace Neo.VM
                     case OpCode.NUMNOTEQUAL:
                         {
                             BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
-                            if (!CheckBigInteger(x2)) return false;
                             BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
-                            if (!CheckBigInteger(x1)) return false;
                             context.EvaluationStack.Push(x1 != x2);
                             CheckStackSize(true, -1);
                             break;
