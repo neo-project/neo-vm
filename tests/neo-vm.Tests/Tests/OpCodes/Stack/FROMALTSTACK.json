@@ -1,0 +1,140 @@
+﻿{
+    "category": "Stack",
+    "name": "FROMALTSTACK",
+    "tests":
+    [
+        {
+            "name": "Without push",
+            "script": "0x6C",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x5413E33706B4FFE766E2B49261546FE465B7F54F",
+                                "instructionPointer": 0,
+                                "nextInstruction": "FROMALTSTACK"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Without push in Alt Stack",
+            "script": "0x556C",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x3257DEB31DCD4970C7A7D89EDCA6C1B1F6E4E707",
+                                "instructionPointer": 1,
+                                "nextInstruction": "FROMALTSTACK",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real Test",
+            "script": "0x556B6C",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x3D8572940E6A685DF8DBF3485A6DD12796FB46A8",
+                                "instructionPointer": 2,
+                                "nextInstruction": "FROMALTSTACK",
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x3D8572940E6A685DF8DBF3485A6DD12796FB46A8",
+                                "instructionPointer": 3,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 5
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
