@@ -589,7 +589,6 @@ namespace Neo.VM
                     case OpCode.INC:
                         {
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
-                            if (!CheckBigInteger(x)) return false;
                             x += 1;
                             if (!CheckBigInteger(x)) return false;
                             context.EvaluationStack.Push(x);
@@ -598,7 +597,6 @@ namespace Neo.VM
                     case OpCode.DEC:
                         {
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
-                            if (!CheckBigInteger(x)) return false;
                             x -= 1;
                             if (!CheckBigInteger(x)) return false;
                             context.EvaluationStack.Push(x);
