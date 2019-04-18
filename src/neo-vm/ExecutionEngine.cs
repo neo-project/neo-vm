@@ -1284,7 +1284,7 @@ namespace Neo.VM
         protected virtual ExecutionContext LoadScript(Script script, byte[] callingScriptHash = null, int rvcount = -1)
         {
             ExecutionContext context = new ExecutionContext(script, callingScriptHash, rvcount);
-            if (InvocationStack.Count == 0)
+            if (EntryScriptHash is null)
                 EntryScriptHash = context.ScriptHash;
             InvocationStack.Push(context);
             return context;
