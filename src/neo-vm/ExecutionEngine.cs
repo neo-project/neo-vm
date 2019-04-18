@@ -1207,7 +1207,7 @@ namespace Neo.VM
                             int pcount = instruction.Operand[1];
                             if (context.EvaluationStack.Count < pcount) return false;
                             ExecutionContext context_call = LoadScript(context.Script, rvcount);
-                            context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16_1;
+                            context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16_1 + 2;
                             if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
                             context.EvaluationStack.CopyTo(context_call.EvaluationStack, pcount);
                             for (int i = 0; i < pcount; i++)
