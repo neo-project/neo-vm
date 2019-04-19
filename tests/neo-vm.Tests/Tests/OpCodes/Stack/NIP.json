@@ -1,0 +1,169 @@
+﻿{
+    "category": "Stack",
+    "name": "NIP",
+    "tests":
+    [
+        {
+            "name": "Without push",
+            "script": "0x77",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xAE552BE33415B13B347B4DA9AF4A8DF13003886C",
+                                "instructionPointer": 0,
+                                "nextInstruction": "NIP"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Without two stack items",
+            "script": "0x5577",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xD6AE3179EFA9E2386523418B3BD006CB1FFCCC54",
+                                "instructionPointer": 1,
+                                "nextInstruction": "NIP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xD6AE3179EFA9E2386523418B3BD006CB1FFCCC54",
+                                "instructionPointer": 1,
+                                "nextInstruction": "NIP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 5
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test",
+            "script": "0x00009177",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x977A561814D8A884C9890522AFAE17532D6F70B7",
+                                "instructionPointer": 3,
+                                "nextInstruction": "NIP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Boolean",
+                                        "value": true
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x977A561814D8A884C9890522AFAE17532D6F70B7",
+                                "instructionPointer": 4,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Boolean",
+                                        "value": true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Boolean",
+                                "value": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
