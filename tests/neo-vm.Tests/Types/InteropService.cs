@@ -16,7 +16,7 @@ namespace Neo.Test.Types
                     }
                 case "System.ExecutionEngine.GetCallingScriptHash":
                     {
-                        engine.CurrentContext.EvaluationStack.Push(engine.CurrentContext.CallingScriptHash);
+                        engine.CurrentContext.EvaluationStack.Push(engine.CurrentContext.CallingScriptHash ?? new byte[0]);
                         return true;
                     }
                 case "System.ExecutionEngine.GetExecutingScriptHash":
