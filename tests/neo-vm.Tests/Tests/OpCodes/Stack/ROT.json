@@ -223,6 +223,31 @@
                             }
                         ]
                     }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 1
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 3
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 2
+                            }
+                        ]
+                    }
                 }
             ]
         }

@@ -1,11 +1,11 @@
 ﻿{
     "category": "Stack",
-    "name": "SWAP",
+    "name": "OVER",
     "tests":
     [
         {
             "name": "Without push",
-            "script": "0x7C",
+            "script": "0x78",
             "steps":
             [
                 {
@@ -19,9 +19,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x9EE8159814B4207AF1287D798A6E18D5924F6B50",
+                                "scriptHash": "0x4E944B03E84FDC97F2FB68CB62B73D000EF5BE71",
                                 "instructionPointer": 0,
-                                "nextInstruction": "SWAP"
+                                "nextInstruction": "OVER"
                             }
                         ]
                     }
@@ -30,7 +30,7 @@
         },
         {
             "name": "With one push",
-            "script": "0x007C",
+            "script": "0x0078",
             "steps":
             [
                 {
@@ -44,9 +44,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x87E8259103A041DBF0212617DECCED255E7B529F",
+                                "scriptHash": "0xCC7A0EED4DA27DF89934B4EECA682218408A8429",
                                 "instructionPointer": 1,
-                                "nextInstruction": "SWAP",
+                                "nextInstruction": "OVER",
                                 "evaluationStack":
                                 [
                                     {
@@ -69,9 +69,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x87E8259103A041DBF0212617DECCED255E7B529F",
+                                "scriptHash": "0xCC7A0EED4DA27DF89934B4EECA682218408A8429",
                                 "instructionPointer": 1,
-                                "nextInstruction": "SWAP",
+                                "nextInstruction": "OVER",
                                 "evaluationStack":
                                 [
                                     {
@@ -87,7 +87,7 @@
         },
         {
             "name": "Real test with 2 items",
-            "script": "0x51527C",
+            "script": "0x515278",
             "steps":
             [
                 {
@@ -102,9 +102,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x5384F8B71D40DE6F002C5ED90D8C20B05CAF6819",
+                                "scriptHash": "0x46504C72FD722450625CDC35C11BC227DD766C1C",
                                 "instructionPointer": 2,
-                                "nextInstruction": "SWAP",
+                                "nextInstruction": "OVER",
                                 "evaluationStack":
                                 [
                                     {
@@ -131,7 +131,7 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x5384F8B71D40DE6F002C5ED90D8C20B05CAF6819",
+                                "scriptHash": "0x46504C72FD722450625CDC35C11BC227DD766C1C",
                                 "instructionPointer": 3,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -143,8 +143,37 @@
                                     {
                                         "type": "Integer",
                                         "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
                                     }
                                 ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 1
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 2
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 1
                             }
                         ]
                     }
@@ -153,7 +182,7 @@
         },
         {
             "name": "Real test with 3 items",
-            "script": "0x5152537C",
+            "script": "0x51525378",
             "steps":
             [
                 {
@@ -169,9 +198,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x7348461A172D40C7BBC53EB1C5D51898F47E5EE4",
+                                "scriptHash": "0xF14DD06CFEDEF7B5FC631BA25B71D8EA15BE5606",
                                 "instructionPointer": 3,
-                                "nextInstruction": "SWAP",
+                                "nextInstruction": "OVER",
                                 "evaluationStack":
                                 [
                                     {
@@ -202,7 +231,7 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x7348461A172D40C7BBC53EB1C5D51898F47E5EE4",
+                                "scriptHash": "0xF14DD06CFEDEF7B5FC631BA25B71D8EA15BE5606",
                                 "instructionPointer": 4,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -214,6 +243,10 @@
                                     {
                                         "type": "Integer",
                                         "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
                                     },
                                     {
                                         "type": "Integer",
@@ -241,6 +274,10 @@
                             {
                                 "type": "Integer",
                                 "value": 3
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 2
                             },
                             {
                                 "type": "Integer",
