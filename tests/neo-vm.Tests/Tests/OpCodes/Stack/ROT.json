@@ -1,0 +1,230 @@
+﻿{
+    "category": "Stack",
+    "name": "ROT",
+    "tests":
+    [
+        {
+            "name": "Without push",
+            "script": "0x7B",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x24A8837CC0C388783111CB3C70A908110A3DB01F",
+                                "instructionPointer": 0,
+                                "nextInstruction": "ROT"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "With one push",
+            "script": "0x007B",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xEBE1C98CCDF09D6889493CAF9511F33F28AC31BD",
+                                "instructionPointer": 1,
+                                "nextInstruction": "ROT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xEBE1C98CCDF09D6889493CAF9511F33F28AC31BD",
+                                "instructionPointer": 1,
+                                "nextInstruction": "ROT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "With 2 items",
+            "script": "0x51527B",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xE8429F59B9BB57BBBA5FB97A2A846DF53D56C6A8",
+                                "instructionPointer": 2,
+                                "nextInstruction": "ROT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xE8429F59B9BB57BBBA5FB97A2A846DF53D56C6A8",
+                                "instructionPointer": 2,
+                                "nextInstruction": "ROT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test with 3 items",
+            "script": "0x5152537B",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x14A1B62A56570F7C2B02D8B009994D7012532A1A",
+                                "instructionPointer": 3,
+                                "nextInstruction": "ROT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x14A1B62A56570F7C2B02D8B009994D7012532A1A",
+                                "instructionPointer": 4,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
