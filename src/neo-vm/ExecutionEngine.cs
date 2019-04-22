@@ -96,7 +96,6 @@ namespace Neo.VM
         /// <summary>
         /// Check if the is possible to overflow the MaxInvocationStack
         /// </summary>
-        /// <param name="stack">Stack</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckMaxInvocationStack() => InvocationStack.Count < MaxInvocationStackSize;
@@ -120,8 +119,8 @@ namespace Neo.VM
         /// <summary>
         /// Check if the is possible to overflow the MaxStackSize
         /// </summary>
-        /// <param name="count">Stack item count</param>
         /// <param name="strict">Is stack count strict?</param>
+        /// <param name="count">Stack item count</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckStackSize(bool strict, int count = 1)
