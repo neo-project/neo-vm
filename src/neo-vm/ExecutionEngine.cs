@@ -1064,10 +1064,10 @@ namespace Neo.VM
 
                                 VMArray result = null;
 
-                                if (array is Struct)
+                                if (array is Struct s)
                                 {
                                     if (instruction.OpCode == OpCode.NEWSTRUCT)
-                                        result = array;
+                                        result = s.Clone();
                                 }
                                 else
                                 {
