@@ -1,0 +1,292 @@
+﻿{
+    "category": "Stack",
+    "name": "XDROP",
+    "tests":
+    [
+        {
+            "name": "Without push",
+            "script": "0x6D",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xECD8BB6107B098FC608B2C0AD3B8147549EAC11C",
+                                "instructionPointer": 0,
+                                "nextInstruction": "XDROP"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Overflow drop",
+            "script": "0x535251536D",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xC4B0ED142B6643896418FEB354A3E3FC957A13E9",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XDROP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xC4B0ED142B6643896418FEB354A3E3FC957A13E9",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XDROP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Wrong index type [Map]",
+            "script": "0x535251C76D",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x6A717D954C9DF69D29E533F441960F2440454C7E",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XDROP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+
+                                        }
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x6A717D954C9DF69D29E533F441960F2440454C7E",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XDROP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test",
+            "script": "0x535251516D",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xBCA3D105E94C00868726B846EFFD7E6575D9C281",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XDROP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xBCA3D105E94C00868726B846EFFD7E6575D9C281",
+                                "instructionPointer": 5,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 1
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 3
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
