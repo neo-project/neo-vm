@@ -9,11 +9,305 @@ namespace Neo.VM
         PUSH0 = 0x00,
         PUSHF = PUSH0,
         /// <summary>
-        /// 0x01-0x4B The next opcode bytes is data to be pushed onto the stack
+        /// Push 1 byte on the evaluation stack.
         /// </summary>
-        PUSHBYTES1 = 0x01,
-        PUSHBYTES75 = 0x4B,
+        PUSHBYTES1 = 0x1,
         /// <summary>
+        /// Push 2 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES2 = 0x2,
+        /// <summary>
+        /// Push 3 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES3 = 0x3,
+        /// <summary>
+        /// Push 4 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES4 = 0x4,
+        /// <summary>
+        /// Push 5 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES5 = 0x5,
+        /// <summary>
+        /// Push 6 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES6 = 0x6,
+        /// <summary>
+        /// Push 7 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES7 = 0x7,
+        /// <summary>
+        /// Push 8 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES8 = 0x8,
+        /// <summary>
+        /// Push 9 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES9 = 0x9,
+        /// <summary>
+        /// Push 10 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES10 = 0xa,
+        /// <summary>
+        /// Push 11 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES11 = 0xb,
+        /// <summary>
+        /// Push 12 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES12 = 0xc,
+        /// <summary>
+        /// Push 13 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES13 = 0xd,
+        /// <summary>
+        /// Push 14 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES14 = 0xe,
+        /// <summary>
+        /// Push 15 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES15 = 0xf,
+        /// <summary>
+        /// Push 16 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES16 = 0x10,
+        /// <summary>
+        /// Push 17 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES17 = 0x11,
+        /// <summary>
+        /// Push 18 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES18 = 0x12,
+        /// <summary>
+        /// Push 19 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES19 = 0x13,
+        /// <summary>
+        /// Push 20 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES20 = 0x14,
+        /// <summary>
+        /// Push 21 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES21 = 0x15,
+        /// <summary>
+        /// Push 22 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES22 = 0x16,
+        /// <summary>
+        /// Push 23 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES23 = 0x17,
+        /// <summary>
+        /// Push 24 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES24 = 0x18,
+        /// <summary>
+        /// Push 25 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES25 = 0x19,
+        /// <summary>
+        /// Push 26 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES26 = 0x1a,
+        /// <summary>
+        /// Push 27 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES27 = 0x1b,
+        /// <summary>
+        /// Push 28 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES28 = 0x1c,
+        /// <summary>
+        /// Push 29 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES29 = 0x1d,
+        /// <summary>
+        /// Push 30 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES30 = 0x1e,
+        /// <summary>
+        /// Push 31 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES31 = 0x1f,
+        /// <summary>
+        /// Push 32 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES32 = 0x20,
+        /// <summary>
+        /// Push 33 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES33 = 0x21,
+        /// <summary>
+        /// Push 34 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES34 = 0x22,
+        /// <summary>
+        /// Push 35 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES35 = 0x23,
+        /// <summary>
+        /// Push 36 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES36 = 0x24,
+        /// <summary>
+        /// Push 37 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES37 = 0x25,
+        /// <summary>
+        /// Push 38 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES38 = 0x26,
+        /// <summary>
+        /// Push 39 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES39 = 0x27,
+        /// <summary>
+        /// Push 40 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES40 = 0x28,
+        /// <summary>
+        /// Push 41 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES41 = 0x29,
+        /// <summary>
+        /// Push 42 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES42 = 0x2a,
+        /// <summary>
+        /// Push 43 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES43 = 0x2b,
+        /// <summary>
+        /// Push 44 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES44 = 0x2c,
+        /// <summary>
+        /// Push 45 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES45 = 0x2d,
+        /// <summary>
+        /// Push 46 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES46 = 0x2e,
+        /// <summary>
+        /// Push 47 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES47 = 0x2f,
+        /// <summary>
+        /// Push 48 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES48 = 0x30,
+        /// <summary>
+        /// Push 49 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES49 = 0x31,
+        /// <summary>
+        /// Push 50 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES50 = 0x32,
+        /// <summary>
+        /// Push 51 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES51 = 0x33,
+        /// <summary>
+        /// Push 52 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES52 = 0x34,
+        /// <summary>
+        /// Push 53 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES53 = 0x35,
+        /// <summary>
+        /// Push 54 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES54 = 0x36,
+        /// <summary>
+        /// Push 55 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES55 = 0x37,
+        /// <summary>
+        /// Push 56 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES56 = 0x38,
+        /// <summary>
+        /// Push 57 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES57 = 0x39,
+        /// <summary>
+        /// Push 58 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES58 = 0x3a,
+        /// <summary>
+        /// Push 59 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES59 = 0x3b,
+        /// <summary>
+        /// Push 60 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES60 = 0x3c,
+        /// <summary>
+        /// Push 61 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES61 = 0x3d,
+        /// <summary>
+        /// Push 62 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES62 = 0x3e,
+        /// <summary>
+        /// Push 63 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES63 = 0x3f,
+        /// <summary>
+        /// Push 64 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES64 = 0x40,
+        /// <summary>
+        /// Push 65 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES65 = 0x41,
+        /// <summary>
+        /// Push 66 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES66 = 0x42,
+        /// <summary>
+        /// Push 67 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES67 = 0x43,
+        /// <summary>
+        /// Push 68 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES68 = 0x44,
+        /// <summary>
+        /// Push 69 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES69 = 0x45,
+        /// <summary>
+        /// Push 70 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES70 = 0x46,
+        /// <summary>
+        /// Push 71 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES71 = 0x47,
+        /// <summary>
+        /// Push 72 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES72 = 0x48,
+        /// <summary>
+        /// Push 73 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES73 = 0x49,
+        /// <summary>
+        /// Push 74 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES74 = 0x4a,
+        /// <summary>
+        /// Push 75 bytes on the evaluation stack.
+        /// </summary>
+        PUSHBYTES75 = 0x4b,        /// <summary>
         /// The next byte contains the number of bytes to be pushed onto the stack.
         /// </summary>
         PUSHDATA1 = 0x4C,
