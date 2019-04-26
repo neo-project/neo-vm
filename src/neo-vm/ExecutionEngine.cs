@@ -982,12 +982,7 @@ namespace Neo.VM
                                     }
                                 default:
                                     {
-                                        byte[] byteArray = item.GetByteArray();
-                                        int index = (int)key.GetBigInteger();
-                                        if (index < 0 || index >= byteArray.Length) return false;
-                                        context.EvaluationStack.Push((int)byteArray[index]);
-                                        CheckStackSize(true, -1);
-                                        break;
+                                        return false;
                                     }
                             }
                             break;
