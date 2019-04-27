@@ -484,11 +484,7 @@ namespace Neo.VM
                             int index = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (index < 0) return false;
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            if (index > x.Length) return false;
-                            if (index + count > x.Length) count = x.Length - index;
-                            byte[] buffer = new byte[count];
-                            Unsafe.MemoryCopy(x, index, buffer, 0, count);
-                            context.EvaluationStack.Push(buffer);
+                            context.EvaluationStack.Push(x.Skip(index).Take(count).ToArray());
                             CheckStackSize(true, -2);
                             break;
                         }
