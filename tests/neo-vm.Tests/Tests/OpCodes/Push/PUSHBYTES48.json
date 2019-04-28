@@ -70,7 +70,7 @@
                             {
                                 "scriptHash": "0xC4771A90BCBA27F6E456930482F0411BA8D1D12C",
                                 "instructionPointer": 0,
-                                "nextInstruction": "48"
+                                "nextInstruction": "PUSHBYTES48"
                             }
                         ]
                     }
