@@ -47,27 +47,27 @@ namespace Neo.VM
         /// <summary>
         /// Push 10 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES10 = 0x0a,
+        PUSHBYTES10 = 0x0A,
         /// <summary>
         /// Push 11 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES11 = 0x0b,
+        PUSHBYTES11 = 0x0B,
         /// <summary>
         /// Push 12 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES12 = 0x0c,
+        PUSHBYTES12 = 0x0C,
         /// <summary>
         /// Push 13 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES13 = 0x0d,
+        PUSHBYTES13 = 0x0D,
         /// <summary>
         /// Push 14 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES14 = 0x0e,
+        PUSHBYTES14 = 0x0E,
         /// <summary>
         /// Push 15 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES15 = 0x0f,
+        PUSHBYTES15 = 0x0F,
         /// <summary>
         /// Push 16 bytes on the evaluation stack.
         /// </summary>
@@ -111,27 +111,27 @@ namespace Neo.VM
         /// <summary>
         /// Push 26 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES26 = 0x1a,
+        PUSHBYTES26 = 0x1A,
         /// <summary>
         /// Push 27 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES27 = 0x1b,
+        PUSHBYTES27 = 0x1B,
         /// <summary>
         /// Push 28 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES28 = 0x1c,
+        PUSHBYTES28 = 0x1C,
         /// <summary>
         /// Push 29 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES29 = 0x1d,
+        PUSHBYTES29 = 0x1D,
         /// <summary>
         /// Push 30 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES30 = 0x1e,
+        PUSHBYTES30 = 0x1E,
         /// <summary>
         /// Push 31 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES31 = 0x1f,
+        PUSHBYTES31 = 0x1F,
         /// <summary>
         /// Push 32 bytes on the evaluation stack.
         /// </summary>
@@ -175,27 +175,27 @@ namespace Neo.VM
         /// <summary>
         /// Push 42 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES42 = 0x2a,
+        PUSHBYTES42 = 0x2A,
         /// <summary>
         /// Push 43 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES43 = 0x2b,
+        PUSHBYTES43 = 0x2B,
         /// <summary>
         /// Push 44 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES44 = 0x2c,
+        PUSHBYTES44 = 0x2C,
         /// <summary>
         /// Push 45 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES45 = 0x2d,
+        PUSHBYTES45 = 0x2D,
         /// <summary>
         /// Push 46 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES46 = 0x2e,
+        PUSHBYTES46 = 0x2E,
         /// <summary>
         /// Push 47 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES47 = 0x2f,
+        PUSHBYTES47 = 0x2F,
         /// <summary>
         /// Push 48 bytes on the evaluation stack.
         /// </summary>
@@ -239,27 +239,27 @@ namespace Neo.VM
         /// <summary>
         /// Push 58 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES58 = 0x3a,
+        PUSHBYTES58 = 0x3A,
         /// <summary>
         /// Push 59 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES59 = 0x3b,
+        PUSHBYTES59 = 0x3B,
         /// <summary>
         /// Push 60 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES60 = 0x3c,
+        PUSHBYTES60 = 0x3C,
         /// <summary>
         /// Push 61 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES61 = 0x3d,
+        PUSHBYTES61 = 0x3D,
         /// <summary>
         /// Push 62 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES62 = 0x3e,
+        PUSHBYTES62 = 0x3E,
         /// <summary>
         /// Push 63 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES63 = 0x3f,
+        PUSHBYTES63 = 0x3F,
         /// <summary>
         /// Push 64 bytes on the evaluation stack.
         /// </summary>
@@ -303,11 +303,11 @@ namespace Neo.VM
         /// <summary>
         /// Push 74 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES74 = 0x4a,
+        PUSHBYTES74 = 0x4A,
         /// <summary>
         /// Push 75 bytes on the evaluation stack.
         /// </summary>
-        PUSHBYTES75 = 0x4b,
+        PUSHBYTES75 = 0x4B,
         /// <summary>
         /// The next byte contains the number of bytes to be pushed onto the stack.
         /// </summary>
