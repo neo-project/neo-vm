@@ -457,13 +457,21 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
+                        "state": "Break",
                         "invocationStack":
                         [
                             {
                                 "scriptHash": "0x2E60619059949C5EC62F43D9A8A20F8328A5F57E",
-                                "instructionPointer": 5,
-                                "nextInstruction": "SUBSTR"
+                                "instructionPointer": 6,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
                             }
                         ]
                     }
