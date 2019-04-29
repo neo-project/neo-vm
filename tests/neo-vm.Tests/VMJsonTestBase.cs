@@ -31,24 +31,9 @@ namespace Neo.Test
                     scriptContainer = new MessageProvider(test.Message);
                 }
 
-
-                // Script table
-
-                ScriptTable scriptTable = null;
-
-                if (test.ScriptTable != null)
-                {
-                    scriptTable = new ScriptTable();
-
-                    foreach (var script in test.ScriptTable)
-                    {
-                        scriptTable.Add(script.Script);
-                    }
-                }
-
                 // Create engine
 
-                using (var engine = new ExecutionEngine(scriptContainer, Crypto.Default, scriptTable, service))
+                using (var engine = new ExecutionEngine(scriptContainer, Crypto.Default, service))
                 {
                     Debugger debugger = new Debugger(engine);
                     engine.LoadScript(test.Script);
