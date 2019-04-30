@@ -277,14 +277,18 @@ namespace Neo.VM
                                 context.InstructionPointer += 3;
                             return true;
                         }
-                    case OpCode.CALL:
+                    case OpCode.CALL_I:
                         {
                             if (!CheckMaxInvocationStack()) return false;
-                            ExecutionContext context_call = LoadScript(context.Script, context.ScriptHash);
-                            context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16;
+                            int rvcount = instruction.Operand[0];
+                            int pcount = instruction.Operand[1];
+                            if (context.EvaluationStack.Count < pcount) return false;
+                            ExecutionContext context_call = LoadScript(context.Script, context.ScriptHash, rvcount);
+                            context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16_1;
                             if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
-                            context.EvaluationStack.CopyTo(context_call.EvaluationStack);
-                            context.EvaluationStack.Clear();
+                            context.EvaluationStack.CopyTo(context_call.EvaluationStack, pcount);
+                            for (int i = 0; i < pcount; i++)
+                                context.EvaluationStack.Pop();
                             break;
                         }
                     case OpCode.RET:
@@ -1175,22 +1179,6 @@ namespace Neo.VM
                                     newArray.Add(item);
                             context.EvaluationStack.Push(new VMArray(newArray));
                             if (!CheckStackSize(false, int.MaxValue)) return false;
-                            break;
-                        }
-
-                    // Stack isolation
-                    case OpCode.CALL_I:
-                        {
-                            if (!CheckMaxInvocationStack()) return false;
-                            int rvcount = instruction.Operand[0];
-                            int pcount = instruction.Operand[1];
-                            if (context.EvaluationStack.Count < pcount) return false;
-                            ExecutionContext context_call = LoadScript(context.Script, context.ScriptHash, rvcount);
-                            context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16_1;
-                            if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
-                            context.EvaluationStack.CopyTo(context_call.EvaluationStack, pcount);
-                            for (int i = 0; i < pcount; i++)
-                                context.EvaluationStack.Pop();
                             break;
                         }
 

@@ -5,7 +5,7 @@
     [
         {
             "name": "Step Into",
-            "script": "0x5165050053665266",
+            "script": "0x51650201070053665266",
             "steps":
             [
                 {
@@ -15,7 +15,7 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
                                 "instructionPointer": 0,
                                 "nextInstruction": "PUSH1"
                             }
@@ -33,9 +33,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
                                 "instructionPointer": 1,
-                                "nextInstruction": "CALL",
+                                "nextInstruction": "CALL_I",
                                 "evaluationStack":
                                 [
                                     {
@@ -58,8 +58,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 6,
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
+                                "instructionPointer": 8,
                                 "nextInstruction": "PUSH2",
                                 "evaluationStack":
                                 [
@@ -70,8 +70,8 @@
                                 ]
                             },
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 4,
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
+                                "instructionPointer": 6,
                                 "nextInstruction": "PUSH3"
                             }
                         ]
@@ -88,8 +88,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 7,
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
+                                "instructionPointer": 9,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
                                 [
@@ -104,8 +104,8 @@
                                 ]
                             },
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 4,
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
+                                "instructionPointer": 6,
                                 "nextInstruction": "PUSH3"
                             }
                         ]
@@ -122,8 +122,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 4,
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
+                                "instructionPointer": 6,
                                 "nextInstruction": "PUSH3",
                                 "evaluationStack":
                                 [
@@ -151,8 +151,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 5,
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
+                                "instructionPointer": 7,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
                                 [
@@ -202,7 +202,7 @@
         },
         {
             "name": "Step Out",
-            "script": "0x5165050053665266",
+            "script": "0x51650201070053665266",
             "steps":
             [
                 {
@@ -212,7 +212,7 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
                                 "instructionPointer": 0,
                                 "nextInstruction": "PUSH1"
                             }
@@ -230,9 +230,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
                                 "instructionPointer": 1,
-                                "nextInstruction": "CALL",
+                                "nextInstruction": "CALL_I",
                                 "evaluationStack":
                                 [
                                     {
@@ -273,7 +273,7 @@
         },
         {
             "name": "Step Over",
-            "script": "0x5165050053665266",
+            "script": "0x51650201070053665266",
             "steps":
             [
                 {
@@ -283,7 +283,7 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
                                 "instructionPointer": 0,
                                 "nextInstruction": "PUSH1"
                             }
@@ -301,9 +301,9 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
                                 "instructionPointer": 1,
-                                "nextInstruction": "CALL",
+                                "nextInstruction": "CALL_I",
                                 "evaluationStack":
                                 [
                                     {
@@ -326,8 +326,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 4,
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
+                                "instructionPointer": 6,
                                 "nextInstruction": "PUSH3",
                                 "evaluationStack":
                                 [
@@ -355,8 +355,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 5,
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
+                                "instructionPointer": 7,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
                                 [
@@ -406,7 +406,7 @@
         },
         {
             "name": "Execute",
-            "script": "0x5165050053665266",
+            "script": "0x51650201070053665266",
             "steps":
             [
                 {
@@ -416,7 +416,7 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x7C1FD4BD77920925B7C37CA4599F7F3A2FCCBAC7",
                                 "instructionPointer": 0,
                                 "nextInstruction": "PUSH1"
                             }

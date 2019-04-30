@@ -42,7 +42,7 @@ namespace Neo.Test
             using (var engine = new ExecutionEngine(null, Crypto.Default, null))
             using (var script = new ScriptBuilder())
             {
-                /* ┌     */ script.EmitJump(OpCode.CALL, 5);
+                /* ┌     */ script.EmitCall(7, 1, 0);
                 /* │  ┌> */ script.Emit(OpCode.NOT);
                 /* │  │  */ script.Emit(OpCode.RET);
                 /* └> │  */ script.Emit(OpCode.PUSH0);
@@ -54,7 +54,7 @@ namespace Neo.Test
 
                 debugger.StepOver();
 
-                Assert.AreEqual(3, engine.CurrentContext.InstructionPointer);
+                Assert.AreEqual(5, engine.CurrentContext.InstructionPointer);
                 Assert.AreEqual(VMState.BREAK, engine.State);
 
                 debugger.Execute();
@@ -70,7 +70,7 @@ namespace Neo.Test
             using (var engine = new ExecutionEngine(null, Crypto.Default, null))
             using (var script = new ScriptBuilder())
             {
-                /* ┌     */ script.EmitJump(OpCode.CALL, 5);
+                /* ┌     */ script.EmitCall(7, 1, 0);
                 /* │  ┌> */ script.Emit(OpCode.NOT);
                 /* │  │  */ script.Emit(OpCode.RET);
                 /* └>X│  */ script.Emit(OpCode.PUSH0);

@@ -72,7 +72,7 @@ namespace Neo.Test
             {
                 using (var script = new ScriptBuilder())
                 {
-                    if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT && op != OpCode.CALL)
+                    if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT)
                     {
                         Assert.ThrowsException<ArgumentException>(() => script.EmitJump(op, offset));
                     }

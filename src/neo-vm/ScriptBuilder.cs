@@ -32,9 +32,19 @@ namespace Neo.VM
             return this;
         }
 
+        public ScriptBuilder EmitCall(short offset, byte rvcount, byte pcount)
+        {
+            byte[] operand = new byte[4];
+            operand[0] = rvcount;
+            operand[1] = pcount;
+            operand[2] = (byte)(offset & 0xff);
+            operand[3] = (byte)(offset >> 8);
+            return Emit(OpCode.CALL_I, operand);
+        }
+
         public ScriptBuilder EmitJump(OpCode op, short offset)
         {
-            if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT && op != OpCode.CALL)
+            if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT)
                 throw new ArgumentException();
             return Emit(op, BitConverter.GetBytes(offset));
         }

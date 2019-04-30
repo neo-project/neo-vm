@@ -410,7 +410,7 @@ namespace Neo.VM
         /// <summary>
         /// Current context is copied to the invocation stack. Reads a 2-byte value n and a jump is performed to relative position n-3.
         /// </summary>
-        CALL = 0x65,
+        CALL_I = 0x65,
         /// <summary>
         /// Stops the execution if invocation stack is empty.
         /// </summary>
@@ -730,13 +730,6 @@ namespace Neo.VM
         /// A map is taken from top of the main stack. The values of this map are put on top of the main stack.
         /// </summary>
         VALUES = 0xCD,
-
-
-        // Stack isolation
-        /// <summary>
-        /// Current context is copied to the invocation stack (similar to CALL). Read return count (1-byte), parameter count (1-byte) and a 2-byte value n for jump to be performed.
-        /// </summary>
-        CALL_I = 0xE0,
 
 
         // Exceptions

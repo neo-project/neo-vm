@@ -73,7 +73,6 @@ namespace Neo.VM
             OperandSizeTable[(int)OpCode.JMP] = 2;
             OperandSizeTable[(int)OpCode.JMPIF] = 2;
             OperandSizeTable[(int)OpCode.JMPIFNOT] = 2;
-            OperandSizeTable[(int)OpCode.CALL] = 2;
             OperandSizeTable[(int)OpCode.CALL_I] = 4;
         }
 
