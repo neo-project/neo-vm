@@ -1205,12 +1205,7 @@ namespace Neo.VM
 
         public ExecutionContext LoadScript(byte[] script, byte[] callingScriptHash = null, int rvcount = -1)
         {
-            return LoadScript(new Script(Crypto, script), callingScriptHash, rvcount);
-        }
-
-        private ExecutionContext LoadScript(Script script, byte[] callingScriptHash = null, int rvcount = -1)
-        {
-            ExecutionContext context = new ExecutionContext(script, callingScriptHash, rvcount);
+            ExecutionContext context = new ExecutionContext(new Script(Crypto, script), callingScriptHash, rvcount);
             LoadContext(context);
             return context;
         }
