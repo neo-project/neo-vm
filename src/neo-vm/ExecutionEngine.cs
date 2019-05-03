@@ -131,7 +131,7 @@ namespace Neo.VM
 
             // Deep inspect
 
-            stackitem_count = GetItemCount(InvocationStack.Select(p => p.EvaluationStack).Distinct().Concat(InvocationStack.Select(p => p.AltStack)).SelectMany(p => p));
+            stackitem_count = GetItemCount(InvocationStack.Select(p => p.EvaluationStack).Distinct().Concat(InvocationStack.Select(p => p.AltStack).Distinct()).SelectMany(p => p));
             if (stackitem_count > MaxStackSize) return false;
             is_stackitem_count_strict = true;
 
