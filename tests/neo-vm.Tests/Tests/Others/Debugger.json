@@ -72,7 +72,14 @@
                             {
                                 "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
                                 "instructionPointer": 4,
-                                "nextInstruction": "PUSH3"
+                                "nextInstruction": "PUSH3",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -106,7 +113,18 @@
                             {
                                 "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
                                 "instructionPointer": 4,
-                                "nextInstruction": "PUSH3"
+                                "nextInstruction": "PUSH3",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
                             }
                         ]
                     }
