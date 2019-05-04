@@ -7,7 +7,7 @@ namespace Neo.VM
         /// <summary>
         /// Number of items to be returned
         /// </summary>
-        public int RVCount { get; }
+        internal int RVCount { get; }
 
         /// <summary>
         /// Script
@@ -17,12 +17,12 @@ namespace Neo.VM
         /// <summary>
         /// Evaluation stack
         /// </summary>
-        public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
+        public RandomAccessStack<StackItem> EvaluationStack { get; }
 
         /// <summary>
         /// Alternative stack
         /// </summary>
-        public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
+        public RandomAccessStack<StackItem> AltStack { get; }
 
         /// <summary>
         /// Instruction pointer
@@ -71,10 +71,22 @@ namespace Neo.VM
         /// <param name="callingScriptHash">Script hash of the calling script</param>
         /// <param name="rvcount">Number of items to be returned</param>
         internal ExecutionContext(Script script, byte[] callingScriptHash, int rvcount)
+            : this(script, callingScriptHash, rvcount, new RandomAccessStack<StackItem>(), new RandomAccessStack<StackItem>())
+        {
+        }
+
+        private ExecutionContext(Script script, byte[] callingScriptHash, int rvcount, RandomAccessStack<StackItem> stack, RandomAccessStack<StackItem> alt)
         {
             this.RVCount = rvcount;
             this.Script = script;
+            this.EvaluationStack = stack;
+            this.AltStack = alt;
             this.CallingScriptHash = callingScriptHash;
+        }
+
+        internal ExecutionContext Clone()
+        {
+            return new ExecutionContext(Script, ScriptHash, 0, EvaluationStack, AltStack);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -732,13 +732,6 @@ namespace Neo.VM
         VALUES = 0xCD,
 
 
-        // Stack isolation
-        /// <summary>
-        /// Current context is copied to the invocation stack (similar to CALL). Read return count (1-byte), parameter count (1-byte) and a 2-byte value n for jump to be performed.
-        /// </summary>
-        CALL_I = 0xE0,
-
-
         // Exceptions
         /// <summary>
         /// Halts the execution of the vm by setting VMState.FAULT.
