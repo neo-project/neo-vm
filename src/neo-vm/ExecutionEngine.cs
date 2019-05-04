@@ -91,13 +91,6 @@ namespace Neo.VM
         public bool CheckMaxItemSize(int length) => length >= 0 && length <= MaxItemSize;
 
         /// <summary>
-        /// Check if the is possible to overflow the MaxInvocationStack
-        /// </summary>
-        /// <returns>Return True if are allowed, otherwise False</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckMaxInvocationStack() => InvocationStack.Count < MaxInvocationStackSize;
-
-        /// <summary>
         /// Check if the BigInteger is allowed for numeric operations
         /// </summary>
         /// <param name="value">Value</param>
@@ -120,7 +113,7 @@ namespace Neo.VM
         /// <param name="count">Stack item count</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckStackSize(bool strict, int count = 1)
+        private bool CheckStackSize(bool strict, int count = 1)
         {
             is_stackitem_count_strict &= strict;
             stackitem_count += count;
@@ -279,7 +272,6 @@ namespace Neo.VM
                         }
                     case OpCode.CALL:
                         {
-                            if (!CheckMaxInvocationStack()) return false;
                             ExecutionContext context_call = context.Clone();
                             context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16;
                             if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
@@ -1198,6 +1190,8 @@ namespace Neo.VM
 
         protected virtual void LoadContext(ExecutionContext context)
         {
+            if (InvocationStack.Count >= MaxInvocationStackSize)
+                throw new InvalidOperationException();
             if (EntryScriptHash is null)
                 EntryScriptHash = context.ScriptHash;
             InvocationStack.Push(context);
