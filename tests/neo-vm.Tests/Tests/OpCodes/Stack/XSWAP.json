@@ -1,30 +1,44 @@
 ﻿{
-    "category": "Others",
-    "name": "Debugger",
+    "category": "Stack",
+    "name": "XSWAP",
     "tests":
     [
         {
-            "name": "Step Into",
-            "script": "0x5165050053665266",
+            "name": "Without push",
+            "script": "0x72",
             "steps":
             [
                 {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
                     "result":
                     {
-                        "state": "Break",
+                        "state": "Fault",
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x7C6A6BCF5FAA451AB936551201D4332CF31A741E",
                                 "instructionPointer": 0,
-                                "nextInstruction": "PUSH1"
+                                "nextInstruction": "XSWAP"
                             }
                         ]
                     }
-                },
+                }
+            ]
+        },
+        {
+            "name": "Pick outside",
+            "script": "0x5152535472",
+            "steps":
+            [
                 {
                     "actions":
                     [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
                         "StepInto"
                     ],
                     "result":
@@ -33,89 +47,19 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 1,
-                                "nextInstruction": "CALL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 6,
-                                "nextInstruction": "PUSH2",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    }
-                                ]
-                            },
-                            {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x6AE7AB4D735D3A154E7B52752FB0297B56730622",
                                 "instructionPointer": 4,
-                                "nextInstruction": "PUSH3",
+                                "nextInstruction": "XSWAP",
                                 "evaluationStack":
                                 [
                                     {
                                         "type": "Integer",
-                                        "value": 1
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 7,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
+                                        "value": 4
                                     },
                                     {
                                         "type": "Integer",
-                                        "value": 1
-                                    }
-                                ]
-                            },
-                            {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 4,
-                                "nextInstruction": "PUSH3",
-                                "evaluationStack":
-                                [
+                                        "value": 3
+                                    },
                                     {
                                         "type": "Integer",
                                         "value": 2
@@ -136,15 +80,66 @@
                     ],
                     "result":
                     {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x6AE7AB4D735D3A154E7B52752FB0297B56730622",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XSWAP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Less than 0",
+            "script": "0x5152534F72",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
                         "state": "Break",
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x8A37769DE09C2E21AD6CC63D1D0A2B292886EBFD",
                                 "instructionPointer": 4,
-                                "nextInstruction": "PUSH3",
+                                "nextInstruction": "XSWAP",
                                 "evaluationStack":
                                 [
+                                    {
+                                        "type": "Integer",
+                                        "value": -1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
                                     {
                                         "type": "Integer",
                                         "value": 2
@@ -165,11 +160,174 @@
                     ],
                     "result":
                     {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x8A37769DE09C2E21AD6CC63D1D0A2B292886EBFD",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XSWAP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Wrong type",
+            "script": "0x515253C772",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
                         "state": "Break",
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0x9C2F31D43F444A2E65BDD847C8FF91AF8342F8D1",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XSWAP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+
+                                        }
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x9C2F31D43F444A2E65BDD847C8FF91AF8342F8D1",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XSWAP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test",
+            "script": "0x5352515272",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xF9418895125F90B3E8E57A67F6EA531DD67CDD6B",
+                                "instructionPointer": 4,
+                                "nextInstruction": "XSWAP",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0xF9418895125F90B3E8E57A67F6EA531DD67CDD6B",
                                 "instructionPointer": 5,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -219,27 +377,16 @@
             ]
         },
         {
-            "name": "Step Out",
-            "script": "0x5165050053665266",
+            "name": "Real test with 0",
+            "script": "0x5352510072",
             "steps":
             [
                 {
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 0,
-                                "nextInstruction": "PUSH1"
-                            }
-                        ]
-                    }
-                },
-                {
                     "actions":
                     [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto",
                         "StepInto"
                     ],
                     "result":
@@ -248,114 +395,26 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 1,
-                                "nextInstruction": "CALL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepOut"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Integer",
-                                "value": 3
-                            },
-                            {
-                                "type": "Integer",
-                                "value": 2
-                            },
-                            {
-                                "type": "Integer",
-                                "value": 1
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Step Over",
-            "script": "0x5165050053665266",
-            "steps":
-            [
-                {
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 0,
-                                "nextInstruction": "PUSH1"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 1,
-                                "nextInstruction": "CALL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepOver"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0xDFFD478674E822A66351C3BBFEF09F15481DBA96",
                                 "instructionPointer": 4,
-                                "nextInstruction": "PUSH3",
+                                "nextInstruction": "XSWAP",
                                 "evaluationStack":
                                 [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
                                     {
                                         "type": "Integer",
                                         "value": 2
                                     },
                                     {
                                         "type": "Integer",
-                                        "value": 1
+                                        "value": 3
                                     }
                                 ]
                             }
@@ -365,7 +424,7 @@
                 {
                     "actions":
                     [
-                        "StepOver"
+                        "StepInto"
                     ],
                     "result":
                     {
@@ -373,14 +432,14 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
+                                "scriptHash": "0xDFFD478674E822A66351C3BBFEF09F15481DBA96",
                                 "instructionPointer": 5,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
                                 [
                                     {
                                         "type": "Integer",
-                                        "value": 3
+                                        "value": 1
                                     },
                                     {
                                         "type": "Integer",
@@ -388,7 +447,7 @@
                                     },
                                     {
                                         "type": "Integer",
-                                        "value": 1
+                                        "value": 3
                                     }
                                 ]
                             }
@@ -398,7 +457,7 @@
                 {
                     "actions":
                     [
-                        "StepOver"
+                        "StepInto"
                     ],
                     "result":
                     {
@@ -407,7 +466,7 @@
                         [
                             {
                                 "type": "Integer",
-                                "value": 3
+                                "value": 1
                             },
                             {
                                 "type": "Integer",
@@ -415,53 +474,7 @@
                             },
                             {
                                 "type": "Integer",
-                                "value": 1
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Execute",
-            "script": "0x5165050053665266",
-            "steps":
-            [
-                {
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "scriptHash": "0x408E0A012B7053EE2045D637FBB54534E8AD4C9A",
-                                "instructionPointer": 0,
-                                "nextInstruction": "PUSH1"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Integer",
                                 "value": 3
-                            },
-                            {
-                                "type": "Integer",
-                                "value": 2
-                            },
-                            {
-                                "type": "Integer",
-                                "value": 1
                             }
                         ]
                     }
