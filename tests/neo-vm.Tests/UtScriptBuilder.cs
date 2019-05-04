@@ -31,29 +31,6 @@ namespace Neo.Test
         }
 
         [TestMethod]
-        public void TestEmitAppCall()
-        {
-            var scriptHash = RandomHelper.RandBuffer(20);
-
-            using (var script = new ScriptBuilder())
-            {
-                Assert.ThrowsException<ArgumentException>(() => script.EmitAppCall(new byte[1], true));
-            }
-
-            using (var script = new ScriptBuilder())
-            {
-                script.EmitAppCall(scriptHash, true);
-                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.TAILCALL }.Concat(scriptHash).ToArray(), script.ToArray());
-            }
-
-            using (var script = new ScriptBuilder())
-            {
-                script.EmitAppCall(scriptHash, false);
-                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.APPCALL }.Concat(scriptHash).ToArray(), script.ToArray());
-            }
-        }
-
-        [TestMethod]
         public void TestEmitSysCall()
         {
             using (var script = new ScriptBuilder())
