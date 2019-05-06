@@ -10,6 +10,8 @@ namespace Neo.VM
 {
     public abstract class StackItem : IEquatable<StackItem>
     {
+        public static StackItem Null { get; } = new byte[0];
+
         public abstract bool Equals(StackItem other);
 
         public sealed override bool Equals(object obj)
