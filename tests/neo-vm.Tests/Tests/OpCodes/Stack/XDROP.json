@@ -19,7 +19,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xECD8BB6107B098FC608B2C0AD3B8147549EAC11C",
                                 "instructionPointer": 0,
                                 "nextInstruction": "XDROP"
                             }
@@ -47,7 +46,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xC4B0ED142B6643896418FEB354A3E3FC957A13E9",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XDROP",
                                 "evaluationStack":
@@ -84,7 +82,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xC4B0ED142B6643896418FEB354A3E3FC957A13E9",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XDROP",
                                 "evaluationStack":
@@ -127,7 +124,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x6A717D954C9DF69D29E533F441960F2440454C7E",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XDROP",
                                 "evaluationStack":
@@ -167,7 +163,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x6A717D954C9DF69D29E533F441960F2440454C7E",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XDROP",
                                 "evaluationStack":
@@ -210,7 +205,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xBCA3D105E94C00868726B846EFFD7E6575D9C281",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XDROP",
                                 "evaluationStack":
@@ -247,7 +241,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xBCA3D105E94C00868726B846EFFD7E6575D9C281",
                                 "instructionPointer": 5,
                                 "nextInstruction": "RET",
                                 "evaluationStack":

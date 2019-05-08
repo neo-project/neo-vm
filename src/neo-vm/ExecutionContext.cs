@@ -54,7 +54,6 @@ namespace Neo.VM
         /// Constructor
         /// </summary>
         /// <param name="script">Script</param>
-        /// <param name="callingScriptHash">Script hash of the calling script</param>
         /// <param name="rvcount">Number of items to be returned</param>
         internal ExecutionContext(Script script, int rvcount)
             : this(script, rvcount, new RandomAccessStack<StackItem>(), new RandomAccessStack<StackItem>())

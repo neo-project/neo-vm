@@ -1,14 +1,10 @@
-﻿using Neo.Test.Converters;
-using Neo.VM;
+﻿using Neo.VM;
 using Newtonsoft.Json;
 
 namespace Neo.Test.Types
 {
     public class VMUTExecutionContextState
     {
-        [JsonProperty, JsonConverter(typeof(ScriptConverter))]
-        public byte[] ScriptHash { get; set; }
-
         [JsonProperty]
         public OpCode NextInstruction { get; set; }
 

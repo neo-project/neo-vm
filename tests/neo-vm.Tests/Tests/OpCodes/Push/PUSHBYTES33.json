@@ -19,7 +19,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x096ECDA926723BE4702464DF5DB18C5FC8506F46",
                                 "instructionPointer": 34,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -68,7 +67,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xAF03A37073E3705175F85A270F4AD27C43C423FC",
                                 "instructionPointer": 0,
                                 "nextInstruction": "PUSHBYTES33"
                             }

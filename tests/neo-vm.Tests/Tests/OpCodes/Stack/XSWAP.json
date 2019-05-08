@@ -19,7 +19,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x7C6A6BCF5FAA451AB936551201D4332CF31A741E",
                                 "instructionPointer": 0,
                                 "nextInstruction": "XSWAP"
                             }
@@ -47,7 +46,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x6AE7AB4D735D3A154E7B52752FB0297B56730622",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XSWAP",
                                 "evaluationStack":
@@ -84,7 +82,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x6AE7AB4D735D3A154E7B52752FB0297B56730622",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XSWAP",
                                 "evaluationStack":
@@ -127,7 +124,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x8A37769DE09C2E21AD6CC63D1D0A2B292886EBFD",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XSWAP",
                                 "evaluationStack":
@@ -164,7 +160,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x8A37769DE09C2E21AD6CC63D1D0A2B292886EBFD",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XSWAP",
                                 "evaluationStack":
@@ -207,7 +202,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x9C2F31D43F444A2E65BDD847C8FF91AF8342F8D1",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XSWAP",
                                 "evaluationStack":
@@ -247,7 +241,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x9C2F31D43F444A2E65BDD847C8FF91AF8342F8D1",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XSWAP",
                                 "evaluationStack":
@@ -290,7 +283,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xF9418895125F90B3E8E57A67F6EA531DD67CDD6B",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XSWAP",
                                 "evaluationStack":
@@ -327,7 +319,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xF9418895125F90B3E8E57A67F6EA531DD67CDD6B",
                                 "instructionPointer": 5,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -395,7 +386,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xDFFD478674E822A66351C3BBFEF09F15481DBA96",
                                 "instructionPointer": 4,
                                 "nextInstruction": "XSWAP",
                                 "evaluationStack":
@@ -432,7 +422,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xDFFD478674E822A66351C3BBFEF09F15481DBA96",
                                 "instructionPointer": 5,
                                 "nextInstruction": "RET",
                                 "evaluationStack":

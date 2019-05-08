@@ -15,7 +15,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x9B4A30911C6BCD2921CD153A2956DA397B5793A4",
                                 "instructionPointer": 0,
                                 "nextInstruction": "RET"
                             }

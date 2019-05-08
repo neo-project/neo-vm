@@ -19,7 +19,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x5413E33706B4FFE766E2B49261546FE465B7F54F",
                                 "instructionPointer": 0,
                                 "nextInstruction": "FROMALTSTACK"
                             }
@@ -45,7 +44,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x3257DEB31DCD4970C7A7D89EDCA6C1B1F6E4E707",
                                 "instructionPointer": 1,
                                 "nextInstruction": "FROMALTSTACK",
                                 "evaluationStack":
@@ -78,7 +76,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x3D8572940E6A685DF8DBF3485A6DD12796FB46A8",
                                 "instructionPointer": 2,
                                 "nextInstruction": "FROMALTSTACK",
                                 "altStack":
@@ -103,7 +100,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x3D8572940E6A685DF8DBF3485A6DD12796FB46A8",
                                 "instructionPointer": 3,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
