@@ -19,7 +19,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x199D36C1A12C52C0BB6A4BBA08416B6A4882AB03",
                                 "instructionPointer": 0,
                                 "nextInstruction": "SIZE"
                             }
@@ -44,7 +43,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xCE35C075D88F85C3D5941D02A25DA9B6A7ADC145",
                                 "instructionPointer": 3,
                                 "nextInstruction": "SIZE",
                                 "evaluationStack":
@@ -94,7 +92,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xA1381D2014709A7478ACCDD42EC1F872B6003019",
                                 "instructionPointer": 2,
                                 "nextInstruction": "SIZE",
                                 "evaluationStack":
@@ -145,7 +142,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x571EE6AAE82CD7A7DEA9B72BFDB59CFDF02C2627",
                                 "instructionPointer": 3,
                                 "nextInstruction": "SIZE",
                                 "evaluationStack":
@@ -195,7 +191,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xC7603DB4A074CFAB99E263650CCDFB55F61E5834",
                                 "instructionPointer": 2,
                                 "nextInstruction": "SIZE",
                                 "evaluationStack":
@@ -244,7 +239,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x6325A13B672E260A92B9A970FBCA307174BC5F88",
                                 "instructionPointer": 1,
                                 "nextInstruction": "SIZE",
                                 "evaluationStack":
@@ -271,7 +265,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x6325A13B672E260A92B9A970FBCA307174BC5F88",
                                 "instructionPointer": 1,
                                 "nextInstruction": "SIZE"
                             }
@@ -297,7 +290,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xFDF69EAC8E9D2F72E18A79DBD115C1D67C07AC66",
                                 "instructionPointer": 2,
                                 "nextInstruction": "SIZE",
                                 "evaluationStack":
@@ -328,7 +320,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xFDF69EAC8E9D2F72E18A79DBD115C1D67C07AC66",
                                 "instructionPointer": 2,
                                 "nextInstruction": "SIZE"
                             }
@@ -354,7 +345,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x2B5AAE9E01537EFE3070F1863CBBE6AFB4F1CABB",
                                 "instructionPointer": 2,
                                 "nextInstruction": "SIZE",
                                 "evaluationStack":
@@ -385,7 +375,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x2B5AAE9E01537EFE3070F1863CBBE6AFB4F1CABB",
                                 "instructionPointer": 2,
                                 "nextInstruction": "SIZE"
                             }
@@ -411,7 +400,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x767813581E20207A133CAB14CBF34AFF8D5CF476",
                                 "instructionPointer": 43,
                                 "nextInstruction": "SIZE",
                                 "evaluationStack":
@@ -436,7 +424,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x767813581E20207A133CAB14CBF34AFF8D5CF476",
                                 "instructionPointer": 43,
                                 "nextInstruction": "SIZE"
                             }

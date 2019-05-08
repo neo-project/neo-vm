@@ -61,8 +61,8 @@ namespace Neo.VM
         public IInteropService Service { get; }
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
-        public ExecutionContext CurrentContext => InvocationStack.Peek();
-        public byte[] EntryScriptHash { get; private set; }
+        public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
+        public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
         public VMState State { get; internal protected set; } = VMState.BREAK;
 
         public ExecutionEngine(IScriptContainer container, ICrypto crypto, IInteropService service = null)
@@ -809,18 +809,6 @@ namespace Neo.VM
                             context.EvaluationStack.Push(sha.ComputeHash(x));
                             break;
                         }
-                    case OpCode.HASH160:
-                        {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(Crypto.Hash160(x));
-                            break;
-                        }
-                    case OpCode.HASH256:
-                        {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(Crypto.Hash256(x));
-                            break;
-                        }
                     case OpCode.CHECKSIG:
                         {
                             byte[] pubkey = context.EvaluationStack.Pop().GetByteArray();
@@ -1192,14 +1180,12 @@ namespace Neo.VM
         {
             if (InvocationStack.Count >= MaxInvocationStackSize)
                 throw new InvalidOperationException();
-            if (EntryScriptHash is null)
-                EntryScriptHash = context.ScriptHash;
             InvocationStack.Push(context);
         }
 
-        public ExecutionContext LoadScript(byte[] script, byte[] callingScriptHash = null, int rvcount = -1)
+        public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(new Script(Crypto, script), callingScriptHash, rvcount);
+            ExecutionContext context = new ExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
             LoadContext(context);
             return context;
         }

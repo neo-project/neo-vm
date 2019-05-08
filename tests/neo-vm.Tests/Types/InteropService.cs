@@ -9,21 +9,6 @@ namespace Neo.Test.Types
         {
             switch (Encoding.ASCII.GetString(method))
             {
-                case "System.ExecutionEngine.GetEntryScriptHash":
-                    {
-                        engine.CurrentContext.EvaluationStack.Push(engine.EntryScriptHash);
-                        return true;
-                    }
-                case "System.ExecutionEngine.GetCallingScriptHash":
-                    {
-                        engine.CurrentContext.EvaluationStack.Push(engine.CurrentContext.CallingScriptHash ?? new byte[0]);
-                        return true;
-                    }
-                case "System.ExecutionEngine.GetExecutingScriptHash":
-                    {
-                        engine.CurrentContext.EvaluationStack.Push(engine.CurrentContext.ScriptHash);
-                        return true;
-                    }
                 case "System.ExecutionEngine.GetScriptContainer":
                     {
                         engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(engine.ScriptContainer));

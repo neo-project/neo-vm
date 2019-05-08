@@ -19,7 +19,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xB66A36659EBA88C37D39694A8B9CCC483BEE3742",
                                 "instructionPointer": 1,
                                 "nextInstruction": "REMOVE"
                             }
@@ -44,7 +43,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x6F109D4D88B4D870CC92C6067537A0EA639A3F3D",
                                 "instructionPointer": 2,
                                 "nextInstruction": "REMOVE"
                             }
@@ -69,7 +67,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xAB0D6DACF54FD316EAE1517E8079C4938F483D6A",
                                 "instructionPointer": 2,
                                 "nextInstruction": "REMOVE",
                                 "evaluationStack":
@@ -101,7 +98,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xDE8D97DCE570B61BB1F538C31AEB9B45D7581890",
                                 "instructionPointer": 5,
                                 "nextInstruction": "REMOVE"
                             }
@@ -132,7 +128,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x0A4FD4A2E07BCF49108A3CA0C488E2C216B19D36",
                                 "instructionPointer": 7,
                                 "nextInstruction": "REMOVE",
                                 "altStack":
@@ -188,7 +183,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x0A4FD4A2E07BCF49108A3CA0C488E2C216B19D36",
                                 "instructionPointer": 8,
                                 "nextInstruction": "FROMALTSTACK",
                                 "altStack":
@@ -254,7 +248,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x7BDE3E00FF99FC7016FA08A3955F658962130C5C",
                                 "instructionPointer": 8,
                                 "nextInstruction": "REMOVE",
                                 "altStack":
@@ -302,7 +295,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x7BDE3E00FF99FC7016FA08A3955F658962130C5C",
                                 "instructionPointer": 9,
                                 "nextInstruction": "FROMALTSTACK",
                                 "altStack":

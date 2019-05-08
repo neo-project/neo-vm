@@ -22,14 +22,14 @@ namespace Neo.Test
 
                 var debugger = new Debugger(engine);
 
-                debugger.AddBreakPoint(engine.CurrentContext.ScriptHash, 3);
-                debugger.AddBreakPoint(engine.CurrentContext.ScriptHash, 4);
+                debugger.AddBreakPoint(engine.CurrentContext.Script, 3);
+                debugger.AddBreakPoint(engine.CurrentContext.Script, 4);
                 debugger.Execute();
 
                 Assert.AreEqual(3, engine.CurrentContext.InstructionPointer);
                 Assert.AreEqual(VMState.BREAK, engine.State);
 
-                debugger.RemoveBreakPoint(engine.CurrentContext.ScriptHash, 4);
+                debugger.RemoveBreakPoint(engine.CurrentContext.Script, 4);
                 debugger.Execute();
 
                 Assert.AreEqual(VMState.HALT, engine.State);
@@ -80,7 +80,7 @@ namespace Neo.Test
 
                 var debugger = new Debugger(engine);
 
-                debugger.AddBreakPoint(engine.CurrentContext.ScriptHash, 5);
+                debugger.AddBreakPoint(engine.CurrentContext.Script, 5);
                 debugger.StepOver();
 
                 Assert.AreEqual(5, engine.CurrentContext.InstructionPointer);

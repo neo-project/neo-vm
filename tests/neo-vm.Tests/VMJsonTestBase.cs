@@ -97,7 +97,6 @@ namespace Neo.Test
                 var context = stack.Peek(x);
                 var opcode = context.InstructionPointer >= context.Script.Length ? OpCode.RET : context.Script[context.InstructionPointer];
 
-                AssertAreEqual(context.ScriptHash.ToHexString().ToUpper(), result[x].ScriptHash.ToHexString().ToUpper(), message + "Script hash is different");
                 AssertAreEqual(opcode, result[x].NextInstruction, message + "Next instruction is different");
                 AssertAreEqual(context.InstructionPointer, result[x].InstructionPointer, message + "Instruction pointer is different");
 
