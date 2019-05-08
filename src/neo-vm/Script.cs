@@ -5,24 +5,8 @@ namespace Neo.VM
 {
     public class Script
     {
-        private byte[] _scriptHash = null;
-
         private readonly byte[] _value;
-        private readonly ICrypto _crypto;
         private readonly Dictionary<int, Instruction> _instructions = new Dictionary<int, Instruction>();
-
-        /// <summary>
-        /// Cached script hash
-        /// </summary>
-        public byte[] ScriptHash
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if (_scriptHash == null) _scriptHash = _crypto.Hash160(_value);
-                return _scriptHash;
-            }
-        }
 
         /// <summary>
         /// Script length
@@ -53,22 +37,9 @@ namespace Neo.VM
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="crypto">Crypto</param>
         /// <param name="script">Script</param>
-        public Script(ICrypto crypto, byte[] script)
+        public Script(byte[] script)
         {
-            _crypto = crypto;
-            _value = script;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="hash">Hash</param>
-        /// <param name="script">Script</param>
-        internal Script(byte[] hash, byte[] script)
-        {
-            _scriptHash = hash;
             _value = script;
         }
 

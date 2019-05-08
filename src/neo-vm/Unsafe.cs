@@ -66,20 +66,5 @@ namespace Neo.VM
             }
             return false;
         }
-
-        /// <summary>
-        /// Convert byte array to int32
-        /// </summary>
-        /// <param name="value">Value (must be checked before this call)</param>
-        /// <param name="startIndex">Start index</param>
-        /// <returns>Integer</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int ToInt32(byte[] value, int startIndex)
-        {
-            fixed (byte* pbyte = &value[startIndex])
-            {
-                return *(int*)pbyte;
-            }
-        }
     }
 }
