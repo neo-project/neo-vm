@@ -19,7 +19,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x572E5D73B53675DA9D45227AD65DF4DA53C1E826",
                                 "instructionPointer": 0,
                                 "nextInstruction": "SYSCALL"
                             }
@@ -44,7 +43,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x5B8661F73D3828ECB71D343FF49BF883EF02428D",
                                 "instructionPointer": 0,
                                 "nextInstruction": "SYSCALL"
                             }
@@ -70,7 +68,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x62C5FB499B47073AB58EE819E2609D25D9762266",
                                 "instructionPointer": 43,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -119,7 +116,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xD990D17A9E649D836D78DCF8ADDB3B3BCC4C00AC",
                                 "instructionPointer": 0,
                                 "nextInstruction": "SYSCALL"
                             }
@@ -144,7 +140,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x50F8F9FEC057277A6826B993401FB0807CC60609",
                                 "instructionPointer": 0,
                                 "nextInstruction": "SYSCALL"
                             }
@@ -169,7 +164,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x6FD417DDF3451019516D933222FB3BC8EAE5F4E6",
                                 "instructionPointer": 0,
                                 "nextInstruction": "SYSCALL"
                             }

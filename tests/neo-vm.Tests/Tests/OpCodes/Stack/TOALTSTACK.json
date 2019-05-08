@@ -19,7 +19,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xFFE12A1A4B38AA3A0F147BF4E57E41FC82A17206",
                                 "instructionPointer": 0,
                                 "nextInstruction": "TOALTSTACK"
                             }
@@ -45,7 +44,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xF1B26DF541F9D4D406F78B2824E2F80DA54D96A5",
                                 "instructionPointer": 2,
                                 "nextInstruction": "RET",
                                 "altStack":

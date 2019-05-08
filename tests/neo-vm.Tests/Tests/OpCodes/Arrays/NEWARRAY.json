@@ -19,7 +19,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x30B59FF0F61288C9FCEDA867E1C236748798CE0B",
                                 "instructionPointer": 0,
                                 "nextInstruction": "NEWARRAY"
                             }
@@ -45,7 +44,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x3EC64D0896F88A69F563FF1CB22D64F43FA281DF",
                                 "instructionPointer": 1,
                                 "nextInstruction": "NEWARRAY"
                             }
@@ -71,7 +69,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x6F4ED340E8F5AF059C603C4E2DB4AD7F549A50CB",
                                 "instructionPointer": 1,
                                 "nextInstruction": "NEWARRAY"
                             }
@@ -97,7 +94,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x7D4B7A75171BB1D9FE5BCA9A39D4B52F13E1BD14",
                                 "instructionPointer": 2,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -171,7 +167,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x3FEC4E71B9A12CFF3738BFDDD6F3B4A7851BF555",
                                 "instructionPointer": 6,
                                 "nextInstruction": "NEWARRAY",
                                 "evaluationStack":
@@ -202,7 +197,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x3FEC4E71B9A12CFF3738BFDDD6F3B4A7851BF555",
                                 "instructionPointer": 7,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
