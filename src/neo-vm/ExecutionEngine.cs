@@ -62,7 +62,6 @@ namespace Neo.VM
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
         public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
-        public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
         public VMState State { get; internal protected set; } = VMState.BREAK;
 
@@ -1186,7 +1185,7 @@ namespace Neo.VM
 
         public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(new Script(script), rvcount);
+            ExecutionContext context = new ExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
             LoadContext(context);
             return context;
         }
