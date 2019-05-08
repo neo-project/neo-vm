@@ -10,33 +10,6 @@ namespace Neo.Test.Types
     {
         public static readonly Crypto Default = new Crypto();
 
-        public byte[] Hash160(byte[] message)
-        {
-            return message.Sha256().RIPEMD160();
-        }
-
-        public byte[] Hash256(byte[] message)
-        {
-            return message.Sha256().Sha256();
-        }
-
-        public byte[] Sign(byte[] message, byte[] prikey, byte[] pubkey)
-        {
-            using (var ecdsa = ECDsa.Create(new ECParameters
-            {
-                Curve = ECCurve.NamedCurves.nistP256,
-                D = prikey,
-                Q = new ECPoint
-                {
-                    X = pubkey.Take(32).ToArray(),
-                    Y = pubkey.Skip(32).ToArray()
-                }
-            }))
-            {
-                return ecdsa.SignData(message, HashAlgorithmName.SHA256);
-            }
-        }
-
         public bool VerifySignature(byte[] message, byte[] signature, byte[] pubkey)
         {
             if (pubkey.Length == 33 && (pubkey[0] == 0x02 || pubkey[0] == 0x03))
