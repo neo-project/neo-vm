@@ -56,8 +56,6 @@ namespace Neo.VM
         private int stackitem_count = 0;
         private bool is_stackitem_count_strict = true;
 
-        public IScriptContainer ScriptContainer { get; }
-        public ICrypto Crypto { get; }
         public IInteropService Service { get; }
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
@@ -65,10 +63,8 @@ namespace Neo.VM
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
         public VMState State { get; internal protected set; } = VMState.BREAK;
 
-        public ExecutionEngine(IScriptContainer container, ICrypto crypto, IInteropService service = null)
+        public ExecutionEngine(IInteropService service = null)
         {
-            this.ScriptContainer = container;
-            this.Crypto = crypto;
             this.Service = service;
         }
 
@@ -807,101 +803,6 @@ namespace Neo.VM
                         {
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
                             context.EvaluationStack.Push(sha.ComputeHash(x));
-                            break;
-                        }
-                    case OpCode.CHECKSIG:
-                        {
-                            byte[] pubkey = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] signature = context.EvaluationStack.Pop().GetByteArray();
-
-                            try
-                            {
-                                context.EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature, pubkey));
-                            }
-                            catch (ArgumentException)
-                            {
-                                context.EvaluationStack.Push(false);
-                            }
-                            CheckStackSize(true, -1);
-                            break;
-                        }
-                    case OpCode.VERIFY:
-                        {
-                            byte[] pubkey = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] signature = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] message = context.EvaluationStack.Pop().GetByteArray();
-
-                            try
-                            {
-                                context.EvaluationStack.Push(Crypto.VerifySignature(message, signature, pubkey));
-                            }
-                            catch (ArgumentException)
-                            {
-                                context.EvaluationStack.Push(false);
-                            }
-                            CheckStackSize(true, -2);
-                            break;
-                        }
-                    case OpCode.CHECKMULTISIG:
-                        {
-                            int n;
-                            byte[][] pubkeys;
-                            StackItem item = context.EvaluationStack.Pop();
-
-                            if (item is VMArray array1)
-                            {
-                                pubkeys = array1.Select(p => p.GetByteArray()).ToArray();
-                                n = pubkeys.Length;
-                                if (n == 0) return false;
-                                CheckStackSize(false, -1);
-                            }
-                            else
-                            {
-                                n = (int)item.GetBigInteger();
-                                if (n < 1 || n > context.EvaluationStack.Count) return false;
-                                pubkeys = new byte[n][];
-                                for (int i = 0; i < n; i++)
-                                    pubkeys[i] = context.EvaluationStack.Pop().GetByteArray();
-                                CheckStackSize(true, -n - 1);
-                            }
-
-                            int m;
-                            byte[][] signatures;
-                            item = context.EvaluationStack.Pop();
-                            if (item is VMArray array2)
-                            {
-                                signatures = array2.Select(p => p.GetByteArray()).ToArray();
-                                m = signatures.Length;
-                                if (m == 0 || m > n) return false;
-                                CheckStackSize(false, -1);
-                            }
-                            else
-                            {
-                                m = (int)item.GetBigInteger();
-                                if (m < 1 || m > n || m > context.EvaluationStack.Count) return false;
-                                signatures = new byte[m][];
-                                for (int i = 0; i < m; i++)
-                                    signatures[i] = context.EvaluationStack.Pop().GetByteArray();
-                                CheckStackSize(true, -m - 1);
-                            }
-                            byte[] message = ScriptContainer.GetMessage();
-                            bool fSuccess = true;
-                            try
-                            {
-                                for (int i = 0, j = 0; fSuccess && i < m && j < n;)
-                                {
-                                    if (Crypto.VerifySignature(message, signatures[i], pubkeys[j]))
-                                        i++;
-                                    j++;
-                                    if (m - i > n - j)
-                                        fSuccess = false;
-                                }
-                            }
-                            catch (ArgumentException)
-                            {
-                                fSuccess = false;
-                            }
-                            context.EvaluationStack.Push(fSuccess);
                             break;
                         }
 

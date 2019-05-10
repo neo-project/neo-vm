@@ -385,7 +385,7 @@
         },
         {
             "name": "Error - With Interop",
-            "script": "0x682953797374656D2E457865637574696F6E456E67696E652E476574536372697074436F6E7461696E657282",
+            "script": "0x6827546573742E457865637574696F6E456E67696E652E476574536372697074436F6E7461696E657282",
             "message": "0x00",
             "steps":
             [
@@ -400,13 +400,13 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 43,
+                                "instructionPointer": 41,
                                 "nextInstruction": "SIZE",
                                 "evaluationStack":
                                 [
                                     {
                                         "type": "Interop",
-                                        "value": "MessageProvider"
+                                        "value": "Object"
                                     }
                                 ]
                             }
@@ -424,7 +424,7 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 43,
+                                "instructionPointer": 41,
                                 "nextInstruction": "SIZE"
                             }
                         ]
