@@ -532,13 +532,9 @@ namespace Neo.VM
         /// Returns 1 if the inputs are exactly equal, 0 otherwise.
         /// </summary>
         EQUAL = 0x87,
-        //OP_EQUALVERIFY = 0x88, // Same as OP_EQUAL, but runs OP_VERIFY afterward.
-        //OP_RESERVED1 = 0x89, // Transaction is invalid unless occuring in an unexecuted OP_IF branch
-        //OP_RESERVED2 = 0x8A, // Transaction is invalid unless occuring in an unexecuted OP_IF branch
 
 
         // Arithmetic
-        // Note: Arithmetic inputs are limited to signed 32-bit integers, but may overflow their output.
         /// <summary>
         /// 1 is added to the input.
         /// </summary>
@@ -675,11 +671,11 @@ namespace Neo.VM
         /// </summary>
         SETITEM = 0xC4,
         /// <summary>
-        ///用作引用類型  en: A value n is taken from top of main stack. A zero-filled array type with size n is put on top of the main stack.
+        /// A value n is taken from top of main stack. A zero-filled array type with size n is put on top of the main stack.
         /// </summary>
         NEWARRAY = 0xC5,
         /// <summary>
-        ///用作值類型 en: A value n is taken from top of main stack. A zero-filled struct type with size n is put on top of the main stack.
+        /// A value n is taken from top of main stack. A zero-filled struct type with size n is put on top of the main stack.
         /// </summary>
         NEWSTRUCT = 0xC6,
         /// <summary>
