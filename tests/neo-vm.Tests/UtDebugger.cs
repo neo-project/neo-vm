@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Neo.Test.Types;
 using Neo.VM;
 
 namespace Neo.Test
@@ -10,7 +9,7 @@ namespace Neo.Test
         [TestMethod]
         public void TestBreakPoint()
         {
-            using (var engine = new ExecutionEngine(null, Crypto.Default, null))
+            using (var engine = new ExecutionEngine())
             using (var script = new ScriptBuilder())
             {
                 script.Emit(OpCode.NOP);
@@ -39,7 +38,7 @@ namespace Neo.Test
         [TestMethod]
         public void TestStepOver()
         {
-            using (var engine = new ExecutionEngine(null, Crypto.Default, null))
+            using (var engine = new ExecutionEngine())
             using (var script = new ScriptBuilder())
             {
                 /* ┌     */ script.EmitJump(OpCode.CALL, 5);
@@ -67,7 +66,7 @@ namespace Neo.Test
         [TestMethod]
         public void TestBreakPointStepOver()
         {
-            using (var engine = new ExecutionEngine(null, Crypto.Default, null))
+            using (var engine = new ExecutionEngine())
             using (var script = new ScriptBuilder())
             {
                 /* ┌     */ script.EmitJump(OpCode.CALL, 5);

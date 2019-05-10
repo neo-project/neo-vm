@@ -651,18 +651,6 @@ namespace Neo.VM
         /// The input is hashed using SHA-256.
         /// </summary>
         SHA256 = 0xA8,
-        /// <summary>
-        /// The publickey and signature are taken from main stack. Verifies if transaction was signed by given publickey and a boolean output is put on top of the main stack.
-        /// </summary>
-        CHECKSIG = 0xAC,
-        /// <summary>
-        /// The publickey, signature and message are taken from main stack. Verifies if given message was signed by given publickey and a boolean output is put on top of the main stack.
-        /// </summary>
-        VERIFY = 0xAD,
-        /// <summary>
-        /// A set of n public keys (an array or value n followed by n pubkeys) is validated against a set of m signatures (an array or value m followed by m signatures). Verify transaction as multisig and a boolean output is put on top of the main stack.
-        /// </summary>
-        CHECKMULTISIG = 0xAE,
 
 
         // Array

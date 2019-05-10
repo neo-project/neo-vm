@@ -18,22 +18,7 @@ namespace Neo.Test
         {
             foreach (var test in ut.Tests)
             {
-                // Interop service
-
-                IInteropService service = new InteropService();
-
-                // Message provider
-
-                IScriptContainer scriptContainer = null;
-
-                if (test.Message != null)
-                {
-                    scriptContainer = new MessageProvider(test.Message);
-                }
-
-                // Create engine
-
-                using (var engine = new ExecutionEngine(scriptContainer, Crypto.Default, service))
+                using (var engine = new ExecutionEngine(new InteropService()))
                 {
                     Debugger debugger = new Debugger(engine);
                     engine.LoadScript(test.Script);

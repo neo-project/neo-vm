@@ -9,9 +9,9 @@ namespace Neo.Test.Types
         {
             switch (Encoding.ASCII.GetString(method))
             {
-                case "System.ExecutionEngine.GetScriptContainer":
+                case "Test.ExecutionEngine.GetScriptContainer":
                     {
-                        engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(engine.ScriptContainer));
+                        engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new object()));
                         return true;
                     }
             }
