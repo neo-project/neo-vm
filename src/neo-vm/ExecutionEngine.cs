@@ -1093,19 +1093,10 @@ namespace Neo.VM
             return context;
         }
 
-        protected virtual bool OnSysCall(uint method)
-        {
-            return false;
-        }
+        protected virtual bool OnSysCallLogic(uint method) => false;
 
-        protected virtual bool PostExecuteInstruction(Instruction instruction)
-        {
-            return true;
-        }
+        protected virtual bool PostExecuteInstruction(Instruction instruction) => true;
 
-        protected virtual bool PreExecuteInstruction()
-        {
-            return true;
-        }
+        protected virtual bool PreExecuteInstruction() => true;
     }
 }
