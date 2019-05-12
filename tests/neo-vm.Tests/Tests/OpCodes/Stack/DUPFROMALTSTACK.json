@@ -109,7 +109,7 @@
         },
         {
             "name": "Real test [Interop]",
-            "script": "0x6827546573742E457865637574696F6E456E67696E652E476574536372697074436F6E7461696E65726B6A",
+            "script": "0x68777777776B6A",
             "message": "0x00",
             "steps":
             [
@@ -125,7 +125,7 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 42,
+                                "instructionPointer": 6,
                                 "nextInstruction": "DUPFROMALTSTACK",
                                 "altStack":
                                 [
@@ -149,7 +149,7 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 43,
+                                "instructionPointer": 7,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
                                 [

@@ -1,19 +1,15 @@
-﻿using System.Text;
-using Neo.VM;
+﻿using Neo.VM;
 
 namespace Neo.Test.Types
 {
     public class InteropService : IInteropService
     {
-        public bool Invoke(byte[] method, ExecutionEngine engine)
+        public bool Invoke(uint method, ExecutionEngine engine)
         {
-            switch (Encoding.ASCII.GetString(method))
+            if (method == 0x77777777)
             {
-                case "Test.ExecutionEngine.GetScriptContainer":
-                    {
-                        engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new object()));
-                        return true;
-                    }
+                engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new object()));
+                return true;
             }
 
             return false;
