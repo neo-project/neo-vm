@@ -302,8 +302,7 @@ namespace Neo.VM
                         }
                     case OpCode.SYSCALL:
                         {
-                            if (instruction.Operand.Length > 252) return false;
-                            if (Service?.Invoke(instruction.Operand, this) != true || !CheckStackSize(false, int.MaxValue))
+                            if (Service?.Invoke(instruction.TokenU32, this) != true || !CheckStackSize(false, int.MaxValue))
                                 return false;
                             break;
                         }

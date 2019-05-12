@@ -67,13 +67,13 @@ namespace Neo.VM
             OperandSizePrefixTable[(int)OpCode.PUSHDATA1] = 1;
             OperandSizePrefixTable[(int)OpCode.PUSHDATA2] = 2;
             OperandSizePrefixTable[(int)OpCode.PUSHDATA4] = 4;
-            OperandSizePrefixTable[(int)OpCode.SYSCALL] = 1;
             for (int i = (int)OpCode.PUSHBYTES1; i <= (int)OpCode.PUSHBYTES75; i++)
                 OperandSizeTable[i] = i;
             OperandSizeTable[(int)OpCode.JMP] = 2;
             OperandSizeTable[(int)OpCode.JMPIF] = 2;
             OperandSizeTable[(int)OpCode.JMPIFNOT] = 2;
             OperandSizeTable[(int)OpCode.CALL] = 2;
+            OperandSizeTable[(int)OpCode.SYSCALL] = 4;
         }
 
         private Instruction(OpCode opcode)

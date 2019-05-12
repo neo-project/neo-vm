@@ -2,6 +2,6 @@
 {
     public interface IInteropService
     {
-        bool Invoke(byte[] method, ExecutionEngine engine);
+        bool Invoke(uint method, ExecutionEngine engine);
     }
 }
