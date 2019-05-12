@@ -18,7 +18,7 @@ namespace Neo.Test
         {
             foreach (var test in ut.Tests)
             {
-                using (var engine = new ExecutionEngine(new InteropService()))
+                using (var engine = new TestEngine())
                 {
                     Debugger debugger = new Debugger(engine);
                     engine.LoadScript(test.Script);
