@@ -62,6 +62,9 @@ namespace Neo.VM
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
         public VMState State { get; internal protected set; } = VMState.BREAK;
 
+        public event EventHandler<ExecutionContext> ContextLoaded;
+        public event EventHandler<ExecutionContext> ContextUnloaded;
+
         #region Limits
 
         /// <summary>
@@ -288,6 +291,7 @@ namespace Neo.VM
                                 context_pop.AltStack.CopyTo(CurrentContext.AltStack);
                             }
                             CheckStackSize(false, 0);
+                            ContextUnloaded?.Invoke(this, context_pop);
                             if (InvocationStack.Count == 0)
                             {
                                 State = VMState.HALT;
@@ -1070,11 +1074,12 @@ namespace Neo.VM
             return true;
         }
 
-        protected virtual void LoadContext(ExecutionContext context)
+        private void LoadContext(ExecutionContext context)
         {
             if (InvocationStack.Count >= MaxInvocationStackSize)
                 throw new InvalidOperationException();
             InvocationStack.Push(context);
+            ContextLoaded?.Invoke(this, context);
         }
 
         public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
