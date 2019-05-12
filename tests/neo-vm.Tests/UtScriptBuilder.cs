@@ -35,31 +35,8 @@ namespace Neo.Test
         {
             using (var script = new ScriptBuilder())
             {
-                Assert.ThrowsException<ArgumentNullException>(() => script.EmitSysCall(null));
-            }
-
-            using (var script = new ScriptBuilder())
-            {
-                script.EmitSysCall("Neo.Runtime.GetTrigger", true);
-                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.SYSCALL, 0x04, 0x75, 0xC8, 0x93, 0xE3 }.ToArray(), script.ToArray());
-            }
-
-            for (byte x = 0; x < byte.MaxValue; x++)
-            {
-                var api = RandomHelper.RandString(x);
-
-                using (var script = new ScriptBuilder())
-                {
-                    if (x >= 1 && x <= 252)
-                    {
-                        script.EmitSysCall(api, false);
-                        CollectionAssert.AreEqual(new byte[] { (byte)OpCode.SYSCALL, (byte)api.Length }.Concat(Encoding.UTF8.GetBytes(api)).ToArray(), script.ToArray());
-                    }
-                    else
-                    {
-                        Assert.ThrowsException<ArgumentException>(() => script.EmitSysCall(RandomHelper.RandString(x), false));
-                    }
-                }
+                script.EmitSysCall(0xE393C875);
+                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.SYSCALL, 0x75, 0xC8, 0x93, 0xE3 }.ToArray(), script.ToArray());
             }
         }
 
