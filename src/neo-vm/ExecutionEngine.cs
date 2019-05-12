@@ -56,17 +56,11 @@ namespace Neo.VM
         private int stackitem_count = 0;
         private bool is_stackitem_count_strict = true;
 
-        public IInteropService Service { get; }
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
         public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
         public VMState State { get; internal protected set; } = VMState.BREAK;
-
-        public ExecutionEngine(IInteropService service = null)
-        {
-            this.Service = service;
-        }
 
         #region Limits
 
@@ -302,7 +296,7 @@ namespace Neo.VM
                         }
                     case OpCode.SYSCALL:
                         {
-                            if (Service?.Invoke(instruction.TokenU32, this) != true || !CheckStackSize(false, int.MaxValue))
+                            if (!OnSysCall(instruction.TokenU32) || !CheckStackSize(false, int.MaxValue))
                                 return false;
                             break;
                         }
@@ -1088,6 +1082,11 @@ namespace Neo.VM
             ExecutionContext context = new ExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
             LoadContext(context);
             return context;
+        }
+
+        protected virtual bool OnSysCall(uint method)
+        {
+            return false;
         }
 
         protected virtual bool PostExecuteInstruction(Instruction instruction)
