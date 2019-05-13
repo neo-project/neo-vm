@@ -707,6 +707,22 @@ namespace Neo.VM
         /// </summary>
         VALUES = 0xCD,
 
+        // Static Evaluation Stack
+        /// <summary>
+        /// Duplicates the item on top of Static Evaluation stack and put it on top of main stack.
+        /// </summary>
+        DUPFROMSTATICSTACK = 0xD0,
+        /// <summary>
+        /// Puts the input onto the top of the Static Evaluation stack. Removes it from the main stack.
+        /// </summary>
+        TOSTATICSTACK = 0xD1,
+        /// <summary>
+        /// Puts the input onto the top of the main stack. Removes it from the Static Evaluation stack.
+        /// </summary>
+        FROMSTATICSTACK = 0xD2,
+        /// <summary>
+        /// The item n back in the main stack is removed.
+        /// </summary>
 
         // Exceptions
         /// <summary>

@@ -58,6 +58,10 @@ namespace Neo.VM
 
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
+
+        //add a static Evaluation for storage infos for everyScript;
+        public RandomAccessStack<StackItem> StaticEvaluationStack { get; } = new RandomAccessStack<StackItem>();
+
         public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
         public VMState State { get; internal protected set; } = VMState.BREAK;
@@ -308,7 +312,23 @@ namespace Neo.VM
                                 return false;
                             break;
                         }
-
+                    // Static Stack ops
+                    case OpCode.DUPFROMSTATICSTACK:
+                        {
+                            context.EvaluationStack.Push(this.StaticEvaluationStack.Peek());
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
+                    case OpCode.TOSTATICSTACK:
+                        {
+                            context.AltStack.Push(this.StaticEvaluationStack.Pop());
+                            break;
+                        }
+                    case OpCode.FROMSTATICSTACK:
+                        {
+                            context.EvaluationStack.Push(this.StaticEvaluationStack.Pop());
+                            break;
+                        }
                     // Stack ops
                     case OpCode.DUPFROMALTSTACK:
                         {
