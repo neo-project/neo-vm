@@ -1,0 +1,55 @@
+﻿{
+    "category": "Push",
+    "name": "PUSHDATA1",
+    "tests":
+    [
+        {
+            "name": "Good definition",
+            "script": "0x4C0401020304",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "ByteArray",
+                                "value": "0x01020304"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Without enough length",
+            "script": "0x4C0501020304",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 0,
+                                "nextInstruction": "PUSHDATA1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

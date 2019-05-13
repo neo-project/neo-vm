@@ -1,77 +1,226 @@
-﻿using System;
+﻿using Neo.VM.Types;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
+using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
 {
     public class ExecutionEngine : IDisposable
     {
-        private readonly IScriptTable table;
-        private readonly InteropService service;
+        #region Limits Variables
 
-        public IScriptContainer ScriptContainer { get; }
-        public ICrypto Crypto { get; }
+        /// <summary>
+        /// Max value for SHL and SHR
+        /// </summary>
+        public virtual int Max_SHL_SHR => 256;
+
+        /// <summary>
+        /// Min value for SHL and SHR
+        /// </summary>
+        public virtual int Min_SHL_SHR => -256;
+
+        /// <summary>
+        /// The max size in bytes allowed size for BigInteger
+        /// </summary>
+        public const int MaxSizeForBigInteger = 32;
+
+        /// <summary>
+        /// Set the max Stack Size
+        /// </summary>
+        public virtual uint MaxStackSize => 2 * 1024;
+
+        /// <summary>
+        /// Set Max Item Size
+        /// </summary>
+        public virtual uint MaxItemSize => 1024 * 1024;
+
+        /// <summary>
+        /// Set Max Invocation Stack Size
+        /// </summary>
+        public virtual uint MaxInvocationStackSize => 1024;
+
+        /// <summary>
+        /// Set Max Array Size
+        /// </summary>
+        public virtual uint MaxArraySize => 1024;
+
+        #endregion
+
+        private static readonly byte[] EmptyBytes = new byte[0];
+
+        private int stackitem_count = 0;
+        private bool is_stackitem_count_strict = true;
+
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
-        public RandomAccessStack<StackItem> EvaluationStack { get; } = new RandomAccessStack<StackItem>();
-        public RandomAccessStack<StackItem> AltStack { get; } = new RandomAccessStack<StackItem>();
-        public ExecutionContext CurrentContext => InvocationStack.Peek();
-        public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
-        public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
-        public VMState State { get; private set; } = VMState.BREAK;
+        public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
+        public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
+        public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
+        public VMState State { get; internal protected set; } = VMState.BREAK;
 
-        public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, InteropService service = null)
+        #region Events
+        
+        public event EventHandler<ExecutionContext> ContextLoaded;
+        public event EventHandler<ExecutionContext> ContextUnloaded;
+        
+        #endregion
+
+        #region Limits
+
+        /// <summary>
+        /// Check if it is possible to overflow the MaxArraySize
+        /// </summary>
+        /// <param name="length">Length</param>
+        /// <returns>Return True if are allowed, otherwise False</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool CheckArraySize(int length) => length <= MaxArraySize;
+
+        /// <summary>
+        /// Check if the is possible to overflow the MaxItemSize
+        /// </summary>
+        /// <param name="length">Length</param>
+        /// <returns>Return True if are allowed, otherwise False</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool CheckMaxItemSize(int length) => length >= 0 && length <= MaxItemSize;
+
+        /// <summary>
+        /// Check if the BigInteger is allowed for numeric operations
+        /// </summary>
+        /// <param name="value">Value</param>
+        /// <returns>Return True if are allowed, otherwise False</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool CheckBigInteger(BigInteger value) => value.ToByteArray().Length <= MaxSizeForBigInteger;
+
+        /// <summary>
+        /// Check if the number is allowed from SHL and SHR
+        /// </summary>
+        /// <param name="shift">Shift</param>
+        /// <returns>Return True if are allowed, otherwise False</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool CheckShift(int shift) => shift <= Max_SHL_SHR && shift >= Min_SHL_SHR;
+
+        /// <summary>
+        /// Check if the is possible to overflow the MaxStackSize
+        /// </summary>
+        /// <param name="strict">Is stack count strict?</param>
+        /// <param name="count">Stack item count</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool CheckStackSize(bool strict, int count = 1)
         {
-            this.ScriptContainer = container;
-            this.Crypto = crypto;
-            this.table = table;
-            this.service = service ?? new InteropService();
+            is_stackitem_count_strict &= strict;
+            stackitem_count += count;
+
+            if (stackitem_count < 0) stackitem_count = int.MaxValue;
+            if (stackitem_count <= MaxStackSize) return true;
+            if (is_stackitem_count_strict) return false;
+
+            // Deep inspect
+
+            stackitem_count = GetItemCount(InvocationStack.Select(p => p.EvaluationStack).Distinct().Concat(InvocationStack.Select(p => p.AltStack).Distinct()).SelectMany(p => p));
+            if (stackitem_count > MaxStackSize) return false;
+            is_stackitem_count_strict = true;
+
+            return true;
         }
 
-        public void AddBreakPoint(uint position)
+        /// <summary>
+        /// Get item count
+        /// </summary>
+        /// <param name="items">Items</param>
+        /// <returns>Return the number of items</returns>
+        private static int GetItemCount(IEnumerable<StackItem> items)
         {
-            CurrentContext.BreakPoints.Add(position);
+            Queue<StackItem> queue = new Queue<StackItem>(items);
+            List<StackItem> counted = new List<StackItem>();
+            int count = 0;
+            while (queue.Count > 0)
+            {
+                StackItem item = queue.Dequeue();
+                count++;
+                switch (item)
+                {
+                    case Types.Array array:
+                        {
+                            if (counted.Any(p => ReferenceEquals(p, array)))
+                                continue;
+                            counted.Add(array);
+                            foreach (StackItem subitem in array)
+                                queue.Enqueue(subitem);
+                            break;
+                        }
+                    case Map map:
+                        {
+                            if (counted.Any(p => ReferenceEquals(p, map)))
+                                continue;
+                            counted.Add(map);
+                            foreach (StackItem subitem in map.Values)
+                                queue.Enqueue(subitem);
+                            break;
+                        }
+                }
+            }
+            return count;
         }
 
-        public void Dispose()
+        #endregion
+
+        public virtual void Dispose()
         {
-            while (InvocationStack.Count > 0)
-                InvocationStack.Pop().Dispose();
+            InvocationStack.Clear();
         }
 
         public void Execute()
         {
             State &= ~VMState.BREAK;
             while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK))
-                StepInto();
+                ExecuteNext();
         }
 
-        private void ExecuteOp(OpCode opcode, ExecutionContext context)
+        internal protected void ExecuteNext()
         {
-            if (opcode > OpCode.PUSH16 && opcode != OpCode.RET && context.PushOnly)
+            if (InvocationStack.Count == 0)
             {
-                State |= VMState.FAULT;
-                return;
+                State = VMState.HALT;
             }
-            if (opcode >= OpCode.PUSHBYTES1 && opcode <= OpCode.PUSHBYTES75)
-                EvaluationStack.Push(context.OpReader.ReadBytes((byte)opcode));
             else
-                switch (opcode)
+            {
+                try
+                {
+                    Instruction instruction = CurrentContext.CurrentInstruction;
+                    if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
+                        State = VMState.FAULT;
+                }
+                catch
+                {
+                    State = VMState.FAULT;
+                }
+            }
+        }
+
+        private bool ExecuteInstruction()
+        {
+            ExecutionContext context = CurrentContext;
+            Instruction instruction = context.CurrentInstruction;
+            if (instruction.OpCode >= OpCode.PUSHBYTES1 && instruction.OpCode <= OpCode.PUSHDATA4)
+            {
+                if (!CheckMaxItemSize(instruction.Operand.Length)) return false;
+                context.EvaluationStack.Push(instruction.Operand);
+                if (!CheckStackSize(true)) return false;
+            }
+            else switch (instruction.OpCode)
                 {
                     // Push value
                     case OpCode.PUSH0:
-                        EvaluationStack.Push(new byte[0]);
-                        break;
-                    case OpCode.PUSHDATA1:
-                        EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadByte()));
-                        break;
-                    case OpCode.PUSHDATA2:
-                        EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadUInt16()));
-                        break;
-                    case OpCode.PUSHDATA4:
-                        EvaluationStack.Push(context.OpReader.ReadBytes(context.OpReader.ReadInt32()));
-                        break;
+                        {
+                            context.EvaluationStack.Push(EmptyBytes);
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
                     case OpCode.PUSHM1:
                     case OpCode.PUSH1:
                     case OpCode.PUSH2:
@@ -89,744 +238,865 @@ namespace Neo.VM
                     case OpCode.PUSH14:
                     case OpCode.PUSH15:
                     case OpCode.PUSH16:
-                        EvaluationStack.Push((int)opcode - (int)OpCode.PUSH1 + 1);
-                        break;
+                        {
+                            context.EvaluationStack.Push((int)instruction.OpCode - (int)OpCode.PUSH1 + 1);
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
 
                     // Control
-                    case OpCode.NOP:
-                        break;
+                    case OpCode.NOP: break;
                     case OpCode.JMP:
                     case OpCode.JMPIF:
                     case OpCode.JMPIFNOT:
                         {
-                            int offset = context.OpReader.ReadInt16();
-                            offset = context.InstructionPointer + offset - 3;
-                            if (offset < 0 || offset > context.Script.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
+                            int offset = context.InstructionPointer + instruction.TokenI16;
+                            if (offset < 0 || offset > context.Script.Length) return false;
                             bool fValue = true;
-                            if (opcode > OpCode.JMP)
+                            if (instruction.OpCode > OpCode.JMP)
                             {
-                                fValue = EvaluationStack.Pop().GetBoolean();
-                                if (opcode == OpCode.JMPIFNOT)
+                                CheckStackSize(false, -1);
+                                fValue = context.EvaluationStack.Pop().GetBoolean();
+
+                                if (instruction.OpCode == OpCode.JMPIFNOT)
                                     fValue = !fValue;
                             }
                             if (fValue)
                                 context.InstructionPointer = offset;
+                            else
+                                context.InstructionPointer += 3;
+                            return true;
                         }
-                        break;
                     case OpCode.CALL:
-                        InvocationStack.Push(context.Clone());
-                        context.InstructionPointer += 2;
-                        ExecuteOp(OpCode.JMP, CurrentContext);
-                        break;
-                    case OpCode.RET:
-                        InvocationStack.Pop().Dispose();
-                        if (InvocationStack.Count == 0)
-                            State |= VMState.HALT;
-                        break;
-                    case OpCode.APPCALL:
-                    case OpCode.TAILCALL:
                         {
-                            if (table == null)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            byte[] script_hash = context.OpReader.ReadBytes(20);
-                            byte[] script = table.GetScript(script_hash);
-                            if (script == null)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            if (opcode == OpCode.TAILCALL)
-                                InvocationStack.Pop().Dispose();
-                            LoadScript(script);
+                            ExecutionContext context_call = context.Clone();
+                            context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16;
+                            if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
+                            LoadContext(context_call);
+                            break;
                         }
-                        break;
+                    case OpCode.RET:
+                        {
+                            ExecutionContext context_pop = InvocationStack.Pop();
+                            int rvcount = context_pop.RVCount;
+                            if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
+                            if (rvcount > 0)
+                            {
+                                if (context_pop.EvaluationStack.Count < rvcount) return false;
+                                RandomAccessStack<StackItem> stack_eval;
+                                if (InvocationStack.Count == 0)
+                                    stack_eval = ResultStack;
+                                else
+                                    stack_eval = CurrentContext.EvaluationStack;
+                                context_pop.EvaluationStack.CopyTo(stack_eval, rvcount);
+                            }
+                            if (context_pop.RVCount == -1 && InvocationStack.Count > 0)
+                            {
+                                context_pop.AltStack.CopyTo(CurrentContext.AltStack);
+                            }
+                            CheckStackSize(false, 0);
+                            ContextUnloaded?.Invoke(this, context_pop);
+                            if (InvocationStack.Count == 0)
+                            {
+                                State = VMState.HALT;
+                            }
+                            return true;
+                        }
                     case OpCode.SYSCALL:
-                        if (!service.Invoke(Encoding.ASCII.GetString(context.OpReader.ReadVarBytes(252)), this))
-                            State |= VMState.FAULT;
-                        break;
+                        {
+                            if (!OnSysCall(instruction.TokenU32) || !CheckStackSize(false, int.MaxValue))
+                                return false;
+                            break;
+                        }
 
                     // Stack ops
                     case OpCode.DUPFROMALTSTACK:
-                        EvaluationStack.Push(AltStack.Peek());
-                        break;
+                        {
+                            context.EvaluationStack.Push(context.AltStack.Peek());
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
                     case OpCode.TOALTSTACK:
-                        AltStack.Push(EvaluationStack.Pop());
-                        break;
+                        {
+                            context.AltStack.Push(context.EvaluationStack.Pop());
+                            break;
+                        }
                     case OpCode.FROMALTSTACK:
-                        EvaluationStack.Push(AltStack.Pop());
-                        break;
+                        {
+                            context.EvaluationStack.Push(context.AltStack.Pop());
+                            break;
+                        }
                     case OpCode.XDROP:
                         {
-                            int n = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (n < 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            EvaluationStack.Remove(n);
+                            int n = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (n < 0) return false;
+                            context.EvaluationStack.Remove(n);
+                            CheckStackSize(false, -2);
+                            break;
                         }
-                        break;
                     case OpCode.XSWAP:
                         {
-                            int n = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (n < 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
+                            int n = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (n < 0) return false;
+                            CheckStackSize(true, -1);
                             if (n == 0) break;
-                            StackItem xn = EvaluationStack.Peek(n);
-                            EvaluationStack.Set(n, EvaluationStack.Peek());
-                            EvaluationStack.Set(0, xn);
+                            StackItem xn = context.EvaluationStack.Peek(n);
+                            context.EvaluationStack.Set(n, context.EvaluationStack.Peek());
+                            context.EvaluationStack.Set(0, xn);
+                            break;
                         }
-                        break;
                     case OpCode.XTUCK:
                         {
-                            int n = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (n <= 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            EvaluationStack.Insert(n, EvaluationStack.Peek());
+                            int n = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (n <= 0) return false;
+                            context.EvaluationStack.Insert(n, context.EvaluationStack.Peek());
+                            break;
                         }
-                        break;
                     case OpCode.DEPTH:
-                        EvaluationStack.Push(EvaluationStack.Count);
-                        break;
+                        {
+                            context.EvaluationStack.Push(context.EvaluationStack.Count);
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
                     case OpCode.DROP:
-                        EvaluationStack.Pop();
-                        break;
+                        {
+                            context.EvaluationStack.Pop();
+                            CheckStackSize(false, -1);
+                            break;
+                        }
                     case OpCode.DUP:
-                        EvaluationStack.Push(EvaluationStack.Peek());
-                        break;
+                        {
+                            context.EvaluationStack.Push(context.EvaluationStack.Peek());
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
                     case OpCode.NIP:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            EvaluationStack.Pop();
-                            EvaluationStack.Push(x2);
+                            context.EvaluationStack.Remove(1);
+                            CheckStackSize(false, -1);
+                            break;
                         }
-                        break;
                     case OpCode.OVER:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Peek();
-                            EvaluationStack.Push(x2);
-                            EvaluationStack.Push(x1);
+                            context.EvaluationStack.Push(context.EvaluationStack.Peek(1));
+                            if (!CheckStackSize(true)) return false;
+                            break;
                         }
-                        break;
                     case OpCode.PICK:
                         {
-                            int n = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (n < 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            EvaluationStack.Push(EvaluationStack.Peek(n));
+                            int n = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (n < 0) return false;
+                            context.EvaluationStack.Push(context.EvaluationStack.Peek(n));
+                            break;
                         }
-                        break;
                     case OpCode.ROLL:
                         {
-                            int n = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (n < 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
+                            int n = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (n < 0) return false;
+                            CheckStackSize(true, -1);
                             if (n == 0) break;
-                            EvaluationStack.Push(EvaluationStack.Remove(n));
+                            context.EvaluationStack.Push(context.EvaluationStack.Remove(n));
+                            break;
                         }
-                        break;
                     case OpCode.ROT:
                         {
-                            StackItem x3 = EvaluationStack.Pop();
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            EvaluationStack.Push(x2);
-                            EvaluationStack.Push(x3);
-                            EvaluationStack.Push(x1);
+                            context.EvaluationStack.Push(context.EvaluationStack.Remove(2));
+                            break;
                         }
-                        break;
                     case OpCode.SWAP:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            EvaluationStack.Push(x2);
-                            EvaluationStack.Push(x1);
+                            context.EvaluationStack.Push(context.EvaluationStack.Remove(1));
+                            break;
                         }
-                        break;
                     case OpCode.TUCK:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            EvaluationStack.Push(x2);
-                            EvaluationStack.Push(x1);
-                            EvaluationStack.Push(x2);
+                            context.EvaluationStack.Insert(2, context.EvaluationStack.Peek());
+                            if (!CheckStackSize(true)) return false;
+                            break;
                         }
-                        break;
                     case OpCode.CAT:
                         {
-                            byte[] x2 = EvaluationStack.Pop().GetByteArray();
-                            byte[] x1 = EvaluationStack.Pop().GetByteArray();
-                            EvaluationStack.Push(x1.Concat(x2).ToArray());
+                            byte[] x2 = context.EvaluationStack.Pop().GetByteArray();
+                            byte[] x1 = context.EvaluationStack.Pop().GetByteArray();
+                            byte[] result;
+                            if (x1.Length == 0)
+                            {
+                                result = x2;
+                            }
+                            else if (x2.Length == 0)
+                            {
+                                result = x1;
+                            }
+                            else
+                            {
+                                int length = x1.Length + x2.Length;
+                                if (!CheckMaxItemSize(length)) return false;
+                                byte[] buffer = new byte[length];
+                                Unsafe.MemoryCopy(x1, 0, buffer, 0, x1.Length);
+                                Unsafe.MemoryCopy(x2, 0, buffer, x1.Length, x2.Length);
+                                result = buffer;
+                            }
+                            context.EvaluationStack.Push(result);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.SUBSTR:
                         {
-                            int count = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (count < 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            int index = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (index < 0)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            byte[] x = EvaluationStack.Pop().GetByteArray();
-                            EvaluationStack.Push(x.Skip(index).Take(count).ToArray());
+                            int count = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (count < 0) return false;
+                            int index = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (index < 0) return false;
+                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
+                            if (index > x.Length) return false;
+                            if (index + count > x.Length) count = x.Length - index;
+                            byte[] buffer = new byte[count];
+                            Unsafe.MemoryCopy(x, index, buffer, 0, count);
+                            context.EvaluationStack.Push(buffer);
+                            CheckStackSize(true, -2);
+                            break;
                         }
-                        break;
                     case OpCode.LEFT:
                         {
-                            int count = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (count < 0)
+                            int count = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (count < 0) return false;
+                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
+                            byte[] buffer;
+                            if (count >= x.Length)
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                buffer = x;
                             }
-                            byte[] x = EvaluationStack.Pop().GetByteArray();
-                            EvaluationStack.Push(x.Take(count).ToArray());
+                            else
+                            {
+                                buffer = new byte[count];
+                                Unsafe.MemoryCopy(x, 0, buffer, 0, count);
+                            }
+                            context.EvaluationStack.Push(buffer);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.RIGHT:
                         {
-                            int count = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (count < 0)
+                            int count = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (count < 0) return false;
+                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
+                            if (count > x.Length) return false;
+                            byte[] buffer;
+                            if (count == x.Length)
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                buffer = x;
                             }
-                            byte[] x = EvaluationStack.Pop().GetByteArray();
-                            if (x.Length < count)
+                            else
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                buffer = new byte[count];
+                                Unsafe.MemoryCopy(x, x.Length - count, buffer, 0, count);
                             }
-                            EvaluationStack.Push(x.Skip(x.Length - count).ToArray());
+                            context.EvaluationStack.Push(buffer);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.SIZE:
                         {
-                            byte[] x = EvaluationStack.Pop().GetByteArray();
-                            EvaluationStack.Push(x.Length);
+                            StackItem x = context.EvaluationStack.Pop();
+                            context.EvaluationStack.Push(x.GetByteLength());
+                            break;
                         }
-                        break;
 
                     // Bitwise logic
                     case OpCode.INVERT:
                         {
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(~x);
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(~x);
+                            break;
                         }
-                        break;
                     case OpCode.AND:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 & x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 & x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.OR:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 | x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 | x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.XOR:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 ^ x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 ^ x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.EQUAL:
                         {
-                            StackItem x2 = EvaluationStack.Pop();
-                            StackItem x1 = EvaluationStack.Pop();
-                            EvaluationStack.Push(x1.Equals(x2));
+                            StackItem x2 = context.EvaluationStack.Pop();
+                            StackItem x1 = context.EvaluationStack.Pop();
+                            context.EvaluationStack.Push(x1.Equals(x2));
+                            CheckStackSize(false, -1);
+                            break;
                         }
-                        break;
 
                     // Numeric
                     case OpCode.INC:
                         {
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x + 1);
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            x += 1;
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(x);
+                            break;
                         }
-                        break;
                     case OpCode.DEC:
                         {
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x - 1);
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            x -= 1;
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(x);
+                            break;
                         }
-                        break;
                     case OpCode.SIGN:
                         {
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x.Sign);
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(x.Sign);
+                            break;
                         }
-                        break;
                     case OpCode.NEGATE:
                         {
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(-x);
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(-x);
+                            break;
                         }
-                        break;
                     case OpCode.ABS:
                         {
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(BigInteger.Abs(x));
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(BigInteger.Abs(x));
+                            break;
                         }
-                        break;
                     case OpCode.NOT:
                         {
-                            bool x = EvaluationStack.Pop().GetBoolean();
-                            EvaluationStack.Push(!x);
+                            bool x = context.EvaluationStack.Pop().GetBoolean();
+                            context.EvaluationStack.Push(!x);
+                            CheckStackSize(false, 0);
+                            break;
                         }
-                        break;
                     case OpCode.NZ:
                         {
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x != BigInteger.Zero);
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(!x.IsZero);
+                            break;
                         }
-                        break;
                     case OpCode.ADD:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 + x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            BigInteger result = x1 + x2;
+                            if (!CheckBigInteger(result)) return false;
+                            context.EvaluationStack.Push(result);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.SUB:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 - x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            BigInteger result = x1 - x2;
+                            if (!CheckBigInteger(result)) return false;
+                            context.EvaluationStack.Push(result);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.MUL:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 * x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            BigInteger result = x1 * x2;
+                            if (!CheckBigInteger(result)) return false;
+                            context.EvaluationStack.Push(result);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.DIV:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 / x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 / x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.MOD:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 % x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 % x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.SHL:
                         {
-                            int n = (int)EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x << n);
+                            int shift = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckShift(shift)) return false;
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            x <<= shift;
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(x);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.SHR:
                         {
-                            int n = (int)EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x >> n);
+                            int shift = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckShift(shift)) return false;
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            x >>= shift;
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(x);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.BOOLAND:
                         {
-                            bool x2 = EvaluationStack.Pop().GetBoolean();
-                            bool x1 = EvaluationStack.Pop().GetBoolean();
-                            EvaluationStack.Push(x1 && x2);
+                            bool x2 = context.EvaluationStack.Pop().GetBoolean();
+                            bool x1 = context.EvaluationStack.Pop().GetBoolean();
+                            context.EvaluationStack.Push(x1 && x2);
+                            CheckStackSize(false, -1);
+                            break;
                         }
-                        break;
                     case OpCode.BOOLOR:
                         {
-                            bool x2 = EvaluationStack.Pop().GetBoolean();
-                            bool x1 = EvaluationStack.Pop().GetBoolean();
-                            EvaluationStack.Push(x1 || x2);
+                            bool x2 = context.EvaluationStack.Pop().GetBoolean();
+                            bool x1 = context.EvaluationStack.Pop().GetBoolean();
+                            context.EvaluationStack.Push(x1 || x2);
+                            CheckStackSize(false, -1);
+                            break;
                         }
-                        break;
                     case OpCode.NUMEQUAL:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 == x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 == x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.NUMNOTEQUAL:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 != x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 != x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.LT:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 < x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 < x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.GT:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 > x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 > x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.LTE:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 <= x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 <= x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.GTE:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(x1 >= x2);
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(x1 >= x2);
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.MIN:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(BigInteger.Min(x1, x2));
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(BigInteger.Min(x1, x2));
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.MAX:
                         {
-                            BigInteger x2 = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x1 = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(BigInteger.Max(x1, x2));
+                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x2)) return false;
+                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x1)) return false;
+                            context.EvaluationStack.Push(BigInteger.Max(x1, x2));
+                            CheckStackSize(true, -1);
+                            break;
                         }
-                        break;
                     case OpCode.WITHIN:
                         {
-                            BigInteger b = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger a = EvaluationStack.Pop().GetBigInteger();
-                            BigInteger x = EvaluationStack.Pop().GetBigInteger();
-                            EvaluationStack.Push(a <= x && x < b);
+                            BigInteger b = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(b)) return false;
+                            BigInteger a = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(a)) return false;
+                            BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
+                            if (!CheckBigInteger(x)) return false;
+                            context.EvaluationStack.Push(a <= x && x < b);
+                            CheckStackSize(true, -2);
+                            break;
                         }
-                        break;
 
                     // Crypto
                     case OpCode.SHA1:
                         using (SHA1 sha = SHA1.Create())
                         {
-                            byte[] x = EvaluationStack.Pop().GetByteArray();
-                            EvaluationStack.Push(sha.ComputeHash(x));
+                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
+                            context.EvaluationStack.Push(sha.ComputeHash(x));
+                            break;
                         }
-                        break;
                     case OpCode.SHA256:
                         using (SHA256 sha = SHA256.Create())
                         {
-                            byte[] x = EvaluationStack.Pop().GetByteArray();
-                            EvaluationStack.Push(sha.ComputeHash(x));
+                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
+                            context.EvaluationStack.Push(sha.ComputeHash(x));
+                            break;
                         }
-                        break;
-                    case OpCode.HASH160:
-                        {
-                            byte[] x = EvaluationStack.Pop().GetByteArray();
-                            EvaluationStack.Push(Crypto.Hash160(x));
-                        }
-                        break;
-                    case OpCode.HASH256:
-                        {
-                            byte[] x = EvaluationStack.Pop().GetByteArray();
-                            EvaluationStack.Push(Crypto.Hash256(x));
-                        }
-                        break;
-                    case OpCode.CHECKSIG:
-                        {
-                            byte[] pubkey = EvaluationStack.Pop().GetByteArray();
-                            byte[] signature = EvaluationStack.Pop().GetByteArray();
-                            try
-                            {
-                                EvaluationStack.Push(Crypto.VerifySignature(ScriptContainer.GetMessage(), signature, pubkey));
-                            }
-                            catch (ArgumentException)
-                            {
-                                EvaluationStack.Push(false);
-                            }
-                        }
-                        break;
-                    case OpCode.CHECKMULTISIG:
-                        {
-                            int n;
-                            byte[][] pubkeys;
-                            StackItem item = EvaluationStack.Pop();
-                            if (item.IsArray)
-                            {
-                                pubkeys = item.GetArray().Select(p => p.GetByteArray()).ToArray();
-                                n = pubkeys.Length;
-                                if (n == 0)
-                                {
-                                    State |= VMState.FAULT;
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                n = (int)item.GetBigInteger();
-                                if (n < 1)
-                                {
-                                    State |= VMState.FAULT;
-                                    return;
-                                }
-                                pubkeys = new byte[n][];
-                                for (int i = 0; i < n; i++)
-                                    pubkeys[i] = EvaluationStack.Pop().GetByteArray();
-                            }
-                            int m;
-                            byte[][] signatures;
-                            item = EvaluationStack.Pop();
-                            if (item.IsArray)
-                            {
-                                signatures = item.GetArray().Select(p => p.GetByteArray()).ToArray();
-                                m = signatures.Length;
-                                if (m == 0 || m > n)
-                                {
-                                    State |= VMState.FAULT;
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                m = (int)item.GetBigInteger();
-                                if (m < 1 || m > n)
-                                {
-                                    State |= VMState.FAULT;
-                                    return;
-                                }
-                                signatures = new byte[m][];
-                                for (int i = 0; i < m; i++)
-                                    signatures[i] = EvaluationStack.Pop().GetByteArray();
-                            }
-                            byte[] message = ScriptContainer.GetMessage();
-                            bool fSuccess = true;
-                            try
-                            {
-                                for (int i = 0, j = 0; fSuccess && i < m && j < n;)
-                                {
-                                    if (Crypto.VerifySignature(message, signatures[i], pubkeys[j]))
-                                        i++;
-                                    j++;
-                                    if (m - i > n - j)
-                                        fSuccess = false;
-                                }
-                            }
-                            catch (ArgumentException)
-                            {
-                                fSuccess = false;
-                            }
-                            EvaluationStack.Push(fSuccess);
-                        }
-                        break;
 
                     // Array
                     case OpCode.ARRAYSIZE:
                         {
-                            StackItem item = EvaluationStack.Pop();
-                            if (!item.IsArray)
-                                EvaluationStack.Push(item.GetByteArray().Length);
+                            StackItem item = context.EvaluationStack.Pop();
+                            if (item is ICollection collection)
+                            {
+                                context.EvaluationStack.Push(collection.Count);
+                                CheckStackSize(false, 0);
+                            }
                             else
-                                EvaluationStack.Push(item.GetArray().Length);
+                            {
+                                context.EvaluationStack.Push(item.GetByteLength());
+                                CheckStackSize(true, 0);
+                            }
+                            break;
                         }
-                        break;
                     case OpCode.PACK:
                         {
-                            int size = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (size < 0 || size > EvaluationStack.Count)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            StackItem[] items = new StackItem[size];
+                            int size = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (size < 0 || size > context.EvaluationStack.Count || !CheckArraySize(size))
+                                return false;
+                            List<StackItem> items = new List<StackItem>(size);
                             for (int i = 0; i < size; i++)
-                                items[i] = EvaluationStack.Pop();
-                            EvaluationStack.Push(items);
+                                items.Add(context.EvaluationStack.Pop());
+                            context.EvaluationStack.Push(items);
+                            break;
                         }
-                        break;
                     case OpCode.UNPACK:
                         {
-                            StackItem item = EvaluationStack.Pop();
-                            if (!item.IsArray)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            StackItem[] items = item.GetArray();
-                            for (int i = items.Length - 1; i >= 0; i--)
-                                EvaluationStack.Push(items[i]);
-                            EvaluationStack.Push(items.Length);
+                            if (!(context.EvaluationStack.Pop() is VMArray array))
+                                return false;
+                            for (int i = array.Count - 1; i >= 0; i--)
+                                context.EvaluationStack.Push(array[i]);
+                            context.EvaluationStack.Push(array.Count);
+                            if (!CheckStackSize(false, array.Count)) return false;
+                            break;
                         }
-                        break;
                     case OpCode.PICKITEM:
                         {
-                            int index = (int)EvaluationStack.Pop().GetBigInteger();
-                            if (index < 0)
+                            StackItem key = context.EvaluationStack.Pop();
+                            if (key is ICollection) return false;
+                            StackItem item = context.EvaluationStack.Pop();
+                            switch (item)
                             {
-                                State |= VMState.FAULT;
-                                return;
+                                case VMArray array:
+                                    {
+                                        int index = (int)key.GetBigInteger();
+                                        if (index < 0 || index >= array.Count) return false;
+                                        context.EvaluationStack.Push(array[index]);
+                                        CheckStackSize(false, -1);
+                                        break;
+                                    }
+                                case Map map:
+                                    {
+                                        if (!map.TryGetValue(key, out StackItem value)) return false;
+                                        context.EvaluationStack.Push(value);
+                                        CheckStackSize(false, -1);
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        byte[] byteArray = item.GetByteArray();
+                                        int index = (int)key.GetBigInteger();
+                                        if (index < 0 || index >= byteArray.Length) return false;
+                                        context.EvaluationStack.Push((int)byteArray[index]);
+                                        CheckStackSize(true, -1);
+                                        break;
+                                    }
                             }
-                            StackItem item = EvaluationStack.Pop();
-                            if (!item.IsArray)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            StackItem[] items = item.GetArray();
-                            if (index >= items.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            EvaluationStack.Push(items[index]);
+                            break;
                         }
-                        break;
                     case OpCode.SETITEM:
                         {
-                            StackItem newItem = EvaluationStack.Pop();
-                            if (newItem.IsStruct)
+                            StackItem value = context.EvaluationStack.Pop();
+                            if (value is Struct s) value = s.Clone();
+                            StackItem key = context.EvaluationStack.Pop();
+                            if (key is ICollection) return false;
+                            switch (context.EvaluationStack.Pop())
                             {
-                                newItem = (newItem as Types.Struct).Clone();
+                                case VMArray array:
+                                    {
+                                        int index = (int)key.GetBigInteger();
+                                        if (index < 0 || index >= array.Count) return false;
+                                        array[index] = value;
+                                        break;
+                                    }
+                                case Map map:
+                                    {
+                                        if (!map.ContainsKey(key) && !CheckArraySize(map.Count + 1))
+                                            return false;
+                                        map[key] = value;
+                                        break;
+                                    }
+                                default:
+                                    return false;
                             }
-                            int index = (int)EvaluationStack.Pop().GetBigInteger();
-                            StackItem arrItem = EvaluationStack.Pop();
-                            if (!arrItem.IsArray)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            StackItem[] items = arrItem.GetArray();
-                            if (index < 0 || index >= items.Length)
-                            {
-                                State |= VMState.FAULT;
-                                return;
-                            }
-                            items[index] = newItem;
+
+                            if (!CheckStackSize(false, int.MaxValue))
+                                return false;
+
+                            break;
                         }
-                        break;
                     case OpCode.NEWARRAY:
-                        {
-                            int count = (int)EvaluationStack.Pop().GetBigInteger();
-                            StackItem[] items = new StackItem[count];
-                            for (var i = 0; i < count; i++)
-                            {
-                                items[i] = false;
-                            }
-                            EvaluationStack.Push(new Types.Array(items));
-                        }
-                        break;
                     case OpCode.NEWSTRUCT:
                         {
-                            int count = (int)EvaluationStack.Pop().GetBigInteger();
-                            StackItem[] items = new StackItem[count];
-                            for (var i = 0; i < count; i++)
+                            var item = context.EvaluationStack.Pop();
+
+                            if (item is VMArray array)
                             {
-                                items[i] = false;
+                                // Allow to convert between array and struct
+
+                                VMArray result = null;
+
+                                if (array is Struct)
+                                {
+                                    if (instruction.OpCode == OpCode.NEWSTRUCT)
+                                        result = array;
+                                }
+                                else
+                                {
+                                    if (instruction.OpCode == OpCode.NEWARRAY)
+                                        result = array;
+                                }
+
+                                if (result is null)
+                                    result = instruction.OpCode == OpCode.NEWARRAY
+                                        ? new VMArray(array)
+                                        : new Struct(array);
+
+                                context.EvaluationStack.Push(result);
                             }
-                            EvaluationStack.Push(new VM.Types.Struct(items));
+                            else
+                            {
+                                int count = (int)item.GetBigInteger();
+
+                                if (count < 0 || !CheckArraySize(count)) return false;
+
+                                List<StackItem> items = new List<StackItem>(count);
+
+                                for (var i = 0; i < count; i++)
+                                {
+                                    items.Add(false);
+                                }
+
+                                VMArray result = instruction.OpCode == OpCode.NEWARRAY
+                                    ? new VMArray(items)
+                                    : new Struct(items);
+
+                                context.EvaluationStack.Push(result);
+
+                                if (!CheckStackSize(true, count)) return false;
+                            }
+                            break;
                         }
-                        break;
+                    case OpCode.NEWMAP:
+                        {
+                            context.EvaluationStack.Push(new Map());
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
+                    case OpCode.APPEND:
+                        {
+                            StackItem newItem = context.EvaluationStack.Pop();
+                            if (newItem is Struct s) newItem = s.Clone();
+                            StackItem arrItem = context.EvaluationStack.Pop();
+                            if (!(arrItem is VMArray array)) return false;
+                            if (!CheckArraySize(array.Count + 1)) return false;
+                            array.Add(newItem);
+                            if (!CheckStackSize(false, int.MaxValue)) return false;
+                            break;
+                        }
+                    case OpCode.REVERSE:
+                        {
+                            StackItem arrItem = context.EvaluationStack.Pop();
+                            CheckStackSize(false, -1);
+                            if (!(arrItem is VMArray array)) return false;
+                            array.Reverse();
+                            break;
+                        }
+                    case OpCode.REMOVE:
+                        {
+                            StackItem key = context.EvaluationStack.Pop();
+                            if (key is ICollection) return false;
+                            StackItem value = context.EvaluationStack.Pop();
+                            CheckStackSize(false, -2);
+                            switch (value)
+                            {
+                                case VMArray array:
+                                    int index = (int)key.GetBigInteger();
+                                    if (index < 0 || index >= array.Count) return false;
+                                    array.RemoveAt(index);
+                                    break;
+                                case Map map:
+                                    map.Remove(key);
+                                    break;
+                                default:
+                                    return false;
+                            }
+                            break;
+                        }
+                    case OpCode.HASKEY:
+                        {
+                            StackItem key = context.EvaluationStack.Pop();
+                            if (key is ICollection) return false;
+                            switch (context.EvaluationStack.Pop())
+                            {
+                                case VMArray array:
+                                    int index = (int)key.GetBigInteger();
+                                    if (index < 0) return false;
+                                    context.EvaluationStack.Push(index < array.Count);
+                                    break;
+                                case Map map:
+                                    context.EvaluationStack.Push(map.ContainsKey(key));
+                                    break;
+                                default:
+                                    return false;
+                            }
+                            CheckStackSize(false, -1);
+                            break;
+                        }
+                    case OpCode.KEYS:
+                        {
+                            if (!(context.EvaluationStack.Pop() is Map map)) return false;
+                            context.EvaluationStack.Push(new VMArray(map.Keys));
+                            if (!CheckStackSize(false, map.Count)) return false;
+                            break;
+                        }
+                    case OpCode.VALUES:
+                        {
+                            ICollection<StackItem> values;
+                            switch (context.EvaluationStack.Pop())
+                            {
+                                case VMArray array:
+                                    values = array;
+                                    break;
+                                case Map map:
+                                    values = map.Values;
+                                    break;
+                                default:
+                                    return false;
+                            }
+                            List<StackItem> newArray = new List<StackItem>(values.Count);
+                            foreach (StackItem item in values)
+                                if (item is Struct s)
+                                    newArray.Add(s.Clone());
+                                else
+                                    newArray.Add(item);
+                            context.EvaluationStack.Push(new VMArray(newArray));
+                            if (!CheckStackSize(false, int.MaxValue)) return false;
+                            break;
+                        }
 
                     // Exceptions
                     case OpCode.THROW:
-                        State |= VMState.FAULT;
-                        return;
-                    case OpCode.THROWIFNOT:
-                        if (!EvaluationStack.Pop().GetBoolean())
                         {
-                            State |= VMState.FAULT;
-                            return;
+                            return false;
                         }
-                        break;
-
+                    case OpCode.THROWIFNOT:
+                        {
+                            if (!context.EvaluationStack.Pop().GetBoolean())
+                                return false;
+                            CheckStackSize(false, -1);
+                            break;
+                        }
                     default:
-                        State |= VMState.FAULT;
-                        return;
+                        return false;
                 }
-            if (!State.HasFlag(VMState.FAULT) && InvocationStack.Count > 0)
-            {
-                if (CurrentContext.BreakPoints.Contains((uint)CurrentContext.InstructionPointer))
-                    State |= VMState.BREAK;
-            }
+            context.MoveNext();
+            return true;
         }
 
-        public void LoadScript(byte[] script, bool push_only = false)
+        private void LoadContext(ExecutionContext context)
         {
-            InvocationStack.Push(new ExecutionContext(this, script, push_only));
+            if (InvocationStack.Count >= MaxInvocationStackSize)
+                throw new InvalidOperationException();
+            InvocationStack.Push(context);
+            ContextLoaded?.Invoke(this, context);
         }
 
-        public bool RemoveBreakPoint(uint position)
+        public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
-            if (InvocationStack.Count == 0) return false;
-            return CurrentContext.BreakPoints.Remove(position);
+            ExecutionContext context = new ExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
+            LoadContext(context);
+            return context;
         }
 
-        public void StepInto()
-        {
-            if (InvocationStack.Count == 0) State |= VMState.HALT;
-            if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
-            OpCode opcode = CurrentContext.InstructionPointer >= CurrentContext.Script.Length ? OpCode.RET : (OpCode)CurrentContext.OpReader.ReadByte();
-            try
-            {
-                ExecuteOp(opcode, CurrentContext);
-            }
-            catch
-            {
-                State |= VMState.FAULT;
-            }
-        }
+        protected virtual bool OnSysCall(uint method) => false;
 
-        public void StepOut()
-        {
-            State &= ~VMState.BREAK;
-            int c = InvocationStack.Count;
-            while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK) && InvocationStack.Count >= c)
-                StepInto();
-        }
+        protected virtual bool PostExecuteInstruction(Instruction instruction) => true;
 
-        public void StepOver()
-        {
-            if (State.HasFlag(VMState.HALT) || State.HasFlag(VMState.FAULT)) return;
-            State &= ~VMState.BREAK;
-            int c = InvocationStack.Count;
-            do
-            {
-                StepInto();
-            } while (!State.HasFlag(VMState.HALT) && !State.HasFlag(VMState.FAULT) && !State.HasFlag(VMState.BREAK) && InvocationStack.Count > c);
-        }
+        protected virtual bool PreExecuteInstruction() => true;
     }
 }

@@ -1,0 +1,25 @@
+language: csharp
+
+os:
+ - linux
+ - osx
+
+dist: bionic
+osx_image: xcode9.1
+
+mono: none
+dotnet: 2.1.300
+
+before_install:
+  - cd tests/neo-vm.Tests
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ulimit -n 2048; fi
+
+script:
+ - dotnet restore
+ - find * -name *.csproj | xargs -I % dotnet add % package coverlet.msbuild
+ - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+after_success:
+  # After all tests OK, Send CodeDov report
+  - echo "Test Success - Branch($TRAVIS_BRANCH) Pull Request($TRAVIS_PULL_REQUEST) Tag($TRAVIS_TAG)"
+  - bash <(curl -s https://codecov.io/bash) -v

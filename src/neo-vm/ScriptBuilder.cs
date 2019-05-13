@@ -7,28 +7,28 @@ namespace Neo.VM
 {
     public class ScriptBuilder : IDisposable
     {
-        private MemoryStream ms = new MemoryStream();
+        private readonly MemoryStream ms = new MemoryStream();
+        private readonly BinaryWriter writer;
 
         public int Offset => (int)ms.Position;
 
+        public ScriptBuilder()
+        {
+            this.writer = new BinaryWriter(ms);
+        }
+
         public void Dispose()
         {
+            writer.Dispose();
             ms.Dispose();
         }
 
         public ScriptBuilder Emit(OpCode op, byte[] arg = null)
         {
-            ms.WriteByte((byte)op);
+            writer.Write((byte)op);
             if (arg != null)
-                ms.Write(arg, 0, arg.Length);
+                writer.Write(arg);
             return this;
-        }
-
-        public ScriptBuilder EmitAppCall(byte[] scriptHash, bool useTailCall = false)
-        {
-            if (scriptHash.Length != 20)
-                throw new ArgumentException();
-            return Emit(useTailCall ? OpCode.TAILCALL : OpCode.APPCALL, scriptHash);
         }
 
         public ScriptBuilder EmitJump(OpCode op, short offset)
@@ -57,26 +57,26 @@ namespace Neo.VM
                 throw new ArgumentNullException();
             if (data.Length <= (int)OpCode.PUSHBYTES75)
             {
-                ms.WriteByte((byte)data.Length);
-                ms.Write(data, 0, data.Length);
+                writer.Write((byte)data.Length);
+                writer.Write(data);
             }
             else if (data.Length < 0x100)
             {
                 Emit(OpCode.PUSHDATA1);
-                ms.WriteByte((byte)data.Length);
-                ms.Write(data, 0, data.Length);
+                writer.Write((byte)data.Length);
+                writer.Write(data);
             }
             else if (data.Length < 0x10000)
             {
                 Emit(OpCode.PUSHDATA2);
-                ms.Write(BitConverter.GetBytes((ushort)data.Length), 0, 2);
-                ms.Write(data, 0, data.Length);
+                writer.Write((ushort)data.Length);
+                writer.Write(data);
             }
             else// if (data.Length < 0x100000000L)
             {
                 Emit(OpCode.PUSHDATA4);
-                ms.Write(BitConverter.GetBytes((uint)data.Length), 0, 4);
-                ms.Write(data, 0, data.Length);
+                writer.Write(data.Length);
+                writer.Write(data);
             }
             return this;
         }
@@ -86,21 +86,14 @@ namespace Neo.VM
             return EmitPush(Encoding.UTF8.GetBytes(data));
         }
 
-        public ScriptBuilder EmitSysCall(string api)
+        public ScriptBuilder EmitSysCall(uint api)
         {
-            if (api == null)
-                throw new ArgumentNullException();
-            byte[] api_bytes = Encoding.ASCII.GetBytes(api);
-            if (api_bytes.Length == 0 || api_bytes.Length > 252)
-                throw new ArgumentException();
-            byte[] arg = new byte[api_bytes.Length + 1];
-            arg[0] = (byte)api_bytes.Length;
-            Buffer.BlockCopy(api_bytes, 0, arg, 1, api_bytes.Length);
-            return Emit(OpCode.SYSCALL, arg);
+            return Emit(OpCode.SYSCALL, BitConverter.GetBytes(api));
         }
 
         public byte[] ToArray()
         {
+            writer.Flush();
             return ms.ToArray();
         }
     }

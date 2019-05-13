@@ -1,62 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    public class ExecutionContext : IDisposable
+    public class ExecutionContext
     {
-        private ExecutionEngine engine;
-        public readonly byte[] Script;
-        public readonly bool PushOnly;
-        internal readonly BinaryReader OpReader;
-        internal readonly HashSet<uint> BreakPoints;
+        /// <summary>
+        /// Number of items to be returned
+        /// </summary>
+        internal int RVCount { get; }
 
-        public int InstructionPointer
+        /// <summary>
+        /// Script
+        /// </summary>
+        public Script Script { get; }
+
+        /// <summary>
+        /// Evaluation stack
+        /// </summary>
+        public RandomAccessStack<StackItem> EvaluationStack { get; }
+
+        /// <summary>
+        /// Alternative stack
+        /// </summary>
+        public RandomAccessStack<StackItem> AltStack { get; }
+
+        /// <summary>
+        /// Instruction pointer
+        /// </summary>
+        public int InstructionPointer { get; set; }
+
+        public Instruction CurrentInstruction
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return (int)OpReader.BaseStream.Position;
-            }
-            set
-            {
-                OpReader.BaseStream.Seek(value, SeekOrigin.Begin);
+                return GetInstruction(InstructionPointer);
             }
         }
 
-        public OpCode NextInstruction => (OpCode)Script[OpReader.BaseStream.Position];
-
-        private byte[] _script_hash = null;
-        public byte[] ScriptHash
+        /// <summary>
+        /// Next instruction
+        /// </summary>
+        public Instruction NextInstruction
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (_script_hash == null)
-                    _script_hash = engine.Crypto.Hash160(Script);
-                return _script_hash;
+                return GetInstruction(InstructionPointer + CurrentInstruction.Size);
             }
         }
 
-        internal ExecutionContext(ExecutionEngine engine, byte[] script, bool push_only, HashSet<uint> break_points = null)
+        public Script CallingScript { get; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="script">Script</param>
+        /// <param name="callingScript">The calling script</param>
+        /// <param name="rvcount">Number of items to be returned</param>
+        internal ExecutionContext(Script script, Script callingScript, int rvcount)
+            : this(script, callingScript, rvcount, new RandomAccessStack<StackItem>(), new RandomAccessStack<StackItem>())
         {
-            this.engine = engine;
+        }
+
+        private ExecutionContext(Script script, Script callingScript, int rvcount, RandomAccessStack<StackItem> stack, RandomAccessStack<StackItem> alt)
+        {
+            this.RVCount = rvcount;
             this.Script = script;
-            this.PushOnly = push_only;
-            this.OpReader = new BinaryReader(new MemoryStream(script, false));
-            this.BreakPoints = break_points ?? new HashSet<uint>();
+            this.EvaluationStack = stack;
+            this.AltStack = alt;
+            this.CallingScript = callingScript;
         }
 
-        public ExecutionContext Clone()
+        internal ExecutionContext Clone()
         {
-            return new ExecutionContext(engine, Script, PushOnly, BreakPoints)
-            {
-                InstructionPointer = InstructionPointer
-            };
+            return new ExecutionContext(Script, Script, 0, EvaluationStack, AltStack);
         }
 
-        public void Dispose()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Instruction GetInstruction(int ip) => Script.GetInstruction(ip);
+
+        internal bool MoveNext()
         {
-            OpReader.Dispose();
+            InstructionPointer += CurrentInstruction.Size;
+            return InstructionPointer < Script.Length;
         }
     }
 }

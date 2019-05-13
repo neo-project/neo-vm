@@ -1,0 +1,59 @@
+﻿{
+    "category": "Arrays",
+    "name": "NEWMAP",
+    "tests":
+    [
+        {
+            "name": "Real test",
+            "script": "0xC7",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 1,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Map",
+                                "value":
+                                {
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System;
 using System.Numerics;
 
 namespace Neo.VM.Types
 {
-    internal class Integer : StackItem
+    public class Integer : StackItem
     {
         private BigInteger value;
 
@@ -16,11 +16,17 @@ namespace Neo.VM.Types
         {
             if (ReferenceEquals(this, other)) return true;
             if (ReferenceEquals(null, other)) return false;
-            Integer i = other as Integer;
-            if (i == null)
-                return GetByteArray().SequenceEqual(other.GetByteArray());
-            else
-                return value == i.value;
+            if (other is Integer i) return value == i.value;
+            byte[] bytes_other;
+            try
+            {
+                bytes_other = other.GetByteArray();
+            }
+            catch (NotSupportedException)
+            {
+                return false;
+            }
+            return Unsafe.MemoryEquals(GetByteArray(), bytes_other);
         }
 
         public override BigInteger GetBigInteger()
@@ -30,12 +36,20 @@ namespace Neo.VM.Types
 
         public override bool GetBoolean()
         {
-            return value != BigInteger.Zero;
+            return !value.IsZero;
         }
 
         public override byte[] GetByteArray()
         {
             return value.ToByteArray();
+        }
+
+        private int _length = -1;
+        public override int GetByteLength()
+        {
+            if (_length == -1)
+                _length = value.ToByteArray().Length;
+            return _length;
         }
     }
 }

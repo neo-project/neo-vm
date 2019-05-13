@@ -1,0 +1,30 @@
+﻿{
+    "category": "Exceptions",
+    "name": "THROW",
+    "tests":
+    [
+        {
+            "script": "0xF0",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 0,
+                                "nextInstruction": "THROW"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

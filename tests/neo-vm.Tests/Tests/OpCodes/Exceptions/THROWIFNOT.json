@@ -1,0 +1,91 @@
+﻿{
+    "category": "Exceptions",
+    "name": "THROWIFNOT",
+    "tests":
+    [
+        {
+            "script": "0x0091F1",
+            "name": "Without throw exception",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 3,
+                                "nextInstruction": "RET"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt"
+                    }
+                }
+            ]
+        },
+        {
+            "script": "0x00F1",
+            "name": "Throw exception (with PUSH)",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 1,
+                                "nextInstruction": "THROWIFNOT"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "script": "0xF1",
+            "name": "Throw exception (without PUSH - FAULT)",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 0,
+                                "nextInstruction": "THROWIFNOT"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
