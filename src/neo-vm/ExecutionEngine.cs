@@ -64,7 +64,8 @@ namespace Neo.VM
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
         public ExecutionContext CurrentContext => InvocationStack.Peek();
-        public byte[] EntryScriptHash { get; private set; }
+        public ExecutionContext CallingContext => InvocationStack.Count > 1 ? InvocationStack.Peek(1) : null;
+        public ExecutionContext EntryContext => InvocationStack.Peek(InvocationStack.Count - 1);
         public VMState State { get; internal protected set; } = VMState.BREAK;
 
         public ExecutionEngine(IScriptContainer container, ICrypto crypto, IScriptTable table = null, IInteropService service = null)
@@ -284,7 +285,7 @@ namespace Neo.VM
                     case OpCode.CALL:
                         {
                             if (!CheckMaxInvocationStack()) return false;
-                            ExecutionContext context_call = LoadScript(context.Script, context.ScriptHash);
+                            ExecutionContext context_call = LoadScript(context.Script);
                             context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16;
                             if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
                             context.EvaluationStack.CopyTo(context_call.EvaluationStack);
@@ -327,7 +328,7 @@ namespace Neo.VM
                             {
                                 script_hash = context.EvaluationStack.Pop().GetByteArray();
                             }
-                            ExecutionContext context_new = LoadScriptByHash(script_hash, context.ScriptHash);
+                            ExecutionContext context_new = LoadScriptByHash(script_hash);
                             if (context_new == null) return false;
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack);
                             if (instruction.OpCode == OpCode.TAILCALL)
@@ -1170,7 +1171,7 @@ namespace Neo.VM
                             int rvcount = instruction.Operand[0];
                             int pcount = instruction.Operand[1];
                             if (context.EvaluationStack.Count < pcount) return false;
-                            ExecutionContext context_call = LoadScript(context.Script, context.ScriptHash, rvcount);
+                            ExecutionContext context_call = LoadScript(context.Script, rvcount);
                             context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16_1 + 2;
                             if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
                             context.EvaluationStack.CopyTo(context_call.EvaluationStack, pcount);
@@ -1207,7 +1208,7 @@ namespace Neo.VM
                                 script_hash = instruction.ReadBytes(2, 20);
                             }
 
-                            ExecutionContext context_new = LoadScriptByHash(script_hash, context.ScriptHash, rvcount);
+                            ExecutionContext context_new = LoadScriptByHash(script_hash, rvcount);
                             if (context_new == null) return false;
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack, pcount);
                             if (instruction.OpCode == OpCode.CALL_ET || instruction.OpCode == OpCode.CALL_EDT)
@@ -1237,26 +1238,24 @@ namespace Neo.VM
             return true;
         }
 
-        public ExecutionContext LoadScript(byte[] script, byte[] callingScriptHash = null, int rvcount = -1)
+        public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
-            return LoadScript(new Script(Crypto, script), callingScriptHash, rvcount);
+            return LoadScript(new Script(Crypto, script), rvcount);
         }
 
-        protected virtual ExecutionContext LoadScript(Script script, byte[] callingScriptHash = null, int rvcount = -1)
+        protected virtual ExecutionContext LoadScript(Script script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(script, callingScriptHash, rvcount);
-            if (EntryScriptHash is null)
-                EntryScriptHash = context.ScriptHash;
+            ExecutionContext context = new ExecutionContext(script, rvcount);
             InvocationStack.Push(context);
             return context;
         }
 
-        private ExecutionContext LoadScriptByHash(byte[] hash, byte[] callingScriptHash, int rvcount = -1)
+        private ExecutionContext LoadScriptByHash(byte[] hash, int rvcount = -1)
         {
             if (table == null) return null;
             byte[] script = table.GetScript(hash);
             if (script == null) return null;
-            return LoadScript(new Script(hash, script), callingScriptHash, rvcount);
+            return LoadScript(new Script(hash, script), rvcount);
         }
 
         protected virtual bool PostExecuteInstruction(Instruction instruction)
