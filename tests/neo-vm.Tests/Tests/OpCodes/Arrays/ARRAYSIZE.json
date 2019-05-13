@@ -4,8 +4,8 @@
     "tests":
     [
         {
-            "name": "Wrong type SYSCALL[Test.ExecutionEngine.GetScriptContainer]+ARRAYSIZE",
-            "script": "0x6827546573742E457865637574696F6E456E67696E652E476574536372697074436F6E7461696E6572C0",
+            "name": "Wrong type SYSCALL[0x77777777]+ARRAYSIZE",
+            "script": "0x6877777777C0",
             "message": "0x00",
             "steps":
             [
@@ -20,7 +20,7 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 41,
+                                "instructionPointer": 5,
                                 "nextInstruction": "ARRAYSIZE",
                                 "evaluationStack":
                                 [
@@ -44,7 +44,7 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 41,
+                                "instructionPointer": 5,
                                 "nextInstruction": "ARRAYSIZE"
                             }
                         ]
