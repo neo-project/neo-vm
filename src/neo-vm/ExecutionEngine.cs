@@ -331,7 +331,10 @@ namespace Neo.VM
                             if (context_new == null) return false;
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack);
                             if (instruction.OpCode == OpCode.TAILCALL)
-                                InvocationStack.Remove(1);
+                            {
+                                ExecutionContext CallingContext = InvocationStack.Remove(1);
+                                CurrentContext.CallingScriptHash = CallingContext.CallingScriptHash;
+                            }
                             else
                                 context.EvaluationStack.Clear();
                             CheckStackSize(false, 0);
@@ -1211,7 +1214,10 @@ namespace Neo.VM
                             if (context_new == null) return false;
                             context.EvaluationStack.CopyTo(context_new.EvaluationStack, pcount);
                             if (instruction.OpCode == OpCode.CALL_ET || instruction.OpCode == OpCode.CALL_EDT)
-                                InvocationStack.Remove(1);
+                            {
+                                ExecutionContext CallingContext = InvocationStack.Remove(1);
+                                CurrentContext.CallingScriptHash = CallingContext.CallingScriptHash;
+                            }
                             else
                                 for (int i = 0; i < pcount; i++)
                                     context.EvaluationStack.Pop();

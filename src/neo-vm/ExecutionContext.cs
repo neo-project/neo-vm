@@ -62,7 +62,7 @@ namespace Neo.VM
             }
         }
 
-        public byte[] CallingScriptHash { get; }
+        public byte[] CallingScriptHash { get; set; }
 
         /// <summary>
         /// Constructor
