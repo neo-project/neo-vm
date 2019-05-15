@@ -11,12 +11,12 @@ namespace Neo.Test.Types
             {
                 case "System.ExecutionEngine.GetEntryScriptHash":
                     {
-                        engine.CurrentContext.EvaluationStack.Push(engine.EntryScriptHash);
+                        engine.CurrentContext.EvaluationStack.Push(engine.EntryContext.ScriptHash);
                         return true;
                     }
                 case "System.ExecutionEngine.GetCallingScriptHash":
                     {
-                        engine.CurrentContext.EvaluationStack.Push(engine.CurrentContext.CallingScriptHash ?? new byte[0]);
+                        engine.CurrentContext.EvaluationStack.Push(engine.CallingContext.ScriptHash);
                         return true;
                     }
                 case "System.ExecutionEngine.GetExecutingScriptHash":

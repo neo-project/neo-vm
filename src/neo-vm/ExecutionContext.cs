@@ -62,19 +62,15 @@ namespace Neo.VM
             }
         }
 
-        public byte[] CallingScriptHash { get; }
-
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="script">Script</param>
-        /// <param name="callingScriptHash">Script hash of the calling script</param>
         /// <param name="rvcount">Number of items to be returned</param>
-        internal ExecutionContext(Script script, byte[] callingScriptHash, int rvcount)
+        internal ExecutionContext(Script script, int rvcount)
         {
             this.RVCount = rvcount;
             this.Script = script;
-            this.CallingScriptHash = callingScriptHash;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
