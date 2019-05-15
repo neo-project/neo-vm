@@ -22,13 +22,12 @@ namespace Neo.VM
             hashset.Add(position);
         }
 
-        public void Execute()
+        public VMState Execute()
         {
             engine.State &= ~VMState.BREAK;
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK))
-            {
                 ExecuteAndCheckBreakPoints();
-            }
+            return engine.State;
         }
 
         private void ExecuteAndCheckBreakPoints()
@@ -49,15 +48,17 @@ namespace Neo.VM
             return true;
         }
 
-        public void StepInto()
+        public VMState StepInto()
         {
-            if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT)) return;
+            if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
+                return engine.State;
             engine.ExecuteNext();
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
+            return engine.State;
         }
 
-        public void StepOut()
+        public VMState StepOut()
         {
             engine.State &= ~VMState.BREAK;
             int c = engine.InvocationStack.Count;
@@ -65,11 +66,13 @@ namespace Neo.VM
                 ExecuteAndCheckBreakPoints();
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
+            return engine.State;
         }
 
-        public void StepOver()
+        public VMState StepOver()
         {
-            if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT)) return;
+            if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
+                return engine.State;
             engine.State &= ~VMState.BREAK;
             int c = engine.InvocationStack.Count;
             do
@@ -79,6 +82,7 @@ namespace Neo.VM
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count > c);
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
+            return engine.State;
         }
     }
 }
