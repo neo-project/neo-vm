@@ -328,12 +328,14 @@ namespace Neo.VM
                         {
                             var item = context.EvaluationStack.Peek(context.EvaluationStack.Count - 1);
                             context.EvaluationStack.Push(item);
+                            if (!CheckStackSize(true)) return false;
                             break;
                         }
                     case OpCode.DUPBOTFROMALTSTACK:
                         {
                             var item = context.AltStack.Peek(context.AltStack.Count - 1);
                             context.EvaluationStack.Push(item);
+                            if (!CheckStackSize(true)) return false;
                             break;
                         }
                     // Stack ops
