@@ -310,7 +310,7 @@ namespace Neo.VM
                                 return false;
                             break;
                         }
-                    // Static Stack ops
+                    // Ex Stack ops
                     case OpCode.OVERFROMALTSTACK:
                         {
                             context.EvaluationStack.Push(context.AltStack.Peek(1));
@@ -324,7 +324,18 @@ namespace Neo.VM
                             context.EvaluationStack.Push(context.AltStack.Peek(n));
                             break;
                         }
-
+                    case OpCode.DUPBOT:
+                        {
+                            var item = context.EvaluationStack.Peek(context.EvaluationStack.Count - 1);
+                            context.EvaluationStack.Push(item);
+                            break;
+                        }
+                    case OpCode.DUPBOTFROMALTSTACK:
+                        {
+                            var item = context.AltStack.Peek(context.AltStack.Count - 1);
+                            context.EvaluationStack.Push(item);
+                            break;
+                        }
                     // Stack ops
                     case OpCode.DUPFROMALTSTACK:
                         {

@@ -717,6 +717,16 @@ namespace Neo.VM
         /// </summary>
         PICKFROMALTSTACK = 0xD1,
 
+
+        /// <summary>
+        /// Copies the bottom stack item to the top.
+        /// </summary>    
+        DUPBOT = 0xD2,
+        /// <summary>
+        ///  Copies the bottomof alt stack and put it on top of main stack.
+        /// </summary> 
+        DUPBOTFROMALTSTACK = 0xD3,
+
         // Exceptions
         /// <summary>
         /// Halts the execution of the vm by setting VMState.FAULT.
