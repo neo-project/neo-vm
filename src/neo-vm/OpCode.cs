@@ -707,23 +707,12 @@ namespace Neo.VM
         /// </summary>
         VALUES = 0xCD,
 
-        // Static Evaluation Stack
-        /// <summary>
-        /// Copies the second-to-top of alt stack and put it on top of main stack.
-        /// </summary>
-        OVERFROMALTSTACK = 0xD0,
-        /// <summary>
-        /// The item n back in the alt stack is copied to the top of main stack.
-        /// </summary>
-        PICKFROMALTSTACK = 0xD1,
-        /// <summary>
-        /// Copies the bottom stack item to the top.
-        /// </summary>    
-        DUPBOT = 0xD2,
+        // Alt Stack EX
+
         /// <summary>
         ///  Copies the bottom of alt stack and put it on top of main stack.
         /// </summary> 
-        DUPBOTFROMALTSTACK = 0xD3,
+        DUPBOTFROMALTSTACK = 0xD0,
 
         // Exceptions
         /// <summary>
