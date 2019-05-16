@@ -310,19 +310,18 @@ namespace Neo.VM
                                 return false;
                             break;
                         }
-                    // Ex Stack ops
 
-
-                    case OpCode.DUPFROMALTSTACK:
-                        {
-                            context.EvaluationStack.Push(context.AltStack.Peek());
-                            if (!CheckStackSize(true)) return false;
-                            break;
-                        }
-                    case OpCode.DUPBOTFROMALTSTACK:
+                    // Stack ops
+                    case OpCode.DUPFROMALTSTACKBOTTOM:
                         {
                             var item = context.AltStack.Peek(context.AltStack.Count - 1);
                             context.EvaluationStack.Push(item);
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
+                    case OpCode.DUPFROMALTSTACK:
+                        {
+                            context.EvaluationStack.Push(context.AltStack.Peek());
                             if (!CheckStackSize(true)) return false;
                             break;
                         }
