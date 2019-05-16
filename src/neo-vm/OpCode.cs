@@ -716,8 +716,6 @@ namespace Neo.VM
         /// The item n back in the alt stack is copied to the top of main stack.
         /// </summary>
         PICKFROMALTSTACK = 0xD1,
-
-
         /// <summary>
         /// Copies the bottom stack item to the top.
         /// </summary>    
