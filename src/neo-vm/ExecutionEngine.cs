@@ -58,15 +58,16 @@ namespace Neo.VM
 
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
+
         public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
         public VMState State { get; internal protected set; } = VMState.BREAK;
 
         #region Events
-        
+
         public event EventHandler<ExecutionContext> ContextLoaded;
         public event EventHandler<ExecutionContext> ContextUnloaded;
-        
+
         #endregion
 
         #region Limits
@@ -311,6 +312,13 @@ namespace Neo.VM
                         }
 
                     // Stack ops
+                    case OpCode.DUPFROMALTSTACKBOTTOM:
+                        {
+                            var item = context.AltStack.Peek(context.AltStack.Count - 1);
+                            context.EvaluationStack.Push(item);
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
                     case OpCode.DUPFROMALTSTACK:
                         {
                             context.EvaluationStack.Push(context.AltStack.Peek());
