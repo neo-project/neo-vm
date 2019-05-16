@@ -723,7 +723,7 @@ namespace Neo.VM
         /// </summary>    
         DUPBOT = 0xD2,
         /// <summary>
-        ///  Copies the bottomof alt stack and put it on top of main stack.
+        ///  Copies the bottom of alt stack and put it on top of main stack.
         /// </summary> 
         DUPBOTFROMALTSTACK = 0xD3,
 
