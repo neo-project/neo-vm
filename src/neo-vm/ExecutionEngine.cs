@@ -59,18 +59,15 @@ namespace Neo.VM
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
 
-        //add a static Evaluation for storage infos for everyScript;
-        public RandomAccessStack<StackItem> StaticEvaluationStack { get; } = new RandomAccessStack<StackItem>();
-
         public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
         public VMState State { get; internal protected set; } = VMState.BREAK;
 
         #region Events
-        
+
         public event EventHandler<ExecutionContext> ContextLoaded;
         public event EventHandler<ExecutionContext> ContextUnloaded;
-        
+
         #endregion
 
         #region Limits
@@ -313,22 +310,20 @@ namespace Neo.VM
                             break;
                         }
                     // Static Stack ops
-                    case OpCode.DUPFROMSTATICSTACK:
+                    case OpCode.OVERFROMALTSTACK:
                         {
-                            context.EvaluationStack.Push(this.StaticEvaluationStack.Peek());
+                            context.EvaluationStack.Push(context.AltStack.Peek(1));
                             if (!CheckStackSize(true)) return false;
                             break;
                         }
-                    case OpCode.TOSTATICSTACK:
+                    case OpCode.PICKFROMALTSTACK:
                         {
-                            context.AltStack.Push(this.StaticEvaluationStack.Pop());
+                            int n = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            if (n < 0) return false;
+                            context.EvaluationStack.Push(context.AltStack.Peek(n));
                             break;
                         }
-                    case OpCode.FROMSTATICSTACK:
-                        {
-                            context.EvaluationStack.Push(this.StaticEvaluationStack.Pop());
-                            break;
-                        }
+
                     // Stack ops
                     case OpCode.DUPFROMALTSTACK:
                         {
