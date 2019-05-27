@@ -159,7 +159,7 @@ namespace Neo.VM
                             if (counted.Any(p => ReferenceEquals(p, map)))
                                 continue;
                             counted.Add(map);
-                            count += map.Keys.Count; // Count key items
+                            count += map.Count; // Count key items
                             foreach (StackItem subitem in map.Values)
                                 queue.Enqueue(subitem);
                             break;
