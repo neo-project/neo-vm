@@ -440,10 +440,9 @@ namespace Neo.VM
                             {
                                 int length = x1.Length + x2.Length;
                                 if (!CheckMaxItemSize(length)) return false;
-                                byte[] buffer = new byte[length];
-                                Unsafe.MemoryCopy(x1, 0, buffer, 0, x1.Length);
-                                Unsafe.MemoryCopy(x2, 0, buffer, x1.Length, x2.Length);
-                                result = buffer;
+                                result = new byte[length];
+                                Unsafe.MemoryCopy(x1, 0, result, 0, x1.Length);
+                                Unsafe.MemoryCopy(x2, 0, result, x1.Length, x2.Length);
                             }
                             context.EvaluationStack.Push(result);
                             CheckStackSize(true, -1);
