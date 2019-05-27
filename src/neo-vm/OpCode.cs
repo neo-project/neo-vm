@@ -651,6 +651,8 @@ namespace Neo.VM
         /// The input is hashed using SHA-256.
         /// </summary>
         SHA256 = 0xA8,
+        //Reserved = 0xAC,
+        //Reserved = 0xAE,
 
 
         // Array
