@@ -892,30 +892,34 @@ namespace Neo.VM
                             StackItem value = context.EvaluationStack.Pop();
                             if (value is Struct s) value = s.Clone();
                             StackItem key = context.EvaluationStack.Pop();
-                            if (key is ICollection) return false;
                             switch (context.EvaluationStack.Pop())
                             {
                                 case VMArray array:
                                     {
                                         int index = (int)key.GetBigInteger();
                                         if (index < 0 || index >= array.Count) return false;
+
                                         array[index] = value;
+                                        if (!CheckStackSize(true, -3))
+                                            return false;
                                         break;
                                     }
                                 case Map map:
                                     {
-                                        if (!map.ContainsKey(key) && !CheckArraySize(map.Count + 1))
+                                        if (key is ICollection) return false;
+
+                                        var contains = map.ContainsKey(key);
+                                        if (!contains && !CheckArraySize(map.Count + 1))
                                             return false;
+
                                         map[key] = value;
+                                        if (!CheckStackSize(true, contains ? -3 : -1))
+                                            return false;
                                         break;
                                     }
                                 default:
                                     return false;
                             }
-
-                            if (!CheckStackSize(false, int.MaxValue))
-                                return false;
-
                             break;
                         }
                     case OpCode.NEWARRAY:
