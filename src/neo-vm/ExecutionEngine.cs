@@ -17,12 +17,12 @@ namespace Neo.VM
         /// <summary>
         /// Max value for SHL and SHR
         /// </summary>
-        public virtual int Max_SHL_SHR => 256;
+        public virtual short Max_SHL_SHR => 256;
 
         /// <summary>
         /// Min value for SHL and SHR
         /// </summary>
-        public virtual int Min_SHL_SHR => -256;
+        public virtual short Min_SHL_SHR => 0;
 
         /// <summary>
         /// The max size in bytes allowed size for BigInteger
