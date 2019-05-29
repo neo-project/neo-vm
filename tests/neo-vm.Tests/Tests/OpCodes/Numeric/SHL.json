@@ -66,8 +66,8 @@
             ]
         },
         {
-            "name": "Exception - Below the limit 0 << -257",
-            "script": "0x0002FFFE98",
+            "name": "Exception - Below the limit 0 << -1",
+            "script": "0x0001FF98",
             "steps":
             [
                 {
@@ -82,14 +82,14 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x29351D375C5FEB0E1ED756CDEF8AB48260E8FCA9",
-                                "instructionPointer": 4,
+                                "scriptHash": "0x11bb7b0c07403b61097d705b1806dd825d1f2aac",
+                                "instructionPointer": 3,
                                 "nextInstruction": "SHL",
                                 "evaluationStack":
                                 [
                                     {
                                         "type": "ByteArray",
-                                        "value": "0xFFFE"
+                                        "value": "0xFF"
                                     },
                                     {
                                         "type": "ByteArray",
@@ -111,8 +111,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x29351D375C5FEB0E1ED756CDEF8AB48260E8FCA9",
-                                "instructionPointer": 4,
+                                "scriptHash": "0x11bb7b0c07403b61097d705b1806dd825d1f2aac",
+                                "instructionPointer": 3,
                                 "nextInstruction": "SHL",
                                 "evaluationStack":
                                 [
@@ -175,6 +175,60 @@
                             {
                                 "type": "Integer",
                                 "value": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test 8 << 2",
+            "script": "0x585298",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "scriptHash": "0x17c97357a4a0cef8c76bf1948e85f1264c881b67",
+                                "instructionPointer": 2,
+                                "nextInstruction": "SHL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 8
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 32
                             }
                         ]
                     }
