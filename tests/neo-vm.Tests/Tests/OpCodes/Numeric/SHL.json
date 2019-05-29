@@ -20,7 +20,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x2C9BA6F08FFCCB999A3FB8636A485A0D12BD2E54",
                                 "instructionPointer": 4,
                                 "nextInstruction": "SHL",
                                 "evaluationStack":
@@ -49,7 +48,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x2C9BA6F08FFCCB999A3FB8636A485A0D12BD2E54",
                                 "instructionPointer": 4,
                                 "nextInstruction": "SHL",
                                 "evaluationStack":
@@ -82,7 +80,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x11bb7b0c07403b61097d705b1806dd825d1f2aac",
                                 "instructionPointer": 3,
                                 "nextInstruction": "SHL",
                                 "evaluationStack":
@@ -111,7 +108,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x11bb7b0c07403b61097d705b1806dd825d1f2aac",
                                 "instructionPointer": 3,
                                 "nextInstruction": "SHL",
                                 "evaluationStack":
@@ -144,7 +140,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x47DA2CD2329F2C882A4DB611D048D53F2CB07085",
                                 "instructionPointer": 4,
                                 "nextInstruction": "SHL",
                                 "evaluationStack":
@@ -198,7 +193,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x17c97357a4a0cef8c76bf1948e85f1264c881b67",
                                 "instructionPointer": 2,
                                 "nextInstruction": "SHL",
                                 "evaluationStack":
