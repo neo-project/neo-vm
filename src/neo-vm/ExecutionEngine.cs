@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
@@ -797,22 +796,6 @@ namespace Neo.VM
                             if (!CheckBigInteger(x)) return false;
                             context.EvaluationStack.Push(a <= x && x < b);
                             CheckStackSize(true, -2);
-                            break;
-                        }
-
-                    // Crypto
-                    case OpCode.SHA1:
-                        using (SHA1 sha = SHA1.Create())
-                        {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(sha.ComputeHash(x));
-                            break;
-                        }
-                    case OpCode.SHA256:
-                        using (SHA256 sha = SHA256.Create())
-                        {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(sha.ComputeHash(x));
                             break;
                         }
 
