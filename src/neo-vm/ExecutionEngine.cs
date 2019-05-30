@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
