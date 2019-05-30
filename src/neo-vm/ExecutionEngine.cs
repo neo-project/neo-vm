@@ -801,13 +801,6 @@ namespace Neo.VM
                         }
 
                     // Crypto
-                    case OpCode.SHA1:
-                        using (SHA1 sha = SHA1.Create())
-                        {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(sha.ComputeHash(x));
-                            break;
-                        }
                     case OpCode.SHA256:
                         using (SHA256 sha = SHA256.Create())
                         {
