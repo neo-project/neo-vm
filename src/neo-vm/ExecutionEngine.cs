@@ -1007,9 +1007,11 @@ namespace Neo.VM
                                     int index = (int)key.GetBigInteger();
                                     if (index < 0 || index >= array.Count) return false;
                                     array.RemoveAt(index);
+                                    CheckStackSize(false, -1);
                                     break;
                                 case Map map:
-                                    map.Remove(key);
+                                    if (map.Remove(key))
+                                        CheckStackSize(false, -2);
                                     break;
                                 default:
                                     return false;
