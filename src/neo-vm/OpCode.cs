@@ -640,7 +640,9 @@ namespace Neo.VM
         /// </summary>
         WITHIN = 0xA5,
 
-
+        //Reserved = 0xAC,
+        //Reserved = 0xAE,
+        
         // Array
         /// <summary>
         /// An array is removed from top of the main stack. Its size is put on top of the main stack.
