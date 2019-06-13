@@ -73,7 +73,7 @@
                         [
                             {
                                 "instructionPointer": 6,
-                                "nextInstruction": "PUSH0",
+                                "nextInstruction": "PUSHBYTES0",
                                 "altStack":
                                 [
                                     {
@@ -310,7 +310,7 @@
                         [
                             {
                                 "instructionPointer": 6,
-                                "nextInstruction": "PUSH0",
+                                "nextInstruction": "PUSHBYTES0",
                                 "altStack":
                                 [
                                     {

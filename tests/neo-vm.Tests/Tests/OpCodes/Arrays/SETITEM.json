@@ -525,7 +525,7 @@
                         [
                             {
                                 "instructionPointer": 3,
-                                "nextInstruction": "PUSH0",
+                                "nextInstruction": "PUSHBYTES0",
                                 "evaluationStack":
                                 [
                                     {
@@ -599,7 +599,7 @@
                         [
                             {
                                 "instructionPointer": 9,
-                                "nextInstruction": "PUSH0",
+                                "nextInstruction": "PUSHBYTES0",
                                 "evaluationStack":
                                 [
                                     {
@@ -779,7 +779,7 @@
                         [
                             {
                                 "instructionPointer": 3,
-                                "nextInstruction": "PUSH0",
+                                "nextInstruction": "PUSHBYTES0",
                                 "evaluationStack":
                                 [
                                     {
@@ -853,7 +853,7 @@
                         [
                             {
                                 "instructionPointer": 9,
-                                "nextInstruction": "PUSH0",
+                                "nextInstruction": "PUSHBYTES0",
                                 "evaluationStack":
                                 [
                                     {

@@ -41,14 +41,14 @@ namespace Neo.VM.Types
 
         public override byte[] GetByteArray()
         {
-            return value.ToByteArray();
+            return value.IsZero ? new byte[0] : value.ToByteArray();
         }
 
         private int _length = -1;
         public override int GetByteLength()
         {
             if (_length == -1)
-                _length = value.ToByteArray().Length;
+                _length = GetByteArray().Length;
             return _length;
         }
     }

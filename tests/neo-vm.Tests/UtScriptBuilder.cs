@@ -74,7 +74,7 @@ namespace Neo.Test
             using (var script = new ScriptBuilder())
             {
                 script.EmitPush(BigInteger.Zero);
-                CollectionAssert.AreEqual(new byte[] { 0x00 }, script.ToArray());
+                CollectionAssert.AreEqual(new byte[]{ 0x50 }, script.ToArray());
             }
 
             for (byte x = 1; x <= 16; x++)
