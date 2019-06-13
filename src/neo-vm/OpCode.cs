@@ -640,21 +640,9 @@ namespace Neo.VM
         /// </summary>
         WITHIN = 0xA5,
 
-
-        // Crypto
-        //RIPEMD160 = 0xA6, // The input is hashed using RIPEMD-160.
-        /// <summary>
-        /// The input is hashed using SHA-1.
-        /// </summary>
-        SHA1 = 0xA7,
-        /// <summary>
-        /// The input is hashed using SHA-256.
-        /// </summary>
-        SHA256 = 0xA8,
         //Reserved = 0xAC,
         //Reserved = 0xAE,
-
-
+        
         // Array
         /// <summary>
         /// An array is removed from top of the main stack. Its size is put on top of the main stack.

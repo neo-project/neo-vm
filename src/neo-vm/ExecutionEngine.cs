@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
@@ -159,6 +158,7 @@ namespace Neo.VM
                             if (counted.Any(p => ReferenceEquals(p, map)))
                                 continue;
                             counted.Add(map);
+                            count += map.Count; // Count key items
                             foreach (StackItem subitem in map.Values)
                                 queue.Enqueue(subitem);
                             break;
@@ -799,22 +799,6 @@ namespace Neo.VM
                             break;
                         }
 
-                    // Crypto
-                    case OpCode.SHA1:
-                        using (SHA1 sha = SHA1.Create())
-                        {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(sha.ComputeHash(x));
-                            break;
-                        }
-                    case OpCode.SHA256:
-                        using (SHA256 sha = SHA256.Create())
-                        {
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            context.EvaluationStack.Push(sha.ComputeHash(x));
-                            break;
-                        }
-
                     // Array
                     case OpCode.ARRAYSIZE:
                         {
@@ -1006,9 +990,11 @@ namespace Neo.VM
                                     int index = (int)key.GetBigInteger();
                                     if (index < 0 || index >= array.Count) return false;
                                     array.RemoveAt(index);
+                                    CheckStackSize(false, -1);
                                     break;
                                 case Map map:
-                                    map.Remove(key);
+                                    if (map.Remove(key))
+                                        CheckStackSize(false, -2);
                                     break;
                                 default:
                                     return false;
