@@ -26,8 +26,8 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
                                         "type": "Map",
@@ -93,16 +93,16 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -311,8 +311,8 @@
                                         "value": 5
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
                                         "type": "Array",
@@ -423,8 +423,8 @@
                                         "value": 5
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
                                         "type": "Struct",

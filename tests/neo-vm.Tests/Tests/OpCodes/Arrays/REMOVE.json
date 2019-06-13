@@ -150,8 +150,8 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
                                         "type": "Array",
@@ -266,8 +266,8 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
                                         "type": "Struct",

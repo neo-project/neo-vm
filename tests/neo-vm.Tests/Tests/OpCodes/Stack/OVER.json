@@ -48,8 +48,8 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -72,8 +72,8 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }

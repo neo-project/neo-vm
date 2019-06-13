@@ -83,12 +83,12 @@
                                         "value": -1
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -111,12 +111,12 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -148,12 +148,12 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
                                         "type": "Map",
@@ -217,12 +217,12 @@
                                         }
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -246,12 +246,12 @@
                                 [
 
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -284,19 +284,18 @@
                                 [
 
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
                                         "type": "Map",
                                         "value":
                                         {
-
                                         }
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -320,8 +319,8 @@
                                 [
 
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -354,16 +353,16 @@
                                 [
 
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     },
                                     {
                                         "type": "Integer",
                                         "value": -1
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -387,8 +386,8 @@
                                 [
 
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }

@@ -29,8 +29,8 @@
                                         "value": "0x0101"
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -53,8 +53,8 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -89,8 +89,8 @@
                                         "value": "0xFFFE"
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -113,8 +113,8 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -149,8 +149,8 @@
                                         "value": "0x0001"
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }

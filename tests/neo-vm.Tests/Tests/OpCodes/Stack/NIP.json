@@ -109,8 +109,8 @@
                                         "value": true
                                     },
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }

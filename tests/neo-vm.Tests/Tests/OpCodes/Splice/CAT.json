@@ -30,7 +30,7 @@
             ]
         },
         {
-            "name": "Wrong type [Map,ByteArray]",
+            "name": "Wrong type [Map,Integer]",
             "script": "0x00C77E",
             "steps":
             [
@@ -52,8 +52,8 @@
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 0
                                     }
                                 ]
                             }
@@ -63,7 +63,7 @@
             ]
         },
         {
-            "name": "Wrong type [ByteArray,Map]",
+            "name": "Wrong type [Integer,Map]",
             "script": "0xC7007E",
             "steps":
             [
