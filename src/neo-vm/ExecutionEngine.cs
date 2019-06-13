@@ -242,7 +242,7 @@ namespace Neo.VM
                     case OpCode.PUSH15:
                     case OpCode.PUSH16:
                         {
-                            context.EvaluationStack.Push(new Integer((int)instruction.OpCode - (int)OpCode.PUSH1 + 1));
+                            context.EvaluationStack.Push((int)instruction.OpCode - (int)OpCode.PUSH1 + 1);
                             if (!CheckStackSize(true)) return false;
                             break;
                         }
