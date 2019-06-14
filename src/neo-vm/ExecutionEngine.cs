@@ -217,14 +217,13 @@ namespace Neo.VM
             else switch (instruction.OpCode)
                 {
                     // Push value
-                    case OpCode.PUSHBYTES0:
+                    case OpCode.PUSH0:
                         {
                             context.EvaluationStack.Push(EmptyBytes);
                             if (!CheckStackSize(true)) return false;
                             break;
                         }
                     case OpCode.PUSHM1:
-                    case OpCode.PUSH0:
                     case OpCode.PUSH1:
                     case OpCode.PUSH2:
                     case OpCode.PUSH3:

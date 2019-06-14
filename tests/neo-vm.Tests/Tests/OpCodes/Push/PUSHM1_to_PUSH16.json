@@ -4,7 +4,7 @@
     "tests":
     [
         {
-            "script": "0x4F505152535455565758595A5B5C5D5E5F6066",
+            "script": "0x4F005152535455565758595A5B5C5D5E5F6066",
             "steps":
             [
                 {
@@ -104,8 +104,8 @@
                                         "value": 1
                                     },
                                     {
-                                        "type": "Integer",
-                                        "value": 0
+                                        "type": "ByteArray",
+                                        "value": ""
                                     },
                                     {
                                         "type": "Integer",
@@ -191,8 +191,8 @@
                                 "value": 1
                             },
                             {
-                                "type": "Integer",
-                                "value": 0
+                                "type": "ByteArray",
+                                "value": ""
                             },
                             {
                                 "type": "Integer",

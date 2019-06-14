@@ -4,10 +4,12 @@ namespace Neo.VM
     {
         // Constants
         /// <summary>
-        /// An empty array of bytes is pushed onto the stack.
+        /// An empty array of bytes is pushed onto the stack. 
+        /// This is equivalent to pushing Integer zero to the stack.
+        /// This is equivalent to pushing Boolean false to the stack.
         /// </summary>
-        PUSHBYTES0 = 0x00,
-        PUSHF = PUSHBYTES0,
+        PUSH0 = 0x00,
+        PUSHF = PUSH0,
         /// <summary>
         /// Push 1 byte on the evaluation stack.
         /// </summary>
@@ -324,10 +326,6 @@ namespace Neo.VM
         /// The number -1 is pushed onto the stack.
         /// </summary>
         PUSHM1 = 0x4F,
-        /// <summary>
-        /// The number 0 is pushed onto the stack.
-        /// </summary>
-        PUSH0 = 0x50,
         /// <summary>
         /// The number 1 is pushed onto the stack.
         /// </summary>

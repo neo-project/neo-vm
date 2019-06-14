@@ -41,7 +41,8 @@ namespace Neo.VM
         public ScriptBuilder EmitPush(BigInteger number)
         {
             if (number == -1) return Emit(OpCode.PUSHM1);
-            if (number >= 0 && number <= 16) return Emit(OpCode.PUSH0 + (byte)number);
+            if (number == 0) return Emit(OpCode.PUSH0);
+            if (number > 0 && number <= 16) return Emit(OpCode.PUSH1 - 1 + (byte)number);
             return EmitPush(number.ToByteArray());
         }
 
