@@ -4,7 +4,9 @@ namespace Neo.VM
     {
         // Constants
         /// <summary>
-        /// An empty array of bytes is pushed onto the stack.
+        /// An empty array of bytes is pushed onto the stack. 
+        /// This is equivalent to pushing Integer zero to the stack.
+        /// This is equivalent to pushing Boolean false to the stack.
         /// </summary>
         PUSH0 = 0x00,
         PUSHF = PUSH0,

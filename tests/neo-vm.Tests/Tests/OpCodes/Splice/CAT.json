@@ -161,6 +161,60 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "CAT int(0) with empty ByteArray",
+            "script": "0x518C007E",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 3,
+                                "nextInstruction": "CAT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 0
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "ByteArray",
+                                "value": ""
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }
