@@ -5,6 +5,8 @@ namespace Neo.VM.Types
 {
     public class Integer : StackItem
     {
+        private static readonly byte[] ZeroBytes = new byte[0];
+
         private BigInteger value;
 
         public Integer(BigInteger value)
@@ -41,7 +43,7 @@ namespace Neo.VM.Types
 
         public override byte[] GetByteArray()
         {
-            return value.IsZero ? new byte[0] : value.ToByteArray();
+            return value.IsZero ? ZeroBytes : value.ToByteArray();
         }
 
         private int _length = -1;
