@@ -20,8 +20,8 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET",
+                                "instructionPointer": 0,
+                                "nextInstruction": "JMP",
                                 "evaluationStack":
                                 [
                                 ]

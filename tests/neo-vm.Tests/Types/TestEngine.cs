@@ -4,7 +4,7 @@ namespace Neo.Test.Types
 {
     class TestEngine : ExecutionEngine
     {
-        protected override bool OnSysCall(uint method, bool isLimited)
+        protected override bool OnSysCall(uint method)
         {
             if (method == 0x77777777)
             {

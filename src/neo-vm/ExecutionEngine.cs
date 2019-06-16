@@ -194,7 +194,7 @@ namespace Neo.VM
                 try
                 {
                     Instruction instruction = CurrentContext.CurrentInstruction;
-                    if (!PreExecuteInstruction() || !ExecuteInstruction(isLimited) || !PostExecuteInstruction(instruction))
+                    if (!PreExecuteInstruction(isLimited) || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                         State = VMState.FAULT;
                 }
                 catch
@@ -204,7 +204,7 @@ namespace Neo.VM
             }
         }
 
-        private bool ExecuteInstruction(bool isLimited = false)
+        private bool ExecuteInstruction()
         {
             ExecutionContext context = CurrentContext;
             Instruction instruction = context.CurrentInstruction;
@@ -252,15 +252,6 @@ namespace Neo.VM
                     case OpCode.JMPIF:
                     case OpCode.JMPIFNOT:
                         {
-                            if(isLimited)
-                            {
-                                // no backwards jump in limited mode
-                                if(instruction.TokenI16 <= 0)
-                                {
-                                    State = VMState.FAULT;
-                                    break;
-                                }
-                            }
                             int offset = context.InstructionPointer + instruction.TokenI16;
                             if (offset < 0 || offset > context.Script.Length) return false;
                             bool fValue = true;
@@ -280,15 +271,6 @@ namespace Neo.VM
                         }
                     case OpCode.CALL:
                         {
-                            if(isLimited)
-                            {
-                                // no backwards call (or recursive call) in limited mode
-                                if(instruction.TokenI16 <= 0)
-                                {
-                                    State = VMState.FAULT;
-                                    break;
-                                }
-                            }
                             ExecutionContext context_call = context.Clone();
                             context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16;
                             if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
@@ -324,7 +306,7 @@ namespace Neo.VM
                         }
                     case OpCode.SYSCALL:
                         {
-                            if (!OnSysCall(instruction.TokenU32, isLimited) || !CheckStackSize(false, int.MaxValue))
+                            if (!OnSysCall(instruction.TokenU32) || !CheckStackSize(false, int.MaxValue))
                                 return false;
                             break;
                         }
@@ -1105,10 +1087,35 @@ namespace Neo.VM
             return context;
         }
 
-        protected virtual bool OnSysCall(uint method, bool isLimited) => false;
+        protected virtual bool OnSysCall(uint method) => false;
   
         protected virtual bool PostExecuteInstruction(Instruction instruction) => true;
 
-        protected virtual bool PreExecuteInstruction() => true;
+        protected virtual bool PreExecuteInstruction(bool isLimited = false)
+        {
+            ExecutionContext context = CurrentContext;
+            Instruction instruction = context.CurrentInstruction;
+            switch(instruction.OpCode)
+            {
+                case OpCode.JMP:
+                case OpCode.JMPIF:
+                case OpCode.JMPIFNOT:
+                case OpCode.CALL:
+                {
+                    if(isLimited)
+                    {
+                        // no backwards jump in limited mode
+                        if(instruction.TokenI16 <= 0)
+                        {
+                            return false;
+                        }
+                    }
+                    break;
+                }
+                default:
+                    return true;
+            }
+            return true;
+        }
     }
 }
