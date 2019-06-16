@@ -5,6 +5,7 @@ using Neo.Test.Types;
 using Neo.VM;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace Neo.Test
 {
@@ -35,10 +36,10 @@ namespace Neo.Test
                                 {
                                     switch (run)
                                     {
-                                        case VMUTActionType.Execute: debugger.Execute(); break;
-                                        case VMUTActionType.StepInto: debugger.StepInto(); break;
-                                        case VMUTActionType.StepOut: debugger.StepOut(); break;
-                                        case VMUTActionType.StepOver: debugger.StepOver(); break;
+                                        case VMUTActionType.Execute: debugger.Execute(test.IsLimited); break;
+                                        case VMUTActionType.StepInto: debugger.StepInto(test.IsLimited); break;
+                                        case VMUTActionType.StepOut: debugger.StepOut(test.IsLimited); break;
+                                        case VMUTActionType.StepOver: debugger.StepOver(test.IsLimited); break;
                                     }
                                 }
 

@@ -1,0 +1,35 @@
+{
+    "category": "Jumps",
+    "name": "JMP",
+    "tests":
+    [
+        {
+            "name": "while(true)",
+            "script": "0x620000",
+            "isLimited": true,
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "FAULT",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 3,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

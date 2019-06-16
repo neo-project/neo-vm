@@ -16,6 +16,9 @@ namespace Neo.Test
         public void TestOpCodesArrays() => TestJson("./Tests/OpCodes/Arrays");
 
         [TestMethod]
+        public void TestOpCodesJumps() => TestJson("./Tests/OpCodes/Jumps");
+
+        [TestMethod]
         public void TestOpCodesStack() => TestJson("./Tests/OpCodes/Stack");
 
         [TestMethod]

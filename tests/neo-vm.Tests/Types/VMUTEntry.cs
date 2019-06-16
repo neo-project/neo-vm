@@ -12,6 +12,9 @@ namespace Neo.Test.Types
         public string Name { get; set; }
 
         [JsonProperty]
+        public bool IsLimited { get; set; }
+
+        [JsonProperty]
         public VMUTStep[] Steps { get; set; }
     }
 }

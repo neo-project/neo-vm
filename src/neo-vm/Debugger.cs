@@ -22,17 +22,17 @@ namespace Neo.VM
             hashset.Add(position);
         }
 
-        public VMState Execute()
+        public VMState Execute(bool isLimited = false)
         {
             engine.State &= ~VMState.BREAK;
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK))
-                ExecuteAndCheckBreakPoints();
+                ExecuteAndCheckBreakPoints(isLimited);
             return engine.State;
         }
 
-        private void ExecuteAndCheckBreakPoints()
+        private void ExecuteAndCheckBreakPoints(bool isLimited)
         {
-            engine.ExecuteNext();
+            engine.ExecuteNext(isLimited);
             if (engine.State == VMState.NONE && engine.InvocationStack.Count > 0 && break_points.Count > 0)
             {
                 if (break_points.TryGetValue(engine.CurrentContext.Script, out HashSet<uint> hashset) && hashset.Contains((uint)engine.CurrentContext.InstructionPointer))
@@ -48,28 +48,28 @@ namespace Neo.VM
             return true;
         }
 
-        public VMState StepInto()
+        public VMState StepInto(bool isLimited = false)
         {
             if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
                 return engine.State;
-            engine.ExecuteNext();
+            engine.ExecuteNext(isLimited);
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
             return engine.State;
         }
 
-        public VMState StepOut()
+        public VMState StepOut(bool isLimited)
         {
             engine.State &= ~VMState.BREAK;
             int c = engine.InvocationStack.Count;
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count >= c)
-                ExecuteAndCheckBreakPoints();
+                ExecuteAndCheckBreakPoints(isLimited);
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
             return engine.State;
         }
 
-        public VMState StepOver()
+        public VMState StepOver(bool isLimited = false)
         {
             if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
                 return engine.State;
@@ -77,7 +77,7 @@ namespace Neo.VM
             int c = engine.InvocationStack.Count;
             do
             {
-                ExecuteAndCheckBreakPoints();
+                ExecuteAndCheckBreakPoints(isLimited);
             }
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count > c);
             if (engine.State == VMState.NONE)
