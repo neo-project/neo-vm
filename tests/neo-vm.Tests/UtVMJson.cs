@@ -3,6 +3,9 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.Test.Extensions;
 using Neo.Test.Types;
+using System.Threading.Tasks;
+using System;
+using System.Diagnostics;
 
 namespace Neo.Test
 {
@@ -17,6 +20,20 @@ namespace Neo.Test
 
         [TestMethod]
         public void TestOpCodesJumps() => TestJson("./Tests/OpCodes/Jumps");
+
+        [TestMethod]
+        [Timeout(3500)]
+        public void TestOpCodesJumpsUnlimited()
+        {
+            //Task.Factory.StartNew(() => TestJson("./Tests/OpCodes/JumpsUnlimited")).Wait(TimeSpan.FromSeconds(3));
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            var task1 = Task.Factory.StartNew(() => TestJson("./Tests/OpCodes/JumpsUnlimited"));
+            task1.Wait(TimeSpan.FromSeconds(3));
+            stopwatch.Stop();
+            // should fail on timer basis
+            Assert.IsTrue(stopwatch.ElapsedMilliseconds >= 3000);
+        }
 
         [TestMethod]
         public void TestOpCodesStack() => TestJson("./Tests/OpCodes/Stack");
