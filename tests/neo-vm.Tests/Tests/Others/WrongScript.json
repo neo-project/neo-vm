@@ -4,7 +4,7 @@
     "tests":
     [
         {
-            "name": "Good: 2048 PUSH1 + 2048 DROP",
+            "name": "Wrong script",
             "script": "0xFF",
             "steps":
             [
