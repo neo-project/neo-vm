@@ -110,14 +110,5 @@ namespace Neo.VM
                 Unsafe.MemoryCopy(script, ip, Operand, 0, operandSize);
             }
         }
-
-        public byte[] ReadBytes(int offset, int count)
-        {
-            if (offset + count > Operand.Length)
-                throw new InvalidOperationException();
-            byte[] buffer = new byte[count];
-            Unsafe.MemoryCopy(Operand, offset, buffer, 0, count);
-            return buffer;
-        }
     }
 }

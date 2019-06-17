@@ -53,10 +53,5 @@ namespace Neo.VM
             }
             return instruction;
         }
-
-        public static implicit operator byte[](Script script)
-        {
-            return script._value;
-        }
     }
 }
