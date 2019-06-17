@@ -1,0 +1,31 @@
+﻿{
+    "category": "Limits",
+    "name": "Wrong Script",
+    "tests":
+    [
+        {
+            "name": "Good: 2048 PUSH1 + 2048 DROP",
+            "script": "0xFF",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 0,
+                                "nextInstruction": 255
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
