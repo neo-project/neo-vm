@@ -1,6 +1,6 @@
 ﻿{
     "category": "Limits",
-    "name": "Wrong Script",
+    "name": "OtherCases",
     "tests":
     [
         {
@@ -23,6 +23,23 @@
                                 "nextInstruction": 255
                             }
                         ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Without script",
+            "script": "",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt"
                     }
                 }
             ]
