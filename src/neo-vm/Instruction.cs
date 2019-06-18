@@ -35,15 +35,6 @@ namespace Neo.VM
             }
         }
 
-        public short TokenI16_1
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                return BitConverter.ToInt16(Operand, sizeof(short));
-            }
-        }
-
         public string TokenString
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
