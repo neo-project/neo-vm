@@ -35,15 +35,6 @@ namespace Neo.VM
             }
         }
 
-        public short TokenI16_1
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                return BitConverter.ToInt16(Operand, sizeof(short));
-            }
-        }
-
         public string TokenString
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -109,15 +100,6 @@ namespace Neo.VM
                     throw new InvalidOperationException();
                 Unsafe.MemoryCopy(script, ip, Operand, 0, operandSize);
             }
-        }
-
-        public byte[] ReadBytes(int offset, int count)
-        {
-            if (offset + count > Operand.Length)
-                throw new InvalidOperationException();
-            byte[] buffer = new byte[count];
-            Unsafe.MemoryCopy(Operand, offset, buffer, 0, count);
-            return buffer;
         }
     }
 }

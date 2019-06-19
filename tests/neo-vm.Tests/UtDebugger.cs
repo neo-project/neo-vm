@@ -36,6 +36,26 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void TestWithoutDebugger()
+        {
+            using (var engine = new ExecutionEngine())
+            using (var script = new ScriptBuilder())
+            {
+                script.Emit(OpCode.NOP);
+                script.Emit(OpCode.NOP);
+                script.Emit(OpCode.NOP);
+                script.Emit(OpCode.NOP);
+
+                engine.LoadScript(script.ToArray());
+
+                engine.Execute();
+
+                Assert.AreEqual(null, engine.CurrentContext);
+                Assert.AreEqual(VMState.HALT, engine.State);
+            }
+        }
+
+        [TestMethod]
         public void TestStepOver()
         {
             using (var engine = new ExecutionEngine())

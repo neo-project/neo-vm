@@ -215,6 +215,112 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "CAT 0x01 with empty ByteArray",
+            "script": "0x51007E",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 2,
+                                "nextInstruction": "CAT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "ByteArray",
+                                "value": "0x01"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "CAT empty ByteArray with 0x01",
+            "script": "0x00517E",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 2,
+                                "nextInstruction": "CAT",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "ByteArray",
+                                "value": "0x01"
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }
