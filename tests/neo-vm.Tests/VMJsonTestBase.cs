@@ -35,7 +35,7 @@ namespace Neo.Test
                                 {
                                     switch (run)
                                     {
-                                        case VMUTActionType.Execute: engine.Execute(); break;
+                                        case VMUTActionType.Execute: debugger.Execute(); break;
                                         case VMUTActionType.StepInto: debugger.StepInto(); break;
                                         case VMUTActionType.StepOut: debugger.StepOut(); break;
                                         case VMUTActionType.StepOver: debugger.StepOver(); break;
