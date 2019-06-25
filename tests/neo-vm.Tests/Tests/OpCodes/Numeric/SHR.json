@@ -175,6 +175,59 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "Real test 4 >> 16",
+            "script": "0x546099",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 2,
+                                "nextInstruction": "SHR",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 16
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 4
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 0
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }
