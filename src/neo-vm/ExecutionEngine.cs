@@ -670,7 +670,7 @@ namespace Neo.VM
                         {
                             int shift = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (!CheckShift(shift)) return false;
-                            if (shift == 0) return true;
+                            if (shift == 0) break;
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
                             if (!CheckBigInteger(x)) return false;
                             x <<= shift;
@@ -683,7 +683,7 @@ namespace Neo.VM
                         {
                             int shift = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (!CheckShift(shift)) return false;
-                            if (shift == 0) return true;
+                            if (shift == 0) break;
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
                             if (!CheckBigInteger(x)) return false;
                             x >>= shift;
