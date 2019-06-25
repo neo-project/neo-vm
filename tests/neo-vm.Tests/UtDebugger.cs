@@ -84,7 +84,7 @@ namespace Neo.Test
         }
 
         [TestMethod]
-        public void TestBreakPointStepInto()
+        public void TestStepInto()
         {
             using (var engine = new ExecutionEngine())
             using (var script = new ScriptBuilder())
