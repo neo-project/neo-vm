@@ -1,7 +1,9 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
+    [DebuggerDisplay("rvcount={RVCount}, ip={InstructionPointer}")]
     public class ExecutionContext
     {
         /// <summary>

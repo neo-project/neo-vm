@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Neo.VM.Types
 {
+    [DebuggerDisplay("type=Boolean, value={value}")]
     public class Boolean : StackItem
     {
         private static readonly byte[] TRUE = { 1 };
         private static readonly byte[] FALSE = { 0 };
 
-        private bool value;
+        private readonly bool value;
 
         public Boolean(bool value)
         {
@@ -18,7 +20,7 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (other is Boolean b) return value == b.value;
             byte[] bytes_other;
             try
@@ -32,19 +34,10 @@ namespace Neo.VM.Types
             return Unsafe.MemoryEquals(GetByteArray(), bytes_other);
         }
 
-        public override BigInteger GetBigInteger()
-        {
-            return value ? BigInteger.One : BigInteger.Zero;
-        }
+        public override BigInteger GetBigInteger() => value ? BigInteger.One : BigInteger.Zero;
 
-        public override bool GetBoolean()
-        {
-            return value;
-        }
+        public override bool GetBoolean() => value;
 
-        public override byte[] GetByteArray()
-        {
-            return value ? TRUE : FALSE;
-        }
+        public override byte[] GetByteArray() => value ? TRUE : FALSE;
     }
 }

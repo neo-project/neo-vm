@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Neo.VM.Types
 {
+    [DebuggerDisplay("type=Array, count={Count}")]
     public class Array : StackItem, ICollection, IList<StackItem>
     {
         protected readonly List<StackItem> _array;
@@ -25,23 +27,14 @@ namespace Neo.VM.Types
 
         public Array(IEnumerable<StackItem> value)
         {
-            this._array = value as List<StackItem> ?? value.ToList();
+            _array = value as List<StackItem> ?? value.ToList();
         }
 
-        public void Add(StackItem item)
-        {
-            _array.Add(item);
-        }
+        public void Add(StackItem item) => _array.Add(item);
 
-        public void Clear()
-        {
-            _array.Clear();
-        }
+        public void Clear() => _array.Clear();
 
-        public bool Contains(StackItem item)
-        {
-            return _array.Contains(item);
-        }
+        public bool Contains(StackItem item) => _array.Contains(item);
 
         void ICollection<StackItem>.CopyTo(StackItem[] array, int arrayIndex)
         {
@@ -54,54 +47,24 @@ namespace Neo.VM.Types
                 array.SetValue(item, index++);
         }
 
-        public override bool Equals(StackItem other)
-        {
-            return ReferenceEquals(this, other);
-        }
+        public override bool Equals(StackItem other) => ReferenceEquals(this, other);
 
-        public override bool GetBoolean()
-        {
-            return true;
-        }
+        public override bool GetBoolean() => true;
 
-        public override byte[] GetByteArray()
-        {
-            throw new NotSupportedException();
-        }
+        public override byte[] GetByteArray() => throw new NotSupportedException();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public IEnumerator<StackItem> GetEnumerator()
-        {
-            return _array.GetEnumerator();
-        }
+        public IEnumerator<StackItem> GetEnumerator() => _array.GetEnumerator();
 
-        int IList<StackItem>.IndexOf(StackItem item)
-        {
-            return _array.IndexOf(item);
-        }
+        int IList<StackItem>.IndexOf(StackItem item) => _array.IndexOf(item);
 
-        public void Insert(int index, StackItem item)
-        {
-            _array.Insert(index, item);
-        }
+        public void Insert(int index, StackItem item) => _array.Insert(index, item);
 
-        bool ICollection<StackItem>.Remove(StackItem item)
-        {
-            return _array.Remove(item);
-        }
+        bool ICollection<StackItem>.Remove(StackItem item) => _array.Remove(item);
 
-        public void RemoveAt(int index)
-        {
-            _array.RemoveAt(index);
-        }
+        public void RemoveAt(int index) => _array.RemoveAt(index);
 
-        public void Reverse()
-        {
-            _array.Reverse();
-        }
+        public void Reverse() => _array.Reverse();
     }
 }

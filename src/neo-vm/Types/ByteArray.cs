@@ -1,10 +1,27 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Text;
 
 namespace Neo.VM.Types
 {
+    [DebuggerDisplay("type=ByteArray, value={HexValue}")]
     public class ByteArray : StackItem
     {
-        private byte[] value;
+        private readonly byte[] value;
+
+        /// <summary>
+        /// Return Hexadecimal value
+        /// </summary>
+        public string HexValue
+        {
+            get
+            {
+                var hex = new StringBuilder(value.Length * 2);
+                foreach (var b in value) hex.AppendFormat("{0:X2}", b);
+                return hex.ToString();
+            }
+        }
+
 
         public ByteArray(byte[] value)
         {
@@ -14,7 +31,7 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             byte[] bytes_other;
             try
             {
@@ -34,9 +51,6 @@ namespace Neo.VM.Types
             return Unsafe.NotZero(value);
         }
 
-        public override byte[] GetByteArray()
-        {
-            return value;
-        }
+        public override byte[] GetByteArray() => value;
     }
 }

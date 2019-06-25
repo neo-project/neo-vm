@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
+    [DebuggerDisplay("length={Length}")]
     public class Script
     {
         private readonly byte[] _value;
