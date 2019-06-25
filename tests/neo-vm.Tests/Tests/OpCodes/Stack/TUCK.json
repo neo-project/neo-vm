@@ -176,7 +176,7 @@
             ]
         },
         {
-            "name": "Real test - Last item",
+            "name": "Real test",
             "script": "0x5152537D",
             "steps":
             [
