@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
+    [DebuggerDisplay("count={Count}")]
     public class RandomAccessStack<T> : IReadOnlyCollection<T>
     {
         private readonly List<T> list = new List<T>();
