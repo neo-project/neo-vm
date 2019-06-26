@@ -27,7 +27,7 @@ namespace Neo.VM.Types
 
         public Array(IEnumerable<StackItem> value)
         {
-            this._array = value as List<StackItem> ?? value.ToList();
+            _array = value as List<StackItem> ?? value.ToList();
         }
 
         public void Add(StackItem item)

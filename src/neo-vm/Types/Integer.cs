@@ -9,7 +9,8 @@ namespace Neo.VM.Types
     {
         private static readonly byte[] ZeroBytes = new byte[0];
 
-        private BigInteger value;
+        private int _length = -1;
+        private readonly BigInteger value;
 
         public Integer(BigInteger value)
         {
@@ -19,7 +20,7 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (other is Integer i) return value == i.value;
             byte[] bytes_other;
             try
@@ -48,7 +49,6 @@ namespace Neo.VM.Types
             return value.IsZero ? ZeroBytes : value.ToByteArray();
         }
 
-        private int _length = -1;
         public override int GetByteLength()
         {
             if (_length == -1)
