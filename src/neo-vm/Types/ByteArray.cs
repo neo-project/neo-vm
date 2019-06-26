@@ -7,7 +7,7 @@ namespace Neo.VM.Types
     [DebuggerDisplay("type=ByteArray, value={HexValue}")]
     public class ByteArray : StackItem
     {
-        private readonly byte[] value;
+        private byte[] value;
 
         /// <summary>
         /// Return Hexadecimal value
@@ -22,7 +22,6 @@ namespace Neo.VM.Types
             }
         }
 
-
         public ByteArray(byte[] value)
         {
             this.value = value;
@@ -31,7 +30,7 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (other is null) return false;
+            if (ReferenceEquals(null, other)) return false;
             byte[] bytes_other;
             try
             {
@@ -51,6 +50,9 @@ namespace Neo.VM.Types
             return Unsafe.NotZero(value);
         }
 
-        public override byte[] GetByteArray() => value;
+        public override byte[] GetByteArray()
+        {
+            return value;
+        }
     }
 }
