@@ -669,6 +669,7 @@ namespace Neo.VM
                     case OpCode.SHL:
                         {
                             int shift = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            CheckStackSize(true, -1);
                             if (!CheckShift(shift)) return false;
                             if (shift == 0) break;
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
@@ -676,12 +677,12 @@ namespace Neo.VM
                             x <<= shift;
                             if (!CheckBigInteger(x)) return false;
                             context.EvaluationStack.Push(x);
-                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.SHR:
                         {
                             int shift = (int)context.EvaluationStack.Pop().GetBigInteger();
+                            CheckStackSize(true, -1);
                             if (!CheckShift(shift)) return false;
                             if (shift == 0) break;
                             BigInteger x = context.EvaluationStack.Pop().GetBigInteger();
@@ -689,7 +690,6 @@ namespace Neo.VM
                             x >>= shift;
                             if (!CheckBigInteger(x)) return false;
                             context.EvaluationStack.Push(x);
-                            CheckStackSize(true, -1);
                             break;
                         }
                     case OpCode.BOOLAND:
