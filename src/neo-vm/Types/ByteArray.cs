@@ -4,23 +4,10 @@ using System.Text;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("Type={GetType().Name}, Value={HexValue}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(value).Replace(\"-\", string.Empty)}")]
     public class ByteArray : StackItem
     {
         private byte[] value;
-
-        /// <summary>
-        /// Return Hexadecimal value
-        /// </summary>
-        public string HexValue
-        {
-            get
-            {
-                var hex = new StringBuilder(value.Length * 2);
-                foreach (var b in value) hex.AppendFormat("{0:X2}", b);
-                return hex.ToString();
-            }
-        }
 
         public ByteArray(byte[] value)
         {
