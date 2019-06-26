@@ -12,8 +12,8 @@ namespace Neo.VM.Types
 
         public StackItem this[StackItem key]
         {
-            get => dictionary[key];
-            set => dictionary[key] = value;
+            get => this.dictionary[key];
+            set => this.dictionary[key] = value;
         }
 
         public ICollection<StackItem> Keys => dictionary.Keys;
@@ -28,18 +28,33 @@ namespace Neo.VM.Types
 
         public Map(Dictionary<StackItem, StackItem> value)
         {
-            dictionary = value;
+            this.dictionary = value;
         }
 
-        public void Add(StackItem key, StackItem value) => dictionary.Add(key, value);
+        public void Add(StackItem key, StackItem value)
+        {
+            dictionary.Add(key, value);
+        }
 
-        void ICollection<KeyValuePair<StackItem, StackItem>>.Add(KeyValuePair<StackItem, StackItem> item) => dictionary.Add(item.Key, item.Value);
+        void ICollection<KeyValuePair<StackItem, StackItem>>.Add(KeyValuePair<StackItem, StackItem> item)
+        {
+            dictionary.Add(item.Key, item.Value);
+        }
 
-        public void Clear() => dictionary.Clear();
+        public void Clear()
+        {
+            dictionary.Clear();
+        }
 
-        bool ICollection<KeyValuePair<StackItem, StackItem>>.Contains(KeyValuePair<StackItem, StackItem> item) => dictionary.ContainsKey(item.Key);
+        bool ICollection<KeyValuePair<StackItem, StackItem>>.Contains(KeyValuePair<StackItem, StackItem> item)
+        {
+            return dictionary.ContainsKey(item.Key);
+        }
 
-        public bool ContainsKey(StackItem key) => dictionary.ContainsKey(key);
+        public bool ContainsKey(StackItem key)
+        {
+            return dictionary.ContainsKey(key);
+        }
 
         void ICollection<KeyValuePair<StackItem, StackItem>>.CopyTo(KeyValuePair<StackItem, StackItem>[] array, int arrayIndex)
         {
@@ -53,20 +68,44 @@ namespace Neo.VM.Types
                 array.SetValue(item, index++);
         }
 
-        public override bool Equals(StackItem other) => ReferenceEquals(this, other);
+        public override bool Equals(StackItem other)
+        {
+            return ReferenceEquals(this, other);
+        }
 
-        public override bool GetBoolean() => true;
+        public override bool GetBoolean()
+        {
+            return true;
+        }
 
-        public override byte[] GetByteArray() => throw new NotSupportedException();
+        public override byte[] GetByteArray()
+        {
+            throw new NotSupportedException();
+        }
 
-        IEnumerator<KeyValuePair<StackItem, StackItem>> IEnumerable<KeyValuePair<StackItem, StackItem>>.GetEnumerator() => dictionary.GetEnumerator();
+        IEnumerator<KeyValuePair<StackItem, StackItem>> IEnumerable<KeyValuePair<StackItem, StackItem>>.GetEnumerator()
+        {
+            return dictionary.GetEnumerator();
+        }
 
-        IEnumerator IEnumerable.GetEnumerator() => dictionary.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return dictionary.GetEnumerator();
+        }
 
-        public bool Remove(StackItem key) => dictionary.Remove(key);
+        public bool Remove(StackItem key)
+        {
+            return dictionary.Remove(key);
+        }
 
-        bool ICollection<KeyValuePair<StackItem, StackItem>>.Remove(KeyValuePair<StackItem, StackItem> item) => dictionary.Remove(item.Key);
+        bool ICollection<KeyValuePair<StackItem, StackItem>>.Remove(KeyValuePair<StackItem, StackItem> item)
+        {
+            return dictionary.Remove(item.Key);
+        }
 
-        public bool TryGetValue(StackItem key, out StackItem value) => dictionary.TryGetValue(key, out value);
+        public bool TryGetValue(StackItem key, out StackItem value)
+        {
+            return dictionary.TryGetValue(key, out value);
+        }
     }
 }
