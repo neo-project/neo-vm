@@ -14,7 +14,7 @@ namespace Neo.VM
 
         public ScriptBuilder()
         {
-            this.writer = new BinaryWriter(ms);
+            writer = new BinaryWriter(ms);
         }
 
         public void Dispose()
