@@ -1,17 +1,40 @@
 ﻿{
-    "category": "Numeric",
-    "name": "SHL",
+    "category": "Stack",
+    "name": "TUCK",
     "tests":
     [
         {
-            "name": "Exception - Above the limit 0 << 257",
-            "script": "0x0002010198",
+            "name": "Without push",
+            "script": "0x7D",
             "steps":
             [
                 {
                     "actions":
                     [
-                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 0,
+                                "nextInstruction": "TUCK"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Outside",
+            "script": "0x007D",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
                         "StepInto"
                     ],
                     "result":
@@ -20,14 +43,10 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 4,
-                                "nextInstruction": "SHL",
+                                "instructionPointer": 1,
+                                "nextInstruction": "TUCK",
                                 "evaluationStack":
                                 [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0101"
-                                    },
                                     {
                                         "type": "ByteArray",
                                         "value": ""
@@ -48,8 +67,8 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 4,
-                                "nextInstruction": "SHL",
+                                "instructionPointer": 1,
+                                "nextInstruction": "TUCK",
                                 "evaluationStack":
                                 [
                                     {
@@ -64,121 +83,8 @@
             ]
         },
         {
-            "name": "Exception - Below the limit 0 << -257",
-            "script": "0x0002FFFE98",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "SHL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0xFFFE"
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "SHL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test 0 << 256",
-            "script": "0x0002000198",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "SHL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0001"
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Integer",
-                                "value": 0
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test 16 << 4",
-            "script": "0x605498",
+            "name": "Real test - Last item",
+            "script": "0x51527D",
             "steps":
             [
                 {
@@ -194,16 +100,16 @@
                         [
                             {
                                 "instructionPointer": 2,
-                                "nextInstruction": "SHL",
+                                "nextInstruction": "TUCK",
                                 "evaluationStack":
                                 [
                                     {
                                         "type": "Integer",
-                                        "value": 4
+                                        "value": 2
                                     },
                                     {
                                         "type": "Integer",
-                                        "value": 16
+                                        "value": 1
                                     }
                                 ]
                             }
@@ -213,7 +119,39 @@
                 {
                     "actions":
                     [
-                        "Execute"
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 3,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
                     ],
                     "result":
                     {
@@ -222,7 +160,15 @@
                         [
                             {
                                 "type": "Integer",
-                                "value": 256
+                                "value": 2
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 1
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 2
                             }
                         ]
                     }
@@ -230,13 +176,14 @@
             ]
         },
         {
-            "name": "Real test 16 << 0",
-            "script": "0x600098",
+            "name": "Real test",
+            "script": "0x5152537D",
             "steps":
             [
                 {
                     "actions":
                     [
+                        "StepInto",
                         "StepInto",
                         "StepInto"
                     ],
@@ -246,17 +193,21 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 2,
-                                "nextInstruction": "SHL",
+                                "instructionPointer": 3,
+                                "nextInstruction": "TUCK",
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "ByteArray",
-                                        "value": ""
+                                        "type": "Integer",
+                                        "value": 3
                                     },
                                     {
                                         "type": "Integer",
-                                        "value": 16
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
                                     }
                                 ]
                             }
@@ -266,7 +217,43 @@
                 {
                     "actions":
                     [
-                        "Execute"
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 4,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 3
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
                     ],
                     "result":
                     {
@@ -275,7 +262,19 @@
                         [
                             {
                                 "type": "Integer",
-                                "value": 16
+                                "value": 3
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 2
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 3
+                            },
+                            {
+                                "type": "Integer",
+                                "value": 1
                             }
                         ]
                     }

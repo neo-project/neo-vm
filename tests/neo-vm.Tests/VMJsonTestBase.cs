@@ -21,7 +21,11 @@ namespace Neo.Test
                 using (var engine = new TestEngine())
                 {
                     Debugger debugger = new Debugger(engine);
-                    engine.LoadScript(test.Script);
+
+                    if (test.Script.Length > 0)
+                    {
+                        engine.LoadScript(test.Script);
+                    }
 
                     // Execute Steps
 
