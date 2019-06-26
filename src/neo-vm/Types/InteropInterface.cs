@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
@@ -12,6 +13,7 @@ namespace Neo.VM.Types
         public abstract T GetInterface<T>() where T : class;
     }
 
+    [DebuggerDisplay("Type={GetType().Name}, Value={_object}")]
     public class InteropInterface<T> : InteropInterface
         where T : class
     {

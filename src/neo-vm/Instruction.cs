@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Neo.VM
 {
+    [DebuggerDisplay("OpCode={OpCode}")]
     public class Instruction
     {
         public static Instruction RET { get; } = new Instruction(OpCode.RET);

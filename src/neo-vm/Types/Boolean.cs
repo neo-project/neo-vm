@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Neo.VM.Types
 {
+    [DebuggerDisplay("Type={GetType().Name}, Value={value}")]
     public class Boolean : StackItem
     {
         private static readonly byte[] TRUE = { 1 };

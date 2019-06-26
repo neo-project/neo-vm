@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
+    [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Map : StackItem, ICollection, IDictionary<StackItem, StackItem>
     {
         private readonly Dictionary<StackItem, StackItem> dictionary;
