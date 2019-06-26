@@ -17,11 +17,11 @@ namespace Neo.VM.Types
     public class InteropInterface<T> : InteropInterface
         where T : class
     {
-        private readonly T _object;
+        private T _object;
 
         public InteropInterface(T value)
         {
-            _object = value;
+            this._object = value;
         }
 
         public override bool Equals(StackItem other)
@@ -32,10 +32,19 @@ namespace Neo.VM.Types
             return _object.Equals(i._object);
         }
 
-        public override bool GetBoolean() => _object != null;
+        public override bool GetBoolean()
+        {
+            return _object != null;
+        }
 
-        public override I GetInterface<I>() => _object as I;
+        public override I GetInterface<I>()
+        {
+            return _object as I;
+        }
 
-        public static implicit operator T(InteropInterface<T> @interface) => @interface._object;
+        public static implicit operator T(InteropInterface<T> @interface)
+        {
+            return @interface._object;
+        }
     }
 }
