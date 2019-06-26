@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("type=Array, count={Count}")]
+    [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Array : StackItem, ICollection, IList<StackItem>
     {
         protected readonly List<StackItem> _array;

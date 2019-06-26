@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    [DebuggerDisplay("count={Count}")]
+    [DebuggerDisplay("Count={Count}")]
     public class RandomAccessStack<T> : IReadOnlyCollection<T>
     {
         private readonly List<T> list = new List<T>();

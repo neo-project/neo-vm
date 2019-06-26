@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    [DebuggerDisplay("rvcount={RVCount}, ip={InstructionPointer}")]
+    [DebuggerDisplay("RVCount={RVCount}, InstructionPointer={InstructionPointer}")]
     public class ExecutionContext
     {
         /// <summary>

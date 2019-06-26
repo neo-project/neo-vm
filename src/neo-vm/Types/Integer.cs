@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("type=Integer, value={value}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={value}")]
     public class Integer : StackItem
     {
         private static readonly byte[] ZeroBytes = new byte[0];

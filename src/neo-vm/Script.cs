@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    [DebuggerDisplay("length={Length}")]
+    [DebuggerDisplay("Length={Length}")]
     public class Script
     {
         private readonly byte[] _value;

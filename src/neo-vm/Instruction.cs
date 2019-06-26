@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Neo.VM
 {
-    [DebuggerDisplay("opcode={OpCode}")]
+    [DebuggerDisplay("OpCode={OpCode}")]
     public class Instruction
     {
         public static Instruction RET { get; } = new Instruction(OpCode.RET);

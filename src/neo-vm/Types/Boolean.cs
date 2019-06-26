@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("type=Boolean, value={value}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={value}")]
     public class Boolean : StackItem
     {
         private static readonly byte[] TRUE = { 1 };

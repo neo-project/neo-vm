@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("type=Struct, count={Count}")]
+    [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Struct : Array
     {
         public Struct() : this(new List<StackItem>()) { }

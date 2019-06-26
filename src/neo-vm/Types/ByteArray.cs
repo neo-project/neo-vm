@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("type=ByteArray, value={HexValue}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={HexValue}")]
     public class ByteArray : StackItem
     {
         private byte[] value;
