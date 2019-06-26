@@ -84,6 +84,46 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void TestStepInto()
+        {
+            using (var engine = new ExecutionEngine())
+            using (var script = new ScriptBuilder())
+            {
+                /* ┌     */ script.EmitJump(OpCode.CALL, 5);
+                /* │  ┌> */ script.Emit(OpCode.NOT);
+                /* │  │  */ script.Emit(OpCode.RET);
+                /* └> │  */ script.Emit(OpCode.PUSH0);
+                /*  └─┘  */ script.Emit(OpCode.RET);
+
+                engine.LoadScript(script.ToArray());
+
+                var debugger = new Debugger(engine);
+
+                var context = engine.CurrentContext;
+
+                Assert.AreEqual(context, engine.CurrentContext);
+                Assert.AreEqual(context, engine.EntryContext);
+
+                debugger.StepInto();
+
+                Assert.AreNotEqual(context, engine.CurrentContext);
+                Assert.AreEqual(context, engine.EntryContext);
+
+                debugger.StepInto();
+                debugger.StepInto();
+
+                Assert.AreEqual(context, engine.CurrentContext);
+                Assert.AreEqual(context, engine.EntryContext);
+
+                debugger.StepInto();
+                debugger.StepInto();
+
+                Assert.AreEqual(true, engine.ResultStack.Pop().GetBoolean());
+                Assert.AreEqual(VMState.HALT, engine.State);
+            }
+        }
+
+        [TestMethod]
         public void TestBreakPointStepOver()
         {
             using (var engine = new ExecutionEngine())
