@@ -14,7 +14,9 @@
   <a href="https://github.com/neo-project/neo-vm/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg">
   </a>
-  <img src="https://badge.fury.io/gh/neo-project%2Fneo-vm.svg">
+  <a href="https://github.com/neo-project/neo-vm/releases">
+    <img src="https://badge.fury.io/gh/neo-project%2Fneo-vm.svg">
+  </a>
 </p>
 
 # NEO Virtual Machine
