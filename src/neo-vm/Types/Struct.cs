@@ -14,9 +14,9 @@ namespace Neo.VM.Types
 
         public Struct Clone()
         {
-            Struct @struct = new Struct();
+            Struct s = new Struct();
             Queue<Struct> queue = new Queue<Struct>();
-            queue.Enqueue(@struct);
+            queue.Enqueue(s);
             queue.Enqueue(this);
             while (queue.Count > 0)
             {
@@ -37,7 +37,7 @@ namespace Neo.VM.Types
                     }
                 }
             }
-            return @struct;
+            return s;
         }
 
         public override bool Equals(StackItem other)

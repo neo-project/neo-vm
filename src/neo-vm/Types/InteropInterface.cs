@@ -42,9 +42,9 @@ namespace Neo.VM.Types
             return _object as I;
         }
 
-        public static implicit operator T(InteropInterface<T> @interface)
+        public static implicit operator T(InteropInterface<T> i)
         {
-            return @interface._object;
+            return i._object;
         }
     }
 }
