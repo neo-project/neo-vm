@@ -6,13 +6,13 @@ namespace Neo.Test
     [TestClass]
     public class UtStruct
     {
-        private readonly Struct s;
+        private readonly Struct uut;
 
         public UtStruct()
         {
-            s = new Struct { 1 };
+            uut = new Struct { 1 };
             for (int i = 0; i < 20000; i++)
-                s = new Struct { s };
+                uut = new Struct { uut };
         }
 
         [TestMethod]
@@ -24,7 +24,7 @@ namespace Neo.Test
             Assert.AreEqual(1, s2[0]);
             ((Struct)s1[1])[0] = 3;
             Assert.AreEqual(2, ((Struct)s2[1])[0]);
-            s.Clone();
+            uut.Clone();
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace Neo.Test
             Assert.IsTrue(s1.Equals(s2));
             Struct s3 = new Struct { 1, new Struct { 3 } };
             Assert.IsFalse(s1.Equals(s3));
-            Assert.IsTrue(s.Equals(s.Clone()));
+            Assert.IsTrue(uut.Equals(uut.Clone()));
         }
     }
 }
