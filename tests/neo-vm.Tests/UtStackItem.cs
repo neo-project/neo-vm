@@ -22,6 +22,18 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void EqualTest()
+        {
+            StackItem itemA = "NEO";
+            StackItem itemB = "NEO";
+            StackItem itemC = "SmartEconomy";
+
+            Assert.AreEqual(itemA, itemB);
+            Assert.AreNotEqual(itemA, itemC);
+            Assert.AreNotEqual(itemA, new object());
+        }
+
+        [TestMethod]
         public void CastTest()
         {
             // Signed integer
