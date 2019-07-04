@@ -22,6 +22,13 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void NullTest()
+        {
+            StackItem nullItem = new byte[0];
+            Assert.AreEqual(nullItem, StackItem.Null);
+        }
+
+        [TestMethod]
         public void EqualTest()
         {
             StackItem itemA = "NEO";
