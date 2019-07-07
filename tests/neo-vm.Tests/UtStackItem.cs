@@ -118,7 +118,7 @@ namespace Neo.Test
 
             // Interop
 
-            var interop = new InteropInterface<Dictionary<int, int>(new Dictionary<int, int>() { { 1, 1 } });
+            var interop = new InteropInterface<Dictionary<int, int>>(new Dictionary<int, int>() { { 1, 1 } });
 
             Dictionary<int, int> value = interop;
             Assert.AreEqual(1, value.Count);
