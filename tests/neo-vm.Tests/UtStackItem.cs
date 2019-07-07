@@ -94,11 +94,11 @@ namespace Neo.Test
 
             // String
 
-            item = "NEO";
+            item = "NEO - 种智能经济分布式网络";
 
             Assert.IsInstanceOfType(item, typeof(ByteArray));
-            CollectionAssert.AreEqual(Encoding.UTF8.GetBytes("NEO"), item.GetByteArray());
-            Assert.AreEqual("NEO", item.GetString());
+            CollectionAssert.AreEqual(Encoding.UTF8.GetBytes("NEO - 种智能经济分布式网络"), item.GetByteArray());
+            Assert.AreEqual("NEO - 种智能经济分布式网络", item.GetString());
 
             // Array
 
