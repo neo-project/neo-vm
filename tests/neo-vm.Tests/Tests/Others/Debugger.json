@@ -11,7 +11,7 @@
                 {
                     "result":
                     {
-                        "state": "Break",
+                        "state": "None",
                         "invocationStack":
                         [
                             {
@@ -218,7 +218,7 @@
                 {
                     "result":
                     {
-                        "state": "Break",
+                        "state": "None",
                         "invocationStack":
                         [
                             {
@@ -287,7 +287,7 @@
                 {
                     "result":
                     {
-                        "state": "Break",
+                        "state": "None",
                         "invocationStack":
                         [
                             {
@@ -416,7 +416,7 @@
                 {
                     "result":
                     {
-                        "state": "Break",
+                        "state": "None",
                         "invocationStack":
                         [
                             {

@@ -11,7 +11,7 @@
                 {
                     "result":
                     {
-                        "state": "Break",
+                        "state": "None",
                         "invocationStack":
                         [
                             {

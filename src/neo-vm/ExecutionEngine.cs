@@ -60,7 +60,7 @@ namespace Neo.VM
 
         public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
-        public VMState State { get; internal protected set; } = VMState.BREAK;
+        public VMState State { get; internal protected set; } = VMState.NONE;
 
         #region Events
 
