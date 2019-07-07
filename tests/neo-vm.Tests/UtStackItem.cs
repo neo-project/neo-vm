@@ -87,10 +87,10 @@ namespace Neo.Test
 
             // ByteArray
 
-            item = new byte[] { 0x01, 0x02, 0x03 };
+            item = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
 
             Assert.IsInstanceOfType(item, typeof(ByteArray));
-            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03 }, item.GetByteArray());
+            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, item.GetByteArray());
 
             // String
 
