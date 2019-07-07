@@ -45,31 +45,31 @@ namespace Neo.Test
         {
             // Signed integer
 
-            StackItem item = 1;
+            StackItem item = int.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(1), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(int.MaxValue), item.GetBigInteger());
 
             // Unsigned integer
 
-            item = 2U;
+            item = uint.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(2), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(uint.MaxValue), item.GetBigInteger());
 
             // Signed long
 
-            item = 3L;
+            item = long.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(3), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(long.MaxValue), item.GetBigInteger());
 
             // Unsigned long
 
-            item = 4UL;
+            item = ulong.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(4), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(ulong.MaxValue), item.GetBigInteger());
 
             // BigInteger
 
@@ -87,10 +87,10 @@ namespace Neo.Test
 
             // ByteArray
 
-            item = new byte[] { 0x01, 0x02, 0x03 };
+            item = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
 
             Assert.IsInstanceOfType(item, typeof(ByteArray));
-            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03 }, item.GetByteArray());
+            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, item.GetByteArray());
 
             // String
 
