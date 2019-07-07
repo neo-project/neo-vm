@@ -48,28 +48,28 @@ namespace Neo.Test
             StackItem item = int.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(1), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(int.MaxValue), item.GetBigInteger());
 
             // Unsigned integer
 
             item = uint.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(2), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(uint.MaxValue), item.GetBigInteger());
 
             // Signed long
 
             item = long.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(3), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(long.MaxValue), item.GetBigInteger());
 
             // Unsigned long
 
             item = ulong.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(4), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(ulong.MaxValue), item.GetBigInteger());
 
             // BigInteger
 
