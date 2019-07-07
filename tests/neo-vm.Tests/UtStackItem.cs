@@ -45,28 +45,28 @@ namespace Neo.Test
         {
             // Signed integer
 
-            StackItem item = 1;
+            StackItem item = int.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
             Assert.AreEqual(new BigInteger(1), item.GetBigInteger());
 
             // Unsigned integer
 
-            item = 2U;
+            item = uint.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
             Assert.AreEqual(new BigInteger(2), item.GetBigInteger());
 
             // Signed long
 
-            item = 3L;
+            item = long.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
             Assert.AreEqual(new BigInteger(3), item.GetBigInteger());
 
             // Unsigned long
 
-            item = 4UL;
+            item = ulong.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
             Assert.AreEqual(new BigInteger(4), item.GetBigInteger());
