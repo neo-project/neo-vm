@@ -34,9 +34,13 @@ namespace Neo.Test
             StackItem itemA = "NEO";
             StackItem itemB = "NEO";
             StackItem itemC = "SmartEconomy";
+            StackItem itemD = "Smarteconomy";
+            StackItem itemE = "smarteconomy";
 
             Assert.AreEqual(itemA, itemB);
             Assert.AreNotEqual(itemA, itemC);
+            Assert.AreNotEqual(itemC, itemD);
+            Assert.AreNotEqual(itemD, itemE);
             Assert.AreNotEqual(itemA, new object());
         }
 
