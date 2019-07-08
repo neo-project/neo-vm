@@ -71,12 +71,12 @@ namespace Neo.VM
 
         private Instruction(OpCode opcode)
         {
-            this.OpCode = opcode;
+            OpCode = opcode;
         }
 
         internal Instruction(byte[] script, int ip)
         {
-            this.OpCode = (OpCode)script[ip++];
+            OpCode = (OpCode)script[ip++];
             int operandSizePrefix = OperandSizePrefixTable[(int)OpCode];
             int operandSize = 0;
             switch (operandSizePrefix)
@@ -97,7 +97,7 @@ namespace Neo.VM
             if (operandSize > 0)
             {
                 ip += operandSizePrefix;
-                this.Operand = new byte[operandSize];
+                Operand = new byte[operandSize];
                 if (ip + operandSize > script.Length)
                     throw new InvalidOperationException();
                 Unsafe.MemoryCopy(script, ip, Operand, 0, operandSize);
