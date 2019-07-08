@@ -84,7 +84,7 @@
         },
         {
             "name": "Real test",
-            "script": "0x00009177",
+            "script": "0x00090000000000000000009177",
             "steps":
             [
                 {
@@ -100,7 +100,7 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 3,
+                                "instructionPointer": 12,
                                 "nextInstruction": "NIP",
                                 "evaluationStack":
                                 [
@@ -128,7 +128,7 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 4,
+                                "instructionPointer": 13,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
                                 [
