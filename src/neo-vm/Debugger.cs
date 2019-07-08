@@ -70,7 +70,7 @@ namespace Neo.VM
             if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
                 return engine.State;
 
-            engine.State = 0x00;
+            engine.State = VMState.NONE;
             int c = engine.InvocationStack.Count;
             do
             {
@@ -78,7 +78,7 @@ namespace Neo.VM
             }
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count > c);
 
-            if (engine.State == 0x00) engine.State = VMState.BREAK;
+            if (engine.State == VMState.NONE) engine.State = VMState.BREAK;
             return engine.State;
         }
     }
