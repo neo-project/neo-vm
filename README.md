@@ -5,8 +5,11 @@
 </p>
 
 <p align="center">
-  <a href='https://coveralls.io/github/neo-project/neo-vm?branch=master'>
-    <img src='https://coveralls.io/repos/github/neo-project/neo-vm/badge.svg?branch=master' alt='Current Coverage Status.' />
+ 
+  <a href='https://codecov.io/github/neo-project/neo-vm/'>
+    <img src='https://codecov.io/github/neo-project/neo-vm/branch/master/graph/badge.svg' 
+    alt='Current Coverage Status.' />
+
   </a>
   <a href="https://travis-ci.com/neo-project/neo-vm">
     <img src="https://travis-ci.com/neo-project/neo-vm.svg?branch=master" alt="Current TravisCI build status.">
