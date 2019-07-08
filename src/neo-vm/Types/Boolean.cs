@@ -10,7 +10,7 @@ namespace Neo.VM.Types
         private static readonly byte[] TRUE = { 1 };
         private static readonly byte[] FALSE = { 0 };
 
-        private bool value;
+        private readonly bool value;
 
         public Boolean(bool value)
         {
@@ -20,7 +20,7 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (other is Boolean b) return value == b.value;
             byte[] bytes_other;
             try

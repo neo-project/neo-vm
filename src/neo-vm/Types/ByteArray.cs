@@ -6,7 +6,7 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(value).Replace(\"-\", string.Empty)}")]
     public class ByteArray : StackItem
     {
-        private byte[] value;
+        private readonly byte[] value;
 
         public ByteArray(byte[] value)
         {
@@ -16,7 +16,7 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             byte[] bytes_other;
             try
             {
