@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href='https://codecov.io/github/neo-project/neo-vm/'>
+  <a href='https://coveralls.io/github/neo-project/neo-vm?branch=master'>
     <img src='https://codecov.io/github/neo-project/neo-vm/branch/master/graph/badge.svg' 
     alt='Current Coverage Status.' />
   </a>
