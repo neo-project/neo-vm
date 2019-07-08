@@ -283,6 +283,180 @@
             ]
         },
         {
+            "name": "Real test [Map]",
+            "script": "0xC7766B5152C46C",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 3,
+                                "nextInstruction": "PUSH1",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ],
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 5,
+                                "nextInstruction": "SETITEM",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ],
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 6,
+                                "nextInstruction": "FROMALTSTACK",
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                            "0x01":
+                                            {
+                                                "type": "Integer",
+                                                "value": 2
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 7,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                            "0x01":
+                                            {
+                                                "type": "Integer",
+                                                "value": 2
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Map",
+                                "value":
+                                {
+                                    "0x01":
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
             "name": "Real test [Array]",
             "script": "0x51C5760055C4",
             "steps":
