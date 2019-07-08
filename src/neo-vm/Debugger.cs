@@ -33,7 +33,7 @@ namespace Neo.VM
         private void ExecuteAndCheckBreakPoints()
         {
             engine.ExecuteNext();
-            if (engine.State == VMState.NONE && engine.InvocationStack.Count > 0 && break_points.Count > 0)
+            if (engine.InvocationStack.Count > 0 && break_points.Count > 0)
             {
                 if (break_points.TryGetValue(engine.CurrentContext.Script, out HashSet<uint> hashset) && hashset.Contains((uint)engine.CurrentContext.InstructionPointer))
                     engine.State = VMState.BREAK;
@@ -53,8 +53,6 @@ namespace Neo.VM
             if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
                 return engine.State;
             engine.ExecuteNext();
-            if (engine.State == VMState.NONE)
-                engine.State = VMState.BREAK;
             return engine.State;
         }
 
@@ -64,8 +62,6 @@ namespace Neo.VM
             int c = engine.InvocationStack.Count;
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count >= c)
                 ExecuteAndCheckBreakPoints();
-            if (engine.State == VMState.NONE)
-                engine.State = VMState.BREAK;
             return engine.State;
         }
 
@@ -73,15 +69,16 @@ namespace Neo.VM
         {
             if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
                 return engine.State;
-            engine.State &= ~VMState.BREAK;
+
+            engine.State = 0x00;
             int c = engine.InvocationStack.Count;
             do
             {
                 ExecuteAndCheckBreakPoints();
             }
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count > c);
-            if (engine.State == VMState.NONE)
-                engine.State = VMState.BREAK;
+
+            if (engine.State == 0x00) engine.State = VMState.BREAK;
             return engine.State;
         }
     }
