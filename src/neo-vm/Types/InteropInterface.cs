@@ -17,11 +17,11 @@ namespace Neo.VM.Types
     public class InteropInterface<T> : InteropInterface
         where T : class
     {
-        private T _object;
+        private readonly T _object;
 
         public InteropInterface(T value)
         {
-            this._object = value;
+            _object = value;
         }
 
         public override bool Equals(StackItem other)
