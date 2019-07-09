@@ -58,10 +58,13 @@ namespace Neo.VM
 
         public VMState StepOut()
         {
-            engine.State &= ~VMState.BREAK;
+            engine.State = VMState.NONE;
             int c = engine.InvocationStack.Count;
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count >= c)
                 ExecuteAndCheckBreakPoints();
+
+            if (engine.State == VMState.NONE)
+                engine.State = VMState.BREAK;
             return engine.State;
         }
 
