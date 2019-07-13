@@ -33,7 +33,7 @@ namespace Neo.VM
         private void ExecuteAndCheckBreakPoints()
         {
             engine.ExecuteNext();
-            if (engine.InvocationStack.Count > 0 && break_points.Count > 0)
+            if (engine.State == VMState.NONE && engine.InvocationStack.Count > 0 && break_points.Count > 0)
             {
                 if (break_points.TryGetValue(engine.CurrentContext.Script, out HashSet<uint> hashset) && hashset.Contains((uint)engine.CurrentContext.InstructionPointer))
                     engine.State = VMState.BREAK;
