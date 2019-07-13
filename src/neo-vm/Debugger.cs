@@ -60,8 +60,8 @@ namespace Neo.VM
         {
             if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
                 return engine.State;
-            engine.State = VMState.NONE;
 
+            engine.State &= ~VMState.BREAK;
             int c = engine.InvocationStack.Count;
             while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count >= c)
                 ExecuteAndCheckBreakPoints();
@@ -76,7 +76,7 @@ namespace Neo.VM
             if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
                 return engine.State;
 
-            engine.State = VMState.NONE;
+            engine.State &= ~VMState.BREAK;
             int c = engine.InvocationStack.Count;
             do
             {
