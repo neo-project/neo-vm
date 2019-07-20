@@ -48,9 +48,9 @@ namespace Neo.Test
             var a = new byte[0];
             var b = new byte[1];
 
-            Assert.IsFalse(Unsafe.MemoryEquals(null, null));
-            Assert.IsFalse(Unsafe.MemoryEquals(new byte[0], null));
-            Assert.IsFalse(Unsafe.MemoryEquals(null, new byte[0]));
+            Assert.IsTrue(Unsafe.MemoryEquals(null, null));
+            Assert.IsFalse(Unsafe.MemoryEquals(a, null));
+            Assert.IsFalse(Unsafe.MemoryEquals(null, a));
 
             Assert.IsTrue(Unsafe.MemoryEquals(a, a));
             Assert.IsTrue(Unsafe.MemoryEquals(new byte[0], new byte[0]));
