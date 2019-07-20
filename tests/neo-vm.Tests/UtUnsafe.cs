@@ -43,18 +43,14 @@ namespace Neo.Test
         }
 
         [TestMethod]
-        public void MemoryEquals_Null()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => Unsafe.MemoryEquals(null, null));
-            Assert.ThrowsException<ArgumentNullException>(() => Unsafe.MemoryEquals(new byte[0], null));
-            Assert.ThrowsException<ArgumentNullException>(() => Unsafe.MemoryEquals(null, new byte[0]));
-        }
-
-        [TestMethod]
         public void MemoryEquals()
         {
             var a = new byte[0];
             var b = new byte[1];
+
+            Assert.IsFalse(Unsafe.MemoryEquals(null, null));
+            Assert.IsFalse(Unsafe.MemoryEquals(new byte[0], null));
+            Assert.IsFalse(Unsafe.MemoryEquals(null, new byte[0]));
 
             Assert.IsTrue(Unsafe.MemoryEquals(a, a));
             Assert.IsTrue(Unsafe.MemoryEquals(new byte[0], new byte[0]));
