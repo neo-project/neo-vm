@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("neo-vm.Tests")]
 namespace Neo.VM
 {
     unsafe internal static class Unsafe
@@ -45,7 +46,8 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool NotZero(byte[] x)
         {
-            if (x is null) throw new ArgumentNullException(nameof(x));
+            if (x is null)
+                throw new ArgumentNullException(nameof(x));
 
             int len = x.Length;
             if (len == 0) return false;
