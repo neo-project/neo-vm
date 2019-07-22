@@ -47,7 +47,6 @@ namespace Neo.VM
         {
             if (x is null)
                 throw new ArgumentNullException(nameof(x));
-
             int len = x.Length;
             if (len == 0) return false;
             fixed (byte* xp = x)
