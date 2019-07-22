@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("neo-vm.Tests")]
 namespace Neo.VM
 {
     unsafe internal static class Unsafe
