@@ -1,0 +1,82 @@
+﻿{
+    "category": "Limits",
+    "name": "Stack item limits",
+    "tests":
+    [
+        {
+            "name": "Max boolean bytearray",
+            "script": "0x2100000000000000000000000000000000000000000000000000000000000000000091",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "nextInstruction": "NOT",
+                                "instructionPointer": 34,
+                                "evaluationStack":
+                                [
+
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x000000000000000000000000000000000000000000000000000000000000000000"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "nextInstruction": "RET",
+                                "instructionPointer": 35,
+                                "evaluationStack":
+                                [
+
+                                    {
+                                        "type": "Boolean",
+                                        "value": false
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+
+                            {
+                                "type": "Boolean",
+                                "value": false
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

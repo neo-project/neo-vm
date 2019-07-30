@@ -14,7 +14,7 @@ namespace Neo.VM
 
         public ScriptBuilder()
         {
-            this.writer = new BinaryWriter(ms);
+            writer = new BinaryWriter(ms);
         }
 
         public void Dispose()
@@ -29,13 +29,6 @@ namespace Neo.VM
             if (arg != null)
                 writer.Write(arg);
             return this;
-        }
-
-        public ScriptBuilder EmitAppCall(byte[] scriptHash, bool useTailCall = false)
-        {
-            if (scriptHash.Length != 20)
-                throw new ArgumentException();
-            return Emit(useTailCall ? OpCode.TAILCALL : OpCode.APPCALL, scriptHash);
         }
 
         public ScriptBuilder EmitJump(OpCode op, short offset)
@@ -93,17 +86,9 @@ namespace Neo.VM
             return EmitPush(Encoding.UTF8.GetBytes(data));
         }
 
-        public ScriptBuilder EmitSysCall(string api)
+        public ScriptBuilder EmitSysCall(uint api)
         {
-            if (api == null)
-                throw new ArgumentNullException();
-            byte[] api_bytes = Encoding.ASCII.GetBytes(api);
-            if (api_bytes.Length == 0 || api_bytes.Length > 252)
-                throw new ArgumentException();
-            byte[] arg = new byte[api_bytes.Length + 1];
-            arg[0] = (byte)api_bytes.Length;
-            Buffer.BlockCopy(api_bytes, 0, arg, 1, api_bytes.Length);
-            return Emit(OpCode.SYSCALL, arg);
+            return Emit(OpCode.SYSCALL, BitConverter.GetBytes(api));
         }
 
         public byte[] ToArray()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
@@ -12,14 +13,15 @@ namespace Neo.VM.Types
         public abstract T GetInterface<T>() where T : class;
     }
 
+    [DebuggerDisplay("Type={GetType().Name}, Value={_object}")]
     public class InteropInterface<T> : InteropInterface
         where T : class
     {
-        private T _object;
+        private readonly T _object;
 
         public InteropInterface(T value)
         {
-            this._object = value;
+            _object = value;
         }
 
         public override bool Equals(StackItem other)

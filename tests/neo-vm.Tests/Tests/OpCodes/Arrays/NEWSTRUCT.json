@@ -19,9 +19,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xC8A63BAE0868372409D7CAB99E21950214D13136",
-                                "instructionPointer": 1,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "NEWSTRUCT"
                             }
                         ]
                     }
@@ -45,9 +44,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xE626BC07AED784E35302B2EF046E454EF0F5B11A",
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 1,
+                                "nextInstruction": "NEWSTRUCT"
                             }
                         ]
                     }
@@ -71,9 +69,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x657E59B5BDE2440B057B86B432A958F5BFAA5E0B",
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 1,
+                                "nextInstruction": "NEWSTRUCT"
                             }
                         ]
                     }
@@ -97,7 +94,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x66DE1F510C099B46CC3BE92CC5D5AFCB9D9105AF",
                                 "instructionPointer": 2,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -171,7 +167,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x3EFCF0F7484499D5523CD40B04D1CF85388AEED4",
                                 "instructionPointer": 6,
                                 "nextInstruction": "NEWSTRUCT",
                                 "evaluationStack":
@@ -202,7 +197,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x3EFCF0F7484499D5523CD40B04D1CF85388AEED4",
                                 "instructionPointer": 7,
                                 "nextInstruction": "RET",
                                 "evaluationStack":

@@ -10,6 +10,8 @@ namespace Neo.VM
 {
     public abstract class StackItem : IEquatable<StackItem>
     {
+        public static StackItem Null { get; } = new byte[0];
+
         public abstract bool Equals(StackItem other);
 
         public sealed override bool Equals(object obj)
@@ -35,6 +37,11 @@ namespace Neo.VM
         public abstract bool GetBoolean();
 
         public abstract byte[] GetByteArray();
+
+        public virtual int GetByteLength()
+        {
+            return GetByteArray().Length;
+        }
 
         public override int GetHashCode()
         {

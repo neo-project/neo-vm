@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Linq;
+using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
+    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(value).Replace(\"-\", string.Empty)}")]
     public class ByteArray : StackItem
     {
-        private byte[] value;
+        private readonly byte[] value;
 
         public ByteArray(byte[] value)
         {
@@ -15,7 +16,7 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             byte[] bytes_other;
             try
             {
@@ -25,14 +26,14 @@ namespace Neo.VM.Types
             {
                 return false;
             }
-            return value.SequenceEqual(bytes_other);
+            return Unsafe.MemoryEquals(value, bytes_other);
         }
 
         public override bool GetBoolean()
         {
             if (value.Length > ExecutionEngine.MaxSizeForBigInteger)
                 return true;
-            return value.Any(p => p != 0);
+            return Unsafe.NotZero(value);
         }
 
         public override byte[] GetByteArray()

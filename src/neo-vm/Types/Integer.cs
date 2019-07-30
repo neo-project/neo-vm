@@ -1,12 +1,16 @@
 ﻿using System;
-using System.Linq;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Neo.VM.Types
 {
+    [DebuggerDisplay("Type={GetType().Name}, Value={value}")]
     public class Integer : StackItem
     {
-        private BigInteger value;
+        private static readonly byte[] ZeroBytes = new byte[0];
+
+        private int _length = -1;
+        private readonly BigInteger value;
 
         public Integer(BigInteger value)
         {
@@ -16,7 +20,7 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (other is Integer i) return value == i.value;
             byte[] bytes_other;
             try
@@ -27,7 +31,7 @@ namespace Neo.VM.Types
             {
                 return false;
             }
-            return GetByteArray().SequenceEqual(bytes_other);
+            return Unsafe.MemoryEquals(GetByteArray(), bytes_other);
         }
 
         public override BigInteger GetBigInteger()
@@ -42,7 +46,14 @@ namespace Neo.VM.Types
 
         public override byte[] GetByteArray()
         {
-            return value.ToByteArray();
+            return value.IsZero ? ZeroBytes : value.ToByteArray();
+        }
+
+        public override int GetByteLength()
+        {
+            if (_length == -1)
+                _length = GetByteArray().Length;
+            return _length;
         }
     }
 }

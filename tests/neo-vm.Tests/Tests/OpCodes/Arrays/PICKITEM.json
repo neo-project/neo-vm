@@ -19,9 +19,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xC3042E466B276668349B7EB49E91196765C10538",
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 2,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }
@@ -44,9 +43,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xF2BBC7F52CD3E77E88CA882CDCD91705C1DD4EF4",
-                                "instructionPointer": 1,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }
@@ -71,7 +69,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x0C4843D61AC914CD49B63DD993AABDBECFA151F5",
                                 "instructionPointer": 3,
                                 "nextInstruction": "PICKITEM",
                                 "evaluationStack":
@@ -108,9 +105,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x0C4843D61AC914CD49B63DD993AABDBECFA151F5",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET",
+                                "instructionPointer": 3,
+                                "nextInstruction": "PICKITEM",
                                 "evaluationStack":
                                 [
                                     {
@@ -148,7 +144,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xDAF9667399D9787D5D17733453C4727CC74A6C93",
                                 "instructionPointer": 3,
                                 "nextInstruction": "PICKITEM",
                                 "evaluationStack":
@@ -187,9 +182,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xDAF9667399D9787D5D17733453C4727CC74A6C93",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 3,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }
@@ -214,7 +208,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x9668C991205C1A87BA1E797239079B297BF40B15",
                                 "instructionPointer": 3,
                                 "nextInstruction": "PICKITEM",
                                 "evaluationStack":
@@ -253,9 +246,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x9668C991205C1A87BA1E797239079B297BF40B15",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 3,
+                                "nextInstruction": "PICKITEM"
                             }
                         ]
                     }
@@ -294,7 +286,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x58C952915B18413984D1B7B8EF7E9086C82111F7",
                                 "instructionPointer": 17,
                                 "nextInstruction": "PICKITEM",
                                 "evaluationStack":
@@ -337,7 +328,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x58C952915B18413984D1B7B8EF7E9086C82111F7",
                                 "instructionPointer": 18,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -402,7 +392,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xF7E012D493A0B38049BF8F1D670304568E6B9A7F",
                                 "instructionPointer": 17,
                                 "nextInstruction": "PICKITEM",
                                 "evaluationStack":
@@ -445,7 +434,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xF7E012D493A0B38049BF8F1D670304568E6B9A7F",
                                 "instructionPointer": 18,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -472,6 +460,189 @@
                             {
                                 "type": "Integer",
                                 "value": 3
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "OutOfBounds with -1 [ByteArray]",
+            "script": "0x0201024FC3",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": -1
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x0102"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "OutOfBounds with more than length [ByteArray]",
+            "script": "0x02010254C3",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 4
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x0102"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test [ByteArray]",
+            "script": "0x02010200C3",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 4,
+                                "nextInstruction": "PICKITEM",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "ByteArray",
+                                        "value": ""
+                                    },
+                                    {
+                                        "type": "ByteArray",
+                                        "value": "0x0102"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 5,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "Execute"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Integer",
+                                "value": 1
                             }
                         ]
                     }

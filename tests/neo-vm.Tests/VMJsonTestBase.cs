@@ -18,39 +18,14 @@ namespace Neo.Test
         {
             foreach (var test in ut.Tests)
             {
-                // Interop service
-
-                IInteropService service = new InteropService();
-
-                // Message provider
-
-                IScriptContainer scriptContainer = null;
-
-                if (test.Message != null)
+                using (var engine = new TestEngine())
                 {
-                    scriptContainer = new MessageProvider(test.Message);
-                }
+                    Debugger debugger = new Debugger(engine);
 
-
-                // Script table
-
-                ScriptTable scriptTable = null;
-
-                if (test.ScriptTable != null)
-                {
-                    scriptTable = new ScriptTable();
-
-                    foreach (var script in test.ScriptTable)
+                    if (test.Script.Length > 0)
                     {
-                        scriptTable.Add(script.Script);
+                        engine.LoadScript(test.Script);
                     }
-                }
-
-                // Create engine
-
-                using (var engine = new ExecutionEngine(scriptContainer, Crypto.Default, scriptTable, service))
-                {
-                    engine.LoadScript(test.Script);
 
                     // Execute Steps
 
@@ -64,10 +39,10 @@ namespace Neo.Test
                                 {
                                     switch (run)
                                     {
-                                        case VMUTActionType.Execute: engine.Execute(); break;
-                                        case VMUTActionType.StepInto: engine.StepInto(); break;
-                                        case VMUTActionType.StepOut: engine.StepOut(); break;
-                                        case VMUTActionType.StepOver: engine.StepOver(); break;
+                                        case VMUTActionType.Execute: debugger.Execute(); break;
+                                        case VMUTActionType.StepInto: debugger.StepInto(); break;
+                                        case VMUTActionType.StepOut: debugger.StepOut(); break;
+                                        case VMUTActionType.StepOver: debugger.StepOver(); break;
                                     }
                                 }
 
@@ -109,9 +84,9 @@ namespace Neo.Test
             for (int x = 0, max = stack.Count; x < max; x++)
             {
                 var context = stack.Peek(x);
+                var opcode = context.InstructionPointer >= context.Script.Length ? OpCode.RET : context.Script[context.InstructionPointer];
 
-                AssertAreEqual(context.ScriptHash.ToHexString().ToUpper(), result[x].ScriptHash.ToHexString().ToUpper(), message + "Script hash is different");
-                AssertAreEqual(context.NextInstruction, result[x].NextInstruction, message + "Next instruction is different");
+                AssertAreEqual(opcode, result[x].NextInstruction, message + "Next instruction is different");
                 AssertAreEqual(context.InstructionPointer, result[x].InstructionPointer, message + "Instruction pointer is different");
 
                 AssertResult(context.EvaluationStack, result[x].EvaluationStack, message + " [EvaluationStack]");

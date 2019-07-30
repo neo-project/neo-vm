@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
+    [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Map : StackItem, ICollection, IDictionary<StackItem, StackItem>
     {
         private readonly Dictionary<StackItem, StackItem> dictionary;
 
         public StackItem this[StackItem key]
         {
-            get => this.dictionary[key];
-            set => this.dictionary[key] = value;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => dictionary[key];
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set => dictionary[key] = value;
         }
 
         public ICollection<StackItem> Keys => dictionary.Keys;
@@ -26,7 +31,7 @@ namespace Neo.VM.Types
 
         public Map(Dictionary<StackItem, StackItem> value)
         {
-            this.dictionary = value;
+            dictionary = value;
         }
 
         public void Add(StackItem key, StackItem value)

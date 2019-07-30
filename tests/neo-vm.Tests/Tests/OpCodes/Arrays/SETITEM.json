@@ -21,7 +21,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xA8D0D989428ACC4D0871A63867FB65C090D4C192",
                                 "instructionPointer": 3,
                                 "nextInstruction": "SETITEM",
                                 "evaluationStack":
@@ -56,9 +55,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xA8D0D989428ACC4D0871A63867FB65C090D4C192",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET",
+                                "instructionPointer": 3,
+                                "nextInstruction": "SETITEM",
                                 "evaluationStack":
                                 [
                                     {
@@ -90,7 +88,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x0F72B9DC4389FB6D2FAC8F9954FF4174748F39BF",
                                 "instructionPointer": 3,
                                 "nextInstruction": "SETITEM",
                                 "evaluationStack":
@@ -123,9 +120,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x0F72B9DC4389FB6D2FAC8F9954FF4174748F39BF",
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 3,
+                                "nextInstruction": "SETITEM"
                             }
                         ]
                     }
@@ -148,9 +144,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x72BB72F41041A6D0E9AB5BB6F67EC3AF7BF6FA5F",
-                                "instructionPointer": 1,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 0,
+                                "nextInstruction": "SETITEM"
                             }
                         ]
                     }
@@ -176,7 +171,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xD553A5EA4F28980DF7A29E353A776972D7699B3D",
                                 "instructionPointer": 4,
                                 "nextInstruction": "SETITEM",
                                 "evaluationStack":
@@ -215,9 +209,8 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xD553A5EA4F28980DF7A29E353A776972D7699B3D",
-                                "instructionPointer": 5,
-                                "nextInstruction": "RET"
+                                "instructionPointer": 4,
+                                "nextInstruction": "SETITEM"
                             }
                         ]
                     }
@@ -243,7 +236,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x4FABD5803C205E3DB0BEEF56D39C3940796BA4CF",
                                 "instructionPointer": 4,
                                 "nextInstruction": "SETITEM",
                                 "evaluationStack":
@@ -282,9 +274,182 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x4FABD5803C205E3DB0BEEF56D39C3940796BA4CF",
+                                "instructionPointer": 4,
+                                "nextInstruction": "SETITEM"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Real test [Map]",
+            "script": "0xC7766B5152C46C",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 3,
+                                "nextInstruction": "PUSH1",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ],
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
                                 "instructionPointer": 5,
-                                "nextInstruction": "RET"
+                                "nextInstruction": "SETITEM",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    },
+                                    {
+                                        "type": "Integer",
+                                        "value": 1
+                                    },
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ],
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 6,
+                                "nextInstruction": "FROMALTSTACK",
+                                "altStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                            "0x01":
+                                            {
+                                                "type": "Integer",
+                                                "value": 2
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 7,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value":
+                                        {
+                                            "0x01":
+                                            {
+                                                "type": "Integer",
+                                                "value": 2
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Map",
+                                "value":
+                                {
+                                    "0x01":
+                                    {
+                                        "type": "Integer",
+                                        "value": 2
+                                    }
+                                }
                             }
                         ]
                     }
@@ -311,7 +476,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x877385686FE501BFA80B0715C5CD7FA957E4A7ED",
                                 "instructionPointer": 5,
                                 "nextInstruction": "SETITEM",
                                 "evaluationStack":
@@ -360,7 +524,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x877385686FE501BFA80B0715C5CD7FA957E4A7ED",
                                 "instructionPointer": 6,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -425,7 +588,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xC10661B57C68864B7994373CDE871EC54203004B",
                                 "instructionPointer": 5,
                                 "nextInstruction": "SETITEM",
                                 "evaluationStack":
@@ -474,7 +636,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0xC10661B57C68864B7994373CDE871EC54203004B",
                                 "instructionPointer": 6,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -537,7 +698,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x2869989D59157DA2EF25E1752AC9B0D3F195F4AA",
                                 "instructionPointer": 3,
                                 "nextInstruction": "PUSH0",
                                 "evaluationStack":
@@ -580,7 +740,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x2869989D59157DA2EF25E1752AC9B0D3F195F4AA",
                                 "instructionPointer": 6,
                                 "nextInstruction": "TOALTSTACK",
                                 "evaluationStack":
@@ -613,7 +772,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x2869989D59157DA2EF25E1752AC9B0D3F195F4AA",
                                 "instructionPointer": 9,
                                 "nextInstruction": "PUSH0",
                                 "evaluationStack":
@@ -669,7 +827,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x2869989D59157DA2EF25E1752AC9B0D3F195F4AA",
                                 "instructionPointer": 12,
                                 "nextInstruction": "FROMALTSTACK",
                                 "evaluationStack":
@@ -713,7 +870,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x2869989D59157DA2EF25E1752AC9B0D3F195F4AA",
                                 "instructionPointer": 13,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
@@ -796,7 +952,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x716E9E24FE0569FD7F7D9CD36AF55629E523F1BC",
                                 "instructionPointer": 3,
                                 "nextInstruction": "PUSH0",
                                 "evaluationStack":
@@ -839,7 +994,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x716E9E24FE0569FD7F7D9CD36AF55629E523F1BC",
                                 "instructionPointer": 6,
                                 "nextInstruction": "TOALTSTACK",
                                 "evaluationStack":
@@ -872,7 +1026,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x716E9E24FE0569FD7F7D9CD36AF55629E523F1BC",
                                 "instructionPointer": 9,
                                 "nextInstruction": "PUSH0",
                                 "evaluationStack":
@@ -928,7 +1081,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x716E9E24FE0569FD7F7D9CD36AF55629E523F1BC",
                                 "instructionPointer": 12,
                                 "nextInstruction": "FROMALTSTACK",
                                 "evaluationStack":
@@ -972,7 +1124,6 @@
                         "invocationStack":
                         [
                             {
-                                "scriptHash": "0x716E9E24FE0569FD7F7D9CD36AF55629E523F1BC",
                                 "instructionPointer": 13,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
