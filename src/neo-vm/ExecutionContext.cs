@@ -74,7 +74,7 @@ namespace Neo.VM
             this.CallingScript = callingScript;
         }
 
-        internal virtual ExecutionContext Clone()
+        internal protected virtual ExecutionContext Clone()
         {
             return new ExecutionContext(Script, Script, 0, EvaluationStack, AltStack);
         }
