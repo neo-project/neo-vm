@@ -9,7 +9,7 @@ namespace Neo.VM
         /// <summary>
         /// Number of items to be returned
         /// </summary>
-        internal int RVCount { get; }
+        internal protected int RVCount { get; }
 
         /// <summary>
         /// Script
@@ -80,9 +80,9 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Instruction GetInstruction(int ip) => Script.GetInstruction(ip);
+        protected Instruction GetInstruction(int ip) => Script.GetInstruction(ip);
 
-        internal bool MoveNext()
+        internal protected bool MoveNext()
         {
             InstructionPointer += CurrentInstruction.Size;
             return InstructionPointer < Script.Length;
