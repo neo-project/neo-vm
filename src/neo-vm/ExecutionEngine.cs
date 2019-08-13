@@ -9,7 +9,7 @@ using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
 {
-    public class ExecutionEngine : IDisposable
+    public class ExecutionEngine : IDisposable, IExecutionContextFactory
     {
         #region Limits Variables
 
@@ -1082,9 +1082,18 @@ namespace Neo.VM
             ContextLoaded?.Invoke(this, context);
         }
 
-        public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
+        public virtual ExecutionContext CreateExecutionContext(Script script, Script callingScript, int rvcount)
         {
-            ExecutionContext context = new ExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
+            return new ExecutionContext(script, callingScript, rvcount);
+        }
+
+        public ExecutionContext LoadScript(byte[] script, int rvcount = -1, IExecutionContextFactory factory = null)
+        {
+            if (factory == null) factory = this;
+
+            ExecutionContext context = factory.CreateExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
+            if (context == null) throw new NotImplementedException();
+
             LoadContext(context);
             return context;
         }
