@@ -1074,7 +1074,7 @@ namespace Neo.VM
             return true;
         }
 
-        private void LoadContext(ExecutionContext context)
+        protected void LoadContext(ExecutionContext context)
         {
             if (InvocationStack.Count >= MaxInvocationStackSize)
                 throw new InvalidOperationException();
