@@ -1087,13 +1087,9 @@ namespace Neo.VM
             return new ExecutionContext(script, callingScript, rvcount);
         }
 
-        public ExecutionContext LoadScript(byte[] script, int rvcount = -1, IExecutionContextFactory factory = null)
+        virtual public LoadScript(byte[] script, int rvcount = -1)
         {
-            if (factory == null) factory = this;
-
-            ExecutionContext context = factory.CreateExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
-            if (context == null) throw new NotImplementedException();
-
+            ExecutionContext context = new ExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
             LoadContext(context);
             return context;
         }
