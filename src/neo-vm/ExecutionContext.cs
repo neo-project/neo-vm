@@ -80,9 +80,9 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected Instruction GetInstruction(int ip) => Script.GetInstruction(ip);
+        private Instruction GetInstruction(int ip) => Script.GetInstruction(ip);
 
-        internal protected bool MoveNext()
+        internal bool MoveNext()
         {
             InstructionPointer += CurrentInstruction.Size;
             return InstructionPointer < Script.Length;
