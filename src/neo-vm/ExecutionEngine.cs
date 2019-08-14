@@ -1084,7 +1084,7 @@ namespace Neo.VM
             ContextLoaded?.Invoke(this, context);
         }
 
-        virtual public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
+        public virtual ExecutionContext LoadScript(byte[] script, int rvcount = -1)
         {
             ExecutionContext context = new ExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
             LoadContext(context);
