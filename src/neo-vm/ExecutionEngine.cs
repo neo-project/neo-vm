@@ -9,7 +9,7 @@ using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
 {
-    public class ExecutionEngine : IDisposable, IExecutionContextFactory
+    public class ExecutionEngine : IDisposable
     {
         #region Limits Variables
 
