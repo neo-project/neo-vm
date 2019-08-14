@@ -1076,6 +1076,8 @@ namespace Neo.VM
 
         protected void LoadContext(ExecutionContext context)
         {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
             if (InvocationStack.Count >= MaxInvocationStackSize)
                 throw new InvalidOperationException();
             InvocationStack.Push(context);
