@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Neo.VM
@@ -6,6 +8,8 @@ namespace Neo.VM
     [DebuggerDisplay("RVCount={RVCount}, InstructionPointer={InstructionPointer}")]
     public class ExecutionContext
     {
+        private readonly Dictionary<Type, object> states = new Dictionary<Type, object>();
+
         /// <summary>
         /// Number of items to be returned
         /// </summary>
@@ -82,10 +86,20 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Instruction GetInstruction(int ip) => Script.GetInstruction(ip);
 
+        public T GetState<T>()
+        {
+            return (T)states[typeof(T)];
+        }
+
         internal bool MoveNext()
         {
             InstructionPointer += CurrentInstruction.Size;
             return InstructionPointer < Script.Length;
+        }
+
+        public void SetState<T>(T state)
+        {
+            states[typeof(T)] = state;
         }
     }
 }
