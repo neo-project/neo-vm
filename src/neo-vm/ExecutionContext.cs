@@ -91,15 +91,27 @@ namespace Neo.VM
             return (T)states[typeof(T)];
         }
 
-        internal bool MoveNext()
+        public bool TryGetState<T>(out T value)
         {
-            InstructionPointer += CurrentInstruction.Size;
-            return InstructionPointer < Script.Length;
+            if (states.TryGetValue(typeof(T), out var val))
+            {
+                value = (T)val;
+                return true;
+            }
+
+            value = default;
+            return false;
         }
 
         public void SetState<T>(T state)
         {
             states[typeof(T)] = state;
+        }
+
+        internal bool MoveNext()
+        {
+            InstructionPointer += CurrentInstruction.Size;
+            return InstructionPointer < Script.Length;
         }
     }
 }
