@@ -24,7 +24,8 @@ namespace Neo.VM
 
         public VMState Execute()
         {
-            engine.State &= ~VMState.BREAK;
+            if (engine.State == VMState.BREAK)
+                engine.State = VMState.NONE;
             while (engine.State == VMState.NONE)
                 ExecuteAndCheckBreakPoints();
             return engine.State;
@@ -60,7 +61,8 @@ namespace Neo.VM
 
         public VMState StepOut()
         {
-            engine.State &= ~VMState.BREAK;
+            if (engine.State == VMState.BREAK)
+                engine.State = VMState.NONE;
             int c = engine.InvocationStack.Count;
             while (engine.State == VMState.NONE && engine.InvocationStack.Count >= c)
                 ExecuteAndCheckBreakPoints();
@@ -73,7 +75,7 @@ namespace Neo.VM
         {
             if (engine.State == VMState.HALT || engine.State == VMState.FAULT)
                 return engine.State;
-            engine.State &= ~VMState.BREAK;
+            engine.State = VMState.NONE;
             int c = engine.InvocationStack.Count;
             do
             {

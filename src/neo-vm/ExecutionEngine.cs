@@ -177,7 +177,8 @@ namespace Neo.VM
 
         public VMState Execute()
         {
-            State &= ~VMState.BREAK;
+            if (State == VMState.BREAK)
+                State = VMState.NONE;
             while (State != VMState.HALT && State != VMState.FAULT)
                 ExecuteNext();
             return State;
