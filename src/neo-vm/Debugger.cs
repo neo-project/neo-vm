@@ -24,8 +24,9 @@ namespace Neo.VM
 
         public VMState Execute()
         {
-            engine.State &= ~VMState.BREAK;
-            while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK))
+            if (engine.State == VMState.BREAK)
+                engine.State = VMState.NONE;
+            while (engine.State == VMState.NONE)
                 ExecuteAndCheckBreakPoints();
             return engine.State;
         }
@@ -50,7 +51,7 @@ namespace Neo.VM
 
         public VMState StepInto()
         {
-            if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
+            if (engine.State == VMState.HALT || engine.State == VMState.FAULT)
                 return engine.State;
             engine.ExecuteNext();
             if (engine.State == VMState.NONE)
@@ -60,9 +61,10 @@ namespace Neo.VM
 
         public VMState StepOut()
         {
-            engine.State &= ~VMState.BREAK;
+            if (engine.State == VMState.BREAK)
+                engine.State = VMState.NONE;
             int c = engine.InvocationStack.Count;
-            while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count >= c)
+            while (engine.State == VMState.NONE && engine.InvocationStack.Count >= c)
                 ExecuteAndCheckBreakPoints();
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
@@ -71,15 +73,15 @@ namespace Neo.VM
 
         public VMState StepOver()
         {
-            if (engine.State.HasFlag(VMState.HALT) || engine.State.HasFlag(VMState.FAULT))
+            if (engine.State == VMState.HALT || engine.State == VMState.FAULT)
                 return engine.State;
-            engine.State &= ~VMState.BREAK;
+            engine.State = VMState.NONE;
             int c = engine.InvocationStack.Count;
             do
             {
                 ExecuteAndCheckBreakPoints();
             }
-            while (!engine.State.HasFlag(VMState.HALT) && !engine.State.HasFlag(VMState.FAULT) && !engine.State.HasFlag(VMState.BREAK) && engine.InvocationStack.Count > c);
+            while (engine.State == VMState.NONE && engine.InvocationStack.Count > c);
             if (engine.State == VMState.NONE)
                 engine.State = VMState.BREAK;
             return engine.State;
