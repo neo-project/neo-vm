@@ -36,6 +36,7 @@ namespace Neo.VM
         public static void MemoryCopy(byte[] src, int srcOffset, byte[] dst, int dstOffset, int count)
         {
             if (count == 0) return;
+            if (srcOffset < 0 || count < 0 || dstOffset < 0) throw new ArgumentException();
             if (checked(srcOffset + count) > src.Length) throw new ArgumentException();
             if (checked(dstOffset + count) > dst.Length) throw new ArgumentException();
 
