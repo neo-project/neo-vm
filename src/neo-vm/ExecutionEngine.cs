@@ -450,11 +450,12 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (count < 0) return false;
+                            if (count > MaxItemSize) count = (int)MaxItemSize;
                             int index = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (index < 0) return false;
                             byte[] x = context.EvaluationStack.Pop().GetByteArray();
                             if (index > x.Length) return false;
-                            if (checked(index + count) > x.Length) count = x.Length - index;
+                            if (index + count > x.Length) count = x.Length - index;
                             byte[] buffer = new byte[count];
                             Unsafe.MemoryCopy(x, index, buffer, 0, count);
                             context.EvaluationStack.Push(buffer);
