@@ -40,19 +40,6 @@ namespace Neo.Test
 
             Unsafe.MemoryCopy(from, 0, to, 5, 5);
             CollectionAssert.AreEqual(to, new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x08, 0x09 });
-
-            Assert.ThrowsException<ArgumentException>(() => Unsafe.MemoryCopy(from, 0, to, 0, 6));
-            Assert.ThrowsException<ArgumentException>(() => Unsafe.MemoryCopy(from, 0, to, 0, 11));
-
-            Assert.ThrowsException<ArgumentException>(() => Unsafe.MemoryCopy(from, 5, to, 0, 1));
-            Assert.ThrowsException<ArgumentException>(() => Unsafe.MemoryCopy(from, 10, to, 0, 1));
-
-            // Overflow exception
-
-            from = new byte[255];
-            to = new byte[255];
-
-            Assert.ThrowsException<OverflowException>(() => Unsafe.MemoryCopy(from, 253, to, 0, int.MaxValue));
         }
 
         [TestMethod]
