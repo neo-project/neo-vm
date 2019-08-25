@@ -21,7 +21,7 @@ install:
 script:
  - dotnet restore
  - echo "Checking format..." 
- - dotnet format --check --dry-run -w ../../neo-vm
+ - dotnet format --check --dry-run -w ../../src/neo-vm
  - dotnet format --check --dry-run -w .
  - find * -name *.csproj | xargs -I % dotnet add % package coverlet.msbuild
  - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
