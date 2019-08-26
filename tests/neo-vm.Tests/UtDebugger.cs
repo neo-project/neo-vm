@@ -69,11 +69,16 @@ namespace Neo.Test
             using (var engine = new ExecutionEngine())
             using (var script = new ScriptBuilder())
             {
-                /* ┌     */ script.EmitJump(OpCode.CALL, 5);
-                /* │  ┌> */ script.Emit(OpCode.NOT);
-                /* │  │  */ script.Emit(OpCode.RET);
-                /* └> │  */ script.Emit(OpCode.PUSH0);
-                /*  └─┘  */ script.Emit(OpCode.RET);
+                /* ┌     CALL 
+                   │  ┌> NOT
+                   │  │  RET
+                   └> │  PUSH0  
+                    └─┘  RET */ 
+                script.EmitJump(OpCode.CALL, 5);
+                script.Emit(OpCode.NOT);
+                script.Emit(OpCode.RET);
+                script.Emit(OpCode.PUSH0);
+                script.Emit(OpCode.RET);
 
                 engine.LoadScript(script.ToArray());
 
@@ -107,15 +112,15 @@ namespace Neo.Test
             using (var engine = new ExecutionEngine())
             using (var script = new ScriptBuilder())
             {
-                /* ┌     */
+                /* ┌     CALL
+                   │  ┌> NOT 
+                   │  │  RET
+                   └> │  PUSH0
+                    └─┘  RET */
                 script.EmitJump(OpCode.CALL, 5);
-                /* │  ┌> */
                 script.Emit(OpCode.NOT);
-                /* │  │  */
                 script.Emit(OpCode.RET);
-                /* └> │  */
                 script.Emit(OpCode.PUSH0);
-                /*  └─┘  */
                 script.Emit(OpCode.RET);
 
                 engine.LoadScript(script.ToArray());
@@ -163,11 +168,16 @@ namespace Neo.Test
             using (var engine = new ExecutionEngine())
             using (var script = new ScriptBuilder())
             {
-                /* ┌     */ script.EmitJump(OpCode.CALL, 5);
-                /* │  ┌> */ script.Emit(OpCode.NOT);
-                /* │  │  */ script.Emit(OpCode.RET);
-                /* └>X│  */ script.Emit(OpCode.PUSH0);
-                /*   └┘  */ script.Emit(OpCode.RET);
+                /* ┌     */
+                script.EmitJump(OpCode.CALL, 5);
+                /* │  ┌> */
+                script.Emit(OpCode.NOT);
+                /* │  │  */
+                script.Emit(OpCode.RET);
+                /* └>X│  */
+                script.Emit(OpCode.PUSH0);
+                /*   └┘  */
+                script.Emit(OpCode.RET);
 
                 engine.LoadScript(script.ToArray());
 
