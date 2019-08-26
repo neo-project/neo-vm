@@ -18,8 +18,8 @@ install:
   - dotnet-format --version
 before_script:
   - echo "Checking format..." 
-  - dotnet format --check --dry-run -w src/neo-vm -v diagnostic # check C# formatting for neo.sln
-  - dotnet format --check --dry-run -w tests/neo-vm.Tests -v diagnostic # check C# formatting for neo.sln
+  - dotnet format --check --dry-run -w src/neo-vm -v diagnostic         # check C# formatting for the source
+  - dotnet format --check --dry-run -w tests/neo-vm.Tests -v diagnostic # check C# formatting for the unit tests
   - cd tests/neo-vm.Tests
 script:
   - dotnet restore
