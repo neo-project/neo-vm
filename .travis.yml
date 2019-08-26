@@ -14,12 +14,12 @@ before_install:
   - cd tests/neo-vm.Tests
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ulimit -n 2048; fi
 install:
-  - dotnet tool install -g dotnet-format
+  - dotnet tool install -g dotnet-format --version 4.0.40103 --add-source https://dotnet.myget.org/F/format/api/v3/index.json
   - export PATH="$PATH:$HOME/.dotnet/tools"
+  - dotnet-format --version
 before_script:
  - echo "Checking format..." 
- - dotnet format --check --dry-run -w ../../src/neo-vm
- - dotnet format --check --dry-run -w .
+ - dotnet format --check --dry-run -w . -v diagnostic # check C# formatting for neo.sln
 script:
  - dotnet restore
  - find * -name *.csproj | xargs -I % dotnet add % package coverlet.msbuild
