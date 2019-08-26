@@ -73,7 +73,7 @@ namespace Neo.Test
                    │  ┌> NOT
                    │  │  RET
                    └> │  PUSH0  
-                    └─┘  RET */ 
+                    └─┘  RET */
                 script.EmitJump(OpCode.CALL, 5);
                 script.Emit(OpCode.NOT);
                 script.Emit(OpCode.RET);
@@ -168,15 +168,15 @@ namespace Neo.Test
             using (var engine = new ExecutionEngine())
             using (var script = new ScriptBuilder())
             {
-                /* ┌     */
+                /* ┌     CALL 
+                   │  ┌> NOT
+                   │  │  RET
+                   └>X│  PUSH0
+                     └┘  RET */
                 script.EmitJump(OpCode.CALL, 5);
-                /* │  ┌> */
                 script.Emit(OpCode.NOT);
-                /* │  │  */
                 script.Emit(OpCode.RET);
-                /* └>X│  */
                 script.Emit(OpCode.PUSH0);
-                /*   └┘  */
                 script.Emit(OpCode.RET);
 
                 engine.LoadScript(script.ToArray());
