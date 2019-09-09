@@ -668,10 +668,12 @@ namespace Neo.VM
         SETITEM = 0xC4,
         /// <summary>
         /// A value n is taken from top of main stack. A zero-filled array type with size n is put on top of the main stack.
+        /// OR a struct is taken from top of main stack and is converted to an array.
         /// </summary>
         NEWARRAY = 0xC5,
         /// <summary>
         /// A value n is taken from top of main stack. A zero-filled struct type with size n is put on top of the main stack.
+        /// OR an array is taken from top of main stack and is converted to a struct.
         /// </summary>
         NEWSTRUCT = 0xC6,
         /// <summary>
