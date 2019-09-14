@@ -1,4 +1,4 @@
-﻿namespace Neo.VM
+namespace Neo.VM
 {
     public enum VMState : byte
     {

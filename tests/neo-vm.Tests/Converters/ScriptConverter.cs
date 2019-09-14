@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Neo.Test.Extensions;
 using Newtonsoft.Json;
 
