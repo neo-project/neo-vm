@@ -930,6 +930,7 @@ namespace Neo.VM
                                         : new Struct(array);
 
                                 context.EvaluationStack.Push(result);
+                                if (!CheckStackSize(false, int.MaxValue)) return false;
                             }
                             else
                             {
@@ -949,7 +950,6 @@ namespace Neo.VM
                                     : new Struct(items);
 
                                 context.EvaluationStack.Push(result);
-
                                 if (!CheckStackSize(true, count)) return false;
                             }
                             break;
