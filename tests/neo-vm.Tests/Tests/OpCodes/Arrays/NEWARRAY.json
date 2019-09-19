@@ -45,7 +45,14 @@
                         [
                             {
                                 "instructionPointer": 1,
-                                "nextInstruction": "NEWARRAY"
+                                "nextInstruction": "NEWARRAY",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Map",
+                                        "value": { }
+                                    }
+                                ]
                             }
                         ]
                     }
@@ -70,7 +77,14 @@
                         [
                             {
                                 "instructionPointer": 1,
-                                "nextInstruction": "NEWARRAY"
+                                "nextInstruction": "NEWARRAY",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Integer",
+                                        "value": -1
+                                    }
+                                ]
                             }
                         ]
                     }
