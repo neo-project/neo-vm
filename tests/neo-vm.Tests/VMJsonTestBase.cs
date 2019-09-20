@@ -66,7 +66,7 @@ namespace Neo.Test
         private void AssertResult(ExecutionEngine engine, VMUTExecutionEngineState result, string message)
         {
             AssertAreEqual(engine.State.ToString().ToLowerInvariant(), result.State.ToString().ToLowerInvariant(), message + "State is different");
-
+            if (engine.State == VMState.FAULT) return;
             AssertResult(engine.InvocationStack, result.InvocationStack, message + " [Invocation stack]");
             AssertResult(engine.ResultStack, result.ResultStack, message + " [Result stack] ");
         }
