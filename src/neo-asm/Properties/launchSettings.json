@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "neo-asm": {
+      "commandName": "Project",
+      "commandLineArgs": "test.asml.txt"
+    }
+  }
+}

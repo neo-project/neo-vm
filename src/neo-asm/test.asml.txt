@@ -1,0 +1,17 @@
+//comment 1 1 23
+//让我们荡起双桨
+Main(/*dddd*/)//support 函数
+{//这里的注释
+//这里的注释
+	PUSH 1//这里的注释
+	PUSH 2
+	CALL method1
+}
+method1()
+{
+	label1:PUSH 1;//
+	PUSH		2
+	ADD
+	BR			label1;
+	RET			
+}

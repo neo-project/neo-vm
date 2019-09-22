@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}"
 EndProject
@@ -10,6 +9,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{210DA31B-019E-48CE-9498-D56A7987C4E6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo-vm.Tests", "tests\neo-vm.Tests\neo-vm.Tests.csproj", "{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo-asm", "src\neo-asm\neo-asm.csproj", "{3CED1E7E-034F-47BD-81B4-CC9DBDC80703}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +26,10 @@ Global
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CED1E7E-034F-47BD-81B4-CC9DBDC80703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CED1E7E-034F-47BD-81B4-CC9DBDC80703}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CED1E7E-034F-47BD-81B4-CC9DBDC80703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CED1E7E-034F-47BD-81B4-CC9DBDC80703}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +37,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6A621185-36A9-4E1A-8D3D-462D19503E32} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC} = {210DA31B-019E-48CE-9498-D56A7987C4E6}
+		{3CED1E7E-034F-47BD-81B4-CC9DBDC80703} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F8AC7AA8-85DE-4A98-9B58-BA08AB813C99}
