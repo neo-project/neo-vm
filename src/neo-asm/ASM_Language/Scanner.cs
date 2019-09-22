@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace neo_asm.ASM_Language
+namespace Neo.Asm.Language
 {
     public class Scanner
     {
@@ -21,37 +21,46 @@ namespace neo_asm.ASM_Language
         {
             public WordType wordtype;
             public string text;
+            public int line;
+            public int col;
             public override string ToString()
             {
+                var valuestr = "";
                 if (text == null)
                 {
                     if (wordtype == WordType.NewLine)
                     {
-                        return "<" + wordtype + "> <ENTER>";
+                        valuestr = "<ENTER>";
                     }
                     else
                     {
-                        return "<" + wordtype + "> <NULL>";
+                        valuestr = "<NULL>";
                     }
                 }
                 if (wordtype == WordType.Space)
                 {
                     if (text[0] == ' ')
                     {
-                        return "<" + wordtype + "> <SPACE>";
+                        valuestr = "<SPACE>";
                     }
                     else if (text[0] == '\t')
                     {
-                        return "<" + wordtype + "> <TAB>";
+                        valuestr = "<TAB>";
                     }
                 }
-                return "<" + wordtype + ">" + text;
+                else
+                {
+                    valuestr = text;
+                }
+                return "<" + wordtype + "> " + valuestr + " (" + line + "," + col + ")";
             }
         }
         const string controlChars = ";\n/* \t(){}:;'\"";
 
         public static IList<Word> Scan(string srctext)
         {
+            int line = 0;
+            int linebegin = 0;
             List<Word> words = new List<Word>();
 
             var text = srctext.Replace("\r", ""); //remove \r,only parse\n
@@ -66,14 +75,16 @@ namespace neo_asm.ASM_Language
                     if (curchar == '\n')//newline
                     {
                         lastchar = (char)0;
-                        var wordNewLine = new Word() { wordtype = WordType.NewLine, text = null };
+                        var wordNewLine = new Word() { wordtype = WordType.NewLine, text = null, line = line, col = i - linebegin };
                         words.Add(wordNewLine);
+                        line++;
+                        linebegin = i + 1;
                         continue;
                     }
                     else if (curchar == ';')
                     {
                         lastchar = (char)0;
-                        var wordNewLine = new Word() { wordtype = WordType.NewLine, text = ";" };
+                        var wordNewLine = new Word() { wordtype = WordType.NewLine, text = ";", line = line, col = i - linebegin };
                         words.Add(wordNewLine);
                         continue;
                     }
@@ -84,7 +95,7 @@ namespace neo_asm.ASM_Language
                             var jend = text.IndexOf("\n", i);
                             if (jend < 0) jend = text.Length - 1;
                             var alltext = text.Substring(i - 1, jend - i + 1);
-                            var wordComment = new Word() { wordtype = WordType.Comment, text = alltext };
+                            var wordComment = new Word() { wordtype = WordType.Comment, text = alltext, line = line, col = i - linebegin - 1 };
                             words.Add(wordComment);
                             i = jend - 1;
                             lastchar = (char)0;
@@ -104,7 +115,7 @@ namespace neo_asm.ASM_Language
                             if (jend < 0)
                                 throw new Exception("error /* not match a */");
                             var alltext = text.Substring(i - 1, jend - i + 3);
-                            var wordComment = new Word() { wordtype = WordType.Comment, text = alltext };
+                            var wordComment = new Word() { wordtype = WordType.Comment, text = alltext, line = line, col = i - linebegin - 1 };
                             words.Add(wordComment);
                             i = jend + 1;
                             lastchar = (char)0;
@@ -124,7 +135,7 @@ namespace neo_asm.ASM_Language
                             if (text[jend] != curchar)
                                 break;
                         }
-                        var wordSpace = new Word() { wordtype = WordType.Space, text = curchar.ToString() };
+                        var wordSpace = new Word() { wordtype = WordType.Space, text = curchar.ToString(), line = line, col = i - linebegin };
                         words.Add(wordSpace);
 
                         i = jend - 1;
@@ -133,21 +144,21 @@ namespace neo_asm.ASM_Language
                     }
                     else if (curchar == '(' || curchar == ')')
                     {
-                        var word = new Word() { wordtype = WordType.Parentheses, text = curchar.ToString() };
+                        var word = new Word() { wordtype = WordType.Parentheses, text = curchar.ToString(), line = line, col = i - linebegin };
                         words.Add(word);
                         lastchar = (char)0;
                         continue;
                     }
                     else if (curchar == '{' || curchar == '}')
                     {
-                        var word = new Word() { wordtype = WordType.Braces, text = curchar.ToString() };
+                        var word = new Word() { wordtype = WordType.Braces, text = curchar.ToString(), line = line, col = i - linebegin };
                         words.Add(word);
                         lastchar = (char)0;
                         continue;
                     }
                     else if (curchar == ':')
                     {
-                        var word = new Word() { wordtype = WordType.Colon, text = curchar.ToString() };
+                        var word = new Word() { wordtype = WordType.Colon, text = curchar.ToString(), line = line, col = i - linebegin };
                         words.Add(word);
                         lastchar = (char)0;
                         continue;
@@ -158,7 +169,7 @@ namespace neo_asm.ASM_Language
                         if (jend < 0)
                             throw new Exception("error string format.");
                         var alltext = text.Substring(i - 1, jend - i + 2);
-                        var word = new Word() { wordtype = WordType.String, text = alltext };
+                        var word = new Word() { wordtype = WordType.String, text = alltext, line = line, col = i - linebegin };
                         words.Add(word);
                         lastchar = (char)0;
                         continue;
@@ -175,7 +186,7 @@ namespace neo_asm.ASM_Language
                             break;
                         wordstr += nextchar;
                     }
-                    var word = new Word() { wordtype = WordType.Word, text = wordstr };
+                    var word = new Word() { wordtype = WordType.Word, text = wordstr, line = line, col = i - linebegin };
                     words.Add(word);
                     lastchar = (char)0;
                     i = jend - 1;

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace neo_asm.ASM_Language
+namespace Neo.Asm.Language
 {
     public class ASMInstruction:IASMNode
     {
@@ -11,21 +11,23 @@ namespace neo_asm.ASM_Language
         /// <summary>
         /// instruction label,can be NULL
         /// </summary>
-        string label;
+        public string label;
 
         /// <summary>
         /// OPCode
         /// </summary>
-        Neo.VM.OpCode opcode;
+        public Neo.VM.OpCode opcode;
 
         /// <summary>
         /// valuetext.can be NULL
         /// </summary>
-        string valuetext;
+        public string valuetext;
 
         /// <summary>
         /// Comment
         /// </summary>
-        string commentRight;
+        public string commentRight;
+
+        public ParsedSourceCode.Range srcmap;
     }
 }

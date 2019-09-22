@@ -11,20 +11,22 @@ namespace neo_asm
             if (args.Length == 0) return;
             if (!File.Exists(args[0])) return;
             var text = File.ReadAllText(args[0]);
-            try
+            //try
 
             {
-                var words = ASM_Language.Scanner.Scan(text);
-                Console.WriteLine("==scan finish words=" + words.Count);
-                foreach (var w in words)
+                var code = Neo.Asm.Language.ParsedSourceCode.Parse("a.asm", text);
+                Console.WriteLine("==scan finish words=" + code.words.Count);
+                foreach (var w in code.words)
                 {
                     Console.WriteLine(w.ToString());
                 }
+                var doc = Neo.Asm.Language.Parser.Parse(code);
+                doc.Dump((str) => Console.WriteLine(str));
             }
-            catch(Exception err)
-            {
-                Console.WriteLine("<EERR>" + err.Message);
-            }
+            //catch(Exception err)
+            //{
+            //    Console.WriteLine("<EERR>" + err.Message);
+            //}
             Console.ReadLine();
 
             //var semantemes = Semanteme.ProcessLines(lines);

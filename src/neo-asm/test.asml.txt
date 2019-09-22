@@ -13,5 +13,6 @@ method1()
 	PUSH		2
 	ADD
 	BR			label1;
+	PUSH "ddd";
 	RET			
 }
