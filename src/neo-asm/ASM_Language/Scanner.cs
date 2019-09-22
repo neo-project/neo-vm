@@ -171,6 +171,7 @@ namespace Neo.Asm.Language
                         var alltext = text.Substring(i - 1, jend - i + 2);
                         var word = new Word() { wordtype = WordType.String, text = alltext, line = line, col = i - linebegin };
                         words.Add(word);
+                        i = jend;
                         lastchar = (char)0;
                         continue;
                     }
