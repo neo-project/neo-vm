@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "REMOVE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -39,14 +32,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "REMOVE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -63,21 +49,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "REMOVE",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -94,14 +66,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "REMOVE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
