@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "DUPFROMALTSTACK"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
