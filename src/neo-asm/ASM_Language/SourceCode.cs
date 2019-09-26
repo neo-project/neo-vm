@@ -11,14 +11,9 @@ namespace Neo.Asm.Language
             ParsedSourceCode code = new ParsedSourceCode();
             code.filename = filename;
             code.srccode = srccode;
-            code.words = Scanner.Scan(srccode);
+            code.words = WordScanner.Scan(srccode);
 
             return code;
-        }
-        public struct LineCol
-        {
-            public int line;
-            public int col;
         }
         public string filename
         {
@@ -30,7 +25,7 @@ namespace Neo.Asm.Language
             get;
             private set;
         }
-        public IList<Scanner.Word> words
+        public IList<WordScanner.Word> words
         {
             get;
             private set;

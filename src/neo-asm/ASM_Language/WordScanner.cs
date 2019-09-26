@@ -4,18 +4,20 @@ using System.Text;
 
 namespace Neo.Asm.Language
 {
-    public class Scanner
+    public class WordScanner
     {
+        [System.Flags]
         public enum WordType
         {
-            Comment,//注释
-            Word,//any text
-            Space,
-            String,//word with "" or ''
-            Parentheses,//( & )
-            Braces,//{ & }
-            Colon,//:
-            NewLine,//enter & ;
+            None = 0,
+            Comment = 1,//注释
+            Word = 2,//any text
+            Space = 4,
+            String = 8,//word with "" or ''
+            Parentheses = 16,//( & )
+            Braces = 32,//{ & }
+            Colon = 64,//:
+            NewLine = 128,//enter & ;
         }
         public class Word
         {

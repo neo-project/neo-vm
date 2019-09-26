@@ -10,6 +10,11 @@ namespace Neo.Asm.Language
         {
             get;
         }
+        ParsedSourceCode.Range srcmap
+        {
+            get;
+        }
+
     }
 
 }

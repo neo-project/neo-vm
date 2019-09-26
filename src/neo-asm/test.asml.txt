@@ -1,5 +1,8 @@
 //comment 1 1 23
 //让我们荡起双桨
+/*
+ many comment
+*/
 Main(/*dddd*/)//support 函数
 {//这里的注释
 //这里的注释
@@ -10,9 +13,14 @@ Main(/*dddd*/)//support 函数
 method1()
 {
 	label1:PUSH 1;//
+	label2://3333//333
+	label3:
 	PUSH		2
-	ADD
-	BR			label1;
-	PUSH "ddd";
+	ADD /*233*///aaa
+	JMP			label1;
+0x88:	PUSH "ddd";
+	PUSH -1
+	PUSH [1,2,3]
+	PUSH [0x2,0x44]
 	RET			
 }

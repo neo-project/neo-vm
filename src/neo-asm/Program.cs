@@ -20,7 +20,7 @@ namespace neo_asm
                 {
                     Console.WriteLine(w.ToString());
                 }
-                var doc = Neo.Asm.Language.Parser.Parse(code);
+                var doc = Neo.Asm.Language.DocumentParser.Parse(code);
                 doc.Dump((str) => Console.WriteLine(str));
             }
             //catch(Exception err)

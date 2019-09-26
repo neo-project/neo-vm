@@ -5,7 +5,7 @@ using System.Text;
 namespace Neo.Asm.Language
 {
 
-    public class ASMDocument : IASMNode
+    public class ASMDocument
     {
         public ASMDocument()
         {
@@ -45,11 +45,15 @@ namespace Neo.Asm.Language
                             ASMComment comment = fn as ASMComment;
                             logaction("        <ASMComment>" + comment.text);
                         }
+                        if (fn is ASMLabel)
+                        {
+                            ASMLabel label = fn as ASMLabel;
+                            logaction("        <ASMLabel>" + label.label + "    " + label.commentRight);
+                        }
                         if (fn is ASMInstruction)
                         {
                             ASMInstruction inst = fn as ASMInstruction;
-                            logaction("        <ASMInstruction>" + inst.opcode.ToString() + " " + inst.valuetext);
-
+                            logaction("        <ASMInstruction>" + inst.opcode.ToString() + " " + inst.valuetext + "   " + inst.commentRight);
                         }
                     }
                     logaction("    }");

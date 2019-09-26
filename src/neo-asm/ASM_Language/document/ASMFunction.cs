@@ -20,8 +20,11 @@ namespace Neo.Asm.Language
         public string commentParams;
         public string commentRight;
 
-        public ParsedSourceCode.Range srcmap;
-
+        public ParsedSourceCode.Range srcmap
+        {
+            get;
+            set;
+        }
 
     }
 }

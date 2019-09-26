@@ -6,17 +6,12 @@ namespace Neo.Asm.Language
 {
     public class ASMInstruction:IASMNode
     {
+
         public IList<IASMNode> nodes => null;
-
-        /// <summary>
-        /// instruction label,can be NULL
-        /// </summary>
-        public string label;
-
         /// <summary>
         /// OPCode
         /// </summary>
-        public Neo.VM.OpCode opcode;
+        public ASMOpCode opcode;
 
         /// <summary>
         /// valuetext.can be NULL
@@ -28,6 +23,10 @@ namespace Neo.Asm.Language
         /// </summary>
         public string commentRight;
 
-        public ParsedSourceCode.Range srcmap;
+        public ParsedSourceCode.Range srcmap
+        {
+            get;
+            set;
+        }
     }
 }
