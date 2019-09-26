@@ -5,9 +5,9 @@ using System.Text;
 namespace Neo.ASML.Node
 {
 
-    public class ASMDocument
+    public class ASMProject
     {
-        public ASMDocument()
+        public ASMProject()
         {
             this.nodes = new List<IASMNode>();
             this.srccodes = new Dictionary<string, SourceCode>();

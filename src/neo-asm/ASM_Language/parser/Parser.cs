@@ -5,21 +5,21 @@ using System.Text;
 
 namespace Neo.ASML.Parser
 {
-    public class DocumentParser
+    public class Parser
     {
-        public static ASMDocument Parse(params SourceCode[] srccodes)
+        public static ASMProject Parse(params SourceCode[] srccodes)
         {
-            ASMDocument doc = new ASMDocument();
+            ASMProject doc = new ASMProject();
 
             foreach (var src in srccodes)
             {
-                ParseDocument(doc, src);
+                ParseOne(doc, src);
             }
 
             return doc;
         }
 
-        static void ParseDocument(ASMDocument doc, SourceCode srccode)
+        static void ParseOne(ASMProject doc, SourceCode srccode)
         {
             if (doc.srccodes.ContainsKey(srccode.filename))
                 throw new Exception("already have that." + srccode.filename);
@@ -51,7 +51,7 @@ namespace Neo.ASML.Parser
                 }
             }
         }
-        public static Word FindNextWord(IList<Word> words, int indexBegin, WordType skiptypes = WordType.Space, WordType endtypes =WordType.NewLine)
+        static Word FindNextWord(IList<Word> words, int indexBegin, WordType skiptypes = WordType.Space, WordType endtypes = WordType.NewLine)
         {
             for (var i = indexBegin; i < words.Count; i++)
             {
@@ -71,7 +71,7 @@ namespace Neo.ASML.Parser
             }
             return null;
         }
-        public static ASMFunction ParseFunction(SourceCode srccode, int indexBegin)
+        static ASMFunction ParseFunction(SourceCode srccode, int indexBegin)
         {
             var words = srccode.words;
 
@@ -175,7 +175,7 @@ namespace Neo.ASML.Parser
 
             return null;
         }
-        public static ASMLabel ParseLabel(SourceCode srccode, int indexBegin)
+        static ASMLabel ParseLabel(SourceCode srccode, int indexBegin)
         {
             ASMLabel label = new ASMLabel() { label = srccode.words[indexBegin].text };
             var next = FindNextWord(srccode.words, indexBegin + 2);
@@ -203,7 +203,7 @@ namespace Neo.ASML.Parser
             return label;
         }
 
-        public static ASMInstruction ParseInstruction(SourceCode srccode, int indexBegin)
+        static ASMInstruction ParseInstruction(SourceCode srccode, int indexBegin)
         {
             ASMInstruction inst = null;
             var words = srccode.words;
@@ -230,7 +230,7 @@ namespace Neo.ASML.Parser
             else if (next.wordtype == WordType.Word || next.wordtype == WordType.String)
             {//op code with param
                 value = next.text;
-                var commentnext = FindNextWord(words, words.IndexOf(next)+1);
+                var commentnext = FindNextWord(words, words.IndexOf(next) + 1);
                 if (commentnext != null && commentnext.wordtype == WordType.Comment)
                 {
                     comment = commentnext.text;

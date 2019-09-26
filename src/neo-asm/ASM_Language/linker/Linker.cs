@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Neo.ASML.Linker
 {
-    class ASMLinker
+    public class Linker
     {
-        public static BuildedModule CreateModule(Neo.ASML.Node.ASMDocument document)
+        public static BuildedModule CreateModule(Neo.ASML.Node.ASMProject document)
         {
             return null;
         }
