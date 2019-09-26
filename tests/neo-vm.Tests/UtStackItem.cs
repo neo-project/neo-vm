@@ -20,7 +20,7 @@ namespace Neo.Test
             Assert.AreEqual(itemA.GetHashCode(), itemB.GetHashCode());
             Assert.AreNotEqual(itemA.GetHashCode(), itemC.GetHashCode());
         }
-        
+
         [TestMethod]
         public void NullTest()
         {
