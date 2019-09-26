@@ -63,14 +63,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "PUSHBYTES54"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

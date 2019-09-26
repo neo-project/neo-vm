@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "NEWARRAY"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -40,21 +33,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "NEWARRAY",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Map",
-                                        "value": { }
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -72,21 +51,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "NEWARRAY",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": -1
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

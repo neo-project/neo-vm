@@ -51,21 +51,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "SETITEM",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -116,14 +102,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "SETITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -140,14 +119,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "SETITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -205,14 +177,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "SETITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -270,14 +235,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "SETITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
