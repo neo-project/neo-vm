@@ -151,9 +151,9 @@ namespace Neo.ASML.Parser
         }
 
 
-        public static ParsedSourceCode ParseSourceCode(string filename, string srccode)
+        public static SourceCode CreateSourceCode(string filename, string srccode)
         {
-            ParsedSourceCode code = new ParsedSourceCode();
+            SourceCode code = new SourceCode();
             code.filename = filename;
             code.srccode = srccode;
             code.words = WordScanner.Scan(srccode);

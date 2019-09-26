@@ -10,14 +10,14 @@ namespace Neo.ASML.Node
         public ASMDocument()
         {
             this.nodes = new List<IASMNode>();
-            this.srccodes = new Dictionary<string, ParsedSourceCode>();
+            this.srccodes = new Dictionary<string, SourceCode>();
         }
         public IList<IASMNode> nodes
         {
             get;
             private set;
         }
-        public Dictionary<string, ParsedSourceCode> srccodes
+        public Dictionary<string, SourceCode> srccodes
         {
             get;
             private set;

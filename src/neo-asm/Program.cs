@@ -14,7 +14,7 @@ namespace neo_asm
             //try
 
             {
-                var code = Neo.ASML.Parser.WordScanner.ParseSourceCode("a.asm", text);
+                var code = Neo.ASML.Parser.WordScanner.CreateSourceCode("a.asm", text);
                 Console.WriteLine("==scan finish words=" + code.words.Count);
                 foreach (var w in code.words)
                 {

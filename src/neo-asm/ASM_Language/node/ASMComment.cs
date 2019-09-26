@@ -9,7 +9,7 @@ namespace Neo.ASML.Node
         public IList<IASMNode> nodes => null;
         public string text;
 
-        public ParsedSourceCode.Range srcmap
+        public SourceCode.Range srcmap
         {
             get;
             set;

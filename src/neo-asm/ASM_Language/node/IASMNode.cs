@@ -10,7 +10,7 @@ namespace Neo.ASML.Node
         {
             get;
         }
-        ParsedSourceCode.Range srcmap
+        SourceCode.Range srcmap
         {
             get;
         }

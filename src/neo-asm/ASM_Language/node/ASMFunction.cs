@@ -20,7 +20,7 @@ namespace Neo.ASML.Node
         public string commentParams;
         public string commentRight;
 
-        public ParsedSourceCode.Range srcmap
+        public SourceCode.Range srcmap
         {
             get;
             set;

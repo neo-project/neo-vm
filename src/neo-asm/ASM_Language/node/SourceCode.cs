@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Neo.ASML.Node
 {
-    public class ParsedSourceCode
+    public class SourceCode
     {
 
         public string filename
@@ -25,7 +25,7 @@ namespace Neo.ASML.Node
 
         public struct Range
         {
-            public ParsedSourceCode srccode;
+            public SourceCode srccode;
             public int beginwordindex;
             public int endwordindex;
         }

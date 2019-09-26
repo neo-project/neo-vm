@@ -7,7 +7,7 @@ namespace Neo.ASML.Parser
 {
     public class DocumentParser
     {
-        public static ASMDocument Parse(params ParsedSourceCode[] srccodes)
+        public static ASMDocument Parse(params SourceCode[] srccodes)
         {
             ASMDocument doc = new ASMDocument();
 
@@ -19,7 +19,7 @@ namespace Neo.ASML.Parser
             return doc;
         }
 
-        static void ParseDocument(ASMDocument doc, ParsedSourceCode srccode)
+        static void ParseDocument(ASMDocument doc, SourceCode srccode)
         {
             if (doc.srccodes.ContainsKey(srccode.filename))
                 throw new Exception("already have that." + srccode.filename);
@@ -71,7 +71,7 @@ namespace Neo.ASML.Parser
             }
             return null;
         }
-        public static ASMFunction ParseFunction(ParsedSourceCode srccode, int indexBegin)
+        public static ASMFunction ParseFunction(SourceCode srccode, int indexBegin)
         {
             var words = srccode.words;
 
@@ -127,7 +127,7 @@ namespace Neo.ASML.Parser
                     if (curword.wordtype == WordType.Braces && curword.text == "}")
                     {
                         endBraces = i;
-                        func.srcmap = new ParsedSourceCode.Range() { srccode = srccode, beginwordindex = indexBegin, endwordindex = endBraces };
+                        func.srcmap = new SourceCode.Range() { srccode = srccode, beginwordindex = indexBegin, endwordindex = endBraces };
                         return func;
                     }
                     else
@@ -135,7 +135,7 @@ namespace Neo.ASML.Parser
                         if (curword.wordtype == WordType.Comment)
                         {
                             var comment = new ASMComment() { text = curword.text };
-                            comment.srcmap = new ParsedSourceCode.Range() { srccode = srccode, beginwordindex = i, endwordindex = i };
+                            comment.srcmap = new SourceCode.Range() { srccode = srccode, beginwordindex = i, endwordindex = i };
                             func.nodes.Add(comment);
                             continue;
                         }
@@ -175,7 +175,7 @@ namespace Neo.ASML.Parser
 
             return null;
         }
-        public static ASMLabel ParseLabel(ParsedSourceCode srccode, int indexBegin)
+        public static ASMLabel ParseLabel(SourceCode srccode, int indexBegin)
         {
             ASMLabel label = new ASMLabel() { label = srccode.words[indexBegin].text };
             var next = FindNextWord(srccode.words, indexBegin + 2);
@@ -183,7 +183,7 @@ namespace Neo.ASML.Parser
             {
                 //with comment;
                 label.commentRight = next.text;
-                label.srcmap = new ParsedSourceCode.Range()
+                label.srcmap = new SourceCode.Range()
                 {
                     srccode = srccode,
                     beginwordindex = indexBegin,
@@ -193,7 +193,7 @@ namespace Neo.ASML.Parser
             else
             {
                 label.commentRight = null;
-                label.srcmap = new ParsedSourceCode.Range()
+                label.srcmap = new SourceCode.Range()
                 {
                     srccode = srccode,
                     beginwordindex = indexBegin,
@@ -203,7 +203,7 @@ namespace Neo.ASML.Parser
             return label;
         }
 
-        public static ASMInstruction ParseInstruction(ParsedSourceCode srccode, int indexBegin)
+        public static ASMInstruction ParseInstruction(SourceCode srccode, int indexBegin)
         {
             ASMInstruction inst = null;
             var words = srccode.words;
@@ -245,7 +245,7 @@ namespace Neo.ASML.Parser
             var code = ASMOpCode.Parse(curword.text);
             //this is a code
             inst = new ASMInstruction() { opcode = code, valuetext = value, commentRight = comment };
-            inst.srcmap = new ParsedSourceCode.Range()
+            inst.srcmap = new SourceCode.Range()
             {
                 srccode = srccode,
                 beginwordindex = indexBegin,
