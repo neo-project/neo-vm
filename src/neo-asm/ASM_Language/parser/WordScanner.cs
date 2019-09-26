@@ -1,62 +1,12 @@
+using Neo.ASML.Node;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neo.Asm.Language
+namespace Neo.ASML.Parser
 {
     public class WordScanner
     {
-        [System.Flags]
-        public enum WordType
-        {
-            None = 0,
-            Comment = 1,//注释
-            Word = 2,//any text
-            Space = 4,
-            String = 8,//word with "" or ''
-            Parentheses = 16,//( & )
-            Braces = 32,//{ & }
-            Colon = 64,//:
-            NewLine = 128,//enter & ;
-        }
-        public class Word
-        {
-            public WordType wordtype;
-            public string text;
-            public int line;
-            public int col;
-            public override string ToString()
-            {
-                var valuestr = "";
-                if (text == null)
-                {
-                    if (wordtype == WordType.NewLine)
-                    {
-                        valuestr = "<ENTER>";
-                    }
-                    else
-                    {
-                        valuestr = "<NULL>";
-                    }
-                }
-                if (wordtype == WordType.Space)
-                {
-                    if (text[0] == ' ')
-                    {
-                        valuestr = "<SPACE>";
-                    }
-                    else if (text[0] == '\t')
-                    {
-                        valuestr = "<TAB>";
-                    }
-                }
-                else
-                {
-                    valuestr = text;
-                }
-                return "<" + wordtype + "> " + valuestr + " (" + line + "," + col + ")";
-            }
-        }
         const string controlChars = ";\n/* \t(){}:;'\"";
 
         public static IList<Word> Scan(string srctext)
@@ -198,6 +148,17 @@ namespace Neo.Asm.Language
             }
 
             return words;
+        }
+
+
+        public static ParsedSourceCode ParseSourceCode(string filename, string srccode)
+        {
+            ParsedSourceCode code = new ParsedSourceCode();
+            code.filename = filename;
+            code.srccode = srccode;
+            code.words = WordScanner.Scan(srccode);
+
+            return code;
         }
     }
 }

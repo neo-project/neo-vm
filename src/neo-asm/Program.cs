@@ -14,13 +14,13 @@ namespace neo_asm
             //try
 
             {
-                var code = Neo.Asm.Language.ParsedSourceCode.Parse("a.asm", text);
+                var code = Neo.ASML.Parser.WordScanner.ParseSourceCode("a.asm", text);
                 Console.WriteLine("==scan finish words=" + code.words.Count);
                 foreach (var w in code.words)
                 {
                     Console.WriteLine(w.ToString());
                 }
-                var doc = Neo.Asm.Language.DocumentParser.Parse(code);
+                var doc = Neo.ASML.Parser.DocumentParser.Parse(code);
                 doc.Dump((str) => Console.WriteLine(str));
             }
             //catch(Exception err)

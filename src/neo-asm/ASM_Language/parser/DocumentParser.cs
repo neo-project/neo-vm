@@ -1,8 +1,9 @@
+using Neo.ASML.Node;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neo.Asm.Language
+namespace Neo.ASML.Parser
 {
     public class DocumentParser
     {
@@ -29,18 +30,18 @@ namespace Neo.Asm.Language
             for (var i = 0; i < srccode.words.Count; i++)
             {
                 var curword = srccode.words[i];
-                if (curword.wordtype == WordScanner.WordType.Comment)//comment
+                if (curword.wordtype == WordType.Comment)//comment
                 {
                     ASMComment comment = new ASMComment() { text = curword.text, };
                     doc.nodes.Add(comment);
                 }
-                else if (curword.wordtype == WordScanner.WordType.Word)
+                else if (curword.wordtype == WordType.Word)
                 {
                     var func = ParseFunction(srccode, i);
                     i = func.srcmap.endwordindex;
                     doc.nodes.Add(func);
                 }//maybe is a function
-                else if (curword.wordtype == WordScanner.WordType.NewLine || curword.wordtype == WordScanner.WordType.Space)
+                else if (curword.wordtype == WordType.NewLine || curword.wordtype == WordType.Space)
                 {
                     continue;
                 }
@@ -50,7 +51,7 @@ namespace Neo.Asm.Language
                 }
             }
         }
-        public static WordScanner.Word FindNextWord(IList<WordScanner.Word> words, int indexBegin, WordScanner.WordType skiptypes = WordScanner.WordType.Space, WordScanner.WordType endtypes = WordScanner.WordType.NewLine)
+        public static Word FindNextWord(IList<Word> words, int indexBegin, WordType skiptypes = WordType.Space, WordType endtypes =WordType.NewLine)
         {
             for (var i = indexBegin; i < words.Count; i++)
             {
@@ -85,11 +86,11 @@ namespace Neo.Asm.Language
             for (var i = indexBegin + 1; i < words.Count; i++)
             {
                 var curword = words[i];
-                if (curword.wordtype == WordScanner.WordType.Space || curword.wordtype == WordScanner.WordType.NewLine)
+                if (curword.wordtype == WordType.Space || curword.wordtype == WordType.NewLine)
                     continue;
                 if (beginParentheses < 0)//find (
                 {
-                    if (curword.wordtype == WordScanner.WordType.Parentheses && curword.text == "(")
+                    if (curword.wordtype == WordType.Parentheses && curword.text == "(")
                     {
                         beginParentheses = i;
                         continue;
@@ -97,12 +98,12 @@ namespace Neo.Asm.Language
                 }
                 else if (endParentheses < 0)// find )
                 {
-                    if (curword.wordtype == WordScanner.WordType.Comment)
+                    if (curword.wordtype == WordType.Comment)
                     {
                         func.commentParams += curword.text;
                         continue;
                     }
-                    if (curword.wordtype == WordScanner.WordType.Parentheses && curword.text == ")")
+                    if (curword.wordtype == WordType.Parentheses && curword.text == ")")
                     {
                         endParentheses = i;
                         continue;
@@ -110,12 +111,12 @@ namespace Neo.Asm.Language
                 }
                 else if (beginBraces < 0)
                 {
-                    if (curword.wordtype == WordScanner.WordType.Comment)
+                    if (curword.wordtype == WordType.Comment)
                     {
                         func.commentRight += curword.text;
                         continue;
                     }
-                    if (curword.wordtype == WordScanner.WordType.Braces && curword.text == "{")
+                    if (curword.wordtype == WordType.Braces && curword.text == "{")
                     {
                         beginBraces = i;
                         continue;
@@ -123,7 +124,7 @@ namespace Neo.Asm.Language
                 }
                 else if (endBraces < 0)
                 {
-                    if (curword.wordtype == WordScanner.WordType.Braces && curword.text == "}")
+                    if (curword.wordtype == WordType.Braces && curword.text == "}")
                     {
                         endBraces = i;
                         func.srcmap = new ParsedSourceCode.Range() { srccode = srccode, beginwordindex = indexBegin, endwordindex = endBraces };
@@ -131,22 +132,22 @@ namespace Neo.Asm.Language
                     }
                     else
                     {
-                        if (curword.wordtype == WordScanner.WordType.Comment)
+                        if (curword.wordtype == WordType.Comment)
                         {
                             var comment = new ASMComment() { text = curword.text };
                             comment.srcmap = new ParsedSourceCode.Range() { srccode = srccode, beginwordindex = i, endwordindex = i };
                             func.nodes.Add(comment);
                             continue;
                         }
-                        else if (curword.wordtype == WordScanner.WordType.NewLine || curword.wordtype == WordScanner.WordType.Space)
+                        else if (curword.wordtype == WordType.NewLine || curword.wordtype == WordType.Space)
                         {
                             continue;
                         }
-                        else if (curword.wordtype == WordScanner.WordType.Word)
+                        else if (curword.wordtype == WordType.Word)
                         {
                             //有可能是指令或者标签指令
                             var next = FindNextWord(words, i + 1);
-                            if (next != null && next.wordtype == WordScanner.WordType.Colon)
+                            if (next != null && next.wordtype == WordType.Colon)
                             {
                                 var label = ParseLabel(srccode, i);
                                 func.nodes.Add(label);
@@ -178,7 +179,7 @@ namespace Neo.Asm.Language
         {
             ASMLabel label = new ASMLabel() { label = srccode.words[indexBegin].text };
             var next = FindNextWord(srccode.words, indexBegin + 2);
-            if (next != null && next.wordtype == WordScanner.WordType.Comment)
+            if (next != null && next.wordtype == WordType.Comment)
             {
                 //with comment;
                 label.commentRight = next.text;
@@ -220,17 +221,17 @@ namespace Neo.Asm.Language
                 value = null;
                 endindex = words.IndexOf(curword);
             }
-            else if (next.wordtype == WordScanner.WordType.Comment)
+            else if (next.wordtype == WordType.Comment)
             {//op cpde with comment
                 comment = next.text;
                 value = null;
                 endindex = words.IndexOf(next);
             }
-            else if (next.wordtype == WordScanner.WordType.Word || next.wordtype == WordScanner.WordType.String)
+            else if (next.wordtype == WordType.Word || next.wordtype == WordType.String)
             {//op code with param
                 value = next.text;
                 var commentnext = FindNextWord(words, words.IndexOf(next)+1);
-                if (commentnext != null && commentnext.wordtype == WordScanner.WordType.Comment)
+                if (commentnext != null && commentnext.wordtype == WordType.Comment)
                 {
                     comment = commentnext.text;
                     endindex = words.IndexOf(commentnext);

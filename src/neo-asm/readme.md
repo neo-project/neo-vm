@@ -75,5 +75,16 @@ PUSH 1 //1 param and newline
 PUSH 2; //end with ;
 ADD // no param
 ```
-除PUSH指令以外，其它的指令名均直接为NEOVM OPCODE的名字，
+除PUSH指令以外，其它的指令名均直接为NEOVM OPCODE的名字
+
 PUSH 指令在编译为AVM时展开
+
+# 如何使用
+
+使用命令行调用
+
+```
+neo-asm -i mycode.asml -o mycode.avm
+```
+
+会得到输出 mycode.avm 和  mycode.asmmap

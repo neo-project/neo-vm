@@ -2,33 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neo.Asm.Language
+namespace Neo.ASML.Node
 {
     public class ParsedSourceCode
     {
-        public static ParsedSourceCode Parse(string filename,string srccode)
-        {
-            ParsedSourceCode code = new ParsedSourceCode();
-            code.filename = filename;
-            code.srccode = srccode;
-            code.words = WordScanner.Scan(srccode);
 
-            return code;
-        }
         public string filename
         {
             get;
-            private set;
+            set;
         }
         public string srccode
         {
             get;
-            private set;
+            set;
         }
-        public IList<WordScanner.Word> words
+        public IList<Word> words
         {
             get;
-            private set;
+            set;
         }
 
         public struct Range
@@ -38,5 +30,5 @@ namespace Neo.Asm.Language
             public int endwordindex;
         }
     }
- 
+
 }

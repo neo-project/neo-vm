@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Neo.Asm.Language
+namespace Neo.ASML.Node
 {
     public class ASMLabel : IASMNode
     {
