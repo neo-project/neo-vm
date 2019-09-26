@@ -10,7 +10,9 @@ namespace Neo.VM
 {
     public abstract class StackItem : IEquatable<StackItem>
     {
-        public static StackItem Null { get; } = new byte[0];
+        public bool IsNull => this is Null;
+
+        public static StackItem Null { get; } = new Null();
 
         public abstract bool Equals(StackItem other);
 
@@ -26,6 +28,7 @@ namespace Neo.VM
         public static StackItem FromInterface<T>(T value)
             where T : class
         {
+            if (value is null) return Null;
             return new InteropInterface<T>(value);
         }
 
