@@ -366,7 +366,7 @@
         },
         {
             "name": "Real test [Array,Array]=Fault",
-            "script": "0x00C56B6D6D9E",
+            "script": "0x00C56B6A6A9E",
             "steps":
             [
                 {
@@ -480,7 +480,7 @@
         },
         {
             "name": "Real test [Struct,Struct]=fault with clone",
-            "script": "0x00C66B6D6D9E",
+            "script": "0x00C66B6A6A9E",
             "steps":
             [
                 {
@@ -650,7 +650,7 @@
         },
         {
             "name": "Real test [Map,Map]=Fault",
-            "script": "0xC76B6D6D9E",
+            "script": "0xC76B6A6A9E",
             "steps":
             [
                 {
@@ -1069,7 +1069,7 @@
         },
         {
             "name": "Real test with clone [Interop,Interop]=fault",
-            "script": "0x68777777776B6D6D9E",
+            "script": "0x68777777776B6A6A9E",
             "steps":
             [
                 {

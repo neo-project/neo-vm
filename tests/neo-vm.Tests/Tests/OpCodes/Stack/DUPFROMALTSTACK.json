@@ -5,7 +5,7 @@
     [
         {
             "name": "Without push",
-            "script": "0x6D",
+            "script": "0x6A",
             "steps":
             [
                 {
@@ -22,7 +22,7 @@
         },
         {
             "name": "Real test [BigInteger]",
-            "script": "0x556B6D",
+            "script": "0x556B6A",
             "steps":
             [
                 {
@@ -102,7 +102,7 @@
         },
         {
             "name": "Real test [Interop]",
-            "script": "0x68777777776B6D",
+            "script": "0x68777777776B6A",
             "message": "0x00",
             "steps":
             [

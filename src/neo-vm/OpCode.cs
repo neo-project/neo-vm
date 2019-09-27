@@ -429,6 +429,14 @@ namespace Neo.VM
 
         // Stack
         /// <summary>
+        /// Copies the bottom of alt stack and put it on top of main stack.
+        /// </summary> 
+        DUPFROMALTSTACKBOTTOM = 0x69,
+        /// <summary>
+        /// Duplicates the item on top of alt stack and put it on top of main stack.
+        /// </summary>
+        DUPFROMALTSTACK = 0x6A,
+        /// <summary>
         /// Puts the input onto the top of the alt stack. Removes it from the main stack.
         /// </summary>
         TOALTSTACK = 0x6B,
@@ -436,14 +444,6 @@ namespace Neo.VM
         /// Puts the input onto the top of the main stack. Removes it from the alt stack.
         /// </summary>
         FROMALTSTACK = 0x6C,
-        /// <summary>
-        /// Duplicates the item on top of alt stack and put it on top of main stack.
-        /// </summary>
-        DUPFROMALTSTACK = 0x6D,
-        /// <summary>
-        /// Copies the bottom of alt stack and put it on top of main stack.
-        /// </summary> 
-        DUPFROMALTSTACKBOTTOM = 0x6E,
         /// <summary>
         /// Returns true if the input is null. Returns false otherwise.
         /// </summary>

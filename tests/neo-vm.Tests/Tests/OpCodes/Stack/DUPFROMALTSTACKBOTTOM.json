@@ -5,7 +5,7 @@
     [
         {
             "name": "Without push",
-            "script": "0x6E",
+            "script": "0x69",
             "steps":
             [
                 {
@@ -22,7 +22,7 @@
         },
         {
             "name": "Without push in alt stack",
-            "script": "0x556E",
+            "script": "0x5569",
             "steps":
             [
                 {
@@ -63,7 +63,7 @@
         },
         {
             "name": "Real test",
-            "script": "0x5152536B6B6B6E",
+            "script": "0x5152536B6B6B69",
             "steps":
             [
                 {

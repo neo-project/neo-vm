@@ -640,7 +640,7 @@
         },
         {
             "name": "Clone test [Array]",
-            "script": "0x51C5760055C46B6D760054C46C",
+            "script": "0x51C5760055C46B6A760054C46C",
             "steps":
             [
                 {
@@ -894,7 +894,7 @@
         },
         {
             "name": "Clone test [Struct]",
-            "script": "0x51C6760055C46B6D760054C46C",
+            "script": "0x51C6760055C46B6A760054C46C",
             "steps":
             [
                 {
