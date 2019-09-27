@@ -451,7 +451,7 @@ namespace Neo.VM
         /// <summary>
         /// The item n back in the main stack is removed.
         /// </summary>
-        XDROP = 0x6D,
+        XDROP = 0x71,
         /// <summary>
         /// The item n back in the main stack in swapped with top stack item.
         /// </summary>
