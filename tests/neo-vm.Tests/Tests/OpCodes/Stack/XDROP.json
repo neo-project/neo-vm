@@ -5,7 +5,7 @@
     [
         {
             "name": "Without push",
-            "script": "0x71",
+            "script": "0x6D",
             "steps":
             [
                 {
@@ -22,7 +22,7 @@
         },
         {
             "name": "Overflow drop",
-            "script": "0x5352515371",
+            "script": "0x535251536D",
             "steps":
             [
                 {
@@ -78,7 +78,7 @@
         },
         {
             "name": "Wrong index type [Map]",
-            "script": "0x535251C771",
+            "script": "0x535251C76D",
             "steps":
             [
                 {
@@ -137,7 +137,7 @@
         },
         {
             "name": "Real test",
-            "script": "0x5352515171",
+            "script": "0x535251516D",
             "steps":
             [
                 {
