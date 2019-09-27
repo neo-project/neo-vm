@@ -120,12 +120,12 @@ namespace Neo.Test
 
             switch (item.Type)
             {
-                case VMUTStackItemType.Null:
-                    {
-                        ret["type"] = VMUTStackItemType.Null.ToString();
-                        ret.Remove("value");
-                        break;
-                    }
+                //case VMUTStackItemType.Null:
+                //    {
+                //        ret["type"] = VMUTStackItemType.Null.ToString();
+                //        ret.Remove("value");
+                //        break;
+                //    }
                 case VMUTStackItemType.String:
                     {
                         // Easy access

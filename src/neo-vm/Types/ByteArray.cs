@@ -8,6 +8,8 @@ namespace Neo.VM.Types
     {
         private readonly byte[] value;
 
+        public override bool IsNull => (value is null );
+
         public ByteArray(byte[] value)
         {
             this.value = value;
@@ -38,7 +40,8 @@ namespace Neo.VM.Types
 
         public override byte[] GetByteArray()
         {
-            return value;
+            // implicit conversion to byte[0], if null
+            return (value is null) ? new byte[0] : value;
         }
     }
 }

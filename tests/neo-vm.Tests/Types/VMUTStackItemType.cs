@@ -6,7 +6,6 @@ namespace Neo.Test.Types
         /// Null
         /// </summary>
         Null,
-
         /// <summary>
         /// Boolean (true,false)
         /// </summary>

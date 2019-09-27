@@ -1,5 +1,6 @@
 using System;
 
+/*
 namespace Neo.VM.Types
 {
     internal class Null : StackItem
@@ -23,3 +24,4 @@ namespace Neo.VM.Types
         }
     }
 }
+*/

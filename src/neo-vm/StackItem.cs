@@ -10,9 +10,9 @@ namespace Neo.VM
 {
     public abstract class StackItem : IEquatable<StackItem>
     {
-        public bool IsNull => this is Null;
+        public virtual bool IsNull => (this is ByteArray) && ((this as ByteArray).IsNull);
 
-        public static StackItem Null { get; } = new Null();
+        public static StackItem Null { get; } = new ByteArray(null);
 
         public abstract bool Equals(StackItem other);
 
