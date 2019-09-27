@@ -39,9 +39,9 @@ namespace Neo.ASML
 
             Dictionary<int, FuncRange> mapfuncrange = new Dictionary<int, FuncRange>();
 
-
+            var mainend = calladdrs.Count > 0 ? calladdrs[0] : -1;
             mapfuncrange.Add(0, new FuncRange()
-            { name = "Main", addrbegin = 0, addrend = calladdrs[0] });
+            { name = "Main", addrbegin = 0, addrend = mainend });
 
             for (var i = 0; i < calladdrs.Count; i++)
             {
