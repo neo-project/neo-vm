@@ -327,10 +327,6 @@ namespace Neo.VM
         /// </summary>
         PUSHM1 = 0x4F,
         /// <summary>
-        /// The item null is pushed onto the stack.
-        /// </summary>
-        PUSHNULL = 0x50,
-        /// <summary>
         /// The number 1 is pushed onto the stack.
         /// </summary>
         PUSH1 = 0x51,
@@ -444,10 +440,6 @@ namespace Neo.VM
         /// Puts the input onto the top of the main stack. Removes it from the alt stack.
         /// </summary>
         FROMALTSTACK = 0x6C,
-        /// <summary>
-        /// Returns true if the input is null. Returns false otherwise.
-        /// </summary>
-        ISNULL = 0x70,
         /// <summary>
         /// The item n back in the main stack is removed.
         /// </summary>
@@ -652,6 +644,17 @@ namespace Neo.VM
 
         //Reserved = 0xAC,
         //Reserved = 0xAE,
+
+        // null operations
+        /// <summary>
+        /// The item null is pushed onto the stack.
+        /// </summary>
+        PUSHNULL = 0xB0,
+        /// <summary>
+        /// Returns true if the input is null. Returns false otherwise.
+        /// </summary>
+        ISNULL = 0xB1,
+
 
         // Array
         /// <summary>

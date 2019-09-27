@@ -5,7 +5,7 @@
     [
         {
             "name": "Without push",
-            "script": "0x70",
+            "script": "0xB1",
             "steps":
             [
                 {
@@ -22,7 +22,7 @@
         },
         {
             "name": "Good definition",
-            "script": "0x5070",
+            "script": "0xB0B1",
             "steps":
             [
                 {
@@ -93,7 +93,7 @@
         },
         {
             "name": "With empty bytearray",
-            "script": "0x0070",
+            "script": "0x00B1",
             "steps":
             [
                 {
