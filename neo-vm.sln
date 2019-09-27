@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo-asm", "src\neo-asm\neo-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "neo-asm-cli", "src\neo-asm-cli\neo-asm-cli.csproj", "{9AF3D1AE-7A47-4708-88CC-858CB888C9FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "neo-asm.Tests", "tests\neo-asm.Tests\neo-asm.Tests.csproj", "{72529CD3-E642-47CA-BF15-EB011C8CCA7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{9AF3D1AE-7A47-4708-88CC-858CB888C9FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AF3D1AE-7A47-4708-88CC-858CB888C9FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AF3D1AE-7A47-4708-88CC-858CB888C9FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72529CD3-E642-47CA-BF15-EB011C8CCA7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72529CD3-E642-47CA-BF15-EB011C8CCA7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72529CD3-E642-47CA-BF15-EB011C8CCA7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72529CD3-E642-47CA-BF15-EB011C8CCA7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +51,7 @@ Global
 		{56063C9E-49B3-4CE2-96C5-E5F7ECACC5FC} = {210DA31B-019E-48CE-9498-D56A7987C4E6}
 		{3CED1E7E-034F-47BD-81B4-CC9DBDC80703} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
 		{9AF3D1AE-7A47-4708-88CC-858CB888C9FA} = {0F08E36C-9F18-423D-8F8C-C8C2FACF00F7}
+		{72529CD3-E642-47CA-BF15-EB011C8CCA7B} = {210DA31B-019E-48CE-9498-D56A7987C4E6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F8AC7AA8-85DE-4A98-9B58-BA08AB813C99}

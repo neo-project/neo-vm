@@ -66,7 +66,16 @@ namespace Neo.ASML.Parser
                             var jend = text.IndexOf("*/", i);
                             if (jend < 0)
                                 throw new Exception("error /* not match a */");
-                            var alltext = text.Substring(i - 1, jend - i + 3);
+                            var alltext = "";//need parse \n in alltext // text.Substring(i - 1, jend - i + 3);
+                            for (var j =i-1;j<jend+2;j++)
+                            {
+                                alltext += text[j];
+                                if(text[j]=='\n')
+                                {
+                                    line++;
+                                    linebegin = 0;
+                                }
+                            }
                             var wordComment = new Word() { wordtype = WordType.Comment, text = alltext, line = line, col = i - linebegin - 1 };
                             words.Add(wordComment);
                             i = jend + 1;
@@ -120,7 +129,16 @@ namespace Neo.ASML.Parser
                         var jend = text.IndexOf(curchar, i + 1);
                         if (jend < 0)
                             throw new Exception("error string format.");
-                        var alltext = text.Substring(i, jend - i + 1);
+                        var alltext = "";//need parse \n in alltext //alltext = text.Substring(i, jend - i + 1);
+                        for (var j = i ; j < jend + 1; j++)
+                        {
+                            alltext += text[j];
+                            if (text[j] == '\n')
+                            {
+                                line++;
+                                linebegin = 0;
+                            }
+                        }
                         var word = new Word() { wordtype = WordType.String, text = alltext, line = line, col = i - linebegin };
                         words.Add(word);
                         i = jend;

@@ -2,7 +2,7 @@
   "profiles": {
     "neo-asm-cli": {
       "commandName": "Project",
-      "commandLineArgs": "test.asml.txt -o test.avm"
+      "commandLineArgs": "-i test.asml.txt -o test.avm"
     }
   }
 }

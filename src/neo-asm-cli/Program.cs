@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace neo_asm_cli
@@ -7,44 +8,113 @@ namespace neo_asm_cli
     {
         static void Main(string[] args)
         {
-            if (args.Length == 0) return;
-            if (!File.Exists(args[0])) return;
-            var text = File.ReadAllText(args[0]);
-            //try
-
+            //parse commandline
+            CommandLineOption option = null;
+            try
             {
-                //1.CreateSourceCode
-                var code = Neo.ASML.Parser.WordScanner.CreateSourceCode("a.asm", text);
-                code.DumpWords((str) => Console.WriteLine(str));
-                //2.ParseSourceCode
-                var proj = Neo.ASML.Parser.Parser.Parse(code);
-                proj.Dump((str) => Console.WriteLine(str));
-
-
-                //3 -> avm bytes
-                var module = Neo.ASML.Linker.Linker.CreateModule(proj);
-                module.Dump((str) => Console.WriteLine(str));
-                var bytes = Neo.ASML.Linker.Linker.Link(module);
-                //dump bytes
-                var hexstr = "";
-                foreach (var b in bytes)
-                {
-                    hexstr += b.ToString("X02");
-                }
-                Console.WriteLine("hexstr=" + hexstr);
-
+                option = CommandLineOption.Parse(args);
             }
-            //catch(Exception err)
-            //{
-            //    Console.WriteLine("<EERR>" + err.Message);
-            //}
-            Console.ReadLine();
+            catch
+            {
+                CommandLineOption.ShowHelp();
+                return;
+            }
 
-            //var semantemes = Semanteme.ProcessLines(lines);
-            //var table = new AddressTable(semantemes);
-            //var script = table.ToScript();
-            //string out_path = args.Length >= 2 ? args[1] : Path.ChangeExtension(args[0], "avm");
-            //File.WriteAllBytes(out_path, script);
+            List<Neo.ASML.Node.SourceCode> codes = new List<Neo.ASML.Node.SourceCode>();
+            //step01.check srcfiles
+            foreach (var file in option.inputfiles)
+            {
+                Console.WriteLine("ParseFile:" + file);
+                if (System.IO.File.Exists(file) == false)
+                {
+                    Console.WriteLine("can not find file:" + file);
+                    return;
+                }
+                try
+                {
+                    var text = System.IO.File.ReadAllText(file);
+
+                    var code = Neo.ASML.Parser.WordScanner.CreateSourceCode(file, text);
+                    codes.Add(code);
+
+                }
+                catch (Exception err)
+                {
+                    Console.WriteLine("<ERROR>ParseCode:" + file + "," + err.Message);
+                    return;
+                }
+                //Console.WriteLine("<DONE>ParseFile");
+            }
+
+            //step02.ParseProj
+            Neo.ASML.Node.ASMProject proj = null;
+            //parse proj
+            try
+            {
+                proj = Neo.ASML.Parser.Parser.Parse(codes.ToArray());
+                //Console.WriteLine("<DONE>GenProj");
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("<ERROR>GenProj:" + err.Message);
+                return;
+            }
+
+            //step03.CreateModule
+            Neo.ASML.Linker.BuildedModule module = null;
+            try
+            {
+                module = Neo.ASML.Linker.Linker.CreateModule(proj);
+                //Console.WriteLine("<DONE>BuildModule");
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("<ERROR>BuildModule:" + err.Message);
+                return;
+            }
+
+            //step04.Link
+            byte[] avm;
+            try
+            {
+                avm = Neo.ASML.Linker.Linker.Link(module);
+                //Console.WriteLine("<DONE>GenAVM");
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("<ERROR>GenAVM:" + err.Message);
+                return;
+            }
+            Console.WriteLine("GenAVM length=" + avm.Length);
+
+            Console.WriteLine("OutputFile:" + option.outputfile);
+            try
+            {
+                System.IO.File.Delete(option.outputfile);
+                System.IO.File.WriteAllBytes(option.outputfile, avm);
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("<ERROR>OutputFile:" + option.outputfile + "," + err.Message);
+                return;
+            }
+
+
+            var outputdebuginfo = System.IO.Path.GetFileName(option.outputfile) + ".avmlinfo.json";
+            Console.WriteLine("OutputDebugInfoFile:" + outputdebuginfo);
+            try
+            {
+                System.IO.File.Delete(outputdebuginfo);
+                var json = module.genDebugInfo();
+                var text = json.ToString(Newtonsoft.Json.Formatting.Indented);
+                System.IO.File.WriteAllText(outputdebuginfo, text);
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("<ERROR>OutputFile:" + outputdebuginfo + "," + err.Message);
+                return;
+            }
         }
+
     }
 }
