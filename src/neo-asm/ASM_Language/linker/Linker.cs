@@ -11,14 +11,14 @@ namespace Neo.ASML.Linker
         public static BuildedModule CreateModule(Neo.ASML.Node.ASMProject project)
         {
             BuildedModule module = new BuildedModule();
-            module.methods = new Dictionary<string, BuildedFunction>();
+            module.functions = new Dictionary<string, BuildedFunction>();
             foreach (var node in project.nodes)
             {
                 if (node is ASML.Node.ASMFunction)
                 {
                     var func = node as Node.ASMFunction;
                     var buildedfunc = BuildFunction(func);
-                    module.methods.Add(buildedfunc.name, buildedfunc);
+                    module.functions.Add(buildedfunc.name, buildedfunc);
                 }
             }
             return module;
@@ -27,21 +27,21 @@ namespace Neo.ASML.Linker
 
         public static byte[] Link(BuildedModule module, string entrypoint = "Main")
         {
-            module.buildmethods = new List<string>();
-            var entrymethod = module.methods[entrypoint];
-            TouchFunction(module, entrymethod);
+            module.buildfuncs = new List<string>();
+            var entryfunc = module.functions[entrypoint];
+            TouchFunction(module, entryfunc);
 
             //convert call addr
             //convert jmp addr
-            foreach (var m in module.buildmethods)
+            foreach (var m in module.buildfuncs)
             {
-                var method = module.methods[m];
-                foreach (var c in method.codes)
+                var func = module.functions[m];
+                foreach (var c in func.codes)
                 {
                     if (c.CALLTarget != null)
                     {
-                        var jmppos = module.methods[c.CALLTarget].addr;
-                        var curaddr = method.addr + c.addr;
+                        var jmppos = module.functions[c.CALLTarget].addr;
+                        var curaddr = func.addr + c.addr;
 
                         Int16 addroff = (Int16)(jmppos - curaddr);
 
@@ -269,28 +269,28 @@ namespace Neo.ASML.Linker
 
         static void TouchFunction(BuildedModule module, BuildedFunction func)
         {
-            if (module.buildmethods.Count > 0)
+            if (module.buildfuncs.Count > 0)
             {
-                var m = module.buildmethods[module.buildmethods.Count - 1];
-                var lastfunc = module.methods[m];
+                var m = module.buildfuncs[module.buildfuncs.Count - 1];
+                var lastfunc = module.functions[m];
                 func.addr = lastfunc.addr + lastfunc.getFinalLength();
             }
             else
             {
                 func.addr = 0;
             }
-            module.buildmethods.Add(func.name);
+            module.buildfuncs.Add(func.name);
 
 
             foreach (var c in func.codes)
             {
                 if (c.CALLTarget != null)
                 {
-                    if (module.methods.ContainsKey(c.CALLTarget) == false)
+                    if (module.functions.ContainsKey(c.CALLTarget) == false)
                         throw new Exception("call method is not exist:" + c.CALLTarget);
-                    var touchfunc = module.methods[c.CALLTarget];
+                    var touchfunc = module.functions[c.CALLTarget];
 
-                    if (module.buildmethods.Contains(c.CALLTarget) == false)
+                    if (module.buildfuncs.Contains(c.CALLTarget) == false)
                     {
                         TouchFunction(module, touchfunc);
                     }

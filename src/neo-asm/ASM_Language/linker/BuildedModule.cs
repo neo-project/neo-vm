@@ -7,16 +7,16 @@ namespace Neo.ASML.Linker
 {
     public class BuildedModule
     {
-        public Dictionary<string, BuildedFunction> methods;
-        public List<string> buildmethods;
+        public Dictionary<string, BuildedFunction> functions;
+        public List<string> buildfuncs;
         public byte[] getFinalBytes()
         {
             using (var ms = new System.IO.MemoryStream())
             {
-                foreach (var m in buildmethods)
+                foreach (var m in buildfuncs)
                 {
-                    var method = methods[m];
-                    var bs = method.getFinalBytes();
+                    var func = functions[m];
+                    var bs = func.getFinalBytes();
                     ms.Write(bs, 0, bs.Length);
                 }
                 return ms.ToArray();
@@ -25,17 +25,17 @@ namespace Neo.ASML.Linker
         public int getFinalLength()
         {
             var length = 0;
-            foreach (var m in buildmethods)
+            foreach (var m in buildfuncs)
             {
-                var method = methods[m];
-                length += method.getFinalLength();
+                var func = functions[m];
+                length += func.getFinalLength();
             }
             return length;
         }
         public void Dump(Action<string> logaction)
         {
             logaction("==Dump Module");
-            foreach (var func in methods.Values)
+            foreach (var func in functions.Values)
             {
                 logaction(func.addr.ToString("X04") + ":" + func.name + "()");
                 logaction("{");
@@ -56,17 +56,17 @@ namespace Neo.ASML.Linker
             List<string> srcfiles = new List<string>();
             var jfuncs = new JArray();
             jobj["functions"] = jfuncs;
-            foreach (var m in buildmethods)
+            foreach (var m in buildfuncs)
             {
-                var method = methods[m];
-                var jmethodobj = new JObject();
-                jfuncs.Add(jmethodobj);
-                jmethodobj["name"] = method.name;
-                jmethodobj["addr"] = method.addr;
-                jmethodobj["bytelength"] = method.getFinalLength();
+                var func = functions[m];
+                var jfuncobj = new JObject();
+                jfuncs.Add(jfuncobj);
+                jfuncobj["name"] = func.name;
+                jfuncobj["addr"] = func.addr;
+                jfuncobj["bytelength"] = func.getFinalLength();
                 var jcodesobj = new JArray();
-                jmethodobj["codes"] = jcodesobj;
-                foreach (var c in method.codes)
+                jfuncobj["codes"] = jcodesobj;
+                foreach (var c in func.codes)
                 {
                     var codeitemObj = new JObject();
                     jcodesobj.Add(codeitemObj);
@@ -93,9 +93,9 @@ namespace Neo.ASML.Linker
                     }
 
                     //one function one srcfile
-                    //if (jmethodobj.ContainsKey("srcfile")==false)
+                    //if (jfuncobj.ContainsKey("srcfile")==false)
                     //{
-                    //    jmethodobj["srcfileindex"] = srcfiles.IndexOf(srcfile);
+                    //    jfuncobj["srcfileindex"] = srcfiles.IndexOf(srcfile);
                     //}
 
                     //one code one srcfile
