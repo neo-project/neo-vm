@@ -14,14 +14,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "THROW"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
