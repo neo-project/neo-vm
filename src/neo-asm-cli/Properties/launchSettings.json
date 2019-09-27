@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "neo-asm-cli": {
+      "commandName": "Project",
+      "commandLineArgs": "test.asml.txt -o test.avm"
+    }
+  }
+}

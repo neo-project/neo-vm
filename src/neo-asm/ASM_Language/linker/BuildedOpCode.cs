@@ -10,8 +10,8 @@ namespace Neo.ASML.Linker
 
         public int addr;
 
-        public bool isJMP;//JMP code,need convert addr in function.
-        public bool isCALL;//CALL code,need convert addr after link
+        public string JMPTarget;//JMP code,need convert addr in function.
+        public string CALLTarget;//CALL code,need convert addr after link
 
         public string[] labels;
         //mapinfo
@@ -19,9 +19,37 @@ namespace Neo.ASML.Linker
 
         public override string ToString()
         {
-            var str = addr.ToString("X04")+": "+ ((Neo.VM.OpCode)finalbytes[0]).ToString();
+            var addrstr = addr.ToString("X04") + ":";
+
+            if (labels != null && labels.Length > 0)
+            {
+                addrstr += "[";
+                foreach (var l in labels)
+                {
+                    addrstr += l + ":";
+                }
+                addrstr += "]";
+
+            }
+            var str = addrstr + " " + ((Neo.VM.OpCode)finalbytes[0]).ToString();
+
+            if (JMPTarget != null)
+            {
+                str += " [" + JMPTarget + "]";
+            }
+            else if (CALLTarget != null)
+            {
+                str += " [" + CALLTarget + "]";
+            }
             if (finalbytes.Length > 1)
-                str += " datalen=" + (finalbytes.Length - 1);
+            {
+                str += " data=[";
+                for (var i = 1; i < finalbytes.Length; i++)
+                {
+                    str += finalbytes[i].ToString("X02");
+                }
+                str += "]";
+            }
             return str;
         }
     }

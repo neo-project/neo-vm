@@ -79,12 +79,35 @@ ADD // no param
 
 PUSH 指令在编译为AVM时展开
 
-# 如何使用
+## 指令参数
 
-使用命令行调用
-
+PUSH指令的参数
+PUSH 指令的参数可以是 数字 bytearray bool string
 ```
-neo-asm -i mycode.asml -o mycode.avm
+PUSH -1
+PUSH 0x3344
+PUSH [0x44,0x33]
+PUSH false
+PUSH "hello"
 ```
 
-会得到输出 mycode.avm 和  mycode.asmmap
+JMP JMPIF JMPIFNOT 指令的参数为label的名字，可以用双引号也可以不用
+```
+JMP label1
+JMP "label1"
+```
+CALL 指令的参数为 method的名字，可以用双引号也可以不用
+```
+CALL method01
+CALL "method01"
+```
+
+SYSCALL 指令的参数为API hash地址或者 名字,是名字时必须使用双引号，hash地址支持多种数字表示形式,与PUSH 相同
+```
+SYSCALL 1113379787
+SYSCALL 0x11235322
+SYSCALL [0x22,0x53,0x23,0x11]
+SYSCALL "Neo.FrameWork.CurrentSome"
+```
+
+

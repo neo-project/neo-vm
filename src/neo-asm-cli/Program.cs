@@ -1,8 +1,7 @@
-using Neo.Compiler.ASM;
 using System;
 using System.IO;
 
-namespace neo_asm
+namespace neo_asm_cli
 {
     class Program
     {

@@ -6,9 +6,9 @@
 Main(/*dddd*/)//support 函数
 {//这里的注释
 //这里的注释
-	PUSH 1//这里的注释
-	PUSH 2
-	CALL method1
+	PUSH 0x01//这里的注释
+	PUSH 0xa2
+	CALL "method1"
 }
 method1()
 {
