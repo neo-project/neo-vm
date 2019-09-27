@@ -120,7 +120,7 @@ namespace Neo.ASML.Parser
                         var jend = text.IndexOf(curchar, i + 1);
                         if (jend < 0)
                             throw new Exception("error string format.");
-                        var alltext = text.Substring(i - 1, jend - i + 2);
+                        var alltext = text.Substring(i, jend - i + 1);
                         var word = new Word() { wordtype = WordType.String, text = alltext, line = line, col = i - linebegin };
                         words.Add(word);
                         i = jend;

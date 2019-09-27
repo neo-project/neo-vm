@@ -13,10 +13,16 @@ namespace Neo.ASML.Linker
         public bool isJMP;//JMP code,need convert addr in function.
         public bool isCALL;//CALL code,need convert addr after link
 
+        public string[] labels;
         //mapinfo
-        public string srcfile;
-        public int srcfileline;
-        public int srcfilecol;
-        public string srcInstructionComment;//comment in sourcecode
+        public ASML.Node.ASMInstruction srcInstruction;
+
+        public override string ToString()
+        {
+            var str = addr.ToString("X04")+": "+ ((Neo.VM.OpCode)finalbytes[0]).ToString();
+            if (finalbytes.Length > 1)
+                str += " datalen=" + (finalbytes.Length - 1);
+            return str;
+        }
     }
 }

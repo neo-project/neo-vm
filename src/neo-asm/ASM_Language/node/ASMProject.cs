@@ -24,7 +24,7 @@ namespace Neo.ASML.Node
         }
         public void Dump(Action<string> logaction)
         {
-            logaction("asm docments:");
+            logaction("ASM project:");
             logaction("[");
             foreach (var n in nodes)
             {

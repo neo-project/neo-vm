@@ -29,6 +29,15 @@ namespace Neo.ASML.Node
             public int beginwordindex;
             public int endwordindex;
         }
+        public void DumpWords(Action<string> logaction)
+        {
+            logaction("==DUMP SourceCode words");
+            foreach (var w in words)
+            {
+                logaction(w.ToString());
+            }
+
+        }
     }
 
 }

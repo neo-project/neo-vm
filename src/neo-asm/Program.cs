@@ -14,14 +14,26 @@ namespace neo_asm
             //try
 
             {
+                //1.CreateSourceCode
                 var code = Neo.ASML.Parser.WordScanner.CreateSourceCode("a.asm", text);
-                Console.WriteLine("==scan finish words=" + code.words.Count);
-                foreach (var w in code.words)
+                code.DumpWords((str) => Console.WriteLine(str));
+                //2.ParseSourceCode
+                var proj = Neo.ASML.Parser.Parser.Parse(code);
+                proj.Dump((str) => Console.WriteLine(str));
+
+
+                //3 -> avm bytes
+                var module = Neo.ASML.Linker.Linker.CreateModule(proj);
+                module.Dump((str) => Console.WriteLine(str));
+                var bytes = Neo.ASML.Linker.Linker.Link(module);
+                //dump bytes
+                var hexstr = "";
+                foreach (var b in bytes)
                 {
-                    Console.WriteLine(w.ToString());
+                    hexstr += b.ToString("X02");
                 }
-                var doc = Neo.ASML.Parser.Parser.Parse(code);
-                doc.Dump((str) => Console.WriteLine(str));
+                Console.WriteLine("hexstr=" + hexstr);
+
             }
             //catch(Exception err)
             //{

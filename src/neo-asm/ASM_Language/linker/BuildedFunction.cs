@@ -10,8 +10,7 @@ namespace Neo.ASML.Linker
         public byte[] finalbytes;
 
         public string name;
-        Dictionary<string, BuildedOpCode> label2code;
-        List<BuildedOpCode> codes;
+        public List<BuildedOpCode> codes;
     }
 
 }
