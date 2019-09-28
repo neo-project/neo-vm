@@ -905,31 +905,29 @@ namespace Neo.VM
                     case OpCode.NEWARRAY:
                     case OpCode.NEWSTRUCT:
                         {
-                            var item = context.EvaluationStack.Pop();
+                            var item = context.EvaluationStack.Peek();
 
                             if (item is VMArray array)
                             {
                                 // Allow to convert between array and struct
 
-                                VMArray result = null;
-
                                 if (array is Struct)
                                 {
                                     if (instruction.OpCode == OpCode.NEWSTRUCT)
-                                        result = array;
+                                        break;
                                 }
                                 else
                                 {
                                     if (instruction.OpCode == OpCode.NEWARRAY)
-                                        result = array;
+                                        break;
                                 }
 
-                                if (result is null)
-                                    result = instruction.OpCode == OpCode.NEWARRAY
-                                        ? new VMArray(array)
-                                        : new Struct(array);
+                                VMArray result = instruction.OpCode == OpCode.NEWARRAY
+                                    ? new VMArray(array)
+                                    : new Struct(array);
 
-                                context.EvaluationStack.Push(result);
+                                context.EvaluationStack.Set(0, result);
+                                if (!CheckStackSize(false, int.MaxValue)) return false;
                             }
                             else
                             {
@@ -948,8 +946,7 @@ namespace Neo.VM
                                     ? new VMArray(items)
                                     : new Struct(items);
 
-                                context.EvaluationStack.Push(result);
-
+                                context.EvaluationStack.Set(0, result);
                                 if (!CheckStackSize(true, count)) return false;
                             }
                             break;
