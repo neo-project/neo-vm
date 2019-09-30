@@ -47,10 +47,10 @@ namespace neo_asm_cli
         {
             Console.WriteLine("===How to Use===");
             Console.WriteLine("use \"-i [filename]\" for input file");
-            Console.WriteLine("if have multi files,use \"-i file1 -i file2 -i ...\"");
+            Console.WriteLine("if have multiple files, use \"-i file1 -i file2 -i ...\"");
             Console.WriteLine("use \"-o [filename]\" for output file");
-            Console.WriteLine("exsample:");
-            Console.WriteLine("neo-asm-cli -i file1.asml -i file2.asml -o outputfile.avm");
+            Console.WriteLine("example:");
+            Console.WriteLine("neo-asm-cli -i file1.asml -i file2.asml -o outputfile.nef");
         }
     }
 }
