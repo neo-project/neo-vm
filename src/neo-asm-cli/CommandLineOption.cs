@@ -8,6 +8,7 @@ namespace neo_asm_cli
     {
         public List<string> inputfiles;
         public string outputfile;
+
         public static CommandLineOption Parse(string[] args)
         {
             if (args == null || args.Length == 0)
@@ -40,17 +41,16 @@ namespace neo_asm_cli
                 throw new Exception("error param no output file");
 
             return option;
-
         }
+
         public static void ShowHelp()
         {
             Console.WriteLine("===How to Use===");
-            Console.WriteLine("use \"-i [filename]\"  for input file");
+            Console.WriteLine("use \"-i [filename]\" for input file");
             Console.WriteLine("if have multi files,use \"-i file1 -i file2 -i ...\"");
-            Console.WriteLine("use \"-o [filename]\"  for output file");
+            Console.WriteLine("use \"-o [filename]\" for output file");
             Console.WriteLine("exsample:");
-            Console.WriteLine("eno-asm-cli -i file1.asml -i file2.asml -o outputfile.avm");
-
+            Console.WriteLine("neo-asm-cli -i file1.asml -i file2.asml -o outputfile.avm");
         }
     }
 }
