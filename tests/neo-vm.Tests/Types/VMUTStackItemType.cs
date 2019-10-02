@@ -3,6 +3,11 @@ namespace Neo.Test.Types
     public enum VMUTStackItemType
     {
         /// <summary>
+        /// Null
+        /// </summary>
+        Null,
+
+        /// <summary>
         /// Boolean (true,false)
         /// </summary>
         Boolean,

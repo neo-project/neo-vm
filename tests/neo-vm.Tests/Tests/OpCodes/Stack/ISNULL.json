@@ -1,11 +1,11 @@
 {
     "category": "Stack",
-    "name": "DUPFROMALTSTACK",
+    "name": "ISNULL",
     "tests":
     [
         {
             "name": "Without push",
-            "script": "0x6D",
+            "script": "0x70",
             "steps":
             [
                 {
@@ -21,14 +21,36 @@
             ]
         },
         {
-            "name": "Real test [BigInteger]",
-            "script": "0x556B6D",
+            "name": "Good definition",
+            "script": "0x5070",
             "steps":
             [
                 {
                     "actions":
                     [
-                        "StepInto",
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 1,
+                                "nextInstruction": "ISNULL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Null"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
                         "StepInto"
                     ],
                     "result":
@@ -38,43 +60,12 @@
                         [
                             {
                                 "instructionPointer": 2,
-                                "nextInstruction": "DUPFROMALTSTACK",
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ],
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
+                                        "type": "Boolean",
+                                        "value": true
                                     }
                                 ]
                             }
@@ -92,8 +83,8 @@
                         "resultStack":
                         [
                             {
-                                "type": "Integer",
-                                "value": 5
+                                "type": "Boolean",
+                                "value": true
                             }
                         ]
                     }
@@ -101,15 +92,13 @@
             ]
         },
         {
-            "name": "Real test [Interop]",
-            "script": "0x68777777776B6D",
-            "message": "0x00",
+            "name": "With empty bytearray",
+            "script": "0x0070",
             "steps":
             [
                 {
                     "actions":
                     [
-                        "StepInto",
                         "StepInto"
                     ],
                     "result":
@@ -118,13 +107,13 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 6,
-                                "nextInstruction": "DUPFROMALTSTACK",
-                                "altStack":
+                                "instructionPointer": 1,
+                                "nextInstruction": "ISNULL",
+                                "evaluationStack":
                                 [
                                     {
-                                        "type": "Interop",
-                                        "value": "Object"
+                                        "type": "ByteArray",
+                                        "value": ""
                                     }
                                 ]
                             }
@@ -142,20 +131,13 @@
                         "invocationStack":
                         [
                             {
-                                "instructionPointer": 7,
+                                "instructionPointer": 2,
                                 "nextInstruction": "RET",
                                 "evaluationStack":
                                 [
                                     {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ],
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
+                                        "type": "Boolean",
+                                        "value": false
                                     }
                                 ]
                             }
@@ -173,8 +155,8 @@
                         "resultStack":
                         [
                             {
-                                "type": "Interop",
-                                "value": "Object"
+                                "type": "Boolean",
+                                "value": false
                             }
                         ]
                     }
