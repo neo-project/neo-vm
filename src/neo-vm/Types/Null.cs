@@ -2,8 +2,10 @@ using System;
 
 namespace Neo.VM.Types
 {
-    internal class Null : StackItem
+    public class Null : StackItem
     {
+        internal Null() { }
+
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
