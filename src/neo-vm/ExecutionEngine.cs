@@ -722,9 +722,19 @@ namespace Neo.VM
                         }
                     case OpCode.NUMEQUAL:
                         {
-                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            var entry2 = context.EvaluationStack.Pop();
+                            var entry1 = context.EvaluationStack.Pop();
+
+                            if (entry1.IsNull || entry2.IsNull)
+                            {
+                                context.EvaluationStack.Push(x1.IsNull == x2.IsNull);
+                                CheckStackSize(true, -1);
+                                break;
+                            }
+
+                            BigInteger x2 = entry2.GetBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = entry1.GetBigInteger();
                             if (!CheckBigInteger(x1)) return false;
                             context.EvaluationStack.Push(x1 == x2);
                             CheckStackSize(true, -1);
@@ -732,9 +742,19 @@ namespace Neo.VM
                         }
                     case OpCode.NUMNOTEQUAL:
                         {
-                            BigInteger x2 = context.EvaluationStack.Pop().GetBigInteger();
+                            var entry2 = context.EvaluationStack.Pop();
+                            var entry1 = context.EvaluationStack.Pop();
+
+                            if (entry1.IsNull || entry2.IsNull)
+                            {
+                                context.EvaluationStack.Push(x1.IsNull != x2.IsNull);
+                                CheckStackSize(true, -1);
+                                break;
+                            }
+
+                            BigInteger x2 = entry2.GetBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            BigInteger x1 = context.EvaluationStack.Pop().GetBigInteger();
+                            BigInteger x1 = entry1.GetBigInteger();
                             if (!CheckBigInteger(x1)) return false;
                             context.EvaluationStack.Push(x1 != x2);
                             CheckStackSize(true, -1);
