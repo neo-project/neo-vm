@@ -13,7 +13,7 @@ dotnet: 3.0.100
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ulimit -n 2048; fi
 install:
-  - dotnet tool install -g Microsoft.dotnet-format
+  - dotnet tool install -g dotnet-format
   - export PATH="$PATH:$HOME/.dotnet/tools"
   - dotnet-format --version
 before_script:
