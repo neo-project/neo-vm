@@ -4,8 +4,6 @@ os:
  - linux
 
 dist: bionic
-osx_image: xcode9.1
-
 mono: none
 dotnet: 3.0.100
 
