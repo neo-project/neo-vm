@@ -11,12 +11,11 @@ install:
   - dotnet tool install -g dotnet-format
   - export PATH="$PATH:$HOME/.dotnet/tools"
   - dotnet-format --version
-before_script:
+script:
   - echo "Checking format..." 
   - dotnet format --check --dry-run -w src/neo-vm -v diagnostic         # check C# formatting for the source
   - dotnet format --check --dry-run -w tests/neo-vm.Tests -v diagnostic # check C# formatting for the unit tests
   - cd tests/neo-vm.Tests
-script:
   - dotnet restore
   - find * -name *.csproj | xargs -I % dotnet add % package coverlet.msbuild
   - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
