@@ -46,25 +46,24 @@ namespace Neo.Test
             var ins = script.GetInstruction(0);
 
             Assert.AreEqual(ins.OpCode, OpCode.PUSH0);
-            Assert.AreEqual(ins.Operand, null);
+            Assert.IsTrue(ins.Operand.IsEmpty);
             Assert.AreEqual(ins.Size, 1);
-            Assert.ThrowsException<ArgumentNullException>(() => { var x = ins.TokenI16; });
-            Assert.ThrowsException<ArgumentNullException>(() => { var x = ins.TokenString; });
-            Assert.ThrowsException<ArgumentNullException>(() => { var x = ins.TokenU32; });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var x = ins.TokenI16; });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var x = ins.TokenU32; });
 
             ins = script.GetInstruction(1);
 
             Assert.AreEqual(ins.OpCode, OpCode.CALL);
-            CollectionAssert.AreEqual(ins.Operand, new byte[] { 0x00, 0x01 });
+            CollectionAssert.AreEqual(ins.Operand.ToArray(), new byte[] { 0x00, 0x01 });
             Assert.AreEqual(ins.Size, 3);
             Assert.AreEqual(ins.TokenI16, 256);
             Assert.AreEqual(ins.TokenString, Encoding.ASCII.GetString(new byte[] { 0x00, 0x01 }));
-            Assert.ThrowsException<ArgumentException>(() => { var x = ins.TokenU32; });
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var x = ins.TokenU32; });
 
             ins = script.GetInstruction(4);
 
             Assert.AreEqual(ins.OpCode, OpCode.SYSCALL);
-            CollectionAssert.AreEqual(ins.Operand, new byte[] { 123, 0x00, 0x00, 0x00 });
+            CollectionAssert.AreEqual(ins.Operand.ToArray(), new byte[] { 123, 0x00, 0x00, 0x00 });
             Assert.AreEqual(ins.Size, 5);
             Assert.AreEqual(ins.TokenI16, 123);
             Assert.AreEqual(ins.TokenString, Encoding.ASCII.GetString(new byte[] { 123, 0x00, 0x00, 0x00 }));
