@@ -11,7 +11,7 @@ namespace Neo.VM
         public static Instruction RET { get; } = new Instruction(OpCode.RET);
 
         public readonly OpCode OpCode;
-        public readonly byte[] Operand;
+        public readonly ReadOnlyMemory<byte> Operand;
 
         private static readonly int[] OperandSizePrefixTable = new int[256];
         private static readonly int[] OperandSizeTable = new int[256];
@@ -33,7 +33,7 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return BitConverter.ToInt16(Operand, 0);
+                return BitConverter.ToInt16(Operand.Span);
             }
         }
 
@@ -42,7 +42,7 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return Encoding.ASCII.GetString(Operand);
+                return Encoding.ASCII.GetString(Operand.Span);
             }
         }
 
@@ -51,7 +51,7 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return BitConverter.ToUInt32(Operand, 0);
+                return BitConverter.ToUInt32(Operand.Span);
             }
         }
 
@@ -97,10 +97,9 @@ namespace Neo.VM
             if (operandSize > 0)
             {
                 ip += operandSizePrefix;
-                Operand = new byte[operandSize];
                 if (ip + operandSize > script.Length)
                     throw new InvalidOperationException();
-                Unsafe.MemoryCopy(script, ip, Operand, 0, operandSize);
+                Operand = new ReadOnlyMemory<byte>(script, ip, operandSize);
             }
         }
     }
