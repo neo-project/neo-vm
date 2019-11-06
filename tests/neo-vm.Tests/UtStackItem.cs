@@ -97,14 +97,14 @@ namespace Neo.Test
             item = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
 
             Assert.IsInstanceOfType(item, typeof(ByteArray));
-            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, item.GetByteArray());
+            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, item.GetByteArray().ToArray());
 
             // String
 
             item = "NEO - 种智能经济分布式网络";
 
             Assert.IsInstanceOfType(item, typeof(ByteArray));
-            CollectionAssert.AreEqual(Encoding.UTF8.GetBytes("NEO - 种智能经济分布式网络"), item.GetByteArray());
+            CollectionAssert.AreEqual(Encoding.UTF8.GetBytes("NEO - 种智能经济分布式网络"), item.GetByteArray().ToArray());
             Assert.AreEqual("NEO - 种智能经济分布式网络", item.GetString());
 
             // Array
