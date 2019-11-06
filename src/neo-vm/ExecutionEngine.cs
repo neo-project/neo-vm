@@ -434,8 +434,8 @@ namespace Neo.VM
                         }
                     case OpCode.CAT:
                         {
-                            ReadOnlyMemory<byte> x2 = context.EvaluationStack.Pop().GetByteArray();
-                            ReadOnlyMemory<byte> x1 = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x2 = context.EvaluationStack.Pop().ToMemory();
+                            ReadOnlyMemory<byte> x1 = context.EvaluationStack.Pop().ToMemory();
                             StackItem result;
                             if (x1.IsEmpty)
                             {
@@ -465,7 +465,7 @@ namespace Neo.VM
                             if (count > MaxItemSize) count = (int)MaxItemSize;
                             int index = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (index < 0) return false;
-                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().ToMemory();
                             if (index > x.Length) return false;
                             if (index + count > x.Length) count = x.Length - index;
                             context.EvaluationStack.Push(x.Slice(index, count));
@@ -476,7 +476,7 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (count < 0) return false;
-                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().ToMemory();
                             if (count < x.Length)
                                 x = x[0..count];
                             context.EvaluationStack.Push(x);
@@ -487,7 +487,7 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (count < 0) return false;
-                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().ToMemory();
                             if (count > x.Length) return false;
                             if (count < x.Length)
                                 x = x[^count..^0];
@@ -855,10 +855,10 @@ namespace Neo.VM
                                     }
                                 default:
                                     {
-                                        ReadOnlyMemory<byte> byteArray = item.GetByteArray();
+                                        ReadOnlySpan<byte> byteArray = item.GetByteArray();
                                         int index = (int)key.GetBigInteger();
                                         if (index < 0 || index >= byteArray.Length) return false;
-                                        context.EvaluationStack.Push((int)byteArray.Span[index]);
+                                        context.EvaluationStack.Push((int)byteArray[index]);
                                         CheckStackSize(true, -1);
                                         break;
                                     }
