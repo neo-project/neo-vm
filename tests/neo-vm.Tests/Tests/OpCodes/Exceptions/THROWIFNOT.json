@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Exceptions",
     "name": "THROWIFNOT",
     "tests":
@@ -51,14 +51,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "THROWIFNOT"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -75,14 +68,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "THROWIFNOT"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

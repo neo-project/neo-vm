@@ -327,6 +327,10 @@ namespace Neo.VM
         /// </summary>
         PUSHM1 = 0x4F,
         /// <summary>
+        /// The item null is pushed onto the stack.
+        /// </summary>
+        PUSHNULL = 0x50,
+        /// <summary>
         /// The number 1 is pushed onto the stack.
         /// </summary>
         PUSH1 = 0x51,
@@ -425,14 +429,6 @@ namespace Neo.VM
 
         // Stack
         /// <summary>
-        /// Copies the bottom of alt stack and put it on top of main stack.
-        /// </summary> 
-        DUPFROMALTSTACKBOTTOM = 0x69,
-        /// <summary>
-        /// Duplicates the item on top of alt stack and put it on top of main stack.
-        /// </summary>
-        DUPFROMALTSTACK = 0x6A,
-        /// <summary>
         /// Puts the input onto the top of the alt stack. Removes it from the main stack.
         /// </summary>
         TOALTSTACK = 0x6B,
@@ -441,9 +437,21 @@ namespace Neo.VM
         /// </summary>
         FROMALTSTACK = 0x6C,
         /// <summary>
+        /// Duplicates the item on top of alt stack and put it on top of main stack.
+        /// </summary>
+        DUPFROMALTSTACK = 0x6D,
+        /// <summary>
+        /// Copies the bottom of alt stack and put it on top of main stack.
+        /// </summary> 
+        DUPFROMALTSTACKBOTTOM = 0x6E,
+        /// <summary>
+        /// Returns true if the input is null. Returns false otherwise.
+        /// </summary>
+        ISNULL = 0x70,
+        /// <summary>
         /// The item n back in the main stack is removed.
         /// </summary>
-        XDROP = 0x6D,
+        XDROP = 0x71,
         /// <summary>
         /// The item n back in the main stack in swapped with top stack item.
         /// </summary>
@@ -644,7 +652,7 @@ namespace Neo.VM
 
         //Reserved = 0xAC,
         //Reserved = 0xAE,
-        
+
         // Array
         /// <summary>
         /// An array is removed from top of the main stack. Its size is put on top of the main stack.
@@ -668,10 +676,12 @@ namespace Neo.VM
         SETITEM = 0xC4,
         /// <summary>
         /// A value n is taken from top of main stack. A zero-filled array type with size n is put on top of the main stack.
+        /// OR a struct is taken from top of main stack and is converted to an array.
         /// </summary>
         NEWARRAY = 0xC5,
         /// <summary>
         /// A value n is taken from top of main stack. A zero-filled struct type with size n is put on top of the main stack.
+        /// OR an array is taken from top of main stack and is converted to a struct.
         /// </summary>
         NEWSTRUCT = 0xC6,
         /// <summary>

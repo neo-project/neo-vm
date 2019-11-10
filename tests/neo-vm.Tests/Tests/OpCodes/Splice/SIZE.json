@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Splice",
     "name": "SIZE",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "SIZE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -261,14 +254,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "SIZE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -316,14 +302,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "SIZE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -371,14 +350,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "SIZE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -420,14 +392,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "SIZE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

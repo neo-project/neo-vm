@@ -1,11 +1,28 @@
 {
-    "category": "Others",
-    "name": "ScriptLogic",
+    "category": "Stack",
+    "name": "ISNULL",
     "tests":
     [
         {
-            "name": "Script logic",
-            "script": "0x00919175",
+            "name": "Without push",
+            "script": "0x70",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Fault"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Good definition",
+            "script": "0x5070",
             "steps":
             [
                 {
@@ -20,7 +37,78 @@
                         [
                             {
                                 "instructionPointer": 1,
-                                "nextInstruction": "NOT",
+                                "nextInstruction": "ISNULL",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Null"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 2,
+                                "nextInstruction": "RET",
+                                "evaluationStack":
+                                [
+                                    {
+                                        "type": "Boolean",
+                                        "value": true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Halt",
+                        "resultStack":
+                        [
+                            {
+                                "type": "Boolean",
+                                "value": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "With empty bytearray",
+            "script": "0x0070",
+            "steps":
+            [
+                {
+                    "actions":
+                    [
+                        "StepInto"
+                    ],
+                    "result":
+                    {
+                        "state": "Break",
+                        "invocationStack":
+                        [
+                            {
+                                "instructionPointer": 1,
+                                "nextInstruction": "ISNULL",
                                 "evaluationStack":
                                 [
                                     {
@@ -44,31 +132,7 @@
                         [
                             {
                                 "instructionPointer": 2,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "DROP",
+                                "nextInstruction": "RET",
                                 "evaluationStack":
                                 [
                                     {
@@ -87,24 +151,14 @@
                     ],
                     "result":
                     {
-                        "state": "Break",
-                        "invocationStack":
+                        "state": "Halt",
+                        "resultStack":
                         [
                             {
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET"
+                                "type": "Boolean",
+                                "value": false
                             }
                         ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt"
                     }
                 }
             ]

@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Arrays",
     "name": "REMOVE",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "REMOVE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -39,14 +32,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "REMOVE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -63,21 +49,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "REMOVE",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -94,21 +66,14 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "REMOVE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
         },
         {
             "name": "Real test [Array]",
-            "script": "0x565552C16B6A00CA6CC2",
+            "script": "0x565552C16B6D00CA6CC2",
             "steps":
             [
                 {
@@ -227,7 +192,7 @@
         },
         {
             "name": "Real test [Struct]",
-            "script": "0x00C67655C86B6A00CA6CC2",
+            "script": "0x00C67655C86B6D00CA6CC2",
             "steps":
             [
                 {

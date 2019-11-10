@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Arrays",
     "name": "ARRAYSIZE",
     "tests":
@@ -40,14 +40,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "ARRAYSIZE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -64,14 +57,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "ARRAYSIZE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

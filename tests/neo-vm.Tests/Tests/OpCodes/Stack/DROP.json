@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Stack",
     "name": "DROP",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "DROP"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

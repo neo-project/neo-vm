@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Neo.VM
@@ -6,12 +6,12 @@ namespace Neo.VM
     unsafe internal static class Unsafe
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool MemoryEquals(byte[] x, byte[] y)
+        public static bool MemoryEquals(ReadOnlySpan<byte> x, ReadOnlySpan<byte> y)
         {
-            if (ReferenceEquals(x, y)) return true;
-            if (x is null || y is null) return false;
+            if (x == y) return true;
             int len = x.Length;
             if (len != y.Length) return false;
+            if (len == 0) return true;
             fixed (byte* xp = x, yp = y)
             {
                 long* xlp = (long*)xp, ylp = (long*)yp;
@@ -33,20 +33,8 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void MemoryCopy(byte[] src, int srcOffset, byte[] dst, int dstOffset, int count)
+        public static bool NotZero(ReadOnlySpan<byte> x)
         {
-            if (count == 0) return;
-            fixed (byte* sp = &src[srcOffset], dp = &dst[dstOffset])
-            {
-                Buffer.MemoryCopy(sp, dp, dst.Length - dstOffset, count);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool NotZero(byte[] x)
-        {
-            if (x is null)
-                throw new ArgumentNullException(nameof(x));
             int len = x.Length;
             if (len == 0) return false;
             fixed (byte* xp = x)

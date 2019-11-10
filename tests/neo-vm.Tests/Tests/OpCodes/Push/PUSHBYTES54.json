@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Push",
     "name": "PUSHBYTES54",
     "tests":
@@ -63,14 +63,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "PUSHBYTES54"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

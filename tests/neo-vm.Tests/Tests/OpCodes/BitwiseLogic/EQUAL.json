@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Bitwise Logic",
     "name": "EQUAL same types",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "EQUAL"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -373,7 +366,7 @@
         },
         {
             "name": "Real test [Array,Array]=true",
-            "script": "0x00C56B6A6A87",
+            "script": "0x00C56B6D6D87",
             "steps":
             [
                 {
@@ -558,7 +551,7 @@
         },
         {
             "name": "Real test [Struct,Struct]=true with clone",
-            "script": "0x00C66B6A6A87",
+            "script": "0x00C66B6D6D87",
             "steps":
             [
                 {
@@ -830,7 +823,7 @@
         },
         {
             "name": "Real test [Map,Map]=true",
-            "script": "0xC76B6A6A87",
+            "script": "0xC76B6D6D87",
             "steps":
             [
                 {
@@ -1320,7 +1313,7 @@
         },
         {
             "name": "Real test with clone [Interop,Interop]=true",
-            "script": "0x68777777776B6A6A87",
+            "script": "0x68777777776B6D6D87",
             "steps":
             [
                 {

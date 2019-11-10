@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Arrays",
     "name": "SETITEM",
     "tests":
@@ -51,21 +51,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "SETITEM",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -116,14 +102,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "SETITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -140,14 +119,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "SETITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -205,14 +177,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "SETITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -270,14 +235,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "SETITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -682,7 +640,7 @@
         },
         {
             "name": "Clone test [Array]",
-            "script": "0x51C5760055C46B6A760054C46C",
+            "script": "0x51C5760055C46B6D760054C46C",
             "steps":
             [
                 {
@@ -936,7 +894,7 @@
         },
         {
             "name": "Clone test [Struct]",
-            "script": "0x51C6760055C46B6A760054C46C",
+            "script": "0x51C6760055C46B6D760054C46C",
             "steps":
             [
                 {

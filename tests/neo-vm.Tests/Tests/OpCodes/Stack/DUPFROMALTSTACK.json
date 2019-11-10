@@ -1,11 +1,11 @@
-﻿{
+{
     "category": "Stack",
     "name": "DUPFROMALTSTACK",
     "tests":
     [
         {
             "name": "Without push",
-            "script": "0x6A",
+            "script": "0x6D",
             "steps":
             [
                 {
@@ -15,21 +15,14 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "DUPFROMALTSTACK"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
         },
         {
             "name": "Real test [BigInteger]",
-            "script": "0x556B6A",
+            "script": "0x556B6D",
             "steps":
             [
                 {
@@ -109,7 +102,7 @@
         },
         {
             "name": "Real test [Interop]",
-            "script": "0x68777777776B6A",
+            "script": "0x68777777776B6D",
             "message": "0x00",
             "steps":
             [

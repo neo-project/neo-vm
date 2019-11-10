@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Splice",
     "name": "CAT",
     "tests":
@@ -17,14 +17,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1048582,
-                                "nextInstruction": "CAT"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -43,21 +36,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "CAT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -76,14 +55,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "CAT"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -100,14 +72,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "CAT"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

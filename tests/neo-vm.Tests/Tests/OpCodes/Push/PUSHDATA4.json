@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Push",
     "name": "PUSHDATA4",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "PUSHDATA4"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -63,14 +56,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "PUSHDATA4"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

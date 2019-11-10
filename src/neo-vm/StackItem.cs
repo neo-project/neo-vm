@@ -1,4 +1,4 @@
-﻿using Neo.VM.Types;
+using Neo.VM.Types;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -10,7 +10,9 @@ namespace Neo.VM
 {
     public abstract class StackItem : IEquatable<StackItem>
     {
-        public static StackItem Null { get; } = new byte[0];
+        public bool IsNull => this is Null;
+
+        public static StackItem Null { get; } = new Null();
 
         public abstract bool Equals(StackItem other);
 
@@ -26,17 +28,18 @@ namespace Neo.VM
         public static StackItem FromInterface<T>(T value)
             where T : class
         {
+            if (value is null) return Null;
             return new InteropInterface<T>(value);
         }
 
         public virtual BigInteger GetBigInteger()
         {
-            return new BigInteger(GetByteArray());
+            return new BigInteger(GetByteArray().Span);
         }
 
         public abstract bool GetBoolean();
 
-        public abstract byte[] GetByteArray();
+        public abstract ReadOnlyMemory<byte> GetByteArray();
 
         public virtual int GetByteLength()
         {
@@ -48,7 +51,7 @@ namespace Neo.VM
             unchecked
             {
                 int hash = 17;
-                foreach (byte element in GetByteArray())
+                foreach (byte element in GetByteArray().Span)
                     hash = hash * 31 + element;
                 return hash;
             }
@@ -56,7 +59,7 @@ namespace Neo.VM
 
         public virtual string GetString()
         {
-            return Encoding.UTF8.GetString(GetByteArray());
+            return Encoding.UTF8.GetString(GetByteArray().Span);
         }
 
         public static implicit operator StackItem(int value)
@@ -90,6 +93,11 @@ namespace Neo.VM
         }
 
         public static implicit operator StackItem(byte[] value)
+        {
+            return new ByteArray(value);
+        }
+
+        public static implicit operator StackItem(ReadOnlyMemory<byte> value)
         {
             return new ByteArray(value);
         }

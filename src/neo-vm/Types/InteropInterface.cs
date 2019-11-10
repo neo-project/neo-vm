@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
     public abstract class InteropInterface : StackItem
     {
-        public override byte[] GetByteArray()
+        public override ReadOnlyMemory<byte> GetByteArray()
         {
             throw new NotSupportedException();
         }

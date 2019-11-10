@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Arrays",
     "name": "PACK",
     "tests":
@@ -49,21 +49,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "PACK",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -80,14 +66,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "PACK"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -104,14 +83,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "PACK"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -128,14 +100,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "PACK"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -152,14 +117,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "PACK"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

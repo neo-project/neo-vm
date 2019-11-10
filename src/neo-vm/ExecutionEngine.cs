@@ -50,8 +50,6 @@ namespace Neo.VM
 
         #endregion
 
-        private static readonly byte[] EmptyBytes = new byte[0];
-
         private int stackitem_count = 0;
         private bool is_stackitem_count_strict = true;
 
@@ -86,7 +84,7 @@ namespace Neo.VM
         /// <param name="value">Value</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckBigInteger(BigInteger value) => value.ToByteArray().Length <= MaxSizeForBigInteger;
+        public bool CheckBigInteger(BigInteger value) => value.GetByteCount() <= MaxSizeForBigInteger;
 
         /// <summary>
         /// Check if the number is allowed from SHL and SHR
@@ -217,7 +215,7 @@ namespace Neo.VM
                     // Push value
                     case OpCode.PUSH0:
                         {
-                            context.EvaluationStack.Push(EmptyBytes);
+                            context.EvaluationStack.Push(ReadOnlyMemory<byte>.Empty);
                             if (!CheckStackSize(true)) return false;
                             break;
                         }
@@ -240,6 +238,12 @@ namespace Neo.VM
                     case OpCode.PUSH16:
                         {
                             context.EvaluationStack.Push((int)instruction.OpCode - (int)OpCode.PUSH1 + 1);
+                            if (!CheckStackSize(true)) return false;
+                            break;
+                        }
+                    case OpCode.PUSHNULL:
+                        {
+                            context.EvaluationStack.Push(StackItem.Null);
                             if (!CheckStackSize(true)) return false;
                             break;
                         }
@@ -333,6 +337,13 @@ namespace Neo.VM
                             context.EvaluationStack.Push(context.AltStack.Pop());
                             break;
                         }
+                    case OpCode.ISNULL:
+                        {
+                            bool b = context.EvaluationStack.Peek().IsNull;
+                            context.EvaluationStack.Set(0, b);
+                            CheckStackSize(false, 0);
+                            break;
+                        }
                     case OpCode.XDROP:
                         {
                             int n = (int)context.EvaluationStack.Pop().GetBigInteger();
@@ -423,14 +434,14 @@ namespace Neo.VM
                         }
                     case OpCode.CAT:
                         {
-                            byte[] x2 = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] x1 = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] result;
-                            if (x1.Length == 0)
+                            ReadOnlyMemory<byte> x2 = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x1 = context.EvaluationStack.Pop().GetByteArray();
+                            StackItem result;
+                            if (x1.IsEmpty)
                             {
                                 result = x2;
                             }
-                            else if (x2.Length == 0)
+                            else if (x2.IsEmpty)
                             {
                                 result = x1;
                             }
@@ -438,9 +449,10 @@ namespace Neo.VM
                             {
                                 int length = x1.Length + x2.Length;
                                 if (!CheckMaxItemSize(length)) return false;
-                                result = new byte[length];
-                                Unsafe.MemoryCopy(x1, 0, result, 0, x1.Length);
-                                Unsafe.MemoryCopy(x2, 0, result, x1.Length, x2.Length);
+                                byte[] dstBuffer = new byte[length];
+                                x1.CopyTo(dstBuffer);
+                                x2.CopyTo(dstBuffer.AsMemory(x1.Length));
+                                result = dstBuffer;
                             }
                             context.EvaluationStack.Push(result);
                             CheckStackSize(true, -1);
@@ -450,14 +462,13 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (count < 0) return false;
+                            if (count > MaxItemSize) count = (int)MaxItemSize;
                             int index = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (index < 0) return false;
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
                             if (index > x.Length) return false;
                             if (index + count > x.Length) count = x.Length - index;
-                            byte[] buffer = new byte[count];
-                            Unsafe.MemoryCopy(x, index, buffer, 0, count);
-                            context.EvaluationStack.Push(buffer);
+                            context.EvaluationStack.Push(x.Slice(index, count));
                             CheckStackSize(true, -2);
                             break;
                         }
@@ -465,18 +476,10 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (count < 0) return false;
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
-                            byte[] buffer;
-                            if (count >= x.Length)
-                            {
-                                buffer = x;
-                            }
-                            else
-                            {
-                                buffer = new byte[count];
-                                Unsafe.MemoryCopy(x, 0, buffer, 0, count);
-                            }
-                            context.EvaluationStack.Push(buffer);
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
+                            if (count < x.Length)
+                                x = x[0..count];
+                            context.EvaluationStack.Push(x);
                             CheckStackSize(true, -1);
                             break;
                         }
@@ -484,19 +487,11 @@ namespace Neo.VM
                         {
                             int count = (int)context.EvaluationStack.Pop().GetBigInteger();
                             if (count < 0) return false;
-                            byte[] x = context.EvaluationStack.Pop().GetByteArray();
+                            ReadOnlyMemory<byte> x = context.EvaluationStack.Pop().GetByteArray();
                             if (count > x.Length) return false;
-                            byte[] buffer;
-                            if (count == x.Length)
-                            {
-                                buffer = x;
-                            }
-                            else
-                            {
-                                buffer = new byte[count];
-                                Unsafe.MemoryCopy(x, x.Length - count, buffer, 0, count);
-                            }
-                            context.EvaluationStack.Push(buffer);
+                            if (count < x.Length)
+                                x = x[^count..^0];
+                            context.EvaluationStack.Push(x);
                             CheckStackSize(true, -1);
                             break;
                         }
@@ -860,10 +855,10 @@ namespace Neo.VM
                                     }
                                 default:
                                     {
-                                        byte[] byteArray = item.GetByteArray();
+                                        ReadOnlyMemory<byte> byteArray = item.GetByteArray();
                                         int index = (int)key.GetBigInteger();
                                         if (index < 0 || index >= byteArray.Length) return false;
-                                        context.EvaluationStack.Push((int)byteArray[index]);
+                                        context.EvaluationStack.Push((int)byteArray.Span[index]);
                                         CheckStackSize(true, -1);
                                         break;
                                     }
@@ -904,31 +899,29 @@ namespace Neo.VM
                     case OpCode.NEWARRAY:
                     case OpCode.NEWSTRUCT:
                         {
-                            var item = context.EvaluationStack.Pop();
+                            var item = context.EvaluationStack.Peek();
 
                             if (item is VMArray array)
                             {
                                 // Allow to convert between array and struct
 
-                                VMArray result = null;
-
                                 if (array is Struct)
                                 {
                                     if (instruction.OpCode == OpCode.NEWSTRUCT)
-                                        result = array;
+                                        break;
                                 }
                                 else
                                 {
                                     if (instruction.OpCode == OpCode.NEWARRAY)
-                                        result = array;
+                                        break;
                                 }
 
-                                if (result is null)
-                                    result = instruction.OpCode == OpCode.NEWARRAY
-                                        ? new VMArray(array)
-                                        : new Struct(array);
+                                VMArray result = instruction.OpCode == OpCode.NEWARRAY
+                                    ? new VMArray(array)
+                                    : new Struct(array);
 
-                                context.EvaluationStack.Push(result);
+                                context.EvaluationStack.Set(0, result);
+                                if (!CheckStackSize(false, int.MaxValue)) return false;
                             }
                             else
                             {
@@ -947,8 +940,7 @@ namespace Neo.VM
                                     ? new VMArray(items)
                                     : new Struct(items);
 
-                                context.EvaluationStack.Push(result);
-
+                                context.EvaluationStack.Set(0, result);
                                 if (!CheckStackSize(true, count)) return false;
                             }
                             break;

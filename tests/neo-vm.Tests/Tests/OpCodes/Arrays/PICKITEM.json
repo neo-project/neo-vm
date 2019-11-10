@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Arrays",
     "name": "PICKITEM",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "PICKITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -39,14 +32,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "PICKITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -101,27 +87,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "PICKITEM",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                            {
-                                                "type": "Boolean",
-                                                "value": false
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -178,14 +144,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "PICKITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -242,21 +201,14 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "PICKITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
         },
         {
             "name": "Real test [Array]",
-            "script": "0x53C56B6A0051C46A5152C46A5253C46C52C3",
+            "script": "0x53C56B6D0051C46D5152C46D5253C46C52C3",
             "steps":
             [
                 {
@@ -362,7 +314,7 @@
         },
         {
             "name": "Real test [Struct]",
-            "script": "0x53C66B6A0051C46A5152C46A5253C46C52C3",
+            "script": "0x53C66B6D0051C46D5152C46D5253C46C52C3",
             "steps":
             [
                 {
@@ -507,14 +459,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "PICKITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -560,14 +505,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "PICKITEM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

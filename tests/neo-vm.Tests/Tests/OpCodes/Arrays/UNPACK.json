@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Arrays",
     "name": "UNPACK",
     "tests":
@@ -16,14 +16,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "UNPACK"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -40,14 +33,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "UNPACK"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

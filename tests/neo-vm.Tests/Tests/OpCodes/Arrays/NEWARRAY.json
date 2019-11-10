@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Arrays",
     "name": "NEWARRAY",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "NEWARRAY"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -40,14 +33,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "NEWARRAY"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -65,14 +51,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "NEWARRAY"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

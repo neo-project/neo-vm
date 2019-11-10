@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Control",
     "name": "SYSCALL",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "SYSCALL"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -39,14 +32,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "SYSCALL"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -112,14 +98,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "SYSCALL"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -136,14 +115,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "SYSCALL"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -160,14 +132,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "SYSCALL"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

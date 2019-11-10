@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Arrays",
     "name": "REVERSE",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "REVERSE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -40,14 +33,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "REVERSE"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

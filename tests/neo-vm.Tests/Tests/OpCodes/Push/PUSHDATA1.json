@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Push",
     "name": "PUSHDATA1",
     "tests":
@@ -39,14 +39,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "PUSHDATA1"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

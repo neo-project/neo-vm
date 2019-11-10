@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Arrays",
     "name": "APPEND",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "APPEND"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -39,21 +32,14 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "APPEND"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
         },
         {
             "name": "Clone test [Array]",
-            "script": "0x00C57655C86B00C5766AC86A56C86C",
+            "script": "0x00C57655C86B00C5766DC86D56C86C",
             "steps":
             [
                 {
@@ -290,7 +276,7 @@
         },
         {
             "name": "Clone test [Struct]",
-            "script": "0x00C67655C86B00C6766AC86A56C86C",
+            "script": "0x00C67655C86B00C6766DC86D56C86C",
             "steps":
             [
                 {

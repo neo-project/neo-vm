@@ -1,11 +1,11 @@
-﻿{
+{
     "category": "Stack",
     "name": "DUPFROMALTSTACKBOTTOM",
     "tests":
     [
         {
             "name": "Without push",
-            "script": "0x69",
+            "script": "0x6E",
             "steps":
             [
                 {
@@ -15,21 +15,14 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "DUPFROMALTSTACKBOTTOM"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
         },
         {
             "name": "Without push in alt stack",
-            "script": "0x5569",
+            "script": "0x556E",
             "steps":
             [
                 {
@@ -63,28 +56,14 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "DUPFROMALTSTACKBOTTOM",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
         },
         {
             "name": "Real test",
-            "script": "0x5152536B6B6B69",
+            "script": "0x5152536B6B6B6E",
             "steps":
             [
                 {

@@ -1,4 +1,4 @@
-﻿{
+{
     "category": "Numeric",
     "name": "SIGN",
     "tests":
@@ -15,14 +15,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "SIGN"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -282,14 +275,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "SIGN"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -333,14 +319,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "SIGN"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -384,14 +363,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "SIGN"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
@@ -576,14 +548,7 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "SIGN"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]

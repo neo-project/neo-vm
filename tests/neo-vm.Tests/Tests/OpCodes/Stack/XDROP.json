@@ -1,11 +1,11 @@
-﻿{
+{
     "category": "Stack",
     "name": "XDROP",
     "tests":
     [
         {
             "name": "Without push",
-            "script": "0x6D",
+            "script": "0x71",
             "steps":
             [
                 {
@@ -15,21 +15,14 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "XDROP"
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
         },
         {
             "name": "Overflow drop",
-            "script": "0x535251536D",
+            "script": "0x5352515371",
             "steps":
             [
                 {
@@ -78,36 +71,14 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "XDROP",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 3
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
         },
         {
             "name": "Wrong index type [Map]",
-            "script": "0x535251C76D",
+            "script": "0x535251C771",
             "steps":
             [
                 {
@@ -159,36 +130,14 @@
                     ],
                     "result":
                     {
-                        "state": "Fault",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "XDROP",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 3
-                                    }
-                                ]
-                            }
-                        ]
+                        "state": "Fault"
                     }
                 }
             ]
         },
         {
             "name": "Real test",
-            "script": "0x535251516D",
+            "script": "0x5352515171",
             "steps":
             [
                 {
