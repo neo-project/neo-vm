@@ -1,4 +1,4 @@
-﻿using Neo.VM.Types;
+using Neo.VM.Types;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1079,9 +1079,9 @@ namespace Neo.VM
             InvocationStack.Push(context);
         }
 
-        public ExecutionContext LoadScript(byte[] script, int rvcount = -1)
+        public ExecutionContext LoadScript(Script script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(new Script(script), CurrentContext?.Script, rvcount);
+            ExecutionContext context = new ExecutionContext(script, CurrentContext?.Script, rvcount);
             LoadContext(context);
             return context;
         }
