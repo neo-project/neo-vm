@@ -57,5 +57,6 @@ namespace Neo.VM
         }
 
         public static implicit operator byte[](Script script) => script._value;
+        public static implicit operator Script(byte[] script) => new Script(script);
     }
 }
