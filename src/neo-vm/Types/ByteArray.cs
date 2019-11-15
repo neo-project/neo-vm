@@ -17,7 +17,7 @@ namespace Neo.VM.Types
         {
             if (ReferenceEquals(this, other)) return true;
             if (other is null) return false;
-            ReadOnlyMemory<byte> bytes_other;
+            ReadOnlySpan<byte> bytes_other;
             try
             {
                 bytes_other = other.GetByteArray();
@@ -26,7 +26,7 @@ namespace Neo.VM.Types
             {
                 return false;
             }
-            return Unsafe.MemoryEquals(value.Span, bytes_other.Span);
+            return Unsafe.MemoryEquals(value.Span, bytes_other);
         }
 
         public override bool GetBoolean()
@@ -36,7 +36,12 @@ namespace Neo.VM.Types
             return Unsafe.NotZero(value.Span);
         }
 
-        public override ReadOnlyMemory<byte> GetByteArray()
+        public override ReadOnlySpan<byte> GetByteArray()
+        {
+            return value.Span;
+        }
+
+        internal override ReadOnlyMemory<byte> ToMemory()
         {
             return value;
         }

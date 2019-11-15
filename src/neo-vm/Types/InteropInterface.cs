@@ -5,12 +5,17 @@ namespace Neo.VM.Types
 {
     public abstract class InteropInterface : StackItem
     {
-        public override ReadOnlyMemory<byte> GetByteArray()
+        public override ReadOnlySpan<byte> GetByteArray()
         {
             throw new NotSupportedException();
         }
 
         public abstract T GetInterface<T>() where T : class;
+
+        internal override ReadOnlyMemory<byte> ToMemory()
+        {
+            throw new NotSupportedException();
+        }
     }
 
     [DebuggerDisplay("Type={GetType().Name}, Value={_object}")]

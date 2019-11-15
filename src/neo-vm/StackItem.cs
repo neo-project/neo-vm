@@ -34,12 +34,12 @@ namespace Neo.VM
 
         public virtual BigInteger GetBigInteger()
         {
-            return new BigInteger(GetByteArray().Span);
+            return new BigInteger(GetByteArray());
         }
 
         public abstract bool GetBoolean();
 
-        public abstract ReadOnlyMemory<byte> GetByteArray();
+        public abstract ReadOnlySpan<byte> GetByteArray();
 
         public virtual int GetByteLength()
         {
@@ -51,7 +51,7 @@ namespace Neo.VM
             unchecked
             {
                 int hash = 17;
-                foreach (byte element in GetByteArray().Span)
+                foreach (byte element in GetByteArray())
                     hash = hash * 31 + element;
                 return hash;
             }
@@ -59,8 +59,10 @@ namespace Neo.VM
 
         public virtual string GetString()
         {
-            return Encoding.UTF8.GetString(GetByteArray().Span);
+            return Encoding.UTF8.GetString(GetByteArray());
         }
+
+        internal abstract ReadOnlyMemory<byte> ToMemory();
 
         public static implicit operator StackItem(int value)
         {
