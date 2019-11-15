@@ -1,5 +1,3 @@
-using System;
-
 namespace Neo.VM.Types
 {
     public class Null : StackItem
@@ -14,19 +12,9 @@ namespace Neo.VM.Types
             return false;
         }
 
-        public override bool GetBoolean()
+        public override bool ToBoolean()
         {
             return false;
-        }
-
-        public override ReadOnlySpan<byte> GetByteArray()
-        {
-            throw new NotSupportedException();
-        }
-
-        internal override ReadOnlyMemory<byte> ToMemory()
-        {
-            throw new NotSupportedException();
         }
     }
 }

@@ -1,12 +1,9 @@
-using Neo.VM.Types;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
-using Array = Neo.VM.Types.Array;
-using Boolean = Neo.VM.Types.Boolean;
 
-namespace Neo.VM
+namespace Neo.VM.Types
 {
     public abstract class StackItem : IEquatable<StackItem>
     {
@@ -32,37 +29,12 @@ namespace Neo.VM
             return new InteropInterface<T>(value);
         }
 
-        public virtual BigInteger GetBigInteger()
-        {
-            return new BigInteger(GetByteArray());
-        }
-
-        public abstract bool GetBoolean();
-
-        public abstract ReadOnlySpan<byte> GetByteArray();
-
-        public virtual int GetByteLength()
-        {
-            return GetByteArray().Length;
-        }
-
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = 17;
-                foreach (byte element in GetByteArray())
-                    hash = hash * 31 + element;
-                return hash;
-            }
+            throw new NotSupportedException();
         }
 
-        public virtual string GetString()
-        {
-            return Encoding.UTF8.GetString(GetByteArray());
-        }
-
-        internal abstract ReadOnlyMemory<byte> ToMemory();
+        public abstract bool ToBoolean();
 
         public static implicit operator StackItem(int value)
         {

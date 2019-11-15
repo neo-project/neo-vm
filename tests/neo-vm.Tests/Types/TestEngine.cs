@@ -1,4 +1,5 @@
 using Neo.VM;
+using Neo.VM.Types;
 
 namespace Neo.Test.Types
 {

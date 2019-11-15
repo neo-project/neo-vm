@@ -96,7 +96,7 @@ namespace Neo.Test
 
                 debugger.Execute();
 
-                Assert.AreEqual(true, engine.ResultStack.Pop().GetBoolean());
+                Assert.AreEqual(true, engine.ResultStack.Pop().ToBoolean());
                 Assert.AreEqual(VMState.HALT, engine.State);
 
                 // Test step over again
@@ -152,7 +152,7 @@ namespace Neo.Test
                 Assert.AreEqual(VMState.BREAK, debugger.StepInto());
                 Assert.AreEqual(VMState.HALT, debugger.StepInto());
 
-                Assert.AreEqual(true, engine.ResultStack.Pop().GetBoolean());
+                Assert.AreEqual(true, engine.ResultStack.Pop().ToBoolean());
                 Assert.AreEqual(VMState.HALT, engine.State);
 
                 // Test step into again
@@ -196,7 +196,7 @@ namespace Neo.Test
 
                 debugger.Execute();
 
-                Assert.AreEqual(true, engine.ResultStack.Pop().GetBoolean());
+                Assert.AreEqual(true, engine.ResultStack.Pop().ToBoolean());
                 Assert.AreEqual(VMState.HALT, engine.State);
             }
         }

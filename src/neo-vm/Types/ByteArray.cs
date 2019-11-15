@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace Neo.VM.Types
 {
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(value.ToArray()).Replace(\"-\", string.Empty)}")]
-    public class ByteArray : StackItem
+    public class ByteArray : PrimitiveType
     {
         private readonly ReadOnlyMemory<byte> value;
 
@@ -13,32 +13,9 @@ namespace Neo.VM.Types
             this.value = value;
         }
 
-        public override bool Equals(StackItem other)
+        public override int GetByteLength()
         {
-            if (ReferenceEquals(this, other)) return true;
-            if (other is null) return false;
-            ReadOnlySpan<byte> bytes_other;
-            try
-            {
-                bytes_other = other.GetByteArray();
-            }
-            catch (NotSupportedException)
-            {
-                return false;
-            }
-            return Unsafe.MemoryEquals(value.Span, bytes_other);
-        }
-
-        public override bool GetBoolean()
-        {
-            if (value.Length > ExecutionEngine.MaxSizeForBigInteger)
-                return true;
-            return Unsafe.NotZero(value.Span);
-        }
-
-        public override ReadOnlySpan<byte> GetByteArray()
-        {
-            return value.Span;
+            return value.Length;
         }
 
         internal override ReadOnlyMemory<byte> ToMemory()

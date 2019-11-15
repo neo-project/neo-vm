@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Neo.VM;
 using Neo.VM.Types;
 using System.Collections.Generic;
 using System.Numerics;
@@ -55,73 +54,65 @@ namespace Neo.Test
             StackItem item = int.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(int.MaxValue), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(int.MaxValue), ((Integer)item).ToBigInteger());
 
             // Unsigned integer
 
             item = uint.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(uint.MaxValue), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(uint.MaxValue), ((Integer)item).ToBigInteger());
 
             // Signed long
 
             item = long.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(long.MaxValue), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(long.MaxValue), ((Integer)item).ToBigInteger());
 
             // Unsigned long
 
             item = ulong.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(ulong.MaxValue), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(ulong.MaxValue), ((Integer)item).ToBigInteger());
 
             // BigInteger
 
             item = BigInteger.MinusOne;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(-1), item.GetBigInteger());
+            Assert.AreEqual(new BigInteger(-1), ((Integer)item).ToBigInteger());
 
             // Boolean
 
             item = true;
 
             Assert.IsInstanceOfType(item, typeof(Boolean));
-            Assert.IsTrue(item.GetBoolean());
+            Assert.IsTrue(item.ToBoolean());
 
             // ByteArray
 
             item = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
 
             Assert.IsInstanceOfType(item, typeof(ByteArray));
-            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, item.GetByteArray().ToArray());
-
-            // String
-
-            item = "NEO - 种智能经济分布式网络";
-
-            Assert.IsInstanceOfType(item, typeof(ByteArray));
-            CollectionAssert.AreEqual(Encoding.UTF8.GetBytes("NEO - 种智能经济分布式网络"), item.GetByteArray().ToArray());
-            Assert.AreEqual("NEO - 种智能经济分布式网络", item.GetString());
+            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, ((ByteArray)item).ToByteArray().ToArray());
 
             // Array
 
             item = new StackItem[] { true, false };
 
             Assert.IsInstanceOfType(item, typeof(Array));
-            Assert.IsTrue(((Array)item)[0].GetBoolean());
-            Assert.IsFalse(((Array)item)[1].GetBoolean());
+            Assert.IsTrue(((Array)item)[0].ToBoolean());
+            Assert.IsFalse(((Array)item)[1].ToBoolean());
 
             // List
 
             item = new List<StackItem>(new StackItem[] { true, false });
 
             Assert.IsInstanceOfType(item, typeof(Array));
-            Assert.IsTrue(((Array)item)[0].GetBoolean());
-            Assert.IsFalse(((Array)item)[1].GetBoolean());
+            Assert.IsTrue(((Array)item)[0].ToBoolean());
+            Assert.IsFalse(((Array)item)[1].ToBoolean());
 
             // Interop
 
