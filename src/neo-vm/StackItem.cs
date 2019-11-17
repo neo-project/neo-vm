@@ -39,7 +39,7 @@ namespace Neo.VM
 
         public abstract bool GetBoolean();
 
-        public abstract byte[] GetByteArray();
+        public abstract ReadOnlySpan<byte> GetByteArray();
 
         public virtual int GetByteLength()
         {
@@ -61,6 +61,8 @@ namespace Neo.VM
         {
             return Encoding.UTF8.GetString(GetByteArray());
         }
+
+        internal abstract ReadOnlyMemory<byte> ToMemory();
 
         public static implicit operator StackItem(int value)
         {
@@ -93,6 +95,11 @@ namespace Neo.VM
         }
 
         public static implicit operator StackItem(byte[] value)
+        {
+            return new ByteArray(value);
+        }
+
+        public static implicit operator StackItem(ReadOnlyMemory<byte> value)
         {
             return new ByteArray(value);
         }

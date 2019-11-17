@@ -3,12 +3,12 @@ using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(value).Replace(\"-\", string.Empty)}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(value.ToArray()).Replace(\"-\", string.Empty)}")]
     public class ByteArray : StackItem
     {
-        private readonly byte[] value;
+        private readonly ReadOnlyMemory<byte> value;
 
-        public ByteArray(byte[] value)
+        public ByteArray(ReadOnlyMemory<byte> value)
         {
             this.value = value;
         }
@@ -17,7 +17,7 @@ namespace Neo.VM.Types
         {
             if (ReferenceEquals(this, other)) return true;
             if (other is null) return false;
-            byte[] bytes_other;
+            ReadOnlySpan<byte> bytes_other;
             try
             {
                 bytes_other = other.GetByteArray();
@@ -26,17 +26,22 @@ namespace Neo.VM.Types
             {
                 return false;
             }
-            return Unsafe.MemoryEquals(value, bytes_other);
+            return Unsafe.MemoryEquals(value.Span, bytes_other);
         }
 
         public override bool GetBoolean()
         {
             if (value.Length > ExecutionEngine.MaxSizeForBigInteger)
                 return true;
-            return Unsafe.NotZero(value);
+            return Unsafe.NotZero(value.Span);
         }
 
-        public override byte[] GetByteArray()
+        public override ReadOnlySpan<byte> GetByteArray()
+        {
+            return value.Span;
+        }
+
+        internal override ReadOnlyMemory<byte> ToMemory()
         {
             return value;
         }

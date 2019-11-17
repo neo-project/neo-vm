@@ -2,8 +2,10 @@ using System;
 
 namespace Neo.VM.Types
 {
-    internal class Null : StackItem
+    public class Null : StackItem
     {
+        internal Null() { }
+
         public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
@@ -17,7 +19,12 @@ namespace Neo.VM.Types
             return false;
         }
 
-        public override byte[] GetByteArray()
+        public override ReadOnlySpan<byte> GetByteArray()
+        {
+            throw new NotSupportedException();
+        }
+
+        internal override ReadOnlyMemory<byte> ToMemory()
         {
             throw new NotSupportedException();
         }
