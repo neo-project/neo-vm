@@ -19,7 +19,12 @@ namespace Neo.VM.Types
             return false;
         }
 
-        public override ReadOnlyMemory<byte> GetByteArray()
+        public override ReadOnlySpan<byte> GetByteArray()
+        {
+            throw new NotSupportedException();
+        }
+
+        internal override ReadOnlyMemory<byte> ToMemory()
         {
             throw new NotSupportedException();
         }

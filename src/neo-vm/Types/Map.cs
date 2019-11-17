@@ -81,7 +81,7 @@ namespace Neo.VM.Types
             return true;
         }
 
-        public override ReadOnlyMemory<byte> GetByteArray()
+        public override ReadOnlySpan<byte> GetByteArray()
         {
             throw new NotSupportedException();
         }
@@ -104,6 +104,11 @@ namespace Neo.VM.Types
         bool ICollection<KeyValuePair<StackItem, StackItem>>.Remove(KeyValuePair<StackItem, StackItem> item)
         {
             return dictionary.Remove(item.Key);
+        }
+
+        internal override ReadOnlyMemory<byte> ToMemory()
+        {
+            throw new NotSupportedException();
         }
 
         public bool TryGetValue(StackItem key, out StackItem value)

@@ -66,7 +66,7 @@ namespace Neo.VM.Types
             return true;
         }
 
-        public override ReadOnlyMemory<byte> GetByteArray()
+        public override ReadOnlySpan<byte> GetByteArray()
         {
             throw new NotSupportedException();
         }
@@ -104,6 +104,11 @@ namespace Neo.VM.Types
         public void Reverse()
         {
             _array.Reverse();
+        }
+
+        internal override ReadOnlyMemory<byte> ToMemory()
+        {
+            throw new NotSupportedException();
         }
     }
 }
