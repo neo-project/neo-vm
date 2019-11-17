@@ -29,10 +29,7 @@ namespace Neo.VM.Types
             return new InteropInterface<T>(value);
         }
 
-        public override int GetHashCode()
-        {
-            throw new NotSupportedException();
-        }
+        public abstract override int GetHashCode();
 
         public abstract bool ToBoolean();
 

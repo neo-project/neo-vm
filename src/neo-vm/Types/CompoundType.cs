@@ -1,3 +1,5 @@
+using System;
+
 namespace Neo.VM.Types
 {
     public abstract class CompoundType : StackItem
@@ -9,6 +11,11 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             return ReferenceEquals(this, other);
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotSupportedException();
         }
 
         public override bool ToBoolean()
