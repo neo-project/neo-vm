@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
@@ -42,6 +43,7 @@ namespace Neo.VM.Types
             return Unsafe.NotZero(value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<byte> ToByteArray()
         {
             return ToMemory().Span;
