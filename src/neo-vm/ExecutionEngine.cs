@@ -1135,8 +1135,8 @@ namespace Neo.VM
                         }
                     case OpCode.KEYS:
                         {
-                            if (!context.EvaluationStack.TryPop<Map>(out var map))
-                                context.EvaluationStack.Push(new VMArray(map.Keys));
+                            if (!context.EvaluationStack.TryPop<Map>(out var map)) return false;
+                            context.EvaluationStack.Push(new VMArray(map.Keys));
                             if (!CheckStackSize(false, map.Count)) return false;
                             break;
                         }
