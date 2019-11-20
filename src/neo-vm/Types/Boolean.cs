@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
@@ -43,6 +44,12 @@ namespace Neo.VM.Types
         internal override ReadOnlyMemory<byte> ToMemory()
         {
             return value ? TRUE : FALSE;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Boolean(bool value)
+        {
+            return new Boolean(value);
         }
     }
 }

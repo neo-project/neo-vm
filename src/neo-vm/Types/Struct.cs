@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
@@ -67,6 +68,18 @@ namespace Neo.VM.Types
                 }
             }
             return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Struct(StackItem[] value)
+        {
+            return new Struct(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Struct(List<StackItem> value)
+        {
+            return new Struct(value);
         }
     }
 }

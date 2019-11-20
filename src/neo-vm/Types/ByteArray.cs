@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Neo.VM.Types
 {
@@ -21,6 +23,24 @@ namespace Neo.VM.Types
         internal override ReadOnlyMemory<byte> ToMemory()
         {
             return value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ByteArray(byte[] value)
+        {
+            return new ByteArray(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ByteArray(ReadOnlyMemory<byte> value)
+        {
+            return new ByteArray(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ByteArray(string value)
+        {
+            return new ByteArray(Encoding.UTF8.GetBytes(value));
         }
     }
 }

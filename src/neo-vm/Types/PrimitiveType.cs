@@ -50,5 +50,59 @@ namespace Neo.VM.Types
         }
 
         internal abstract ReadOnlyMemory<byte> ToMemory();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(int value)
+        {
+            return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(uint value)
+        {
+            return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(long value)
+        {
+            return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(ulong value)
+        {
+            return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(BigInteger value)
+        {
+            return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(bool value)
+        {
+            return (Boolean)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(byte[] value)
+        {
+            return (ByteArray)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(ReadOnlyMemory<byte> value)
+        {
+            return (ByteArray)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(string value)
+        {
+            return (ByteArray)value;
+        }
     }
 }

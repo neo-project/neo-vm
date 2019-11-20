@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
@@ -42,6 +43,7 @@ namespace Neo.VM.Types
             return _object != null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator T(InteropInterface<T> @interface)
         {
             return @interface._object;

@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
@@ -43,6 +44,36 @@ namespace Neo.VM.Types
         internal override ReadOnlyMemory<byte> ToMemory()
         {
             return value.IsZero ? ReadOnlyMemory<byte>.Empty : value.ToByteArray();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Integer(int value)
+        {
+            return (BigInteger)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Integer(uint value)
+        {
+            return (BigInteger)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Integer(long value)
+        {
+            return (BigInteger)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Integer(ulong value)
+        {
+            return (BigInteger)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Integer(BigInteger value)
+        {
+            return new Integer(value);
         }
     }
 }

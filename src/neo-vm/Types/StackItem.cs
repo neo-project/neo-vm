@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
@@ -32,59 +32,70 @@ namespace Neo.VM.Types
 
         public abstract bool ToBoolean();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(int value)
         {
-            return (BigInteger)value;
+            return (Integer)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(uint value)
         {
-            return (BigInteger)value;
+            return (Integer)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(long value)
         {
-            return (BigInteger)value;
+            return (Integer)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(ulong value)
         {
-            return (BigInteger)value;
+            return (Integer)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(BigInteger value)
         {
-            return new Integer(value);
+            return (Integer)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(bool value)
         {
-            return new Boolean(value);
+            return (Boolean)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(byte[] value)
         {
-            return new ByteArray(value);
+            return (ByteArray)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(ReadOnlyMemory<byte> value)
         {
-            return new ByteArray(value);
+            return (ByteArray)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(string value)
         {
-            return new ByteArray(Encoding.UTF8.GetBytes(value));
+            return (ByteArray)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(StackItem[] value)
         {
-            return new Array(value);
+            return (Array)value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(List<StackItem> value)
         {
-            return new Array(value);
+            return (Array)value;
         }
     }
 }

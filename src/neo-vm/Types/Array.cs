@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
@@ -79,6 +80,18 @@ namespace Neo.VM.Types
         public void Reverse()
         {
             _array.Reverse();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Array(StackItem[] value)
+        {
+            return new Array(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Array(List<StackItem> value)
+        {
+            return new Array(value);
         }
     }
 }
