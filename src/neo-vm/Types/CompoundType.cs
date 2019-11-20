@@ -2,16 +2,15 @@ using System;
 
 namespace Neo.VM.Types
 {
-    public class Null : StackItem
+    public abstract class CompoundType : StackItem
     {
-        internal Null() { }
+        public abstract int Count { get; }
+
+        public abstract void Clear();
 
         public override bool Equals(StackItem other)
         {
-            if (ReferenceEquals(this, other)) return true;
-            if (other is null) return true;
-            if (other is Null) return true;
-            return false;
+            return ReferenceEquals(this, other);
         }
 
         public override int GetHashCode()
@@ -21,7 +20,7 @@ namespace Neo.VM.Types
 
         public override bool ToBoolean()
         {
-            return false;
+            return true;
         }
     }
 }

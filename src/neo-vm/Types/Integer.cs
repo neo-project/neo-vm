@@ -5,7 +5,7 @@ using System.Numerics;
 namespace Neo.VM.Types
 {
     [DebuggerDisplay("Type={GetType().Name}, Value={value}")]
-    public class Integer : StackItem
+    public class Integer : PrimitiveType
     {
         private int _length = -1;
         private readonly BigInteger value;
@@ -20,31 +20,7 @@ namespace Neo.VM.Types
             if (ReferenceEquals(this, other)) return true;
             if (other is null) return false;
             if (other is Integer i) return value == i.value;
-            ReadOnlySpan<byte> bytes_other;
-            try
-            {
-                bytes_other = other.GetByteArray();
-            }
-            catch (NotSupportedException)
-            {
-                return false;
-            }
-            return Unsafe.MemoryEquals(GetByteArray(), bytes_other);
-        }
-
-        public override BigInteger GetBigInteger()
-        {
-            return value;
-        }
-
-        public override bool GetBoolean()
-        {
-            return !value.IsZero;
-        }
-
-        public override ReadOnlySpan<byte> GetByteArray()
-        {
-            return value.IsZero ? ReadOnlySpan<byte>.Empty : value.ToByteArray();
+            return base.Equals(other);
         }
 
         public override int GetByteLength()
@@ -52,6 +28,16 @@ namespace Neo.VM.Types
             if (_length == -1)
                 _length = value.GetByteCount();
             return _length;
+        }
+
+        public override BigInteger ToBigInteger()
+        {
+            return value;
+        }
+
+        public override bool ToBoolean()
+        {
+            return !value.IsZero;
         }
 
         internal override ReadOnlyMemory<byte> ToMemory()
