@@ -7,11 +7,9 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Struct : Array
     {
-        public Struct() : this(new List<StackItem>()) { }
+        public Struct() : base() { }
 
-        public Struct(IEnumerable<StackItem> value) : base(value)
-        {
-        }
+        public Struct(IEnumerable<StackItem> value) : base(value) { }
 
         public Struct Clone()
         {
