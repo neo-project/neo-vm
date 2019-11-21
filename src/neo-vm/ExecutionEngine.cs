@@ -1075,8 +1075,8 @@ namespace Neo.VM
                         {
                             StackItem newItem = context.EvaluationStack.Pop();
                             if (newItem is Struct s) newItem = s.Clone();
-                            StackItem arrItem = context.EvaluationStack.Pop();
-                            if (!(arrItem is VMArray array)) return false;
+                            if (!context.EvaluationStack.TryPop(out VMArray array))
+                                return false;
                             if (!CheckArraySize(array.Count + 1)) return false;
                             array.Add(newItem);
                             if (!CheckStackSize(false, int.MaxValue)) return false;
@@ -1084,9 +1084,9 @@ namespace Neo.VM
                         }
                     case OpCode.REVERSE:
                         {
-                            StackItem arrItem = context.EvaluationStack.Pop();
+                            if (!context.EvaluationStack.TryPop(out VMArray array))
+                                return false;
                             CheckStackSize(false, -1);
-                            if (!(arrItem is VMArray array)) return false;
                             array.Reverse();
                             break;
                         }
