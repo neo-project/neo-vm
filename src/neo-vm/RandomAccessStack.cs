@@ -65,20 +65,15 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryPop<TItem>(out TItem item)
+        public bool TryPop<TItem>(out TItem item) where TItem : T
         {
             var index = list.Count - 1;
 
-            if (index >= 0)
+            if (index >= 0 && list[index] is TItem i)
             {
-                T entry = list[index];
                 list.RemoveAt(index);
-
-                if (entry is TItem i)
-                {
-                    item = i;
-                    return true;
-                }
+                item = i;
+                return true;
             }
 
             item = default;
