@@ -15,9 +15,7 @@ jobs:
       with:
         dotnet-version: 3.0.100
     - name: Install dotnet-format
-      run: |
-        dotnet tool install -g dotnet-format
-        dotnet-format --version
+      run: dotnet tool install --tool-path ./ dotnet-format
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Check format
