@@ -9,7 +9,7 @@ jobs:
     steps:
     - name: Chectout
       uses: actions/checkout@v1
-    - run: echo ${{ GITHUB_ACTION }}
+    - run: echo ${GITHUB_ACTION}
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
