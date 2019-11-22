@@ -1,6 +1,6 @@
 name: .NET Core Test and Publish
 
-on: pull_request
+on: push
 
 jobs:
 
