@@ -9,7 +9,7 @@ jobs:
     steps:
     - name: Chectout
       uses: actions/checkout@v1
-    - run: echo ${{ github.ref }}
+    - run: echo ${{ GITHUB_ACTION }}
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -31,7 +31,7 @@ jobs:
         path-to-lcov: ./tests/neo-vm.Tests/coverage.info
 
   publish:
-    if: github.ref == 'master'
+    if: github.ref == 'refs/heads/master'
     needs: test
     runs-on: ubuntu-latest
     steps:
