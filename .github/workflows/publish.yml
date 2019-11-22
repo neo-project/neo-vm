@@ -15,4 +15,4 @@ jobs:
       with:
         dotnet-version: 3.0.100
     - name: Pack with dotnet
-      run: dotnet pack -c Debug --version-suffix CI$(date +%S)
+      run: dotnet pack -c Debug -o out --version-suffix CI$(date +%s)
