@@ -14,14 +14,16 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.0.100
-    - name: Install dotnet-format
-      run: dotnet tool install --tool-path ./ dotnet-format
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Check format
-      run: ./dotnet-format --check --dry-run -v diagnostic
+      run: |
+        dotnet tool install --tool-path ./ dotnet-format
+        ./dotnet-format --check --dry-run -v diagnostic
     - name: Test
-      run: dotnet test
+      run: |
+        find * -name *.csproj | xargs -I % dotnet add % package coverlet.msbuild
+        dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage/lcov
     - name: Coveralls
       uses: coverallsapp/github-action@master
       with:
