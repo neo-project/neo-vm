@@ -20,7 +20,10 @@ namespace Neo.VM.Types
         public override int Count => _array.Count;
         public bool IsReadOnly => false;
 
-        public Array() : this(new List<StackItem>()) { }
+        public Array()
+        {
+            _array = new List<StackItem>();
+        }
 
         public Array(IEnumerable<StackItem> value)
         {
