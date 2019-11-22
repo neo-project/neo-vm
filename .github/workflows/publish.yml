@@ -16,3 +16,7 @@ jobs:
         dotnet-version: 3.0.100
     - name: Pack with dotnet
       run: dotnet pack -c Debug -o out --version-suffix CI$(date +%s)
+    - name: Publish to Github Packages
+      run: |
+        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/neo-project/index.json" -UserName neo-project -Password {{secrets.GITHUB_TOKEN}}
+        nuget push out/*.nupkg -Source "GitHub"
