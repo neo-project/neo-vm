@@ -22,3 +22,5 @@ jobs:
       run: ./dotnet-format --check --dry-run -v diagnostic
     - name: Test
       run: dotnet test
+    - name: Coveralls
+      uses: coverallsapp/github-action@v1.0.1
