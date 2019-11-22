@@ -106,6 +106,17 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void TestTryPopPush()
+        {
+            var stack = CreateOrderedStack(3);
+
+            Assert.IsTrue(stack.TryPop<int>(out var item) && item == 3);
+            Assert.IsTrue(stack.TryPop(out item) && item == 2);
+            Assert.IsTrue(stack.TryPop(out item) && item == 1);
+            Assert.IsFalse(stack.TryPop(out item) && item == 0);
+        }
+
+        [TestMethod]
         public void TestRemove()
         {
             var stack = CreateOrderedStack(4);
