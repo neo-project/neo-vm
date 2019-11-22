@@ -1,6 +1,6 @@
 name: .NET Core Test and Publish
 
-on: push
+on: pull_request
 
 jobs:
 
@@ -9,6 +9,10 @@ jobs:
     steps:
     - name: Chectout
       uses: actions/checkout@v1
+    - run: |
+        echo ${{ github.ref }}
+        echo ${{ github.head_ref }}
+        echo ${{ github.base_ref }}
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
