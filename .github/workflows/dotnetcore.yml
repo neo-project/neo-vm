@@ -17,7 +17,7 @@ jobs:
     - name: Install dotnet-format
       run: |
         dotnet tool install -g dotnet-format
-        export PATH="$PATH:$HOME/.dotnet/tools"
+        dotnet-format --version
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Check format
