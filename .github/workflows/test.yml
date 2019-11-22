@@ -1,6 +1,6 @@
-name: .NET Core
+name: Test
 
-on: [push]
+on: push
 
 jobs:
   test:
