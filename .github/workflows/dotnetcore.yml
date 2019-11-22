@@ -22,7 +22,7 @@ jobs:
         ./dotnet-format --check --dry-run -v diagnostic
     - name: Test
       run: |
-        find * -name *.csproj | xargs -I % dotnet add % package coverlet.msbuild
+        find tests -name *.csproj | xargs -I % dotnet add % package coverlet.msbuild
         dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage/lcov
     - name: Coveralls
       uses: coverallsapp/github-action@master
