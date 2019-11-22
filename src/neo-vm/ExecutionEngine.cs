@@ -345,7 +345,7 @@ namespace Neo.VM
                         }
                     case OpCode.XDROP:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_n))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
                                 return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
@@ -355,7 +355,7 @@ namespace Neo.VM
                         }
                     case OpCode.XSWAP:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_n))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
                                 return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
@@ -368,7 +368,7 @@ namespace Neo.VM
                         }
                     case OpCode.XTUCK:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_n))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
                                 return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n <= 0) return false;
@@ -407,7 +407,7 @@ namespace Neo.VM
                         }
                     case OpCode.PICK:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_n))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
                                 return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
@@ -416,7 +416,7 @@ namespace Neo.VM
                         }
                     case OpCode.ROLL:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_n))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
                                 return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
@@ -443,10 +443,10 @@ namespace Neo.VM
                         }
                     case OpCode.CAT:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             ReadOnlyMemory<byte> x2 = item_x2.ToMemory();
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             ReadOnlyMemory<byte> x1 = item_x1.ToMemory();
                             StackItem result;
@@ -473,16 +473,16 @@ namespace Neo.VM
                         }
                     case OpCode.SUBSTR:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_count))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_count))
                                 return false;
                             int count = (int)item_count.ToBigInteger();
                             if (count < 0) return false;
                             if (count > MaxItemSize) count = (int)MaxItemSize;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_index))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_index))
                                 return false;
                             int index = (int)item_index.ToBigInteger();
                             if (index < 0) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             ReadOnlyMemory<byte> x = item_x.ToMemory();
                             if (index > x.Length) return false;
@@ -493,11 +493,11 @@ namespace Neo.VM
                         }
                     case OpCode.LEFT:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_count))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_count))
                                 return false;
                             int count = (int)item_count.ToBigInteger();
                             if (count < 0) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             ReadOnlyMemory<byte> x = item_x.ToMemory();
                             if (count < x.Length)
@@ -508,11 +508,11 @@ namespace Neo.VM
                         }
                     case OpCode.RIGHT:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_count))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_count))
                                 return false;
                             int count = (int)item_count.ToBigInteger();
                             if (count < 0) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             ReadOnlyMemory<byte> x = item_x.ToMemory();
                             if (count > x.Length) return false;
@@ -524,7 +524,7 @@ namespace Neo.VM
                         }
                     case OpCode.SIZE:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType x))
                                 return false;
                             context.EvaluationStack.Push(x.GetByteLength());
                             break;
@@ -533,7 +533,7 @@ namespace Neo.VM
                     // Bitwise logic
                     case OpCode.INVERT:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -542,11 +542,11 @@ namespace Neo.VM
                         }
                     case OpCode.AND:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -556,11 +556,11 @@ namespace Neo.VM
                         }
                     case OpCode.OR:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -570,11 +570,11 @@ namespace Neo.VM
                         }
                     case OpCode.XOR:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -594,7 +594,7 @@ namespace Neo.VM
                     // Numeric
                     case OpCode.INC:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -605,7 +605,7 @@ namespace Neo.VM
                         }
                     case OpCode.DEC:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -616,7 +616,7 @@ namespace Neo.VM
                         }
                     case OpCode.SIGN:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -625,7 +625,7 @@ namespace Neo.VM
                         }
                     case OpCode.NEGATE:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -634,7 +634,7 @@ namespace Neo.VM
                         }
                     case OpCode.ABS:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -650,7 +650,7 @@ namespace Neo.VM
                         }
                     case OpCode.NZ:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -659,11 +659,11 @@ namespace Neo.VM
                         }
                     case OpCode.ADD:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -675,11 +675,11 @@ namespace Neo.VM
                         }
                     case OpCode.SUB:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -691,11 +691,11 @@ namespace Neo.VM
                         }
                     case OpCode.MUL:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -707,11 +707,11 @@ namespace Neo.VM
                         }
                     case OpCode.DIV:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -721,11 +721,11 @@ namespace Neo.VM
                         }
                     case OpCode.MOD:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -735,13 +735,13 @@ namespace Neo.VM
                         }
                     case OpCode.SHL:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_shift))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_shift))
                                 return false;
                             int shift = (int)item_shift.ToBigInteger();
                             CheckStackSize(true, -1);
                             if (!CheckShift(shift)) return false;
                             if (shift == 0) break;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -752,13 +752,13 @@ namespace Neo.VM
                         }
                     case OpCode.SHR:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_shift))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_shift))
                                 return false;
                             int shift = (int)item_shift.ToBigInteger();
                             CheckStackSize(true, -1);
                             if (!CheckShift(shift)) return false;
                             if (shift == 0) break;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -785,11 +785,11 @@ namespace Neo.VM
                         }
                     case OpCode.NUMEQUAL:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -799,11 +799,11 @@ namespace Neo.VM
                         }
                     case OpCode.NUMNOTEQUAL:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -813,11 +813,11 @@ namespace Neo.VM
                         }
                     case OpCode.LT:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -827,11 +827,11 @@ namespace Neo.VM
                         }
                     case OpCode.GT:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -841,11 +841,11 @@ namespace Neo.VM
                         }
                     case OpCode.LTE:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -855,11 +855,11 @@ namespace Neo.VM
                         }
                     case OpCode.GTE:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -869,11 +869,11 @@ namespace Neo.VM
                         }
                     case OpCode.MIN:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -883,11 +883,11 @@ namespace Neo.VM
                         }
                     case OpCode.MAX:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x2))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
                                 return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x1))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
                                 return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
@@ -897,15 +897,15 @@ namespace Neo.VM
                         }
                     case OpCode.WITHIN:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_b))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_b))
                                 return false;
                             BigInteger b = item_b.ToBigInteger();
                             if (!CheckBigInteger(b)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_a))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_a))
                                 return false;
                             BigInteger a = item_a.ToBigInteger();
                             if (!CheckBigInteger(a)) return false;
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_x))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
                                 return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
@@ -934,7 +934,7 @@ namespace Neo.VM
                         }
                     case OpCode.PACK:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType item_size))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_size))
                                 return false;
                             int size = (int)item_size.ToBigInteger();
                             if (size < 0 || size > context.EvaluationStack.Count || !CheckArraySize(size))
@@ -947,7 +947,7 @@ namespace Neo.VM
                         }
                     case OpCode.UNPACK:
                         {
-                            if (!(context.EvaluationStack.Pop() is VMArray array))
+                            if (!context.EvaluationStack.TryPop(out VMArray array))
                                 return false;
                             for (int i = array.Count - 1; i >= 0; i--)
                                 context.EvaluationStack.Push(array[i]);
@@ -957,7 +957,7 @@ namespace Neo.VM
                         }
                     case OpCode.PICKITEM:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType key))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType key))
                                 return false;
                             switch (context.EvaluationStack.Pop())
                             {
@@ -994,7 +994,7 @@ namespace Neo.VM
                         {
                             StackItem value = context.EvaluationStack.Pop();
                             if (value is Struct s) value = s.Clone();
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType key))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType key))
                                 return false;
                             switch (context.EvaluationStack.Pop())
                             {
@@ -1075,8 +1075,8 @@ namespace Neo.VM
                         {
                             StackItem newItem = context.EvaluationStack.Pop();
                             if (newItem is Struct s) newItem = s.Clone();
-                            StackItem arrItem = context.EvaluationStack.Pop();
-                            if (!(arrItem is VMArray array)) return false;
+                            if (!context.EvaluationStack.TryPop(out VMArray array))
+                                return false;
                             if (!CheckArraySize(array.Count + 1)) return false;
                             array.Add(newItem);
                             if (!CheckStackSize(false, int.MaxValue)) return false;
@@ -1084,15 +1084,15 @@ namespace Neo.VM
                         }
                     case OpCode.REVERSE:
                         {
-                            StackItem arrItem = context.EvaluationStack.Pop();
+                            if (!context.EvaluationStack.TryPop(out VMArray array))
+                                return false;
                             CheckStackSize(false, -1);
-                            if (!(arrItem is VMArray array)) return false;
                             array.Reverse();
                             break;
                         }
                     case OpCode.REMOVE:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType key))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType key))
                                 return false;
                             StackItem value = context.EvaluationStack.Pop();
                             CheckStackSize(false, -2);
@@ -1115,7 +1115,7 @@ namespace Neo.VM
                         }
                     case OpCode.HASKEY:
                         {
-                            if (!(context.EvaluationStack.Pop() is PrimitiveType key))
+                            if (!context.EvaluationStack.TryPop(out PrimitiveType key))
                                 return false;
                             switch (context.EvaluationStack.Pop())
                             {
@@ -1135,7 +1135,7 @@ namespace Neo.VM
                         }
                     case OpCode.KEYS:
                         {
-                            if (!(context.EvaluationStack.Pop() is Map map)) return false;
+                            if (!context.EvaluationStack.TryPop(out Map map)) return false;
                             context.EvaluationStack.Push(new VMArray(map.Keys));
                             if (!CheckStackSize(false, map.Count)) return false;
                             break;
