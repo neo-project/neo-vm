@@ -14,9 +14,13 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.0.100
+    - name: Setup NuGet.exe for use with actions
+      uses: NuGet/setup-nuget@v1
     - name: Pack with dotnet
-      run: dotnet pack -c Debug -o out --version-suffix CI$(date +%s)
+      run: dotnet pack -c Debug -o out --include-source --version-suffix CI$(date +%s)
     - name: Publish to Github Packages
-      run: dotnet nuget push out/*.nupkg -s https://nuget.pkg.github.com/neo-project/index.json -k ${GITHUB_TOKEN}  
+      run: |
+        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/neo-project/index.json" -UserName neo-project -Password ${GITHUB_TOKEN}
+        nuget push out/*.nupkg -Source "GitHub"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
