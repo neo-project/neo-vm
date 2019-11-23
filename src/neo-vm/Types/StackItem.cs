@@ -5,8 +5,11 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
-    public abstract class StackItem : IEquatable<StackItem>
+    public abstract class StackItem : IEquatable<StackItem>, IMemoryItem
     {
+        private static int CurrentHashCode = 0;
+        internal readonly int HashCode = CurrentHashCode++;
+
         public bool IsNull => this is Null;
 
         public static StackItem Null { get; } = new Null();
@@ -28,9 +31,27 @@ namespace Neo.VM.Types
             return new InteropInterface<T>(value);
         }
 
-        public abstract override int GetHashCode();
+        public int GetMemoryHashCode()
+        {
+            return HashCode;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode;
+        }
 
         public abstract bool ToBoolean();
+
+        public virtual void OnAddMemory(ReservedMemory memory)
+        {
+            memory.AllocateMemory();
+        }
+
+        public virtual void OnRemoveFromMemory(ReservedMemory memory)
+        {
+            memory.FreeMemory();
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(int value)
@@ -84,18 +105,6 @@ namespace Neo.VM.Types
         public static implicit operator StackItem(string value)
         {
             return (ByteArray)value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator StackItem(StackItem[] value)
-        {
-            return (Array)value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator StackItem(List<StackItem> value)
-        {
-            return (Array)value;
         }
     }
 }

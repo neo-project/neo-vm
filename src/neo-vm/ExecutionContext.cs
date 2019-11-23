@@ -7,8 +7,11 @@ using System.Runtime.CompilerServices;
 namespace Neo.VM
 {
     [DebuggerDisplay("RVCount={RVCount}, InstructionPointer={InstructionPointer}")]
-    public sealed class ExecutionContext
+    public sealed class ExecutionContext : IMemoryItem
     {
+        private static int CurrentHashCode = 0;
+        internal readonly int HashCode = CurrentHashCode++;
+
         private readonly Dictionary<Type, object> states = new Dictionary<Type, object>();
 
         /// <summary>
@@ -65,8 +68,9 @@ namespace Neo.VM
         /// <param name="script">Script</param>
         /// <param name="callingScript">The calling script</param>
         /// <param name="rvcount">Number of items to be returned</param>
-        internal ExecutionContext(Script script, Script callingScript, int rvcount)
-            : this(script, callingScript, rvcount, new RandomAccessStack<StackItem>(), new RandomAccessStack<StackItem>())
+        /// <param name="memory">Memory</param>
+        internal ExecutionContext(Script script, Script callingScript, int rvcount, ReservedMemory memory)
+            : this(script, callingScript, rvcount, new RandomAccessStack<StackItem>(memory), new RandomAccessStack<StackItem>(memory))
         {
         }
 
@@ -77,6 +81,21 @@ namespace Neo.VM
             this.EvaluationStack = stack;
             this.AltStack = alt;
             this.CallingScript = callingScript;
+        }
+
+        public void OnAddMemory(ReservedMemory memory)
+        {
+            memory.AllocateMemory();
+        }
+
+        public void OnRemoveFromMemory(ReservedMemory memory)
+        {
+            memory.FreeMemory();
+        }
+
+        public int GetMemoryHashCode()
+        {
+            return HashCode;
         }
 
         internal ExecutionContext Clone()

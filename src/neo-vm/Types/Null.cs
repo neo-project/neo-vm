@@ -1,5 +1,3 @@
-using System;
-
 namespace Neo.VM.Types
 {
     public class Null : StackItem
@@ -12,11 +10,6 @@ namespace Neo.VM.Types
             if (other is null) return true;
             if (other is Null) return true;
             return false;
-        }
-
-        public override int GetHashCode()
-        {
-            throw new NotSupportedException();
         }
 
         public override bool ToBoolean()

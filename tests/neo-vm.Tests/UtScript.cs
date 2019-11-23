@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace Neo.Test
@@ -8,6 +9,54 @@ namespace Neo.Test
     [TestClass]
     public class UtScript
     {
+        [TestMethod]
+        public void MaxItemTestOk()
+        {
+            MaxItemTest(false, 1);
+        }
+
+        [TestMethod]
+        public void MaxItemTestFail()
+        {
+            MaxItemTest(true, 1);
+        }
+
+        [TestMethod]
+        public void Bench()
+        {
+            MaxItemTest(false, 1000);
+        }
+
+        public void MaxItemTest(bool error, int iterations = 1)
+        {
+            var script = new ScriptBuilder();
+
+            for (int x = 0; x < iterations; x++)
+            {
+                script.Emit(OpCode.PUSH0);
+                script.Emit(OpCode.NEWARRAY);
+                script.Emit(OpCode.TOALTSTACK);
+
+                for (int y = 0; y < (error ? 1024 : 1023); y++)
+                {
+                    script.Emit(OpCode.DUPFROMALTSTACK);
+                    script.Emit(OpCode.PUSH0);
+                    script.Emit(OpCode.APPEND); // Force stack count
+                }
+
+                script.Emit(OpCode.FROMALTSTACK);
+                script.Emit(OpCode.DROP);
+            }
+
+            Stopwatch sw = Stopwatch.StartNew();
+            var engine = new ExecutionEngine();
+            engine.LoadScript(script.ToArray());
+            Assert.AreEqual(error ? VMState.FAULT : VMState.HALT, engine.Execute());
+
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed);
+        }
+
         [TestMethod]
         public void Conversion()
         {

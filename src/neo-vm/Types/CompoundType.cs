@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -13,11 +12,6 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             return ReferenceEquals(this, other);
-        }
-
-        public override int GetHashCode()
-        {
-            throw new NotSupportedException();
         }
 
         public override bool ToBoolean()

@@ -1,19 +1,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
     [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Struct : Array
     {
-        public Struct() : base() { }
+        public Struct(ReservedMemory memory) : base(memory) { }
 
-        public Struct(IEnumerable<StackItem> value) : base(value) { }
+        public Struct(ReservedMemory memory, IEnumerable<StackItem> value) : base(memory, value) { }
 
-        public Struct Clone()
+        public Struct Clone(ReservedMemory memory)
         {
-            Struct @struct = new Struct();
+            Struct @struct = new Struct(memory);
             Queue<Struct> queue = new Queue<Struct>();
             queue.Enqueue(@struct);
             queue.Enqueue(this);
@@ -25,7 +24,7 @@ namespace Neo.VM.Types
                 {
                     if (item is Struct sb)
                     {
-                        Struct sa = new Struct();
+                        Struct sa = new Struct(memory);
                         a.Add(sa);
                         queue.Enqueue(sa);
                         queue.Enqueue(sb);
@@ -66,18 +65,6 @@ namespace Neo.VM.Types
                 }
             }
             return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Struct(StackItem[] value)
-        {
-            return new Struct(value);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Struct(List<StackItem> value)
-        {
-            return new Struct(value);
         }
     }
 }

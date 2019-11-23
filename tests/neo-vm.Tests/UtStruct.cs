@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Neo.VM;
 using Neo.VM.Types;
 
 namespace Neo.Test
@@ -7,24 +8,26 @@ namespace Neo.Test
     public class UtStruct
     {
         private readonly Struct @struct;
+        private readonly ReservedMemory memory;
 
         public UtStruct()
         {
-            @struct = new Struct { 1 };
-            for (int i = 0; i < 20000; i++)
-                @struct = new Struct { @struct };
+            memory = new ReservedMemory(200_000);
+            @struct = new Struct(memory) { 1 };
+            for (int i = 0; i < 20_000; i++)
+                @struct = new Struct(memory) { @struct };
         }
 
         [TestMethod]
         public void Clone()
         {
-            Struct s1 = new Struct { 1, new Struct { 2 } };
-            Struct s2 = s1.Clone();
+            Struct s1 = new Struct(memory) { 1, new Struct(memory) { 2 } };
+            Struct s2 = s1.Clone(memory);
             s1[0] = 3;
             Assert.AreEqual(1, s2[0]);
             ((Struct)s1[1])[0] = 3;
             Assert.AreEqual(2, ((Struct)s2[1])[0]);
-            @struct.Clone();
+            @struct.Clone(memory);
         }
 
         [TestMethod]
@@ -32,12 +35,12 @@ namespace Neo.Test
         public void Equals()
 #pragma warning restore xUnit1024 // Test methods cannot have overloads
         {
-            Struct s1 = new Struct { 1, new Struct { 2 } };
-            Struct s2 = new Struct { 1, new Struct { 2 } };
+            Struct s1 = new Struct(memory) { 1, new Struct(memory) { 2 } };
+            Struct s2 = new Struct(memory) { 1, new Struct(memory) { 2 } };
             Assert.IsTrue(s1.Equals(s2));
-            Struct s3 = new Struct { 1, new Struct { 3 } };
+            Struct s3 = new Struct(memory) { 1, new Struct(memory) { 3 } };
             Assert.IsFalse(s1.Equals(s3));
-            Assert.IsTrue(@struct.Equals(@struct.Clone()));
+            Assert.IsTrue(@struct.Equals(@struct.Clone(memory)));
         }
     }
 }

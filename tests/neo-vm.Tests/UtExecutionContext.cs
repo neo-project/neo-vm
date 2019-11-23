@@ -9,7 +9,7 @@ namespace Neo.Test
         [TestMethod]
         public void StateTest()
         {
-            var context = new ExecutionContext(null, null, 0);
+            var context = new ExecutionContext(null, null, 0, new ReservedMemory());
 
             Assert.IsFalse(context.TryGetState<int>(out var i));
             context.SetState(5);

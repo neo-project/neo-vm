@@ -8,6 +8,7 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Map : CompoundType, IDictionary<PrimitiveType, StackItem>
     {
+        private readonly ReservedMemory _memory;
         private readonly Dictionary<PrimitiveType, StackItem> dictionary;
 
         public StackItem this[PrimitiveType key]
@@ -15,7 +16,19 @@ namespace Neo.VM.Types
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => dictionary[key];
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set => dictionary[key] = value;
+            set
+            {
+                if (dictionary.TryGetValue(key, out var before))
+                {
+                    _memory.Remove(before);
+                }
+                else
+                {
+                    _memory.Add(key);
+                }
+                _memory.Add(value);
+                dictionary[key] = value;
+            }
         }
 
         public ICollection<PrimitiveType> Keys => dictionary.Keys;
@@ -23,25 +36,37 @@ namespace Neo.VM.Types
         public override int Count => dictionary.Count;
         public bool IsReadOnly => false;
 
-        public Map() : this(new Dictionary<PrimitiveType, StackItem>()) { }
-
-        public Map(Dictionary<PrimitiveType, StackItem> value)
+        public Map(ReservedMemory memory)
         {
+            _memory = memory;
+            dictionary = new Dictionary<PrimitiveType, StackItem>();
+        }
+
+        public Map(ReservedMemory memory, Dictionary<PrimitiveType, StackItem> value)
+        {
+            _memory = memory;
             dictionary = value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(PrimitiveType key, StackItem value)
         {
+            _memory.Add(key);
+            _memory.Add(value);
+
             dictionary.Add(key, value);
         }
 
         void ICollection<KeyValuePair<PrimitiveType, StackItem>>.Add(KeyValuePair<PrimitiveType, StackItem> item)
         {
-            dictionary.Add(item.Key, item.Value);
+            Add(item.Key, item.Value);
         }
 
         public override void Clear()
         {
+            _memory.RemoveRange(Keys);
+            _memory.RemoveRange(Values);
+
             dictionary.Clear();
         }
 
@@ -73,17 +98,47 @@ namespace Neo.VM.Types
 
         public bool Remove(PrimitiveType key)
         {
-            return dictionary.Remove(key);
+            if (dictionary.TryGetValue(key, out var value))
+            {
+                _memory.Remove(key);
+                _memory.Remove(value);
+                dictionary.Remove(key);
+                return true;
+            }
+
+            return false;
         }
 
         bool ICollection<KeyValuePair<PrimitiveType, StackItem>>.Remove(KeyValuePair<PrimitiveType, StackItem> item)
         {
-            return dictionary.Remove(item.Key);
+            return Remove(item.Key);
         }
 
         public bool TryGetValue(PrimitiveType key, out StackItem value)
         {
             return dictionary.TryGetValue(key, out value);
+        }
+
+        public override void OnAddMemory(ReservedMemory memory)
+        {
+            memory.AllocateMemory();
+
+            foreach (var key in this)
+            {
+                memory.Add(key.Key);
+                memory.Add(key.Value);
+            }
+        }
+
+        public override void OnRemoveFromMemory(ReservedMemory memory)
+        {
+            memory.FreeMemory();
+
+            foreach (var key in this)
+            {
+                memory.Remove(key.Key);
+                memory.Remove(key.Value);
+            }
         }
     }
 }

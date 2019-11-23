@@ -9,24 +9,43 @@ namespace Neo.VM
 {
     [DebuggerDisplay("Count={Count}")]
     public class RandomAccessStack<T> : IReadOnlyCollection<T>
+        where T : IMemoryItem
     {
         private readonly List<T> list = new List<T>();
+        private readonly ReservedMemory _memory;
 
-        public int Count => list.Count;
+        public RandomAccessStack(ReservedMemory memory)
+        {
+            _memory = memory;
+        }
+
+        public int Count
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { return list.Count; }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
+            _memory.RemoveRange(list);
             list.Clear();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(RandomAccessStack<T> stack, int count = -1)
         {
             if (count == 0) return;
             if (count == -1)
+            {
+                stack._memory.AddRange(list);
                 stack.list.AddRange(list);
+            }
             else
+            {
+                stack._memory.AddRange(list.Skip(list.Count - count));
                 stack.list.AddRange(list.Skip(list.Count - count));
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -41,12 +60,15 @@ namespace Neo.VM
             return list.GetEnumerator();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Insert(int index, T item)
         {
             if (index > list.Count) throw new InvalidOperationException();
+            _memory.Add(item);
             list.Insert(list.Count - index, item);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Peek(int index = 0)
         {
             if (index >= list.Count) throw new InvalidOperationException();
@@ -55,7 +77,7 @@ namespace Neo.VM
                 index += list.Count;
                 if (index < 0) throw new InvalidOperationException();
             }
-            return list[(list.Count - index - 1)];
+            return list[list.Count - index - 1];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -73,6 +95,7 @@ namespace Neo.VM
             {
                 item = list[index];
                 list.RemoveAt(index);
+                _memory.Remove(item);
                 return true;
             }
 
@@ -89,6 +112,7 @@ namespace Neo.VM
             {
                 item = i;
                 list.RemoveAt(index);
+                _memory.Remove(i);
                 return true;
             }
 
@@ -99,9 +123,11 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(T item)
         {
+            _memory.Add(item);
             list.Add(item);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Remove(int index)
         {
             if (index >= list.Count) throw new InvalidOperationException();
@@ -113,9 +139,11 @@ namespace Neo.VM
             index = list.Count - index - 1;
             T item = list[index];
             list.RemoveAt(index);
+            _memory.Remove(item);
             return item;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(int index, T item)
         {
             if (index >= list.Count) throw new InvalidOperationException();
@@ -124,7 +152,9 @@ namespace Neo.VM
                 index += list.Count;
                 if (index < 0) throw new InvalidOperationException();
             }
-            list[(list.Count - index - 1)] = item;
+            _memory.Remove(list[list.Count - index - 1]);
+            _memory.Add(item);
+            list[list.Count - index - 1] = item;
         }
     }
 }
