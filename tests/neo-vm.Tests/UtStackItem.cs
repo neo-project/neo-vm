@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Neo.VM;
 using Neo.VM.Types;
 using System.Collections.Generic;
 using System.Numerics;
@@ -8,6 +9,22 @@ namespace Neo.Test
     [TestClass]
     public class UtStackItem
     {
+        [TestMethod]
+        public void CircularRecursionTest()
+        {
+            var memory = new ReservedMemory();
+            var stack = new RandomAccessStack<StackItem>(memory);
+
+            var array = new Array(memory);
+            stack.Push(array);
+
+            array.Add(array);
+            array.Add(array);
+
+            Assert.AreEqual(2, array.Count);
+            Assert.AreEqual(1, stack.Count);
+        }
+
         [TestMethod]
         public void HashCodeTest()
         {
