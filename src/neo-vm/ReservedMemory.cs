@@ -8,29 +8,16 @@ namespace Neo.VM
     [DebuggerDisplay("Reserved={Reserved}, Used={Used}, Free={Free}")]
     public class ReservedMemory
     {
-        [DebuggerDisplay("Item={Item}, Count={Count}")]
-        class Entry
+        class ReferenceEqualsComparer : IEqualityComparer<IMemoryItem>
         {
-            public readonly IMemoryItem Item;
-            public int Count;
-
-            public Entry(IMemoryItem item)
-            {
-                Item = item;
-                Count = 1;
-            }
-        }
-
-        class ReferenceEqualsComparer : IEqualityComparer<Entry>
-        {
-            public bool Equals(Entry x, Entry y) => ReferenceEquals(x.Item, y.Item);
-            public int GetHashCode(Entry obj) => obj.Item.GetMemoryHashCode();
+            public bool Equals(IMemoryItem x, IMemoryItem y) => ReferenceEquals(x, y);
+            public int GetHashCode(IMemoryItem obj) => obj.GetMemoryHashCode();
         }
 
         /// <summary>
         /// Entries
         /// </summary>
-        private readonly HashSet<Entry> _entries = new HashSet<Entry>(new ReferenceEqualsComparer());
+        private readonly IDictionary<IMemoryItem, int> _entries = new Dictionary<IMemoryItem, int>(new ReferenceEqualsComparer());
 
         /// <summary>
         /// Free memory
@@ -87,15 +74,13 @@ namespace Neo.VM
         /// <param name="item">Item</param>
         public void Add(IMemoryItem item)
         {
-            var entry = new Entry(item);
-
-            if (_entries.TryGetValue(entry, out var actual))
+            if (_entries.TryGetValue(item, out var actual))
             {
-                actual.Count++;
+                _entries[item] = actual + 1;
             }
             else
             {
-                _entries.Add(entry);
+                _entries.Add(item, 1);
                 item.OnAddMemory(this);
             }
         }
@@ -106,16 +91,16 @@ namespace Neo.VM
         /// <param name="item">Item</param>
         public void Remove(IMemoryItem item)
         {
-            var entry = new Entry(item);
-
-            if (_entries.TryGetValue(entry, out var actual))
+            if (_entries.TryGetValue(item, out var actual))
             {
-                actual.Count--;
-
-                if (actual.Count <= 0)
+                if (actual <= 1)
                 {
-                    _entries.Remove(actual);
+                    _entries.Remove(item);
                     item.OnRemoveFromMemory(this);
+                }
+                else
+                {
+                    _entries[item] = actual - 1;
                 }
             }
             else
