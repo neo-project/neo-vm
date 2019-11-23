@@ -57,8 +57,8 @@ namespace Neo.VM.Types
 
         public override void Clear()
         {
-            _array.Clear();
             _memory.RemoveRange(_array);
+            _array.Clear();
         }
 
         public bool Contains(StackItem item)
