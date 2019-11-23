@@ -1,21 +1,17 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
     public abstract class InteropInterface : StackItem
     {
-        public override ReadOnlySpan<byte> GetByteArray()
+        public override int GetHashCode()
         {
             throw new NotSupportedException();
         }
 
         public abstract T GetInterface<T>() where T : class;
-
-        internal override ReadOnlyMemory<byte> ToMemory()
-        {
-            throw new NotSupportedException();
-        }
     }
 
     [DebuggerDisplay("Type={GetType().Name}, Value={_object}")]
@@ -37,16 +33,17 @@ namespace Neo.VM.Types
             return _object.Equals(i._object);
         }
 
-        public override bool GetBoolean()
-        {
-            return _object != null;
-        }
-
         public override I GetInterface<I>()
         {
             return _object as I;
         }
 
+        public override bool ToBoolean()
+        {
+            return _object != null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator T(InteropInterface<T> @interface)
         {
             return @interface._object;

@@ -1,10 +1,12 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Neo.VM.Types
 {
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(value.ToArray()).Replace(\"-\", string.Empty)}")]
-    public class ByteArray : StackItem
+    public class ByteArray : PrimitiveType
     {
         private readonly ReadOnlyMemory<byte> value;
 
@@ -13,37 +15,32 @@ namespace Neo.VM.Types
             this.value = value;
         }
 
-        public override bool Equals(StackItem other)
+        public override int GetByteLength()
         {
-            if (ReferenceEquals(this, other)) return true;
-            if (other is null) return false;
-            ReadOnlySpan<byte> bytes_other;
-            try
-            {
-                bytes_other = other.GetByteArray();
-            }
-            catch (NotSupportedException)
-            {
-                return false;
-            }
-            return Unsafe.MemoryEquals(value.Span, bytes_other);
-        }
-
-        public override bool GetBoolean()
-        {
-            if (value.Length > ExecutionEngine.MaxSizeForBigInteger)
-                return true;
-            return Unsafe.NotZero(value.Span);
-        }
-
-        public override ReadOnlySpan<byte> GetByteArray()
-        {
-            return value.Span;
+            return value.Length;
         }
 
         internal override ReadOnlyMemory<byte> ToMemory()
         {
             return value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ByteArray(byte[] value)
+        {
+            return new ByteArray(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ByteArray(ReadOnlyMemory<byte> value)
+        {
+            return new ByteArray(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ByteArray(string value)
+        {
+            return new ByteArray(Encoding.UTF8.GetBytes(value));
         }
     }
 }

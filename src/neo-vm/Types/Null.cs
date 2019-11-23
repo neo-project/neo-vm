@@ -14,19 +14,14 @@ namespace Neo.VM.Types
             return false;
         }
 
-        public override bool GetBoolean()
+        public override int GetHashCode()
+        {
+            throw new NotSupportedException();
+        }
+
+        public override bool ToBoolean()
         {
             return false;
-        }
-
-        public override ReadOnlySpan<byte> GetByteArray()
-        {
-            throw new NotSupportedException();
-        }
-
-        internal override ReadOnlyMemory<byte> ToMemory()
-        {
-            throw new NotSupportedException();
         }
     }
 }

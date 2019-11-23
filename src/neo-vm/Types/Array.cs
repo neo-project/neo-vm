@@ -1,13 +1,13 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
     [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
-    public class Array : StackItem, ICollection, IList<StackItem>
+    public class Array : CompoundType, IList<StackItem>
     {
         protected readonly List<StackItem> _array;
 
@@ -17,13 +17,13 @@ namespace Neo.VM.Types
             set => _array[index] = value;
         }
 
-        public int Count => _array.Count;
+        public override int Count => _array.Count;
         public bool IsReadOnly => false;
 
-        bool ICollection.IsSynchronized => false;
-        object ICollection.SyncRoot => _array;
-
-        public Array() : this(new List<StackItem>()) { }
+        public Array()
+        {
+            _array = new List<StackItem>();
+        }
 
         public Array(IEnumerable<StackItem> value)
         {
@@ -35,7 +35,7 @@ namespace Neo.VM.Types
             _array.Add(item);
         }
 
-        public void Clear()
+        public override void Clear()
         {
             _array.Clear();
         }
@@ -48,27 +48,6 @@ namespace Neo.VM.Types
         void ICollection<StackItem>.CopyTo(StackItem[] array, int arrayIndex)
         {
             _array.CopyTo(array, arrayIndex);
-        }
-
-        void ICollection.CopyTo(System.Array array, int index)
-        {
-            foreach (StackItem item in _array)
-                array.SetValue(item, index++);
-        }
-
-        public override bool Equals(StackItem other)
-        {
-            return ReferenceEquals(this, other);
-        }
-
-        public override bool GetBoolean()
-        {
-            return true;
-        }
-
-        public override ReadOnlySpan<byte> GetByteArray()
-        {
-            throw new NotSupportedException();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -106,9 +85,16 @@ namespace Neo.VM.Types
             _array.Reverse();
         }
 
-        internal override ReadOnlyMemory<byte> ToMemory()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Array(StackItem[] value)
         {
-            throw new NotSupportedException();
+            return new Array(value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Array(List<StackItem> value)
+        {
+            return new Array(value);
         }
     }
 }
