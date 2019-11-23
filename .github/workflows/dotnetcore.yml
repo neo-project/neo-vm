@@ -2,6 +2,8 @@ name: .NET Core Test and Publish
 
 on:
   push:
+    branches: master
+  pull_request:
 
 jobs:
 
@@ -50,7 +52,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   PublishMyGet:
-    if: true || github.ref == 'refs/heads/master' && startsWith(github.repository, 'neo-project/')
+    if: github.ref == 'refs/heads/master' && startsWith(github.repository, 'neo-project/')
     needs: Test
     runs-on: ubuntu-latest
     steps:
