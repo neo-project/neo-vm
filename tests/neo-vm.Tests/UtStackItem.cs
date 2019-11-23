@@ -23,6 +23,7 @@ namespace Neo.Test
 
             Assert.AreEqual(2, array.Count);
             Assert.AreEqual(1, stack.Count);
+            Assert.AreEqual(1, memory.Used);
         }
 
         [TestMethod]
