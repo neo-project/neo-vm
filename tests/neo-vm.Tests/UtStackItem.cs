@@ -10,7 +10,7 @@ namespace Neo.Test
     public class UtStackItem
     {
         [TestMethod]
-        public void CircularRecursionTest()
+        public void CircularRecursionArrayTest()
         {
             var memory = new ReservedMemory();
             var stack = new RandomAccessStack<StackItem>(memory);
@@ -24,6 +24,12 @@ namespace Neo.Test
             Assert.AreEqual(2, array.Count);
             Assert.AreEqual(1, stack.Count);
             Assert.AreEqual(1, memory.Used);
+
+            array.Add(true);
+
+            Assert.AreEqual(3, array.Count);
+            Assert.AreEqual(1, stack.Count);
+            Assert.AreEqual(2, memory.Used);
         }
 
         [TestMethod]
