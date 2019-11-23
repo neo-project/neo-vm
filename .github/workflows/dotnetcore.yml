@@ -2,8 +2,6 @@ name: .NET Core Test and Publish
 
 on:
   push:
-    branches: master
-  pull_request:
 
 jobs:
 
@@ -50,3 +48,21 @@ jobs:
         nuget push out/*.nupkg -Source "GitHub"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  Publish To MyGet:
+    if: true || github.ref == 'refs/heads/master' && startsWith(github.repository, 'neo-project/')
+    needs: Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Chectout
+      uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+    - name: Pack with dotnet
+      run: git rev-list --count HEAD |xargs printf "CI%05d" |xargs dotnet pack -c Debug -o out --include-source --version-suffix
+    - name: Publish to MyGet
+      run: dotnet nuget push out/*.nupkg -s https://www.myget.org/F/neo/ -ss https://www.myget.org/F/neo/symbols/ -k ${MYGET_TOKEN} -sk ${MYGET_TOKEN}
+      env:
+        MYGET_TOKEN: ${{ secrets.MYGET_TOKEN }}
