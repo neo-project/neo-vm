@@ -11,9 +11,8 @@
   <a href="https://github.com/neo-project/neo-vm/releases">
     <img src="https://badge.fury.io/gh/neo-project%2Fneo-vm.svg" alt="Current neo-vm version.">
   </a>
-  <a href='https://coveralls.io/github/neo-project/neo-vm?branch=master'>
-    <img src='https://codecov.io/github/neo-project/neo-vm/branch/master/graph/badge.svg' 
-    alt='Current Coverage Status.' />
+  <a href='https://coveralls.io/github/neo-project/neo-vm'>
+    <img src='https://coveralls.io/repos/github/neo-project/neo-vm/badge.svg' alt='Coverage Status' />
   </a>
   <a href="https://github.com/neo-project/neo-vm">
     <img src="https://tokei.rs/b1/github/neo-project/neo-vm?category=lines" alt="total lines.">
