@@ -18,7 +18,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${DOTNET_VERSION}
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Check format
       run: |
         dotnet tool install --tool-path ./ dotnet-format
@@ -42,7 +42,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${DOTNET_VERSION}
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Setup NuGet.exe for use with actions
       uses: NuGet/setup-nuget@v1
     - name: Pack with dotnet
@@ -64,7 +64,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${DOTNET_VERSION}
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Pack with dotnet
       run: git rev-list --count HEAD |xargs printf "CI%05d" |xargs dotnet pack -c Debug -o out --include-source --version-suffix
     - name: Publish to MyGet
