@@ -29,6 +29,7 @@ namespace Neo.Test
 
         public void MaxItemTest(bool error, int iterations = 1)
         {
+            var items = 1000;
             var script = new ScriptBuilder();
 
             for (int x = 0; x < iterations; x++)
@@ -37,7 +38,7 @@ namespace Neo.Test
                 script.Emit(OpCode.NEWARRAY);
                 script.Emit(OpCode.TOALTSTACK);
 
-                for (int y = 0; y < (error ? 1024 : 1023); y++)
+                for (int y = 0; y < (error ? items : items - 1); y++)
                 {
                     script.Emit(OpCode.DUPFROMALTSTACK);
                     script.Emit(OpCode.PUSH0);
@@ -49,11 +50,14 @@ namespace Neo.Test
             }
 
             Stopwatch sw = Stopwatch.StartNew();
+
             var engine = new ExecutionEngine();
+            engine.StackItemMemory.Reserved = items;
+
             engine.LoadScript(script.ToArray());
             Assert.AreEqual(error ? VMState.FAULT : VMState.HALT, engine.Execute());
-
             sw.Stop();
+
             Console.WriteLine(sw.Elapsed);
         }
 

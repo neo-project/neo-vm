@@ -45,7 +45,7 @@ namespace Neo.VM
         /// <summary>
         /// Reserved
         /// </summary>
-        public readonly int Reserved;
+        public int Reserved { get; internal set; }
 
         /// <summary>
         /// Constructor
