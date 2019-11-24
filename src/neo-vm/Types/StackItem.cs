@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -36,10 +35,7 @@ namespace Neo.VM.Types
             return HashCode;
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode;
-        }
+        public abstract override int GetHashCode();
 
         public abstract bool ToBoolean();
 

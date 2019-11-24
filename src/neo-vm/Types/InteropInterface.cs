@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -5,6 +6,11 @@ namespace Neo.VM.Types
 {
     public abstract class InteropInterface : StackItem
     {
+        public override int GetHashCode()
+        {
+            throw new NotSupportedException();
+        }
+
         public abstract T GetInterface<T>() where T : class;
     }
 
