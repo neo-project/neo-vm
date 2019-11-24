@@ -14,10 +14,12 @@ namespace Neo.VM
             public int GetHashCode(IMemoryItem obj) => RuntimeHelpers.GetHashCode(obj);
         }
 
+        private static readonly ReferenceEqualsComparer _comparer = new ReferenceEqualsComparer();
+
         /// <summary>
         /// Entries
         /// </summary>
-        private readonly IDictionary<IMemoryItem, int> _entries = new Dictionary<IMemoryItem, int>(new ReferenceEqualsComparer());
+        private readonly IDictionary<IMemoryItem, int> _entries = new Dictionary<IMemoryItem, int>(_comparer);
 
         /// <summary>
         /// Free memory
