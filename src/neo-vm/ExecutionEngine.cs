@@ -27,11 +27,6 @@ namespace Neo.VM
         public const int MaxSizeForBigInteger = 32;
 
         /// <summary>
-        /// Set the max Stack Size
-        /// </summary>
-        public virtual uint MaxStackSize => 2 * 1024;
-
-        /// <summary>
         /// Set Max Item Size
         /// </summary>
         public virtual uint MaxItemSize => 1024 * 1024;
