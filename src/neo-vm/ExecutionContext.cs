@@ -9,9 +9,6 @@ namespace Neo.VM
     [DebuggerDisplay("RVCount={RVCount}, InstructionPointer={InstructionPointer}")]
     public sealed class ExecutionContext : IMemoryItem
     {
-        private static int CurrentHashCode = 0;
-        internal readonly int HashCode = CurrentHashCode++;
-
         private readonly Dictionary<Type, object> states = new Dictionary<Type, object>();
 
         /// <summary>
@@ -91,11 +88,6 @@ namespace Neo.VM
         public void OnRemoveFromMemory(ReservedMemory memory)
         {
             memory.FreeMemory();
-        }
-
-        public int GetMemoryHashCode()
-        {
-            return HashCode;
         }
 
         internal ExecutionContext Clone()

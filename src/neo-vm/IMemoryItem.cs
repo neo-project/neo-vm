@@ -3,12 +3,6 @@ namespace Neo.VM
     public interface IMemoryItem
     {
         /// <summary>
-        /// Get memory hash code
-        /// </summary>
-        /// <returns></returns>
-        int GetMemoryHashCode();
-
-        /// <summary>
         /// Is invoked when the item will be added to the memory
         /// </summary>
         /// <param name="memory">Memory</param>

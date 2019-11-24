@@ -6,9 +6,6 @@ namespace Neo.VM.Types
 {
     public abstract class StackItem : IEquatable<StackItem>, IMemoryItem
     {
-        private static int CurrentHashCode = 0;
-        internal readonly int HashCode = CurrentHashCode++;
-
         public bool IsNull => this is Null;
 
         public static StackItem Null { get; } = new Null();
@@ -28,11 +25,6 @@ namespace Neo.VM.Types
         {
             if (value is null) return Null;
             return new InteropInterface<T>(value);
-        }
-
-        public int GetMemoryHashCode()
-        {
-            return HashCode;
         }
 
         public abstract override int GetHashCode();

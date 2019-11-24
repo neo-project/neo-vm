@@ -11,7 +11,7 @@ namespace Neo.VM
         class ReferenceEqualsComparer : IEqualityComparer<IMemoryItem>
         {
             public bool Equals(IMemoryItem x, IMemoryItem y) => ReferenceEquals(x, y);
-            public int GetHashCode(IMemoryItem obj) => obj.GetMemoryHashCode();
+            public int GetHashCode(IMemoryItem obj) => RuntimeHelpers.GetHashCode(obj);
         }
 
         /// <summary>
