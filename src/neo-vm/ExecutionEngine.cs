@@ -827,9 +827,9 @@ namespace Neo.VM
                             int size = (int)item_size.ToBigInteger();
                             if (size < 0 || size > context.EvaluationStack.Count || !CheckArraySize(size))
                                 return false;
-                            List<StackItem> items = new List<StackItem>(size);
+                            StackItem[] items = new StackItem[size];
                             for (int i = 0; i < size; i++)
-                                items.Add(context.EvaluationStack.Pop());
+                                items[i] = context.EvaluationStack.Pop();
                             context.EvaluationStack.Push(new VMArray(StackItemMemory, items));
                             break;
                         }
