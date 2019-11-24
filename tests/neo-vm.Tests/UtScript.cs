@@ -19,7 +19,7 @@ namespace Neo.Test
         [TestMethod]
         public void MaxItemTestFail()
         {
-            //TestWithArray(true, 1);
+            TestWithArray(true, 1);
             TestWithPUSHPOP(true, 1);
         }
 
