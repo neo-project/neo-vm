@@ -17,7 +17,7 @@ namespace Neo.VM
         private static readonly ReferenceEqualsComparer _comparer = new ReferenceEqualsComparer();
 
         /// <summary>
-        /// Entries
+        /// These entries contains the item and the memory counter
         /// </summary>
         private readonly IDictionary<IMemoryItem, int> _entries = new Dictionary<IMemoryItem, int>(_comparer);
 
@@ -78,6 +78,8 @@ namespace Neo.VM
         {
             if (_entries.TryGetValue(item, out var actual))
             {
+                // Increase the counter in one
+
                 _entries[item] = actual + 1;
             }
             else
@@ -102,6 +104,8 @@ namespace Neo.VM
                 }
                 else
                 {
+                    // Decrease the counter in one
+
                     _entries[item] = actual - 1;
                 }
             }
