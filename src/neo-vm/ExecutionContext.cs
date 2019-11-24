@@ -80,11 +80,13 @@ namespace Neo.VM
             this.CallingScript = callingScript;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void OnAddMemory(ReservedMemory memory)
         {
             memory.AllocateMemory();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void OnRemoveFromMemory(ReservedMemory memory)
         {
             memory.FreeMemory();

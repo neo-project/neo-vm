@@ -31,11 +31,13 @@ namespace Neo.VM.Types
 
         public abstract bool ToBoolean();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void OnAddMemory(ReservedMemory memory)
         {
             memory.AllocateMemory();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public virtual void OnRemoveFromMemory(ReservedMemory memory)
         {
             memory.FreeMemory();

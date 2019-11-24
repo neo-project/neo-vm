@@ -71,7 +71,7 @@ namespace Neo.Test
 
         public void TestWithPUSHPOP(bool error, int iterations = 1)
         {
-            var items = 1000;
+            var items = 2048;
             var script = new ScriptBuilder();
 
             for (int y = 0; y < (error ? items + 1 : items - 1); y++)
