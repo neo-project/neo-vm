@@ -12,22 +12,30 @@ namespace Neo.Test
         [TestMethod]
         public void MaxItemTestOk()
         {
-            MaxItemTest(false, 1);
+            TestWithArray(false, 1);
+            TestWithPUSHPOP(false, 1);
         }
 
         [TestMethod]
         public void MaxItemTestFail()
         {
-            MaxItemTest(true, 1);
+            //TestWithArray(true, 1);
+            TestWithPUSHPOP(true, 1);
         }
 
         [TestMethod]
-        public void Bench()
+        public void BenchArray()
         {
-            MaxItemTest(false, 1000);
+            TestWithArray(false, 1000);
         }
 
-        public void MaxItemTest(bool error, int iterations = 1)
+        [TestMethod]
+        public void BenchPushPop()
+        {
+            TestWithPUSHPOP(false, 1000);
+        }
+
+        public void TestWithArray(bool error, int iterations = 1)
         {
             var items = 1000;
             var script = new ScriptBuilder();
@@ -46,6 +54,33 @@ namespace Neo.Test
                 }
 
                 script.Emit(OpCode.FROMALTSTACK);
+                script.Emit(OpCode.DROP);
+            }
+
+            Stopwatch sw = Stopwatch.StartNew();
+
+            var engine = new ExecutionEngine();
+            engine.StackItemMemory.Reserved = items;
+
+            engine.LoadScript(script.ToArray());
+            Assert.AreEqual(error ? VMState.FAULT : VMState.HALT, engine.Execute());
+            sw.Stop();
+
+            Console.WriteLine(sw.Elapsed);
+        }
+
+        public void TestWithPUSHPOP(bool error, int iterations = 1)
+        {
+            var items = 1000;
+            var script = new ScriptBuilder();
+
+            for (int y = 0; y < (error ? items + 1 : items - 1); y++)
+            {
+                script.Emit(OpCode.PUSH0);
+            }
+
+            for (int y = 0; y < (error ? items : items - 1); y++)
+            {
                 script.Emit(OpCode.DROP);
             }
 
