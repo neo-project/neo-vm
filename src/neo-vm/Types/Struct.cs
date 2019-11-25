@@ -11,34 +11,6 @@ namespace Neo.VM.Types
 
         public Struct(IEnumerable<StackItem> value) : base(value) { }
 
-        public Struct Clone()
-        {
-            Struct @struct = new Struct();
-            Queue<Struct> queue = new Queue<Struct>();
-            queue.Enqueue(@struct);
-            queue.Enqueue(this);
-            while (queue.Count > 0)
-            {
-                Struct a = queue.Dequeue();
-                Struct b = queue.Dequeue();
-                foreach (StackItem item in b)
-                {
-                    if (item is Struct sb)
-                    {
-                        Struct sa = new Struct();
-                        a.Add(sa);
-                        queue.Enqueue(sa);
-                        queue.Enqueue(sb);
-                    }
-                    else
-                    {
-                        a.Add(item);
-                    }
-                }
-            }
-            return @struct;
-        }
-
         public override bool Equals(StackItem other)
         {
             if (other is null) return false;

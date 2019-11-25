@@ -110,7 +110,7 @@ namespace Neo.Test
         {
             var stack = CreateOrderedStack(3);
 
-            Assert.IsTrue(stack.TryPop<int>(out var item) && item == 3);
+            Assert.IsTrue(stack.TryPop(out var item) && item == 3);
             Assert.IsTrue(stack.TryPop(out item) && item == 2);
             Assert.IsTrue(stack.TryPop(out item) && item == 1);
             Assert.IsFalse(stack.TryPop(out item) && item == 0);

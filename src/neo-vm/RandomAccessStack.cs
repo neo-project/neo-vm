@@ -15,12 +15,12 @@ namespace Neo.VM
         public int Count => list.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Clear()
+        internal void Clear()
         {
             list.Clear();
         }
 
-        public void CopyTo(RandomAccessStack<T> stack, int count = -1)
+        internal void CopyTo(RandomAccessStack<T> stack, int count = -1)
         {
             if (count == 0) return;
             if (count == -1)
@@ -41,7 +41,7 @@ namespace Neo.VM
             return list.GetEnumerator();
         }
 
-        public void Insert(int index, T item)
+        internal void Insert(int index, T item)
         {
             if (index > list.Count) throw new InvalidOperationException();
             list.Insert(list.Count - index, item);
@@ -59,64 +59,26 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Pop()
+        internal T Pop()
         {
             return Remove(0);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryPop(out T item)
-        {
-            var index = list.Count - 1;
-
-            if (index >= 0)
-            {
-                item = list[index];
-                list.RemoveAt(index);
-                return true;
-            }
-
-            item = default;
-            return false;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryPop<TItem>(out TItem item) where TItem : T
-        {
-            var index = list.Count - 1;
-
-            if (index >= 0 && list[index] is TItem i)
-            {
-                item = i;
-                list.RemoveAt(index);
-                return true;
-            }
-
-            item = default;
-            return false;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Push(T item)
+        internal void Push(T item)
         {
             list.Add(item);
         }
 
-        public T Remove(int index)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal T Remove(int index)
         {
-            if (index >= list.Count) throw new InvalidOperationException();
-            if (index < 0)
-            {
-                index += list.Count;
-                if (index < 0) throw new InvalidOperationException();
-            }
-            index = list.Count - index - 1;
-            T item = list[index];
-            list.RemoveAt(index);
+            if (!TryRemove(index, out T item))
+                throw new InvalidOperationException();
             return item;
         }
 
-        public void Set(int index, T item)
+        internal void Set(int index, T item)
         {
             if (index >= list.Count) throw new InvalidOperationException();
             if (index < 0)
@@ -125,6 +87,34 @@ namespace Neo.VM
                 if (index < 0) throw new InvalidOperationException();
             }
             list[(list.Count - index - 1)] = item;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal bool TryPop(out T item)
+        {
+            return TryRemove(0, out item);
+        }
+
+        internal bool TryRemove(int index, out T item)
+        {
+            if (index >= list.Count)
+            {
+                item = default;
+                return false;
+            }
+            if (index < 0)
+            {
+                index += list.Count;
+                if (index < 0)
+                {
+                    item = default;
+                    return false;
+                }
+            }
+            index = list.Count - index - 1;
+            item = list[index];
+            list.RemoveAt(index);
+            return true;
         }
     }
 }

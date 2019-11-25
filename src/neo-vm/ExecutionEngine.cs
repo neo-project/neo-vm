@@ -1,7 +1,6 @@
 using Neo.VM.Types;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using VMArray = Neo.VM.Types.Array;
@@ -49,8 +48,15 @@ namespace Neo.VM
 
         #endregion
 
+        private class ReferenceTracing
+        {
+            public int StackReferences;
+            public Dictionary<CompoundType, int> ObjectReferences;
+        }
+
+        private readonly Dictionary<CompoundType, ReferenceTracing> reference_tracing = new Dictionary<CompoundType, ReferenceTracing>(ReferenceEqualityComparer.Default);
+        private readonly List<CompoundType> zero_referred = new List<CompoundType>();
         private int stackitem_count = 0;
-        private bool is_stackitem_count_strict = true;
 
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
         public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
@@ -93,75 +99,95 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckShift(int shift) => shift <= Max_SHL_SHR && shift >= Min_SHL_SHR;
 
-        /// <summary>
-        /// Check if the is possible to overflow the MaxStackSize
-        /// </summary>
-        /// <param name="strict">Is stack count strict?</param>
-        /// <param name="count">Stack item count</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool CheckStackSize(bool strict, int count = 1)
+        #endregion
+
+        private void AddReference(StackItem referred, CompoundType parent)
         {
-            is_stackitem_count_strict &= strict;
-            stackitem_count += count;
+            if (!(referred is CompoundType compound)) return;
+            if (!reference_tracing.TryGetValue(compound, out ReferenceTracing tracing))
+            {
+                tracing = new ReferenceTracing();
+                reference_tracing.Add(compound, tracing);
+            }
+            if (tracing.ObjectReferences is null)
+                tracing.ObjectReferences = new Dictionary<CompoundType, int>(ReferenceEqualityComparer.Default);
+            if (tracing.ObjectReferences.TryGetValue(parent, out int count))
+                count++;
+            else
+                count = 1;
+            tracing.ObjectReferences[parent] = count;
+        }
 
-            if (stackitem_count < 0) stackitem_count = int.MaxValue;
-            if (stackitem_count <= MaxStackSize) return true;
-            if (is_stackitem_count_strict) return false;
-
-            // Deep inspect
-
-            stackitem_count = GetItemCount(InvocationStack.Select(p => p.EvaluationStack).Distinct().Concat(InvocationStack.Select(p => p.AltStack).Distinct()).SelectMany(p => p));
-            if (stackitem_count > MaxStackSize) return false;
-            is_stackitem_count_strict = true;
-
+        public bool AppendItem(VMArray array, StackItem item)
+        {
+            if (array.Count >= MaxArraySize) return false;
+            array.Add(item);
+            stackitem_count++;
+            AddReference(item, array);
             return true;
         }
 
-        /// <summary>
-        /// Get item count
-        /// </summary>
-        /// <param name="items">Items</param>
-        /// <returns>Return the number of items</returns>
-        private static int GetItemCount(IEnumerable<StackItem> items)
+        private void CheckZeroReferred()
         {
-            Queue<StackItem> queue = new Queue<StackItem>(items);
-            List<StackItem> counted = new List<StackItem>();
-            int count = 0;
-            while (queue.Count > 0)
+            if (zero_referred.Count == 0) return;
+            HashSet<CompoundType> toBeDestroyed = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
+            foreach (CompoundType compound in zero_referred)
             {
-                StackItem item = queue.Dequeue();
-                count++;
-                switch (item)
+                Queue<CompoundType> toBeChecked = new Queue<CompoundType>();
+                toBeChecked.Enqueue(compound);
+                while (toBeChecked.Count > 0)
                 {
-                    case Types.Array array:
-                        {
-                            if (counted.Any(p => ReferenceEquals(p, array)))
-                                continue;
-                            counted.Add(array);
-                            foreach (StackItem subitem in array)
-                                queue.Enqueue(subitem);
-                            break;
-                        }
-                    case Map map:
-                        {
-                            if (counted.Any(p => ReferenceEquals(p, map)))
-                                continue;
-                            counted.Add(map);
-                            count += map.Count; // Count key items
-                            foreach (StackItem subitem in map.Values)
-                                queue.Enqueue(subitem);
-                            break;
-                        }
+                    CompoundType c = toBeChecked.Dequeue();
+                    ReferenceTracing tracing = reference_tracing[c];
+                    if (tracing.StackReferences > 0) break;
+                    toBeDestroyed.Add(c);
+                    if (tracing.ObjectReferences is null) continue;
+                    foreach (var pair in tracing.ObjectReferences)
+                        if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key))
+                            toBeChecked.Enqueue(pair.Key);
                 }
             }
-            return count;
+            foreach (CompoundType compound in toBeDestroyed)
+            {
+                reference_tracing.Remove(compound);
+                if (compound is Map)
+                    stackitem_count -= compound.Count * 2;
+                else
+                    stackitem_count -= compound.Count;
+            }
+            zero_referred.Clear();
         }
-
-        #endregion
 
         protected virtual void ContextUnloaded(ExecutionContext context)
         {
+        }
+
+        private Struct CreateClonedStruct(Struct s)
+        {
+            Struct result = new Struct();
+            Queue<Struct> queue = new Queue<Struct>();
+            queue.Enqueue(result);
+            queue.Enqueue(s);
+            while (queue.Count > 0)
+            {
+                Struct a = queue.Dequeue();
+                Struct b = queue.Dequeue();
+                foreach (StackItem item in b)
+                {
+                    if (item is Struct sb)
+                    {
+                        Struct sa = new Struct();
+                        AppendItem(a, sa);
+                        queue.Enqueue(sa);
+                        queue.Enqueue(sb);
+                    }
+                    else
+                    {
+                        AppendItem(a, item);
+                    }
+                }
+            }
+            return result;
         }
 
         public virtual void Dispose()
@@ -206,16 +232,14 @@ namespace Neo.VM
             if (instruction.OpCode >= OpCode.PUSHBYTES1 && instruction.OpCode <= OpCode.PUSHDATA4)
             {
                 if (!CheckMaxItemSize(instruction.Operand.Length)) return false;
-                context.EvaluationStack.Push(instruction.Operand);
-                if (!CheckStackSize(true)) return false;
+                Push(instruction.Operand);
             }
             else switch (instruction.OpCode)
                 {
                     // Push value
                     case OpCode.PUSH0:
                         {
-                            context.EvaluationStack.Push(ReadOnlyMemory<byte>.Empty);
-                            if (!CheckStackSize(true)) return false;
+                            Push(ReadOnlyMemory<byte>.Empty);
                             break;
                         }
                     case OpCode.PUSHM1:
@@ -236,14 +260,12 @@ namespace Neo.VM
                     case OpCode.PUSH15:
                     case OpCode.PUSH16:
                         {
-                            context.EvaluationStack.Push((int)instruction.OpCode - (int)OpCode.PUSH1 + 1);
-                            if (!CheckStackSize(true)) return false;
+                            Push((int)instruction.OpCode - (int)OpCode.PUSH1 + 1);
                             break;
                         }
                     case OpCode.PUSHNULL:
                         {
-                            context.EvaluationStack.Push(StackItem.Null);
-                            if (!CheckStackSize(true)) return false;
+                            Push(StackItem.Null);
                             break;
                         }
 
@@ -258,9 +280,8 @@ namespace Neo.VM
                             bool fValue = true;
                             if (instruction.OpCode > OpCode.JMP)
                             {
-                                CheckStackSize(false, -1);
-                                fValue = context.EvaluationStack.Pop().ToBoolean();
-
+                                if (!TryPop(out StackItem x)) return false;
+                                fValue = x.ToBoolean();
                                 if (instruction.OpCode == OpCode.JMPIFNOT)
                                     fValue = !fValue;
                             }
@@ -283,21 +304,25 @@ namespace Neo.VM
                             ExecutionContext context_pop = InvocationStack.Pop();
                             int rvcount = context_pop.RVCount;
                             if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
-                            if (rvcount > 0)
+                            RandomAccessStack<StackItem> stack_eval;
+                            if (InvocationStack.Count == 0)
+                                stack_eval = ResultStack;
+                            else
+                                stack_eval = CurrentContext.EvaluationStack;
+                            if (context_pop.EvaluationStack == stack_eval)
                             {
-                                if (context_pop.EvaluationStack.Count < rvcount) return false;
-                                RandomAccessStack<StackItem> stack_eval;
-                                if (InvocationStack.Count == 0)
-                                    stack_eval = ResultStack;
-                                else
-                                    stack_eval = CurrentContext.EvaluationStack;
-                                context_pop.EvaluationStack.CopyTo(stack_eval, rvcount);
+                                if (context_pop.RVCount != 0) return false;
+                            }
+                            else
+                            {
+                                if (context_pop.EvaluationStack.Count != rvcount) return false;
+                                if (rvcount > 0)
+                                    context_pop.EvaluationStack.CopyTo(stack_eval);
                             }
                             if (context_pop.RVCount == -1 && InvocationStack.Count > 0)
                             {
                                 context_pop.AltStack.CopyTo(CurrentContext.AltStack);
                             }
-                            CheckStackSize(false, 0);
                             if (InvocationStack.Count == 0)
                             {
                                 State = VMState.HALT;
@@ -307,7 +332,7 @@ namespace Neo.VM
                         }
                     case OpCode.SYSCALL:
                         {
-                            if (!OnSysCall(instruction.TokenU32) || !CheckStackSize(false, int.MaxValue))
+                            if (!OnSysCall(instruction.TokenU32))
                                 return false;
                             break;
                         }
@@ -315,52 +340,47 @@ namespace Neo.VM
                     // Stack ops
                     case OpCode.DUPFROMALTSTACKBOTTOM:
                         {
-                            var item = context.AltStack.Peek(context.AltStack.Count - 1);
-                            context.EvaluationStack.Push(item);
-                            if (!CheckStackSize(true)) return false;
+                            Push(context.AltStack.Peek(-1));
                             break;
                         }
                     case OpCode.DUPFROMALTSTACK:
                         {
-                            context.EvaluationStack.Push(context.AltStack.Peek());
-                            if (!CheckStackSize(true)) return false;
+                            Push(context.AltStack.Peek());
                             break;
                         }
                     case OpCode.TOALTSTACK:
                         {
+                            //Move item from the EvaluationStack to the AltStack. No need to check.
                             context.AltStack.Push(context.EvaluationStack.Pop());
                             break;
                         }
                     case OpCode.FROMALTSTACK:
                         {
+                            //Move item from the AltStack to the EvaluationStack. No need to check.
                             context.EvaluationStack.Push(context.AltStack.Pop());
                             break;
                         }
                     case OpCode.ISNULL:
                         {
-                            bool b = context.EvaluationStack.Peek().IsNull;
-                            context.EvaluationStack.Set(0, b);
-                            CheckStackSize(false, 0);
+                            if (!TryPop(out StackItem x)) return false;
+                            Push(x.IsNull);
                             break;
                         }
                     case OpCode.XDROP:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_n)) return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
-                            context.EvaluationStack.Remove(n);
-                            CheckStackSize(false, -2);
+                            if (!TryRemove(n, out StackItem _)) return false;
                             break;
                         }
                     case OpCode.XSWAP:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_n)) return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
-                            CheckStackSize(true, -1);
                             if (n == 0) break;
+                            //Swap item[0] and item[n]. No need to check.
                             StackItem xn = context.EvaluationStack.Peek(n);
                             context.EvaluationStack.Set(n, context.EvaluationStack.Peek());
                             context.EvaluationStack.Set(0, xn);
@@ -368,86 +388,77 @@ namespace Neo.VM
                         }
                     case OpCode.XTUCK:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_n)) return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n <= 0) return false;
-                            context.EvaluationStack.Insert(n, context.EvaluationStack.Peek());
+                            if (!TryInsert(n, context.EvaluationStack.Peek())) return false;
                             break;
                         }
                     case OpCode.DEPTH:
                         {
-                            context.EvaluationStack.Push(context.EvaluationStack.Count);
-                            if (!CheckStackSize(true)) return false;
+                            Push(context.EvaluationStack.Count);
                             break;
                         }
                     case OpCode.DROP:
                         {
-                            context.EvaluationStack.Pop();
-                            CheckStackSize(false, -1);
+                            if (!TryPop(out StackItem _)) return false;
                             break;
                         }
                     case OpCode.DUP:
                         {
-                            context.EvaluationStack.Push(context.EvaluationStack.Peek());
-                            if (!CheckStackSize(true)) return false;
+                            Push(context.EvaluationStack.Peek());
                             break;
                         }
                     case OpCode.NIP:
                         {
-                            context.EvaluationStack.Remove(1);
-                            CheckStackSize(false, -1);
+                            if (!TryRemove(1, out StackItem _)) return false;
                             break;
                         }
                     case OpCode.OVER:
                         {
-                            context.EvaluationStack.Push(context.EvaluationStack.Peek(1));
-                            if (!CheckStackSize(true)) return false;
+                            Push(context.EvaluationStack.Peek(1));
                             break;
                         }
                     case OpCode.PICK:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_n)) return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
-                            context.EvaluationStack.Push(context.EvaluationStack.Peek(n));
+                            Push(context.EvaluationStack.Peek(n));
                             break;
                         }
                     case OpCode.ROLL:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_n))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_n)) return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
-                            CheckStackSize(true, -1);
                             if (n == 0) break;
+                            //Move item[n] to the top. No need to check.
                             context.EvaluationStack.Push(context.EvaluationStack.Remove(n));
                             break;
                         }
                     case OpCode.ROT:
                         {
+                            //Move item[2] to the top. No need to check.
                             context.EvaluationStack.Push(context.EvaluationStack.Remove(2));
                             break;
                         }
                     case OpCode.SWAP:
                         {
+                            //Move item[1] to the top. No need to check.
                             context.EvaluationStack.Push(context.EvaluationStack.Remove(1));
                             break;
                         }
                     case OpCode.TUCK:
                         {
-                            context.EvaluationStack.Insert(2, context.EvaluationStack.Peek());
-                            if (!CheckStackSize(true)) return false;
+                            if (!TryInsert(2, context.EvaluationStack.Peek())) return false;
                             break;
                         }
                     case OpCode.CAT:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             ReadOnlyMemory<byte> x2 = item_x2.ToMemory();
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
                             ReadOnlyMemory<byte> x1 = item_x1.ToMemory();
                             StackItem result;
                             if (x1.IsEmpty)
@@ -467,465 +478,381 @@ namespace Neo.VM
                                 x2.CopyTo(dstBuffer.AsMemory(x1.Length));
                                 result = dstBuffer;
                             }
-                            context.EvaluationStack.Push(result);
-                            CheckStackSize(true, -1);
+                            Push(result);
                             break;
                         }
                     case OpCode.SUBSTR:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_count))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_count)) return false;
                             int count = (int)item_count.ToBigInteger();
                             if (count < 0) return false;
                             if (count > MaxItemSize) count = (int)MaxItemSize;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_index))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_index)) return false;
                             int index = (int)item_index.ToBigInteger();
                             if (index < 0) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             ReadOnlyMemory<byte> x = item_x.ToMemory();
                             if (index > x.Length) return false;
                             if (index + count > x.Length) count = x.Length - index;
-                            context.EvaluationStack.Push(x.Slice(index, count));
-                            CheckStackSize(true, -2);
+                            Push(x.Slice(index, count));
                             break;
                         }
                     case OpCode.LEFT:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_count))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_count)) return false;
                             int count = (int)item_count.ToBigInteger();
                             if (count < 0) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             ReadOnlyMemory<byte> x = item_x.ToMemory();
-                            if (count < x.Length)
-                                x = x[0..count];
-                            context.EvaluationStack.Push(x);
-                            CheckStackSize(true, -1);
+                            if (count < x.Length) x = x[0..count];
+                            Push(x);
                             break;
                         }
                     case OpCode.RIGHT:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_count))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_count)) return false;
                             int count = (int)item_count.ToBigInteger();
                             if (count < 0) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             ReadOnlyMemory<byte> x = item_x.ToMemory();
                             if (count > x.Length) return false;
-                            if (count < x.Length)
-                                x = x[^count..^0];
-                            context.EvaluationStack.Push(x);
-                            CheckStackSize(true, -1);
+                            if (count < x.Length) x = x[^count..^0];
+                            Push(x);
                             break;
                         }
                     case OpCode.SIZE:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType x))
-                                return false;
-                            context.EvaluationStack.Push(x.GetByteLength());
+                            if (!TryPop(out PrimitiveType x)) return false;
+                            Push(x.GetByteLength());
                             break;
                         }
 
                     // Bitwise logic
                     case OpCode.INVERT:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(~x);
+                            Push(~x);
                             break;
                         }
                     case OpCode.AND:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 & x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 & x2);
                             break;
                         }
                     case OpCode.OR:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 | x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 | x2);
                             break;
                         }
                     case OpCode.XOR:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 ^ x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 ^ x2);
                             break;
                         }
                     case OpCode.EQUAL:
                         {
-                            StackItem x2 = context.EvaluationStack.Pop();
-                            StackItem x1 = context.EvaluationStack.Pop();
-                            context.EvaluationStack.Push(x1.Equals(x2));
-                            CheckStackSize(false, -1);
+                            if (!TryPop(out StackItem x2)) return false;
+                            if (!TryPop(out StackItem x1)) return false;
+                            Push(x1.Equals(x2));
                             break;
                         }
 
                     // Numeric
                     case OpCode.INC:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
                             x += 1;
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(x);
+                            Push(x);
                             break;
                         }
                     case OpCode.DEC:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
                             x -= 1;
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(x);
+                            Push(x);
                             break;
                         }
                     case OpCode.SIGN:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(x.Sign);
+                            Push(x.Sign);
                             break;
                         }
                     case OpCode.NEGATE:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(-x);
+                            Push(-x);
                             break;
                         }
                     case OpCode.ABS:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(BigInteger.Abs(x));
+                            Push(BigInteger.Abs(x));
                             break;
                         }
                     case OpCode.NOT:
                         {
-                            bool x = context.EvaluationStack.Pop().ToBoolean();
-                            context.EvaluationStack.Push(!x);
-                            CheckStackSize(false, 0);
+                            if (!TryPop(out StackItem x)) return false;
+                            Push(!x.ToBoolean());
                             break;
                         }
                     case OpCode.NZ:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(!x.IsZero);
+                            Push(!x.IsZero);
                             break;
                         }
                     case OpCode.ADD:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
                             BigInteger result = x1 + x2;
                             if (!CheckBigInteger(result)) return false;
-                            context.EvaluationStack.Push(result);
-                            CheckStackSize(true, -1);
+                            Push(result);
                             break;
                         }
                     case OpCode.SUB:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
                             BigInteger result = x1 - x2;
                             if (!CheckBigInteger(result)) return false;
-                            context.EvaluationStack.Push(result);
-                            CheckStackSize(true, -1);
+                            Push(result);
                             break;
                         }
                     case OpCode.MUL:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
                             BigInteger result = x1 * x2;
                             if (!CheckBigInteger(result)) return false;
-                            context.EvaluationStack.Push(result);
-                            CheckStackSize(true, -1);
+                            Push(result);
                             break;
                         }
                     case OpCode.DIV:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 / x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 / x2);
                             break;
                         }
                     case OpCode.MOD:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 % x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 % x2);
                             break;
                         }
                     case OpCode.SHL:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_shift))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_shift)) return false;
                             int shift = (int)item_shift.ToBigInteger();
-                            CheckStackSize(true, -1);
                             if (!CheckShift(shift)) return false;
                             if (shift == 0) break;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
                             x <<= shift;
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(x);
+                            Push(x);
                             break;
                         }
                     case OpCode.SHR:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_shift))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_shift)) return false;
                             int shift = (int)item_shift.ToBigInteger();
-                            CheckStackSize(true, -1);
                             if (!CheckShift(shift)) return false;
                             if (shift == 0) break;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
                             x >>= shift;
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(x);
+                            Push(x);
                             break;
                         }
                     case OpCode.BOOLAND:
                         {
-                            bool x2 = context.EvaluationStack.Pop().ToBoolean();
-                            bool x1 = context.EvaluationStack.Pop().ToBoolean();
-                            context.EvaluationStack.Push(x1 && x2);
-                            CheckStackSize(false, -1);
+                            if (!TryPop(out StackItem x2)) return false;
+                            if (!TryPop(out StackItem x1)) return false;
+                            Push(x1.ToBoolean() && x2.ToBoolean());
                             break;
                         }
                     case OpCode.BOOLOR:
                         {
-                            bool x2 = context.EvaluationStack.Pop().ToBoolean();
-                            bool x1 = context.EvaluationStack.Pop().ToBoolean();
-                            context.EvaluationStack.Push(x1 || x2);
-                            CheckStackSize(false, -1);
+                            if (!TryPop(out StackItem x2)) return false;
+                            if (!TryPop(out StackItem x1)) return false;
+                            Push(x1.ToBoolean() || x2.ToBoolean());
                             break;
                         }
                     case OpCode.NUMEQUAL:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 == x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 == x2);
                             break;
                         }
                     case OpCode.NUMNOTEQUAL:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 != x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 != x2);
                             break;
                         }
                     case OpCode.LT:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 < x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 < x2);
                             break;
                         }
                     case OpCode.GT:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 > x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 > x2);
                             break;
                         }
                     case OpCode.LTE:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 <= x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 <= x2);
                             break;
                         }
                     case OpCode.GTE:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(x1 >= x2);
-                            CheckStackSize(true, -1);
+                            Push(x1 >= x2);
                             break;
                         }
                     case OpCode.MIN:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(BigInteger.Min(x1, x2));
-                            CheckStackSize(true, -1);
+                            Push(BigInteger.Min(x1, x2));
                             break;
                         }
                     case OpCode.MAX:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x2))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x2)) return false;
                             BigInteger x2 = item_x2.ToBigInteger();
                             if (!CheckBigInteger(x2)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x1))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x1)) return false;
                             BigInteger x1 = item_x1.ToBigInteger();
                             if (!CheckBigInteger(x1)) return false;
-                            context.EvaluationStack.Push(BigInteger.Max(x1, x2));
-                            CheckStackSize(true, -1);
+                            Push(BigInteger.Max(x1, x2));
                             break;
                         }
                     case OpCode.WITHIN:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_b))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_b)) return false;
                             BigInteger b = item_b.ToBigInteger();
                             if (!CheckBigInteger(b)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_a))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_a)) return false;
                             BigInteger a = item_a.ToBigInteger();
                             if (!CheckBigInteger(a)) return false;
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_x))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_x)) return false;
                             BigInteger x = item_x.ToBigInteger();
                             if (!CheckBigInteger(x)) return false;
-                            context.EvaluationStack.Push(a <= x && x < b);
-                            CheckStackSize(true, -2);
+                            Push(a <= x && x < b);
                             break;
                         }
 
                     // Array
                     case OpCode.ARRAYSIZE:
                         {
-                            switch (context.EvaluationStack.Pop())
+                            if (!TryPop(out StackItem x)) return false;
+                            switch (x)
                             {
                                 case CompoundType compound:
-                                    context.EvaluationStack.Push(compound.Count);
-                                    CheckStackSize(false, 0);
+                                    Push(compound.Count);
                                     break;
                                 case PrimitiveType primitive:
-                                    context.EvaluationStack.Push(primitive.GetByteLength());
-                                    CheckStackSize(true, 0);
+                                    Push(primitive.GetByteLength());
                                     break;
                                 default:
                                     return false;
@@ -934,46 +861,44 @@ namespace Neo.VM
                         }
                     case OpCode.PACK:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType item_size))
-                                return false;
+                            if (!TryPop(out PrimitiveType item_size)) return false;
                             int size = (int)item_size.ToBigInteger();
                             if (size < 0 || size > context.EvaluationStack.Count || !CheckArraySize(size))
                                 return false;
-                            List<StackItem> items = new List<StackItem>(size);
+                            VMArray array = new VMArray();
                             for (int i = 0; i < size; i++)
-                                items.Add(context.EvaluationStack.Pop());
-                            context.EvaluationStack.Push(items);
+                            {
+                                if (!TryPop(out StackItem item)) return false;
+                                if (!AppendItem(array, item)) return false;
+                            }
+                            Push(array);
                             break;
                         }
                     case OpCode.UNPACK:
                         {
-                            if (!context.EvaluationStack.TryPop(out VMArray array))
-                                return false;
+                            if (!TryPop(out VMArray array)) return false;
                             for (int i = array.Count - 1; i >= 0; i--)
-                                context.EvaluationStack.Push(array[i]);
-                            context.EvaluationStack.Push(array.Count);
-                            if (!CheckStackSize(false, array.Count)) return false;
+                                Push(array[i]);
+                            Push(array.Count);
                             break;
                         }
                     case OpCode.PICKITEM:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType key))
-                                return false;
-                            switch (context.EvaluationStack.Pop())
+                            if (!TryPop(out PrimitiveType key)) return false;
+                            if (!TryPop(out StackItem x)) return false;
+                            switch (x)
                             {
                                 case VMArray array:
                                     {
                                         int index = (int)key.ToBigInteger();
                                         if (index < 0 || index >= array.Count) return false;
-                                        context.EvaluationStack.Push(array[index]);
-                                        CheckStackSize(false, -1);
+                                        Push(array[index]);
                                         break;
                                     }
                                 case Map map:
                                     {
                                         if (!map.TryGetValue(key, out StackItem value)) return false;
-                                        context.EvaluationStack.Push(value);
-                                        CheckStackSize(false, -1);
+                                        Push(value);
                                         break;
                                     }
                                 case PrimitiveType primitive:
@@ -981,8 +906,7 @@ namespace Neo.VM
                                         ReadOnlySpan<byte> byteArray = primitive.ToByteArray();
                                         int index = (int)key.ToBigInteger();
                                         if (index < 0 || index >= byteArray.Length) return false;
-                                        context.EvaluationStack.Push((int)byteArray[index]);
-                                        CheckStackSize(true, -1);
+                                        Push((BigInteger)byteArray[index]);
                                         break;
                                     }
                                 default:
@@ -992,72 +916,77 @@ namespace Neo.VM
                         }
                     case OpCode.SETITEM:
                         {
-                            StackItem value = context.EvaluationStack.Pop();
-                            if (value is Struct s) value = s.Clone();
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType key))
-                                return false;
-                            switch (context.EvaluationStack.Pop())
+                            if (!TryPop(out StackItem value)) return false;
+                            if (value is Struct s) value = CreateClonedStruct(s);
+                            if (!TryPop(out PrimitiveType key)) return false;
+                            if (!TryPop(out StackItem x)) return false;
+                            switch (x)
                             {
                                 case VMArray array:
                                     {
                                         int index = (int)key.ToBigInteger();
-                                        if (index < 0 || index >= array.Count) return false;
-                                        array[index] = value;
+                                        if (!SetItem(array, index, value)) return false;
                                         break;
                                     }
                                 case Map map:
                                     {
-                                        if (!map.ContainsKey(key) && !CheckArraySize(map.Count + 1))
-                                            return false;
-                                        map[key] = value;
+                                        if (!SetItem(map, key, value)) return false;
                                         break;
                                     }
                                 default:
                                     return false;
                             }
-
-                            if (!CheckStackSize(false, int.MaxValue))
-                                return false;
-
                             break;
                         }
                     case OpCode.NEWARRAY:
                     case OpCode.NEWSTRUCT:
                         {
-                            switch (context.EvaluationStack.Peek())
+                            if (!TryPop(out StackItem x)) return false;
+                            switch (x)
                             {
+                                // Allow to convert between array and struct
                                 case VMArray array:
                                     {
-                                        // Allow to convert between array and struct
+                                        VMArray result;
                                         if (array is Struct)
                                         {
                                             if (instruction.OpCode == OpCode.NEWSTRUCT)
-                                                break;
+                                            {
+                                                result = array;
+                                            }
+                                            else
+                                            {
+                                                result = new VMArray();
+                                                foreach (StackItem item in array)
+                                                    AppendItem(result, item);
+                                            }
                                         }
                                         else
                                         {
                                             if (instruction.OpCode == OpCode.NEWARRAY)
-                                                break;
+                                            {
+                                                result = array;
+                                            }
+                                            else
+                                            {
+                                                result = new Struct();
+                                                foreach (StackItem item in array)
+                                                    AppendItem(result, item);
+                                            }
                                         }
-                                        VMArray result = instruction.OpCode == OpCode.NEWARRAY
-                                            ? new VMArray(array)
-                                            : new Struct(array);
-                                        context.EvaluationStack.Set(0, result);
-                                        if (!CheckStackSize(false, int.MaxValue)) return false;
+                                        Push(result);
                                     }
                                     break;
                                 case PrimitiveType primitive:
                                     {
                                         int count = (int)primitive.ToBigInteger();
                                         if (count < 0 || !CheckArraySize(count)) return false;
-                                        List<StackItem> items = new List<StackItem>(count);
-                                        for (var i = 0; i < count; i++)
-                                            items.Add(false);
                                         VMArray result = instruction.OpCode == OpCode.NEWARRAY
-                                            ? new VMArray(items)
-                                            : new Struct(items);
-                                        context.EvaluationStack.Set(0, result);
-                                        if (!CheckStackSize(true, count)) return false;
+                                            ? new VMArray()
+                                            : new Struct();
+                                        for (var i = 0; i < count; i++)
+                                            AppendItem(result, false);
+                                        Push(result);
                                     }
                                     break;
                                 default:
@@ -1067,46 +996,35 @@ namespace Neo.VM
                         }
                     case OpCode.NEWMAP:
                         {
-                            context.EvaluationStack.Push(new Map());
-                            if (!CheckStackSize(true)) return false;
+                            Push(new Map());
                             break;
                         }
                     case OpCode.APPEND:
                         {
-                            StackItem newItem = context.EvaluationStack.Pop();
-                            if (newItem is Struct s) newItem = s.Clone();
-                            if (!context.EvaluationStack.TryPop(out VMArray array))
-                                return false;
-                            if (!CheckArraySize(array.Count + 1)) return false;
-                            array.Add(newItem);
-                            if (!CheckStackSize(false, int.MaxValue)) return false;
+                            if (!TryPop(out StackItem newItem)) return false;
+                            if (!TryPop(out VMArray array)) return false;
+                            if (newItem is Struct s) newItem = CreateClonedStruct(s);
+                            if (!AppendItem(array, newItem)) return false;
                             break;
                         }
                     case OpCode.REVERSE:
                         {
-                            if (!context.EvaluationStack.TryPop(out VMArray array))
-                                return false;
-                            CheckStackSize(false, -1);
+                            if (!TryPop(out VMArray array)) return false;
                             array.Reverse();
                             break;
                         }
                     case OpCode.REMOVE:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType key))
-                                return false;
-                            StackItem value = context.EvaluationStack.Pop();
-                            CheckStackSize(false, -2);
-                            switch (value)
+                            if (!TryPop(out PrimitiveType key)) return false;
+                            if (!TryPop(out StackItem x)) return false;
+                            switch (x)
                             {
                                 case VMArray array:
                                     int index = (int)key.ToBigInteger();
-                                    if (index < 0 || index >= array.Count) return false;
-                                    array.RemoveAt(index);
-                                    CheckStackSize(false, -1);
+                                    if (!RemoveItem(array, index)) return false;
                                     break;
                                 case Map map:
-                                    if (map.Remove(key))
-                                        CheckStackSize(false, -2);
+                                    RemoveItem(map, key);
                                     break;
                                 default:
                                     return false;
@@ -1115,35 +1033,37 @@ namespace Neo.VM
                         }
                     case OpCode.HASKEY:
                         {
-                            if (!context.EvaluationStack.TryPop(out PrimitiveType key))
-                                return false;
-                            switch (context.EvaluationStack.Pop())
+                            if (!TryPop(out PrimitiveType key)) return false;
+                            if (!TryPop(out StackItem x)) return false;
+                            switch (x)
                             {
                                 case VMArray array:
                                     int index = (int)key.ToBigInteger();
                                     if (index < 0) return false;
-                                    context.EvaluationStack.Push(index < array.Count);
+                                    Push(index < array.Count);
                                     break;
                                 case Map map:
-                                    context.EvaluationStack.Push(map.ContainsKey(key));
+                                    Push(map.ContainsKey(key));
                                     break;
                                 default:
                                     return false;
                             }
-                            CheckStackSize(false, -1);
                             break;
                         }
                     case OpCode.KEYS:
                         {
-                            if (!context.EvaluationStack.TryPop(out Map map)) return false;
-                            context.EvaluationStack.Push(new VMArray(map.Keys));
-                            if (!CheckStackSize(false, map.Count)) return false;
+                            if (!TryPop(out Map map)) return false;
+                            VMArray array = new VMArray();
+                            foreach (PrimitiveType key in map.Keys)
+                                AppendItem(array, key);
+                            Push(array);
                             break;
                         }
                     case OpCode.VALUES:
                         {
                             ICollection<StackItem> values;
-                            switch (context.EvaluationStack.Pop())
+                            if (!TryPop(out StackItem x)) return false;
+                            switch (x)
                             {
                                 case VMArray array:
                                     values = array;
@@ -1154,14 +1074,13 @@ namespace Neo.VM
                                 default:
                                     return false;
                             }
-                            List<StackItem> newArray = new List<StackItem>(values.Count);
+                            VMArray newArray = new VMArray();
                             foreach (StackItem item in values)
                                 if (item is Struct s)
-                                    newArray.Add(s.Clone());
+                                    AppendItem(newArray, CreateClonedStruct(s));
                                 else
-                                    newArray.Add(item);
-                            context.EvaluationStack.Push(new VMArray(newArray));
-                            if (!CheckStackSize(false, int.MaxValue)) return false;
+                                    AppendItem(newArray, item);
+                            Push(newArray);
                             break;
                         }
 
@@ -1172,9 +1091,8 @@ namespace Neo.VM
                         }
                     case OpCode.THROWIFNOT:
                         {
-                            if (!context.EvaluationStack.Pop().ToBoolean())
-                                return false;
-                            CheckStackSize(false, -1);
+                            if (!TryPop(out StackItem x)) return false;
+                            if (!x.ToBoolean()) return false;
                             break;
                         }
                     default:
@@ -1200,8 +1118,101 @@ namespace Neo.VM
 
         protected virtual bool OnSysCall(uint method) => false;
 
-        protected virtual bool PostExecuteInstruction(Instruction instruction) => true;
+        protected virtual bool PostExecuteInstruction(Instruction instruction)
+        {
+            CheckZeroReferred();
+            return stackitem_count <= MaxStackSize;
+        }
 
         protected virtual bool PreExecuteInstruction() => true;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Push(StackItem item)
+        {
+            TryInsert(0, item);
+        }
+
+        public bool RemoveItem(VMArray array, int index)
+        {
+            if (index < 0 || index >= array.Count) return false;
+            RemoveReference(array[index], array);
+            array.RemoveAt(index);
+            stackitem_count--;
+            return true;
+        }
+
+        public void RemoveItem(Map map, PrimitiveType key)
+        {
+            if (!map.Remove(key, out StackItem old_value)) return;
+            RemoveReference(old_value, map);
+            stackitem_count -= 2;
+        }
+
+        private void RemoveReference(StackItem referred, CompoundType parent)
+        {
+            if (!(referred is CompoundType compound)) return;
+            reference_tracing[compound].ObjectReferences[parent] -= 1;
+        }
+
+        public bool SetItem(VMArray array, int index, StackItem item)
+        {
+            if (index < 0 || index >= array.Count) return false;
+            RemoveReference(array[index], array);
+            array[index] = item;
+            AddReference(item, array);
+            return true;
+        }
+
+        public bool SetItem(Map map, PrimitiveType key, StackItem value)
+        {
+            if (map.TryGetValue(key, out StackItem old_value))
+            {
+                RemoveReference(old_value, map);
+            }
+            else
+            {
+                if (map.Count >= MaxArraySize) return false;
+                stackitem_count += 2;
+            }
+            map[key] = value;
+            AddReference(value, map);
+            return true;
+        }
+
+        private bool TryInsert(int index, StackItem item)
+        {
+            var stack = CurrentContext.EvaluationStack;
+            if (index < 0 || index > stack.Count) return false;
+            stack.Insert(index, item);
+            stackitem_count++;
+            if (!(item is CompoundType compound)) return true;
+            if (reference_tracing.TryGetValue(compound, out ReferenceTracing tracing))
+                tracing.StackReferences++;
+            else
+                reference_tracing.Add(compound, new ReferenceTracing { StackReferences = 1 });
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryPop<T>(out T item) where T : StackItem
+        {
+            return TryRemove(0, out item);
+        }
+
+        private bool TryRemove<T>(int index, out T item) where T : StackItem
+        {
+            if (!CurrentContext.EvaluationStack.TryRemove(index, out StackItem stackItem))
+            {
+                item = null;
+                return false;
+            }
+            stackitem_count--;
+            item = stackItem as T;
+            if (item is null) return false;
+            if (!(item is CompoundType item_compound)) return true;
+            reference_tracing[item_compound].StackReferences--;
+            zero_referred.Add(item_compound);
+            return true;
+        }
     }
 }
