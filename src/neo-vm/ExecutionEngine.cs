@@ -985,7 +985,7 @@ namespace Neo.VM
                                             ? new VMArray()
                                             : new Struct();
                                         for (var i = 0; i < count; i++)
-                                            AppendItem(result, false);
+                                            AppendItem(result, StackItem.Null);
                                         Push(result);
                                     }
                                     break;
