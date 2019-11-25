@@ -285,8 +285,7 @@
                                         "value":
                                         [
                                             {
-                                                "type": "Boolean",
-                                                "value": false
+                                                "type": "Null"
                                             }
                                         ]
                                     }
@@ -333,8 +332,7 @@
                                         "value":
                                         [
                                             {
-                                                "type": "Boolean",
-                                                "value": false
+                                                "type": "Null"
                                             }
                                         ]
                                     }
