@@ -930,7 +930,7 @@ namespace Neo.VM
                                     {
                                         int count = (int)primitive.ToBigInteger();
                                         if (count < 0 || !CheckArraySize(count)) return false;
-                                        StackItem[] items = new StackItem[count];
+                                        List<StackItem> items = new List<StackItem>(count);
                                         for (var i = 0; i < count; i++)
                                             items.Add(StackItem.Null);
                                         VMArray result = instruction.OpCode == OpCode.NEWARRAY
