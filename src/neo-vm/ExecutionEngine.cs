@@ -64,6 +64,7 @@ namespace Neo.VM
         public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
         public VMState State { get; internal protected set; } = VMState.BREAK;
+        public int StackItemCount => stackitem_count;
 
         #region Limits
 
@@ -133,19 +134,26 @@ namespace Neo.VM
             HashSet<CompoundType> toBeDestroyed = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
             foreach (CompoundType compound in zero_referred)
             {
+                HashSet<CompoundType> toBeDestroyedInLoop = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
                 Queue<CompoundType> toBeChecked = new Queue<CompoundType>();
                 toBeChecked.Enqueue(compound);
                 while (toBeChecked.Count > 0)
                 {
                     CompoundType c = toBeChecked.Dequeue();
                     ReferenceTracing tracing = reference_tracing[c];
-                    if (tracing.StackReferences > 0) break;
-                    toBeDestroyed.Add(c);
+                    if (tracing.StackReferences > 0)
+                    {
+                        toBeDestroyedInLoop.Clear();
+                        break;
+                    }
+                    toBeDestroyedInLoop.Add(c);
                     if (tracing.ObjectReferences is null) continue;
                     foreach (var pair in tracing.ObjectReferences)
-                        if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key))
+                        if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key))
                             toBeChecked.Enqueue(pair.Key);
                 }
+                if (toBeDestroyedInLoop.Count > 0)
+                    toBeDestroyed.UnionWith(toBeDestroyedInLoop);
             }
             foreach (CompoundType compound in toBeDestroyed)
             {
@@ -1151,7 +1159,10 @@ namespace Neo.VM
         private void RemoveReference(StackItem referred, CompoundType parent)
         {
             if (!(referred is CompoundType compound)) return;
-            reference_tracing[compound].ObjectReferences[parent] -= 1;
+            ReferenceTracing tracing = reference_tracing[compound];
+            tracing.ObjectReferences[parent] -= 1;
+            if (tracing.StackReferences == 0)
+                zero_referred.Add(compound);
         }
 
         public bool SetItem(VMArray array, int index, StackItem item)
@@ -1210,8 +1221,8 @@ namespace Neo.VM
             item = stackItem as T;
             if (item is null) return false;
             if (!(item is CompoundType item_compound)) return true;
-            reference_tracing[item_compound].StackReferences--;
-            zero_referred.Add(item_compound);
+            if (--reference_tracing[item_compound].StackReferences == 0)
+                zero_referred.Add(item_compound);
             return true;
         }
     }
