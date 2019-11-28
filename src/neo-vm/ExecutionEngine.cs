@@ -932,7 +932,7 @@ namespace Neo.VM
                                         if (count < 0 || !CheckArraySize(count)) return false;
                                         StackItem[] items = new StackItem[count];
                                         for (var i = 0; i < count; i++)
-                                            items[i] = false;
+                                            items.Add(StackItem.Null);
                                         VMArray result = instruction.OpCode == OpCode.NEWARRAY
                                             ? new VMArray(StackItemMemory, items)
                                             : new Struct(StackItemMemory, items);

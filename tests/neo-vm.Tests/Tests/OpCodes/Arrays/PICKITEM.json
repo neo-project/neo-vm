@@ -70,8 +70,7 @@
                                         "value":
                                         [
                                             {
-                                                "type": "Boolean",
-                                                "value": false
+                                                "type": "Null"
                                             }
                                         ]
                                     }
@@ -123,12 +122,10 @@
                                         "value":
                                         [
                                             {
-                                                "type": "Boolean",
-                                                "value": false
+                                                "type": "Null"
                                             },
                                             {
-                                                "type": "Boolean",
-                                                "value": false
+                                                "type": "Null"
                                             }
                                         ]
                                     }
@@ -180,12 +177,10 @@
                                         "value":
                                         [
                                             {
-                                                "type": "Boolean",
-                                                "value": false
+                                                "type": "Null"
                                             },
                                             {
-                                                "type": "Boolean",
-                                                "value": false
+                                                "type": "Null"
                                             }
                                         ]
                                     }
