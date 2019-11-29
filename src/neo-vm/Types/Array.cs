@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Neo.VM.Types
 {
@@ -39,7 +38,7 @@ namespace Neo.VM.Types
             {
                 null => new List<StackItem>(),
                 List<StackItem> list => list,
-                _ => value.ToList()
+                _ => new List<StackItem>(value)
             };
             if (referenceCounter != null)
                 foreach (StackItem item in _array)
