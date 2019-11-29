@@ -75,10 +75,7 @@ namespace Neo.VM
             foreach (CompoundType compound in toBeDestroyed)
             {
                 counter.Remove(compound);
-                if (compound is Map)
-                    references_count -= compound.Count * 2;
-                else
-                    references_count -= compound.Count;
+                references_count -= compound.ItemsCount;
             }
             zero_referred.Clear();
         }

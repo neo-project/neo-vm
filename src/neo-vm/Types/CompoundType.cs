@@ -13,6 +13,8 @@ namespace Neo.VM.Types
 
         public abstract int Count { get; }
 
+        public abstract int ItemsCount { get; }
+
         public override bool Equals(StackItem other)
         {
             return ReferenceEquals(this, other);

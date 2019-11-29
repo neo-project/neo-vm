@@ -29,9 +29,10 @@ namespace Neo.VM.Types
             }
         }
 
+        public override int Count => dictionary.Count;
+        public override int ItemsCount => dictionary.Count * 2;
         public IEnumerable<PrimitiveType> Keys => dictionary.Keys;
         public IEnumerable<StackItem> Values => dictionary.Values;
-        public override int Count => dictionary.Count;
 
         public Map(Dictionary<PrimitiveType, StackItem> value = null)
             : this(null, value)
