@@ -64,7 +64,7 @@ namespace Neo.VM.Types
 
         public void RemoveAt(int index)
         {
-            ReferenceCounter.RemoveReference(_array[index], this);
+            ReferenceCounter?.RemoveReference(_array[index], this);
             _array.RemoveAt(index);
         }
 
