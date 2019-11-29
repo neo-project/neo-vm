@@ -42,6 +42,12 @@ namespace Neo.VM.Types
             : base(referenceCounter)
         {
             dictionary = value ?? new Dictionary<PrimitiveType, StackItem>();
+            if (referenceCounter != null)
+                foreach (var pair in dictionary)
+                {
+                    referenceCounter.AddReference(pair.Key, this);
+                    referenceCounter.AddReference(pair.Value, this);
+                }
         }
 
         public bool ContainsKey(PrimitiveType key)
