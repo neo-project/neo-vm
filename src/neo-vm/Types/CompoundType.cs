@@ -1,14 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
     public abstract class CompoundType : StackItem
     {
-        public abstract int Count { get; }
+        protected readonly ReferenceCounter ReferenceCounter;
 
-        public abstract void Clear();
+        protected CompoundType(ReferenceCounter referenceCounter)
+        {
+            this.ReferenceCounter = referenceCounter;
+        }
+
+        public abstract int Count { get; }
 
         public override bool Equals(StackItem other)
         {
@@ -23,18 +26,6 @@ namespace Neo.VM.Types
         public override bool ToBoolean()
         {
             return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator CompoundType(StackItem[] value)
-        {
-            return (Array)value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator CompoundType(List<StackItem> value)
-        {
-            return (Array)value;
         }
     }
 }

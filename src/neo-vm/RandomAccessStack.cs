@@ -15,12 +15,12 @@ namespace Neo.VM
         public int Count => list.Count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Clear()
+        public void Clear()
         {
             list.Clear();
         }
 
-        internal void CopyTo(RandomAccessStack<T> stack, int count = -1)
+        public void CopyTo(RandomAccessStack<T> stack, int count = -1)
         {
             if (count == 0) return;
             if (count == -1)
@@ -41,7 +41,7 @@ namespace Neo.VM
             return list.GetEnumerator();
         }
 
-        internal void Insert(int index, T item)
+        public void Insert(int index, T item)
         {
             if (index > list.Count) throw new InvalidOperationException();
             list.Insert(list.Count - index, item);
@@ -59,26 +59,26 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal T Pop()
+        public T Pop()
         {
             return Remove(0);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void Push(T item)
+        public void Push(T item)
         {
             list.Add(item);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal T Remove(int index)
+        public T Remove(int index)
         {
             if (!TryRemove(index, out T item))
                 throw new InvalidOperationException();
             return item;
         }
 
-        internal void Set(int index, T item)
+        public void Set(int index, T item)
         {
             if (index >= list.Count) throw new InvalidOperationException();
             if (index < 0)
@@ -90,12 +90,12 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool TryPop(out T item)
+        public bool TryPop(out T item)
         {
             return TryRemove(0, out item);
         }
 
-        internal bool TryRemove(int index, out T item)
+        public bool TryRemove(int index, out T item)
         {
             if (index >= list.Count)
             {

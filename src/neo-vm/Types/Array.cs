@@ -2,52 +2,54 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
     [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
-    public class Array : CompoundType, IList<StackItem>
+    public class Array : CompoundType, IReadOnlyList<StackItem>
     {
         protected readonly List<StackItem> _array;
 
         public StackItem this[int index]
         {
-            get => _array[index];
-            set => _array[index] = value;
+            get
+            {
+                return _array[index];
+            }
+            set
+            {
+                ReferenceCounter?.RemoveReference(_array[index], this);
+                _array[index] = value;
+                ReferenceCounter?.AddReference(value, this);
+            }
         }
 
         public override int Count => _array.Count;
         public bool IsReadOnly => false;
 
-        public Array()
+        public Array(IEnumerable<StackItem> value = null)
+            : this(null, value)
         {
-            _array = new List<StackItem>();
         }
 
-        public Array(IEnumerable<StackItem> value)
+        public Array(ReferenceCounter referenceCounter, IEnumerable<StackItem> value = null)
+            : base(referenceCounter)
         {
-            _array = value as List<StackItem> ?? value.ToList();
+            _array = value switch
+            {
+                null => new List<StackItem>(),
+                List<StackItem> list => list,
+                _ => value.ToList()
+            };
+            if (referenceCounter != null)
+                foreach (StackItem item in _array)
+                    referenceCounter.AddReference(item, this);
         }
 
         public void Add(StackItem item)
         {
             _array.Add(item);
-        }
-
-        public override void Clear()
-        {
-            _array.Clear();
-        }
-
-        public bool Contains(StackItem item)
-        {
-            return _array.Contains(item);
-        }
-
-        void ICollection<StackItem>.CopyTo(StackItem[] array, int arrayIndex)
-        {
-            _array.CopyTo(array, arrayIndex);
+            ReferenceCounter?.AddReference(item, this);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -60,41 +62,15 @@ namespace Neo.VM.Types
             return _array.GetEnumerator();
         }
 
-        int IList<StackItem>.IndexOf(StackItem item)
-        {
-            return _array.IndexOf(item);
-        }
-
-        public void Insert(int index, StackItem item)
-        {
-            _array.Insert(index, item);
-        }
-
-        bool ICollection<StackItem>.Remove(StackItem item)
-        {
-            return _array.Remove(item);
-        }
-
         public void RemoveAt(int index)
         {
+            ReferenceCounter.RemoveReference(_array[index], this);
             _array.RemoveAt(index);
         }
 
         public void Reverse()
         {
             _array.Reverse();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Array(StackItem[] value)
-        {
-            return new Array(value);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Array(List<StackItem> value)
-        {
-            return new Array(value);
         }
     }
 }

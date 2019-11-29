@@ -1,15 +1,48 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
     [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Struct : Array
     {
-        public Struct() : base() { }
+        public Struct(IEnumerable<StackItem> value = null)
+            : this(null, value)
+        {
+        }
 
-        public Struct(IEnumerable<StackItem> value) : base(value) { }
+        public Struct(ReferenceCounter referenceCounter, IEnumerable<StackItem> value = null)
+            : base(referenceCounter, value)
+        {
+        }
+
+        public Struct Clone()
+        {
+            Struct result = new Struct(ReferenceCounter);
+            Queue<Struct> queue = new Queue<Struct>();
+            queue.Enqueue(result);
+            queue.Enqueue(this);
+            while (queue.Count > 0)
+            {
+                Struct a = queue.Dequeue();
+                Struct b = queue.Dequeue();
+                foreach (StackItem item in b)
+                {
+                    if (item is Struct sb)
+                    {
+                        Struct sa = new Struct(ReferenceCounter);
+                        a.Add(sa);
+                        queue.Enqueue(sa);
+                        queue.Enqueue(sb);
+                    }
+                    else
+                    {
+                        a.Add(item);
+                    }
+                }
+            }
+            return result;
+        }
 
         public override bool Equals(StackItem other)
         {
@@ -38,18 +71,6 @@ namespace Neo.VM.Types
                 }
             }
             return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Struct(StackItem[] value)
-        {
-            return new Struct(value);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Struct(List<StackItem> value)
-        {
-            return new Struct(value);
         }
     }
 }

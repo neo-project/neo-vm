@@ -101,7 +101,7 @@ namespace Neo.Test
         /// <param name="stack">Stack</param>
         /// <param name="result">Result</param>
         /// <param name="message">Message</param>
-        private void AssertResult(RandomAccessStack<StackItem> stack, VMUTStackItem[] result, string message)
+        private void AssertResult(EvaluationStack stack, VMUTStackItem[] result, string message)
         {
             AssertAreEqual(stack.Count, result == null ? 0 : result.Length, message + "Stack is different");
 

@@ -1,4 +1,3 @@
-using Neo.VM.Types;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,12 +23,12 @@ namespace Neo.VM
         /// <summary>
         /// Evaluation stack
         /// </summary>
-        public RandomAccessStack<StackItem> EvaluationStack { get; }
+        public EvaluationStack EvaluationStack { get; }
 
         /// <summary>
         /// Alternative stack
         /// </summary>
-        public RandomAccessStack<StackItem> AltStack { get; }
+        public EvaluationStack AltStack { get; }
 
         /// <summary>
         /// Instruction pointer
@@ -65,12 +64,12 @@ namespace Neo.VM
         /// <param name="script">Script</param>
         /// <param name="callingScript">The calling script</param>
         /// <param name="rvcount">Number of items to be returned</param>
-        internal ExecutionContext(Script script, Script callingScript, int rvcount)
-            : this(script, callingScript, rvcount, new RandomAccessStack<StackItem>(), new RandomAccessStack<StackItem>())
+        internal ExecutionContext(Script script, Script callingScript, int rvcount, ReferenceCounter referenceCounter)
+            : this(script, callingScript, rvcount, new EvaluationStack(referenceCounter), new EvaluationStack(referenceCounter))
         {
         }
 
-        private ExecutionContext(Script script, Script callingScript, int rvcount, RandomAccessStack<StackItem> stack, RandomAccessStack<StackItem> alt)
+        private ExecutionContext(Script script, Script callingScript, int rvcount, EvaluationStack stack, EvaluationStack alt)
         {
             this.RVCount = rvcount;
             this.Script = script;

@@ -41,40 +41,21 @@ namespace Neo.VM
         /// </summary>
         public virtual uint MaxInvocationStackSize => 1024;
 
-        /// <summary>
-        /// Set Max Array Size
-        /// </summary>
-        public virtual uint MaxArraySize => 1024;
-
         #endregion
 
-        private class ReferenceTracing
-        {
-            public int StackReferences;
-            public Dictionary<CompoundType, int> ObjectReferences;
-        }
-
-        private readonly Dictionary<CompoundType, ReferenceTracing> reference_tracing = new Dictionary<CompoundType, ReferenceTracing>(ReferenceEqualityComparer.Default);
-        private readonly List<CompoundType> zero_referred = new List<CompoundType>();
-        private int stackitem_count = 0;
-
+        public ReferenceCounter ReferenceCounter { get; } = new ReferenceCounter();
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
-        public RandomAccessStack<StackItem> ResultStack { get; } = new RandomAccessStack<StackItem>();
-
         public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
         public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
+        public EvaluationStack ResultStack { get; }
         public VMState State { get; internal protected set; } = VMState.BREAK;
-        public int StackItemCount => stackitem_count;
+
+        public ExecutionEngine()
+        {
+            ResultStack = new EvaluationStack(ReferenceCounter);
+        }
 
         #region Limits
-
-        /// <summary>
-        /// Check if it is possible to overflow the MaxArraySize
-        /// </summary>
-        /// <param name="length">Length</param>
-        /// <returns>Return True if are allowed, otherwise False</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckArraySize(int length) => length <= MaxArraySize;
 
         /// <summary>
         /// Check if the is possible to overflow the MaxItemSize
@@ -102,100 +83,8 @@ namespace Neo.VM
 
         #endregion
 
-        private void AddReference(StackItem referred, CompoundType parent)
-        {
-            if (!(referred is CompoundType compound)) return;
-            if (!reference_tracing.TryGetValue(compound, out ReferenceTracing tracing))
-            {
-                tracing = new ReferenceTracing();
-                reference_tracing.Add(compound, tracing);
-            }
-            if (tracing.ObjectReferences is null)
-                tracing.ObjectReferences = new Dictionary<CompoundType, int>(ReferenceEqualityComparer.Default);
-            if (tracing.ObjectReferences.TryGetValue(parent, out int count))
-                count++;
-            else
-                count = 1;
-            tracing.ObjectReferences[parent] = count;
-        }
-
-        public bool AppendItem(VMArray array, StackItem item)
-        {
-            if (array.Count >= MaxArraySize) return false;
-            array.Add(item);
-            stackitem_count++;
-            AddReference(item, array);
-            return true;
-        }
-
-        private void CheckZeroReferred()
-        {
-            if (zero_referred.Count == 0) return;
-            HashSet<CompoundType> toBeDestroyed = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
-            foreach (CompoundType compound in zero_referred)
-            {
-                HashSet<CompoundType> toBeDestroyedInLoop = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
-                Queue<CompoundType> toBeChecked = new Queue<CompoundType>();
-                toBeChecked.Enqueue(compound);
-                while (toBeChecked.Count > 0)
-                {
-                    CompoundType c = toBeChecked.Dequeue();
-                    ReferenceTracing tracing = reference_tracing[c];
-                    if (tracing.StackReferences > 0)
-                    {
-                        toBeDestroyedInLoop.Clear();
-                        break;
-                    }
-                    toBeDestroyedInLoop.Add(c);
-                    if (tracing.ObjectReferences is null) continue;
-                    foreach (var pair in tracing.ObjectReferences)
-                        if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key))
-                            toBeChecked.Enqueue(pair.Key);
-                }
-                if (toBeDestroyedInLoop.Count > 0)
-                    toBeDestroyed.UnionWith(toBeDestroyedInLoop);
-            }
-            foreach (CompoundType compound in toBeDestroyed)
-            {
-                reference_tracing.Remove(compound);
-                if (compound is Map)
-                    stackitem_count -= compound.Count * 2;
-                else
-                    stackitem_count -= compound.Count;
-            }
-            zero_referred.Clear();
-        }
-
         protected virtual void ContextUnloaded(ExecutionContext context)
         {
-        }
-
-        private Struct CreateClonedStruct(Struct s)
-        {
-            Struct result = new Struct();
-            Queue<Struct> queue = new Queue<Struct>();
-            queue.Enqueue(result);
-            queue.Enqueue(s);
-            while (queue.Count > 0)
-            {
-                Struct a = queue.Dequeue();
-                Struct b = queue.Dequeue();
-                foreach (StackItem item in b)
-                {
-                    if (item is Struct sb)
-                    {
-                        Struct sa = new Struct();
-                        AppendItem(a, sa);
-                        queue.Enqueue(sa);
-                        queue.Enqueue(sb);
-                    }
-                    else
-                    {
-                        AppendItem(a, item);
-                    }
-                }
-            }
-            return result;
         }
 
         public virtual void Dispose()
@@ -312,7 +201,7 @@ namespace Neo.VM
                             ExecutionContext context_pop = InvocationStack.Pop();
                             int rvcount = context_pop.RVCount;
                             if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
-                            RandomAccessStack<StackItem> stack_eval;
+                            EvaluationStack stack_eval;
                             if (InvocationStack.Count == 0)
                                 stack_eval = ResultStack;
                             else
@@ -358,14 +247,14 @@ namespace Neo.VM
                         }
                     case OpCode.TOALTSTACK:
                         {
-                            //Move item from the EvaluationStack to the AltStack. No need to check.
-                            context.AltStack.Push(context.EvaluationStack.Pop());
+                            if (!TryPop(out StackItem x)) return false;
+                            context.AltStack.Push(x);
                             break;
                         }
                     case OpCode.FROMALTSTACK:
                         {
-                            //Move item from the AltStack to the EvaluationStack. No need to check.
-                            context.EvaluationStack.Push(context.AltStack.Pop());
+                            if (!context.AltStack.TryPop(out StackItem x)) return false;
+                            Push(x);
                             break;
                         }
                     case OpCode.ISNULL:
@@ -379,7 +268,7 @@ namespace Neo.VM
                             if (!TryPop(out PrimitiveType item_n)) return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
-                            if (!TryRemove(n, out StackItem _)) return false;
+                            if (!context.EvaluationStack.TryRemove(n, out StackItem _)) return false;
                             break;
                         }
                     case OpCode.XSWAP:
@@ -388,9 +277,8 @@ namespace Neo.VM
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
                             if (n == 0) break;
-                            //Swap item[0] and item[n]. No need to check.
-                            StackItem xn = context.EvaluationStack.Peek(n);
-                            context.EvaluationStack.Set(n, context.EvaluationStack.Peek());
+                            StackItem xn = Peek(n);
+                            context.EvaluationStack.Set(n, Peek());
                             context.EvaluationStack.Set(0, xn);
                             break;
                         }
@@ -399,7 +287,7 @@ namespace Neo.VM
                             if (!TryPop(out PrimitiveType item_n)) return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n <= 0) return false;
-                            if (!TryInsert(n, context.EvaluationStack.Peek())) return false;
+                            context.EvaluationStack.Insert(n, Peek());
                             break;
                         }
                     case OpCode.DEPTH:
@@ -414,17 +302,17 @@ namespace Neo.VM
                         }
                     case OpCode.DUP:
                         {
-                            Push(context.EvaluationStack.Peek());
+                            Push(Peek());
                             break;
                         }
                     case OpCode.NIP:
                         {
-                            if (!TryRemove(1, out StackItem _)) return false;
+                            if (!context.EvaluationStack.TryRemove(1, out StackItem _)) return false;
                             break;
                         }
                     case OpCode.OVER:
                         {
-                            Push(context.EvaluationStack.Peek(1));
+                            Push(Peek(1));
                             break;
                         }
                     case OpCode.PICK:
@@ -432,7 +320,7 @@ namespace Neo.VM
                             if (!TryPop(out PrimitiveType item_n)) return false;
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
-                            Push(context.EvaluationStack.Peek(n));
+                            Push(Peek(n));
                             break;
                         }
                     case OpCode.ROLL:
@@ -441,25 +329,25 @@ namespace Neo.VM
                             int n = (int)item_n.ToBigInteger();
                             if (n < 0) return false;
                             if (n == 0) break;
-                            //Move item[n] to the top. No need to check.
-                            context.EvaluationStack.Push(context.EvaluationStack.Remove(n));
+                            if (!context.EvaluationStack.TryRemove(n, out StackItem x)) return false;
+                            Push(x);
                             break;
                         }
                     case OpCode.ROT:
                         {
-                            //Move item[2] to the top. No need to check.
-                            context.EvaluationStack.Push(context.EvaluationStack.Remove(2));
+                            if (!context.EvaluationStack.TryRemove(2, out StackItem x)) return false;
+                            Push(x);
                             break;
                         }
                     case OpCode.SWAP:
                         {
-                            //Move item[1] to the top. No need to check.
-                            context.EvaluationStack.Push(context.EvaluationStack.Remove(1));
+                            if (!context.EvaluationStack.TryRemove(1, out StackItem x)) return false;
+                            Push(x);
                             break;
                         }
                     case OpCode.TUCK:
                         {
-                            if (!TryInsert(2, context.EvaluationStack.Peek())) return false;
+                            context.EvaluationStack.Insert(2, Peek());
                             break;
                         }
                     case OpCode.CAT:
@@ -871,13 +759,13 @@ namespace Neo.VM
                         {
                             if (!TryPop(out PrimitiveType item_size)) return false;
                             int size = (int)item_size.ToBigInteger();
-                            if (size < 0 || size > context.EvaluationStack.Count || !CheckArraySize(size))
+                            if (size < 0 || size > context.EvaluationStack.Count)
                                 return false;
-                            VMArray array = new VMArray();
+                            VMArray array = new VMArray(ReferenceCounter);
                             for (int i = 0; i < size; i++)
                             {
                                 if (!TryPop(out StackItem item)) return false;
-                                if (!AppendItem(array, item)) return false;
+                                array.Add(item);
                             }
                             Push(array);
                             break;
@@ -925,7 +813,7 @@ namespace Neo.VM
                     case OpCode.SETITEM:
                         {
                             if (!TryPop(out StackItem value)) return false;
-                            if (value is Struct s) value = CreateClonedStruct(s);
+                            if (value is Struct s) value = s.Clone();
                             if (!TryPop(out PrimitiveType key)) return false;
                             if (!TryPop(out StackItem x)) return false;
                             switch (x)
@@ -933,12 +821,12 @@ namespace Neo.VM
                                 case VMArray array:
                                     {
                                         int index = (int)key.ToBigInteger();
-                                        if (!SetItem(array, index, value)) return false;
+                                        array[index] = value;
                                         break;
                                     }
                                 case Map map:
                                     {
-                                        if (!SetItem(map, key, value)) return false;
+                                        map[key] = value;
                                         break;
                                     }
                                 default:
@@ -959,28 +847,16 @@ namespace Neo.VM
                                         if (array is Struct)
                                         {
                                             if (instruction.OpCode == OpCode.NEWSTRUCT)
-                                            {
                                                 result = array;
-                                            }
                                             else
-                                            {
-                                                result = new VMArray();
-                                                foreach (StackItem item in array)
-                                                    AppendItem(result, item);
-                                            }
+                                                result = new VMArray(ReferenceCounter, array);
                                         }
                                         else
                                         {
                                             if (instruction.OpCode == OpCode.NEWARRAY)
-                                            {
                                                 result = array;
-                                            }
                                             else
-                                            {
-                                                result = new Struct();
-                                                foreach (StackItem item in array)
-                                                    AppendItem(result, item);
-                                            }
+                                                result = new Struct(ReferenceCounter, array);
                                         }
                                         Push(result);
                                     }
@@ -988,12 +864,12 @@ namespace Neo.VM
                                 case PrimitiveType primitive:
                                     {
                                         int count = (int)primitive.ToBigInteger();
-                                        if (count < 0 || !CheckArraySize(count)) return false;
+                                        if (count < 0 || count > MaxStackSize) return false;
                                         VMArray result = instruction.OpCode == OpCode.NEWARRAY
-                                            ? new VMArray()
-                                            : new Struct();
+                                            ? new VMArray(ReferenceCounter)
+                                            : new Struct(ReferenceCounter);
                                         for (var i = 0; i < count; i++)
-                                            AppendItem(result, StackItem.Null);
+                                            result.Add(StackItem.Null);
                                         Push(result);
                                     }
                                     break;
@@ -1004,15 +880,15 @@ namespace Neo.VM
                         }
                     case OpCode.NEWMAP:
                         {
-                            Push(new Map());
+                            Push(new Map(ReferenceCounter));
                             break;
                         }
                     case OpCode.APPEND:
                         {
                             if (!TryPop(out StackItem newItem)) return false;
                             if (!TryPop(out VMArray array)) return false;
-                            if (newItem is Struct s) newItem = CreateClonedStruct(s);
-                            if (!AppendItem(array, newItem)) return false;
+                            if (newItem is Struct s) newItem = s.Clone();
+                            array.Add(newItem);
                             break;
                         }
                     case OpCode.REVERSE:
@@ -1029,10 +905,10 @@ namespace Neo.VM
                             {
                                 case VMArray array:
                                     int index = (int)key.ToBigInteger();
-                                    if (!RemoveItem(array, index)) return false;
+                                    array.RemoveAt(index);
                                     break;
                                 case Map map:
-                                    RemoveItem(map, key);
+                                    map.Remove(key);
                                     break;
                                 default:
                                     return false;
@@ -1061,15 +937,12 @@ namespace Neo.VM
                     case OpCode.KEYS:
                         {
                             if (!TryPop(out Map map)) return false;
-                            VMArray array = new VMArray();
-                            foreach (PrimitiveType key in map.Keys)
-                                AppendItem(array, key);
-                            Push(array);
+                            Push(new VMArray(ReferenceCounter, map.Keys));
                             break;
                         }
                     case OpCode.VALUES:
                         {
-                            ICollection<StackItem> values;
+                            IEnumerable<StackItem> values;
                             if (!TryPop(out StackItem x)) return false;
                             switch (x)
                             {
@@ -1082,12 +955,12 @@ namespace Neo.VM
                                 default:
                                     return false;
                             }
-                            VMArray newArray = new VMArray();
+                            VMArray newArray = new VMArray(ReferenceCounter);
                             foreach (StackItem item in values)
                                 if (item is Struct s)
-                                    AppendItem(newArray, CreateClonedStruct(s));
+                                    newArray.Add(s.Clone());
                                 else
-                                    AppendItem(newArray, item);
+                                    newArray.Add(item);
                             Push(newArray);
                             break;
                         }
@@ -1119,17 +992,30 @@ namespace Neo.VM
 
         public ExecutionContext LoadScript(Script script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(script, CurrentContext?.Script, rvcount);
+            ExecutionContext context = new ExecutionContext(script, CurrentContext?.Script, rvcount, ReferenceCounter);
             LoadContext(context);
             return context;
         }
 
         protected virtual bool OnSysCall(uint method) => false;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public StackItem Peek(int index = 0)
+        {
+            var stack = CurrentContext?.EvaluationStack ?? ResultStack;
+            return stack.Peek(index);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public StackItem Pop()
+        {
+            return CurrentContext.EvaluationStack.Pop();
+        }
+
         protected virtual bool PostExecuteInstruction(Instruction instruction)
         {
-            CheckZeroReferred();
-            return stackitem_count <= MaxStackSize;
+            ReferenceCounter.CheckZeroReferred();
+            return ReferenceCounter.Count <= MaxStackSize;
         }
 
         protected virtual bool PreExecuteInstruction() => true;
@@ -1137,93 +1023,13 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
         {
-            TryInsert(0, item);
-        }
-
-        public bool RemoveItem(VMArray array, int index)
-        {
-            if (index < 0 || index >= array.Count) return false;
-            RemoveReference(array[index], array);
-            array.RemoveAt(index);
-            stackitem_count--;
-            return true;
-        }
-
-        public void RemoveItem(Map map, PrimitiveType key)
-        {
-            if (!map.Remove(key, out StackItem old_value)) return;
-            RemoveReference(old_value, map);
-            stackitem_count -= 2;
-        }
-
-        private void RemoveReference(StackItem referred, CompoundType parent)
-        {
-            if (!(referred is CompoundType compound)) return;
-            ReferenceTracing tracing = reference_tracing[compound];
-            tracing.ObjectReferences[parent] -= 1;
-            if (tracing.StackReferences == 0)
-                zero_referred.Add(compound);
-        }
-
-        public bool SetItem(VMArray array, int index, StackItem item)
-        {
-            if (index < 0 || index >= array.Count) return false;
-            RemoveReference(array[index], array);
-            array[index] = item;
-            AddReference(item, array);
-            return true;
-        }
-
-        public bool SetItem(Map map, PrimitiveType key, StackItem value)
-        {
-            if (map.TryGetValue(key, out StackItem old_value))
-            {
-                RemoveReference(old_value, map);
-            }
-            else
-            {
-                if (map.Count >= MaxArraySize) return false;
-                stackitem_count += 2;
-            }
-            map[key] = value;
-            AddReference(value, map);
-            return true;
-        }
-
-        private bool TryInsert(int index, StackItem item)
-        {
-            var stack = CurrentContext.EvaluationStack;
-            if (index < 0 || index > stack.Count) return false;
-            stack.Insert(index, item);
-            stackitem_count++;
-            if (!(item is CompoundType compound)) return true;
-            if (reference_tracing.TryGetValue(compound, out ReferenceTracing tracing))
-                tracing.StackReferences++;
-            else
-                reference_tracing.Add(compound, new ReferenceTracing { StackReferences = 1 });
-            return true;
+            CurrentContext.EvaluationStack.Push(item);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryPop<T>(out T item) where T : StackItem
         {
-            return TryRemove(0, out item);
-        }
-
-        private bool TryRemove<T>(int index, out T item) where T : StackItem
-        {
-            if (!CurrentContext.EvaluationStack.TryRemove(index, out StackItem stackItem))
-            {
-                item = null;
-                return false;
-            }
-            stackitem_count--;
-            item = stackItem as T;
-            if (item is null) return false;
-            if (!(item is CompoundType item_compound)) return true;
-            if (--reference_tracing[item_compound].StackReferences == 0)
-                zero_referred.Add(item_compound);
-            return true;
+            return CurrentContext.EvaluationStack.TryPop(out item);
         }
     }
 }
