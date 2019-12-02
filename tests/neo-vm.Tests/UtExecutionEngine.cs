@@ -32,13 +32,13 @@ namespace Neo.Test
             sb.Emit(OpCode.APPEND); //{A[A,B],D[]}|{B[C[D]]}:7
             sb.Emit(OpCode.DUPFROMALTSTACK); //{A[A,B],D[],B[C]}|{B[C[D]]}:8
             sb.Emit(OpCode.APPEND); //{A[A,B]}|{B[C[D[B]]]}:7
-            sb.Emit(OpCode.FROMALTSTACK); //{A[A,B],B[C[D[B]]]}:7
-            sb.Emit(OpCode.DROP); //{A[A,B[C[D[B]]]]}:6
-            sb.Emit(OpCode.DUP); //{A[A,B[C[D[B]]]],A[A,B]}:7
-            sb.EmitPush(1); //{A[A,B[C[D[B]]]],A[A,B],1}:8
-            sb.Emit(OpCode.REMOVE); //{A[A]}:2
-            sb.Emit(OpCode.DROP); //{}:0
-            sb.Emit(OpCode.RET);
+            sb.Emit(OpCode.FROMALTSTACK); //{A[A,B],B[C[D[B]]]}|{}:7
+            sb.Emit(OpCode.DROP); //{A[A,B[C[D[B]]]]}|{}:6
+            sb.Emit(OpCode.DUP); //{A[A,B[C[D[B]]]],A[A,B]}|{}:7
+            sb.EmitPush(1); //{A[A,B[C[D[B]]]],A[A,B],1}|{}:8
+            sb.Emit(OpCode.REMOVE); //{A[A]}|{}:2
+            sb.Emit(OpCode.TOALTSTACK); //{}|{A[A]}:2
+            sb.Emit(OpCode.RET); //{}:0
             using ExecutionEngine engine = new ExecutionEngine();
             Debugger debugger = new Debugger(engine);
             engine.LoadScript(sb.ToArray());
@@ -97,8 +97,9 @@ namespace Neo.Test
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.HALT, debugger.Execute());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
 }
