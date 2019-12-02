@@ -26,12 +26,19 @@ namespace Neo.VM
                 tracing = new Entry();
                 counter.Add(compound, tracing);
             }
+            int count;
             if (tracing.ObjectReferences is null)
+            {
                 tracing.ObjectReferences = new Dictionary<CompoundType, int>(ReferenceEqualityComparer.Default);
-            if (tracing.ObjectReferences.TryGetValue(parent, out int count))
-                count++;
-            else
                 count = 1;
+            }
+            else
+            {
+                if (tracing.ObjectReferences.TryGetValue(parent, out count))
+                    count++;
+                else
+                    count = 1;
+            }
             tracing.ObjectReferences[parent] = count;
         }
 

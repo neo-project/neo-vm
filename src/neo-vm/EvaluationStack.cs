@@ -33,6 +33,7 @@ namespace Neo.VM
             return innerStack.GetEnumerator();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Insert(int index, StackItem item)
         {
             innerStack.Insert(index, item);
@@ -56,7 +57,8 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
         {
-            Insert(0, item);
+            innerStack.Push(item);
+            referenceCounter.AddStackReference(item);
         }
 
         internal void Set(int index, StackItem item)
