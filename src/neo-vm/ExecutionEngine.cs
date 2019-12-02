@@ -45,8 +45,8 @@ namespace Neo.VM
 
         public ReferenceCounter ReferenceCounter { get; } = new ReferenceCounter();
         public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
-        public ExecutionContext CurrentContext => InvocationStack.Count > 0 ? InvocationStack.Peek() : null;
-        public ExecutionContext EntryContext => InvocationStack.Count > 0 ? InvocationStack.Peek(InvocationStack.Count - 1) : null;
+        public ExecutionContext CurrentContext { get; private set; }
+        public ExecutionContext EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }
         public VMState State { get; internal protected set; } = VMState.BREAK;
 
@@ -203,9 +203,16 @@ namespace Neo.VM
                             if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
                             EvaluationStack stack_eval;
                             if (InvocationStack.Count == 0)
+                            {
+                                EntryContext = null;
+                                CurrentContext = null;
                                 stack_eval = ResultStack;
+                            }
                             else
+                            {
+                                CurrentContext = InvocationStack.Peek();
                                 stack_eval = CurrentContext.EvaluationStack;
+                            }
                             if (context_pop.EvaluationStack == stack_eval)
                             {
                                 if (context_pop.RVCount != 0) return false;
@@ -988,6 +995,8 @@ namespace Neo.VM
             if (InvocationStack.Count >= MaxInvocationStackSize)
                 throw new InvalidOperationException();
             InvocationStack.Push(context);
+            if (EntryContext is null) EntryContext = context;
+            CurrentContext = context;
         }
 
         public ExecutionContext LoadScript(Script script, int rvcount = -1)
