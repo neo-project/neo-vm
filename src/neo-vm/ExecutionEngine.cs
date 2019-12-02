@@ -223,9 +223,9 @@ namespace Neo.VM
                                 if (rvcount > 0)
                                     context_pop.EvaluationStack.CopyTo(stack_eval);
                             }
-                            if (context_pop.RVCount == -1 && InvocationStack.Count > 0)
+                            if (InvocationStack.Count == 0 || context_pop.AltStack != CurrentContext.AltStack)
                             {
-                                context_pop.AltStack.CopyTo(CurrentContext.AltStack);
+                                context_pop.AltStack.Clear();
                             }
                             if (InvocationStack.Count == 0)
                             {

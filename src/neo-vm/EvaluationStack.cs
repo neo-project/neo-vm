@@ -18,6 +18,13 @@ namespace Neo.VM
 
         public int Count => innerStack.Count;
 
+        internal void Clear()
+        {
+            foreach (StackItem item in innerStack)
+                referenceCounter.RemoveStackReference(item);
+            innerStack.Clear();
+        }
+
         internal void CopyTo(EvaluationStack stack, int count = -1)
         {
             innerStack.CopyTo(stack.innerStack, count);
