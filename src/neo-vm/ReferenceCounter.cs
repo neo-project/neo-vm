@@ -52,39 +52,42 @@ namespace Neo.VM
                 counter.Add(compound, new Entry { StackReferences = 1 });
         }
 
-        internal void CheckZeroReferred()
+        internal int CheckZeroReferred()
         {
-            if (zero_referred.Count == 0) return;
-            HashSet<CompoundType> toBeDestroyed = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
-            foreach (CompoundType compound in zero_referred)
+            if (zero_referred.Count > 0)
             {
-                HashSet<CompoundType> toBeDestroyedInLoop = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
-                Queue<CompoundType> toBeChecked = new Queue<CompoundType>();
-                toBeChecked.Enqueue(compound);
-                while (toBeChecked.Count > 0)
+                HashSet<CompoundType> toBeDestroyed = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
+                foreach (CompoundType compound in zero_referred)
                 {
-                    CompoundType c = toBeChecked.Dequeue();
-                    Entry entry = counter[c];
-                    if (entry.StackReferences > 0)
+                    HashSet<CompoundType> toBeDestroyedInLoop = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
+                    Queue<CompoundType> toBeChecked = new Queue<CompoundType>();
+                    toBeChecked.Enqueue(compound);
+                    while (toBeChecked.Count > 0)
                     {
-                        toBeDestroyedInLoop.Clear();
-                        break;
+                        CompoundType c = toBeChecked.Dequeue();
+                        Entry entry = counter[c];
+                        if (entry.StackReferences > 0)
+                        {
+                            toBeDestroyedInLoop.Clear();
+                            break;
+                        }
+                        toBeDestroyedInLoop.Add(c);
+                        if (entry.ObjectReferences is null) continue;
+                        foreach (var pair in entry.ObjectReferences)
+                            if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key))
+                                toBeChecked.Enqueue(pair.Key);
                     }
-                    toBeDestroyedInLoop.Add(c);
-                    if (entry.ObjectReferences is null) continue;
-                    foreach (var pair in entry.ObjectReferences)
-                        if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key))
-                            toBeChecked.Enqueue(pair.Key);
+                    if (toBeDestroyedInLoop.Count > 0)
+                        toBeDestroyed.UnionWith(toBeDestroyedInLoop);
                 }
-                if (toBeDestroyedInLoop.Count > 0)
-                    toBeDestroyed.UnionWith(toBeDestroyedInLoop);
+                foreach (CompoundType compound in toBeDestroyed)
+                {
+                    counter.Remove(compound);
+                    references_count -= compound.ItemsCount;
+                }
+                zero_referred.Clear();
             }
-            foreach (CompoundType compound in toBeDestroyed)
-            {
-                counter.Remove(compound);
-                references_count -= compound.ItemsCount;
-            }
-            zero_referred.Clear();
+            return references_count;
         }
 
         internal void RemoveReference(StackItem referred, CompoundType parent)

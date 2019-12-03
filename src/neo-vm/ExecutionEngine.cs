@@ -1022,8 +1022,7 @@ namespace Neo.VM
 
         protected virtual bool PostExecuteInstruction(Instruction instruction)
         {
-            ReferenceCounter.CheckZeroReferred();
-            return ReferenceCounter.Count <= MaxStackSize;
+            return ReferenceCounter.CheckZeroReferred() <= MaxStackSize;
         }
 
         protected virtual bool PreExecuteInstruction() => true;
