@@ -1011,8 +1011,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Peek(int index = 0)
         {
-            var stack = CurrentContext?.EvaluationStack ?? ResultStack;
-            return stack.Peek(index);
+            return CurrentContext.EvaluationStack.Peek(index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
