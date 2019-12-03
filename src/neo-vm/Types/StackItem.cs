@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -84,18 +83,6 @@ namespace Neo.VM.Types
         public static implicit operator StackItem(string value)
         {
             return (ByteArray)value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator StackItem(StackItem[] value)
-        {
-            return (Array)value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator StackItem(List<StackItem> value)
-        {
-            return (Array)value;
         }
     }
 }
