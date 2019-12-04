@@ -1,120 +1,102 @@
 {
-    "category": "Limits",
-    "name": "Invocation limits",
-    "tests":
-    [
+  "category": "Limits",
+  "name": "Invocation limits",
+  "tests": [
+    {
+      "name": "More than 1024 ExecutionContext",
+      "script": "0c0200048b6b6c8c766b64060065f9ff66",
+      "steps": [
         {
-            "name": "More than 1024 ExecutionContext",
-            "script": "0x0200048B6B6C8C766B64060065F9FF66",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "nextInstruction": "FROMALTSTACK",
-                                "instructionPointer": 5,
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1025
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "nextInstruction": "JMPIFNOT",
-                                "instructionPointer": 9,
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1024
-                                    }
-                                ],
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1024
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "nextInstruction": "FROMALTSTACK",
-                                "instructionPointer": 5,
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1024
-                                    }
-                                ]
-                            },
-                            {
-                                "nextInstruction": "RET",
-                                "instructionPointer": 15,
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1024
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "nextInstruction": "FROMALTSTACK",
+                "instructionPointer": 5,
+                "altStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1025
+                  }
+                ]
+              }
             ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "nextInstruction": "JMPIFNOT",
+                "instructionPointer": 9,
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1024
+                  }
+                ],
+                "altStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1024
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "nextInstruction": "FROMALTSTACK",
+                "instructionPointer": 5,
+                "altStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1024
+                  }
+                ]
+              },
+              {
+                "nextInstruction": "RET",
+                "instructionPointer": 15,
+                "altStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1024
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    }
+  ]
 }
