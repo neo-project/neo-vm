@@ -71,3 +71,19 @@ jobs:
       run: dotnet nuget push out/*.nupkg -s https://www.myget.org/F/neo/api/v2/package -k ${MYGET_TOKEN} -ss https://www.myget.org/F/neo/symbols/api/v2/package -sk ${MYGET_TOKEN}
       env:
         MYGET_TOKEN: ${{ secrets.MYGET_TOKEN }}
+
+  Release:
+    #if: github.ref == 'refs/heads/master' && startsWith(github.repository, 'neo-project/')
+    #needs: Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Pack with dotnet
+      run: dotnet pack -o out -c Release
+    - name: Print version
+      run: find out -name *.nupkg
