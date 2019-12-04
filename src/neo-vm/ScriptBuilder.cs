@@ -41,7 +41,7 @@ namespace Neo.VM
         public ScriptBuilder EmitPush(BigInteger number)
         {
             if (number >= -1 && number <= 16) return Emit(OpCode.PUSH0 + (byte)(int)number);
-            byte[] data = number.ToByteArray();
+            byte[] data = number.ToByteArray(isUnsigned: false, isBigEndian: false);
             if (data.Length == 1) return Emit(OpCode.PUSHINT8, data);
             if (data.Length == 2) return Emit(OpCode.PUSHINT16, data);
             if (data.Length <= 4) return Emit(OpCode.PUSHINT32, PadRight(data, 4));
