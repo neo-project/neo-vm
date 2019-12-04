@@ -40,27 +40,27 @@ namespace Neo.VM
 
         public ScriptBuilder EmitPush(BigInteger number)
         {
-            if (number == -1) return Emit(OpCode.PUSHM1);
-            if (number == 0) return Emit(OpCode.PUSH0);
-            if (number > 0 && number <= 16) return Emit(OpCode.PUSH1 - 1 + (byte)number);
-            return EmitPush(number.ToByteArray());
+            if (number >= -1 && number <= 16) return Emit(OpCode.PUSH0 + (byte)(int)number);
+            byte[] data = number.ToByteArray();
+            if (data.Length == 1) return Emit(OpCode.PUSHINT8, data);
+            if (data.Length == 2) return Emit(OpCode.PUSHINT16, data);
+            if (data.Length <= 4) return Emit(OpCode.PUSHINT32, data);
+            if (data.Length <= 8) return Emit(OpCode.PUSHINT64, data);
+            if (data.Length <= 16) return Emit(OpCode.PUSHINT128, data);
+            if (data.Length <= 32) return Emit(OpCode.PUSHINT256, data);
+            throw new ArgumentOutOfRangeException(nameof(number));
         }
 
         public ScriptBuilder EmitPush(bool data)
         {
-            return Emit(data ? OpCode.PUSHT : OpCode.PUSHF);
+            return Emit(data ? OpCode.PUSH1 : OpCode.PUSH0);
         }
 
         public ScriptBuilder EmitPush(byte[] data)
         {
             if (data == null)
-                throw new ArgumentNullException();
-            if (data.Length <= (int)OpCode.PUSHBYTES75)
-            {
-                writer.Write((byte)data.Length);
-                writer.Write(data);
-            }
-            else if (data.Length < 0x100)
+                throw new ArgumentNullException(nameof(data));
+            if (data.Length < 0x100)
             {
                 Emit(OpCode.PUSHDATA1);
                 writer.Write((byte)data.Length);
