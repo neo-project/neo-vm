@@ -61,6 +61,20 @@
           }
         }
       ]
+    },
+    {
+      "name": "Max items with PUSHDATA (2048+1)",
+      "script": "010004c5c201fe03c5c20c0101",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
     }
   ]
 }
