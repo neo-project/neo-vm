@@ -32,8 +32,8 @@
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -829,7 +829,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 36,
+                "instructionPointer": 38,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
@@ -853,7 +853,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 37,
+                "instructionPointer": 39,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -894,7 +894,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 36,
+                "instructionPointer": 38,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
@@ -918,7 +918,72 @@
             "state": "Break",
             "invocationStack": [
               {
+                "instructionPointer": 39,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [ByteArray,ByteArray]=false different length",
+      "script": "0c1100000000000000000000000000000001230c100000000000000000000000000000012487",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
                 "instructionPointer": 37,
+                "nextInstruction": "EQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x00000000000000000000000000000124"
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0000000000000000000000000000000123"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 38,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -959,7 +1024,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 35,
+                "instructionPointer": 37,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
@@ -983,72 +1048,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 36,
-                "nextInstruction": "RET",
-                "evaluationStack": [
-                  {
-                    "type": "Boolean",
-                    "value": false
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Halt",
-            "resultStack": [
-              {
-                "type": "Boolean",
-                "value": false
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Real test [ByteArray,ByteArray]=false different length",
-      "script": "0c1100000000000000000000000000000001230c100000000000000000000000000000012487",
-      "steps": [
-        {
-          "actions": [
-            "StepInto",
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 35,
-                "nextInstruction": "EQUAL",
-                "evaluationStack": [
-                  {
-                    "type": "ByteArray",
-                    "value": "0x00000000000000000000000000000124"
-                  },
-                  {
-                    "type": "ByteArray",
-                    "value": "0x0000000000000000000000000000000123"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 36,
+                "instructionPointer": 38,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {

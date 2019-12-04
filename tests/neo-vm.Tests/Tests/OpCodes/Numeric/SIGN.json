@@ -313,7 +313,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 3,
+                "instructionPointer": 4,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
@@ -333,7 +333,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 4,
+                "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -373,7 +373,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 3,
+                "instructionPointer": 4,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
@@ -393,7 +393,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 4,
+                "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {

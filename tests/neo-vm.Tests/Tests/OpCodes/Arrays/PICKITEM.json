@@ -367,7 +367,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 4,
+                "instructionPointer": 5,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
@@ -406,7 +406,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 4,
+                "instructionPointer": 5,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
@@ -445,12 +445,12 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 4,
+                "instructionPointer": 5,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
                     "type": "ByteArray",
@@ -469,7 +469,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {

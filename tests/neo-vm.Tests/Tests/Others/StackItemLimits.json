@@ -15,7 +15,7 @@
             "invocationStack": [
               {
                 "nextInstruction": "NOT",
-                "instructionPointer": 34,
+                "instructionPointer": 35,
                 "evaluationStack": [
                   {
                     "type": "ByteArray",
@@ -35,7 +35,7 @@
             "invocationStack": [
               {
                 "nextInstruction": "RET",
-                "instructionPointer": 35,
+                "instructionPointer": 36,
                 "evaluationStack": [
                   {
                     "type": "Boolean",

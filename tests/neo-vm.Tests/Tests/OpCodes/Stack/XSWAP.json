@@ -273,8 +273,8 @@
                 "nextInstruction": "XSWAP",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
                     "type": "Integer",

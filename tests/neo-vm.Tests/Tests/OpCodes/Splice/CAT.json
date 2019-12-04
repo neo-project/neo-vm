@@ -78,7 +78,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer": 8,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -124,8 +124,8 @@
                 "nextInstruction": "CAT",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
                     "type": "Integer",
@@ -169,8 +169,8 @@
                 "nextInstruction": "CAT",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
                     "type": "Integer",
@@ -218,8 +218,8 @@
                     "value": 1
                   },
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }

@@ -69,7 +69,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "nextInstruction": "LEFT",
                 "evaluationStack": [
                   {
@@ -108,7 +108,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "nextInstruction": "LEFT",
                 "evaluationStack": [
                   {
@@ -132,7 +132,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer": 7,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -173,7 +173,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "nextInstruction": "LEFT",
                 "evaluationStack": [
                   {
@@ -197,7 +197,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer": 7,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {

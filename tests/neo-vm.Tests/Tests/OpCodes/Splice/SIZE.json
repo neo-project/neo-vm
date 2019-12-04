@@ -28,7 +28,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 3,
+                "instructionPointer": 4,
                 "nextInstruction": "SIZE",
                 "evaluationStack": [
                   {

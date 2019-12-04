@@ -63,12 +63,12 @@
                     "value": -1
                   },
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -103,12 +103,12 @@
                 "nextInstruction": "SUBSTR",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
                     "type": "Map",
@@ -151,12 +151,12 @@
                     "value": {}
                   },
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -191,16 +191,16 @@
                 "nextInstruction": "SUBSTR",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
                     "type": "Map",
                     "value": {}
                   },
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -235,16 +235,16 @@
                 "nextInstruction": "SUBSTR",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   },
                   {
                     "type": "Integer",
                     "value": -1
                   },
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -275,7 +275,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "nextInstruction": "SUBSTR",
                 "evaluationStack": [
                   {
@@ -319,7 +319,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 13,
+                "instructionPointer": 14,
                 "nextInstruction": "SUBSTR",
                 "evaluationStack": [
                   {
@@ -369,7 +369,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 13,
+                "instructionPointer": 14,
                 "nextInstruction": "SUBSTR",
                 "evaluationStack": [
                   {
@@ -418,7 +418,7 @@
             "resultStack": [
               {
                 "type": "ByteArray",
-                "value": "QUE="
+                "value": "4141"
               }
             ]
           }

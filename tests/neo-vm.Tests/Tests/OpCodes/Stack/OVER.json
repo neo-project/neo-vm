@@ -32,8 +32,8 @@
                 "nextInstruction": "OVER",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }

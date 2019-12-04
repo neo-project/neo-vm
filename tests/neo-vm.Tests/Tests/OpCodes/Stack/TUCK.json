@@ -32,8 +32,8 @@
                 "nextInstruction": "TUCK",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }

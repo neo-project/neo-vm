@@ -32,8 +32,8 @@
                 "nextInstruction": "SWAP",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }

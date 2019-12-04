@@ -17,7 +17,7 @@
             "invocationStack": [
               {
                 "nextInstruction": "FROMALTSTACK",
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "altStack": [
                   {
                     "type": "Integer",
@@ -40,7 +40,7 @@
             "invocationStack": [
               {
                 "nextInstruction": "JMPIFNOT",
-                "instructionPointer": 9,
+                "instructionPointer": 10,
                 "evaluationStack": [
                   {
                     "type": "Integer",
@@ -67,7 +67,7 @@
             "invocationStack": [
               {
                 "nextInstruction": "FROMALTSTACK",
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "altStack": [
                   {
                     "type": "Integer",
@@ -77,7 +77,7 @@
               },
               {
                 "nextInstruction": "RET",
-                "instructionPointer": 15,
+                "instructionPointer": 16,
                 "altStack": [
                   {
                     "type": "Integer",

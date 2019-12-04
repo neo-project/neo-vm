@@ -18,8 +18,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
-                    "value": ""
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -34,8 +34,8 @@
             "state": "Halt",
             "resultStack": [
               {
-                "type": "ByteArray",
-                "value": ""
+                "type": "Integer",
+                "value": 0
               }
             ]
           }
