@@ -62,10 +62,10 @@ namespace Neo.VM
             OperandSizePrefixTable[(int)OpCode.PUSHDATA4] = 4;
             OperandSizeTable[(int)OpCode.PUSHINT8] = 1;
             OperandSizeTable[(int)OpCode.PUSHINT16] = 2;
-            OperandSizeTable[(int)OpCode.PUSHINT32] = 3;
-            OperandSizeTable[(int)OpCode.PUSHINT64] = 4;
-            OperandSizeTable[(int)OpCode.PUSHINT128] = 5;
-            OperandSizeTable[(int)OpCode.PUSHINT256] = 6;
+            OperandSizeTable[(int)OpCode.PUSHINT32] = 4;
+            OperandSizeTable[(int)OpCode.PUSHINT64] = 8;
+            OperandSizeTable[(int)OpCode.PUSHINT128] = 16;
+            OperandSizeTable[(int)OpCode.PUSHINT256] = 32;
             OperandSizeTable[(int)OpCode.JMP] = 2;
             OperandSizeTable[(int)OpCode.JMPIF] = 2;
             OperandSizeTable[(int)OpCode.JMPIFNOT] = 2;

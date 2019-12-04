@@ -1,0 +1,45 @@
+{
+  "category": "Push",
+  "name": "PUSHINT8 to PUSHINT256",
+  "tests": [
+    {
+      "script": "00ff01feff02fdffffff03fcffffffffffffff04fbffffffffffffffffffffffffffffff05faffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": -6
+              },
+              {
+                "type": "Integer",
+                "value": -5
+              },
+              {
+                "type": "Integer",
+                "value": -4
+              },
+              {
+                "type": "Integer",
+                "value": -3
+              },
+              {
+                "type": "Integer",
+                "value": -2
+              },
+              {
+                "type": "Integer",
+                "value": -1
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
