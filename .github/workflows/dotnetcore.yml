@@ -82,7 +82,8 @@ jobs:
     - name: Get version
       run: |
         sudo apt install libxml2-utils
-        find src -name *.csproj | xargs xmllint --xpath "//VersionPrefix/text() | //VersionSuffix/text()" | xargs printf "v%s-%s"
+        find src -name *.csproj | xargs xmllint --xpath "//VersionPrefix/text() | //VersionSuffix/text()" | xargs printf "RELEASE_VERSION=v%s-%s" | xargs export
+        echo $RELEASE_VERSION
 #    - name: Setup .NET Core
 #      uses: actions/setup-dotnet@v1
 #      with:
