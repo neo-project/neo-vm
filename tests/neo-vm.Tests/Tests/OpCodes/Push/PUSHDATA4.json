@@ -3,8 +3,8 @@
   "name": "PUSHDATA4",
   "tests": [
     {
-      "name": "Check limit (MaxItemSize = 1024 * 1024)",
-      "script": "0e0010000101020304",
+      "name": "More length than script",
+      "script": "0e00080000",
       "steps": [
         {
           "actions": [
