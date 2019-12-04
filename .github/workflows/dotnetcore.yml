@@ -79,11 +79,13 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-    - name: Pack with dotnet
-      run: dotnet pack -o out -c Release
-    - name: Print version
-      run: find out -name *.nupkg
+    - name: Get version
+      run: |
+        sudo apt install libxml2-utils
+        find src -name *.csproj | xargs xmllint --xpath "//VersionPrefix/text() | //VersionSuffix/text()"
+#    - name: Setup .NET Core
+#      uses: actions/setup-dotnet@v1
+#      with:
+#        dotnet-version: ${{ env.DOTNET_VERSION }}
+#    - name: Pack with dotnet
+#      run: dotnet pack -o out -c Release
