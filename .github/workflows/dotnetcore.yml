@@ -87,11 +87,9 @@ jobs:
     - name: Check tag
       id: check_tag
       run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, steps.get_version.outputs.version) }} | head -n 1 | cut -d$' ' -f2 | xargs printf "::set-output name=statusCode::%s" | xargs echo
-    - name: Read outputs
-      run: echo ${{ steps.check_tag.outputs.statusCode == '404' }}
     - name: Create release
-      id: create_release
       if: steps.check_tag.outputs.statusCode == '404'
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
