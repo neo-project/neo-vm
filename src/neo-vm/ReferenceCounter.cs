@@ -1,5 +1,6 @@
 using Neo.VM.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Neo.VM
 {
@@ -85,7 +86,7 @@ namespace Neo.VM
                 {
                     counter.Remove(compound);
                     references_count -= compound.SubItemsCount;
-                    foreach (CompoundType subitem in compound.SubItems)
+                    foreach (CompoundType subitem in compound.SubItems.OfType<CompoundType>())
                     {
                         if (toBeDestroyed.Contains(subitem)) continue;
                         Entry entry = counter[subitem];
