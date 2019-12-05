@@ -65,7 +65,7 @@ namespace Neo.VM
                     while (toBeChecked.Count > 0)
                     {
                         CompoundType c = toBeChecked.Dequeue();
-                        Entry entry = counter[c];
+                        if (!counter.TryGetValue(c, out Entry entry)) continue;
                         if (entry.StackReferences > 0)
                         {
                             toBeDestroyedInLoop.Clear();
