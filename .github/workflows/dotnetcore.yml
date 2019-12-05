@@ -85,23 +85,29 @@ jobs:
         sudo apt install xmlstarlet
         find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('::set-output name=version::v',//VersionPrefix/text(),'-',//VersionSuffix/text())" | xargs echo
     - name: Check tag
-      run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, steps.get_version.outputs.version) }} | head -n 1 | cut -d$' ' -f2
-#    - name: Create release
-#      id: create_release
-#      uses: actions/create-release@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        tag_name: ${{ steps.get_version.outputs.version }}
-#        release_name: ${{ steps.get_version.outputs.version }}
-#        prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
-#    - name: Setup .NET Core
-#      uses: actions/setup-dotnet@v1
-#      with:
-#        dotnet-version: ${{ env.DOTNET_VERSION }}
-#    - name: Pack with dotnet
-#      run: dotnet pack -o out -c Release
-#    - name: Publish to NuGet
-#      run: dotnet nuget push out/*.nupkg -s https://api.nuget.org/v3/index.json -k ${NUGET_TOKEN}
-#      env:
-#        NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+      id: check_tag
+      run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, steps.get_version.outputs.version) }} | head -n 1 | cut -d$' ' -f2 | xargs printf "::set-output name=statusCode::%s" | xargs echo
+    - name: Read outputs
+      run: echo ${{ steps.check_tag.outputs.statusCode == '404' }}
+    - name: Create release
+      id: create_release
+      if: steps.check_tag.outputs.statusCode == '404'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }}
+        release_name: ${{ steps.get_version.outputs.version }}
+        prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
+    - name: Setup .NET Core
+      if: steps.check_tag.outputs.statusCode == '404'
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Publish to NuGet
+      if: steps.check_tag.outputs.statusCode == '404'
+      run: |
+        dotnet pack -o out -c Release
+        dotnet nuget push out/*.nupkg -s https://api.nuget.org/v3/index.json -k ${NUGET_TOKEN}
+      env:
+        NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
