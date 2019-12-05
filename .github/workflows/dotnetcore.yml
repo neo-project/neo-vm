@@ -93,9 +93,13 @@ jobs:
         tag_name: ${{ steps.get_version.outputs.version }}
         release_name: ${{ steps.get_version.outputs.version }}
         prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
-#    - name: Setup .NET Core
-#      uses: actions/setup-dotnet@v1
-#      with:
-#        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
 #    - name: Pack with dotnet
 #      run: dotnet pack -o out -c Release
+#    - name: Publish to NuGet
+#      run: dotnet nuget push out/*.nupkg -s https://api.nuget.org/v3/index.json -k ${NUGET_TOKEN}
+#      env:
+#        NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
