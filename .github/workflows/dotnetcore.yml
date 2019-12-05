@@ -84,16 +84,14 @@ jobs:
       run: |
         sudo apt install xmlstarlet
         find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('::set-output name=version::v',//VersionPrefix/text(),'-',//VersionSuffix/text())" | xargs echo
-    - name: Print version
-      run: echo ${{ steps.get_version.outputs.version }}
-#    - name: Create release
-#      id: create_release
-#      uses: actions/create-release@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        tag_name: ${{ env.RELEASE_VERSION }}
-#        prerelease: ${{ contains(env.RELEASE_VERSION, '-') }}
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.version }}
+        prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
 #    - name: Setup .NET Core
 #      uses: actions/setup-dotnet@v1
 #      with:
