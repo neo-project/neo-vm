@@ -83,20 +83,22 @@ jobs:
       id: get_version
       run: |
         sudo apt install xmlstarlet
-        find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('::set-output name=version::v',//VersionPrefix/text(),'-',//VersionSuffix/text(),'-test')" | xargs echo
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.get_version.outputs.version }}
-        release_name: ${{ steps.get_version.outputs.version }}
-        prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+        find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('::set-output name=version::v',//VersionPrefix/text(),'-',//VersionSuffix/text())" | xargs echo
+    - name: Check tag
+      run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, steps.get_version.outputs.version) }} | head -n 1 | cut -d$' ' -f2
+#    - name: Create release
+#      id: create_release
+#      uses: actions/create-release@v1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      with:
+#        tag_name: ${{ steps.get_version.outputs.version }}
+#        release_name: ${{ steps.get_version.outputs.version }}
+#        prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
+#    - name: Setup .NET Core
+#      uses: actions/setup-dotnet@v1
+#      with:
+#        dotnet-version: ${{ env.DOTNET_VERSION }}
 #    - name: Pack with dotnet
 #      run: dotnet pack -o out -c Release
 #    - name: Publish to NuGet
