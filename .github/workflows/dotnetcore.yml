@@ -91,6 +91,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.get_version.outputs.version }}
+        release_name: ${{ steps.get_version.outputs.version }}
         prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
 #    - name: Setup .NET Core
 #      uses: actions/setup-dotnet@v1
