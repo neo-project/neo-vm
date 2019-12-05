@@ -73,8 +73,8 @@ jobs:
         MYGET_TOKEN: ${{ secrets.MYGET_TOKEN }}
 
   Release:
-    #if: github.ref == 'refs/heads/master' && startsWith(github.repository, 'neo-project/')
-    #needs: Test
+    if: github.ref == 'refs/heads/master' && startsWith(github.repository, 'neo-project/')
+    needs: Test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
