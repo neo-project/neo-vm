@@ -83,7 +83,7 @@ jobs:
       id: get_version
       run: |
         sudo apt install xmlstarlet
-        find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('::set-output name=version::v',//VersionPrefix/text(),'-',//VersionSuffix/text())" | xargs echo
+        find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('::set-output name=version::v',//VersionPrefix/text(),'-',//VersionSuffix/text(),'-test')" | xargs echo
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
