@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Neo.VM.Types
 {
@@ -30,8 +31,9 @@ namespace Neo.VM.Types
         }
 
         public override int Count => dictionary.Count;
-        public override int ItemsCount => dictionary.Count * 2;
         public IEnumerable<PrimitiveType> Keys => dictionary.Keys;
+        internal override IEnumerable<StackItem> SubItems => Keys.Concat(Values);
+        internal override int SubItemsCount => dictionary.Count * 2;
         public IEnumerable<StackItem> Values => dictionary.Values;
 
         public Map(Dictionary<PrimitiveType, StackItem> value = null)

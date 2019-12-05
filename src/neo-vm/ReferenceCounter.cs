@@ -12,7 +12,7 @@ namespace Neo.VM
         }
 
         private readonly Dictionary<CompoundType, Entry> counter = new Dictionary<CompoundType, Entry>(ReferenceEqualityComparer.Default);
-        private readonly List<CompoundType> zero_referred = new List<CompoundType>();
+        private readonly HashSet<CompoundType> zero_referred = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
         private int references_count = 0;
 
         public int Count => references_count;
@@ -54,7 +54,7 @@ namespace Neo.VM
 
         internal int CheckZeroReferred()
         {
-            if (zero_referred.Count > 0)
+            while (zero_referred.Count > 0)
             {
                 HashSet<CompoundType> toBeDestroyed = new HashSet<CompoundType>(ReferenceEqualityComparer.Default);
                 foreach (CompoundType compound in zero_referred)
@@ -65,7 +65,7 @@ namespace Neo.VM
                     while (toBeChecked.Count > 0)
                     {
                         CompoundType c = toBeChecked.Dequeue();
-                        if (!counter.TryGetValue(c, out Entry entry)) continue;
+                        Entry entry = counter[c];
                         if (entry.StackReferences > 0)
                         {
                             toBeDestroyedInLoop.Clear();
@@ -80,12 +80,20 @@ namespace Neo.VM
                     if (toBeDestroyedInLoop.Count > 0)
                         toBeDestroyed.UnionWith(toBeDestroyedInLoop);
                 }
+                zero_referred.Clear();
                 foreach (CompoundType compound in toBeDestroyed)
                 {
                     counter.Remove(compound);
-                    references_count -= compound.ItemsCount;
+                    references_count -= compound.SubItemsCount;
+                    foreach (CompoundType subitem in compound.SubItems)
+                    {
+                        if (toBeDestroyed.Contains(subitem)) continue;
+                        Entry entry = counter[subitem];
+                        entry.ObjectReferences.Remove(compound);
+                        if (entry.StackReferences == 0)
+                            zero_referred.Add(subitem);
+                    }
                 }
-                zero_referred.Clear();
             }
             return references_count;
         }
