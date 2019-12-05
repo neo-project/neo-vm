@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Neo.VM.Types
 {
@@ -13,7 +14,9 @@ namespace Neo.VM.Types
 
         public abstract int Count { get; }
 
-        public abstract int ItemsCount { get; }
+        internal abstract IEnumerable<StackItem> SubItems { get; }
+
+        internal abstract int SubItemsCount { get; }
 
         public override bool Equals(StackItem other)
         {

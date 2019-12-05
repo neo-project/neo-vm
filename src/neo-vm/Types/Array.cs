@@ -24,7 +24,8 @@ namespace Neo.VM.Types
         }
 
         public override int Count => _array.Count;
-        public override int ItemsCount => _array.Count;
+        internal override IEnumerable<StackItem> SubItems => _array;
+        internal override int SubItemsCount => _array.Count;
 
         public Array(IEnumerable<StackItem> value = null)
             : this(null, value)
