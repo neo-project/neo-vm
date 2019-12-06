@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -57,20 +58,14 @@ namespace Neo.VM
 
         static Instruction()
         {
-            OperandSizePrefixTable[(int)OpCode.PUSHDATA1] = 1;
-            OperandSizePrefixTable[(int)OpCode.PUSHDATA2] = 2;
-            OperandSizePrefixTable[(int)OpCode.PUSHDATA4] = 4;
-            OperandSizeTable[(int)OpCode.PUSHINT8] = 1;
-            OperandSizeTable[(int)OpCode.PUSHINT16] = 2;
-            OperandSizeTable[(int)OpCode.PUSHINT32] = 4;
-            OperandSizeTable[(int)OpCode.PUSHINT64] = 8;
-            OperandSizeTable[(int)OpCode.PUSHINT128] = 16;
-            OperandSizeTable[(int)OpCode.PUSHINT256] = 32;
-            OperandSizeTable[(int)OpCode.JMP] = 2;
-            OperandSizeTable[(int)OpCode.JMPIF] = 2;
-            OperandSizeTable[(int)OpCode.JMPIFNOT] = 2;
-            OperandSizeTable[(int)OpCode.CALL] = 2;
-            OperandSizeTable[(int)OpCode.SYSCALL] = 4;
+            foreach (FieldInfo field in typeof(OpCode).GetFields(BindingFlags.Public | BindingFlags.Static))
+            {
+                OperandSizeAttribute attribute = field.GetCustomAttribute<OperandSizeAttribute>();
+                if (attribute == null) continue;
+                int index = (int)(OpCode)field.GetValue(null);
+                OperandSizePrefixTable[index] = attribute.SizePrefix;
+                OperandSizeTable[index] = attribute.Size;
+            }
         }
 
         private Instruction(OpCode opcode)
