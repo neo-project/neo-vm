@@ -127,6 +127,12 @@ namespace Neo.Test
                         ret.Remove("value");
                         break;
                     }
+                case VMUTStackItemType.Pointer:
+                    {
+                        ret["type"] = VMUTStackItemType.Pointer.ToString();
+                        ret["value"] = item.Value.Value<int>();
+                        break;
+                    }
                 case VMUTStackItemType.String:
                     {
                         // Easy access
@@ -192,6 +198,14 @@ namespace Neo.Test
                         return new JObject
                         {
                             ["type"] = type,
+                        };
+                    }
+                case Pointer p:
+                    {
+                        return new JObject
+                        {
+                            ["type"] = type,
+                            ["value"] = p.Position
                         };
                     }
                 case VM.Types.Boolean v: value = new JValue(v.ToBoolean()); break;

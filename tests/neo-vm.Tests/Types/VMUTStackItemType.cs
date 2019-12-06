@@ -8,6 +8,11 @@ namespace Neo.Test.Types
         Null,
 
         /// <summary>
+        /// An address of function
+        /// </summary>
+        Pointer,
+
+        /// <summary>
         /// Boolean (true,false)
         /// </summary>
         Boolean,

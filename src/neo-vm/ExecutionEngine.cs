@@ -138,6 +138,13 @@ namespace Neo.VM
                         Push(new BigInteger(instruction.Operand.Span));
                         break;
                     }
+                case OpCode.PUSHA:
+                    {
+                        int position = instruction.TokenI32;
+                        if (position < 0 || position > CurrentContext.Script.Length) return false;
+                        Push(new Pointer(position));
+                        break;
+                    }
                 case OpCode.PUSHNULL:
                     {
                         Push(StackItem.Null);
@@ -197,9 +204,20 @@ namespace Neo.VM
                         return true;
                     }
                 case OpCode.CALL:
+                case OpCode.CALLA:
                     {
+                        int position;
+                        if (instruction.OpCode == OpCode.CALLA)
+                        {
+                            if (!TryPop(out Pointer x)) return false;
+                            position = x.Position;
+                        }
+                        else
+                        {
+                            position = context.InstructionPointer + instruction.TokenI16;
+                        }
                         ExecutionContext context_call = context.Clone();
-                        context_call.InstructionPointer = context.InstructionPointer + instruction.TokenI16;
+                        context_call.InstructionPointer = position;
                         if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
                         LoadContext(context_call);
                         break;
