@@ -1,4 +1,5 @@
 using System;
+using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -34,7 +35,16 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return BitConverter.ToInt16(Operand.Span);
+                return BinaryPrimitives.ReadInt16LittleEndian(Operand.Span);
+            }
+        }
+
+        public int TokenI32
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return BinaryPrimitives.ReadInt32LittleEndian(Operand.Span);
             }
         }
 
@@ -52,7 +62,7 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return BitConverter.ToUInt32(Operand.Span);
+                return BinaryPrimitives.ReadUInt32LittleEndian(Operand.Span);
             }
         }
 

@@ -16,6 +16,8 @@ namespace Neo.VM
         PUSHINT128 = 0x04,
         [OperandSize(Size = 32)]
         PUSHINT256 = 0x05,
+        [OperandSize(Size = 4)]
+        PUSHA = 0x0A,
         /// <summary>
         /// The item null is pushed onto the stack.
         /// </summary>
@@ -109,6 +111,8 @@ namespace Neo.VM
         PUSH16 = 0x20,
 
         // Flow control
+
+        CALLA = 0x3A,
         /// <summary>
         ///  Does nothing.
         /// </summary>
