@@ -51,7 +51,7 @@ namespace Neo.Test
 
                             var add = string.IsNullOrEmpty(step.Name) ? "" : "-" + step.Name;
 
-                            AssertResult(engine, step.Result, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
+                            AssertResult(step.Result, engine, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
                         }
                     }
                 }
@@ -64,12 +64,12 @@ namespace Neo.Test
         /// <param name="engine">Engine</param>
         /// <param name="result">Result</param>
         /// <param name="message">Message</param>
-        private void AssertResult(ExecutionEngine engine, VMUTExecutionEngineState result, string message)
+        private void AssertResult(VMUTExecutionEngineState result, ExecutionEngine engine, string message)
         {
-            AssertAreEqual(engine.State.ToString().ToLowerInvariant(), result.State.ToString().ToLowerInvariant(), message + "State is different");
+            AssertAreEqual(result.State.ToString().ToLowerInvariant(), engine.State.ToString().ToLowerInvariant(), message + "State is different");
             if (engine.State == VMState.FAULT) return;
-            AssertResult(engine.InvocationStack, result.InvocationStack, message + " [Invocation stack]");
-            AssertResult(engine.ResultStack, result.ResultStack, message + " [Result stack] ");
+            AssertResult(result.InvocationStack, engine.InvocationStack, message + " [Invocation stack]");
+            AssertResult(result.ResultStack, engine.ResultStack, message + " [Result stack] ");
         }
 
         /// <summary>
@@ -78,20 +78,20 @@ namespace Neo.Test
         /// <param name="stack">Stack</param>
         /// <param name="result">Result</param>
         /// <param name="message">Message</param>
-        private void AssertResult(RandomAccessStack<ExecutionContext> stack, VMUTExecutionContextState[] result, string message)
+        private void AssertResult(VMUTExecutionContextState[] result, RandomAccessStack<ExecutionContext> stack, string message)
         {
-            AssertAreEqual(stack.Count, result == null ? 0 : result.Length, message + "Stack is different");
+            AssertAreEqual(result == null ? 0 : result.Length, stack.Count, message + "Stack is different");
 
             for (int x = 0, max = stack.Count; x < max; x++)
             {
                 var context = stack.Peek(x);
                 var opcode = context.InstructionPointer >= context.Script.Length ? OpCode.RET : context.Script[context.InstructionPointer];
 
-                AssertAreEqual(opcode, result[x].NextInstruction, message + "Next instruction is different");
-                AssertAreEqual(context.InstructionPointer, result[x].InstructionPointer, message + "Instruction pointer is different");
+                AssertAreEqual(result[x].NextInstruction, opcode, message + "Next instruction is different");
+                AssertAreEqual(result[x].InstructionPointer, context.InstructionPointer, message + "Instruction pointer is different");
 
-                AssertResult(context.EvaluationStack, result[x].EvaluationStack, message + " [EvaluationStack]");
-                AssertResult(context.AltStack, result[x].AltStack, message + " [AltStack]");
+                AssertResult(result[x].EvaluationStack, context.EvaluationStack, message + " [EvaluationStack]");
+                AssertResult(result[x].AltStack, context.AltStack, message + " [AltStack]");
             }
         }
 
@@ -101,13 +101,13 @@ namespace Neo.Test
         /// <param name="stack">Stack</param>
         /// <param name="result">Result</param>
         /// <param name="message">Message</param>
-        private void AssertResult(EvaluationStack stack, VMUTStackItem[] result, string message)
+        private void AssertResult(VMUTStackItem[] result, EvaluationStack stack, string message)
         {
-            AssertAreEqual(stack.Count, result == null ? 0 : result.Length, message + "Stack is different");
+            AssertAreEqual(result == null ? 0 : result.Length, stack.Count, message + "Stack is different");
 
             for (int x = 0, max = stack.Count; x < max; x++)
             {
-                AssertAreEqual(ItemToJson(stack.Peek(x)).ToString(Formatting.None), PrepareJsonItem(result[x]).ToString(Formatting.None), message + "Stack item is different");
+                AssertAreEqual(PrepareJsonItem(result[x]).ToString(Formatting.None), ItemToJson(stack.Peek(x)).ToString(Formatting.None), message + "Stack item is different");
             }
         }
 
@@ -243,18 +243,18 @@ namespace Neo.Test
         /// <summary>
         /// Assert with message
         /// </summary>
-        /// <param name="a">A</param>
-        /// <param name="b">B</param>
+        /// <param name="expected">A</param>
+        /// <param name="actual">B</param>
         /// <param name="message">Message</param>
-        private void AssertAreEqual(object a, object b, string message)
+        private void AssertAreEqual(object expected, object actual, string message)
         {
-            if (a is byte[] ba) a = ba.ToHexString().ToUpperInvariant();
-            if (b is byte[] bb) b = bb.ToHexString().ToUpperInvariant();
+            if (expected is byte[] ba) expected = ba.ToHexString().ToUpperInvariant();
+            if (actual is byte[] bb) actual = bb.ToHexString().ToUpperInvariant();
 
-            if (a.ToJson() != b.ToJson())
+            if (expected.ToJson() != actual.ToJson())
             {
                 throw new Exception(message +
-                    $"{Environment.NewLine}Expected:{Environment.NewLine + a.ToString() + Environment.NewLine}Actual:{Environment.NewLine + b.ToString()}");
+                    $"{Environment.NewLine}Expected:{Environment.NewLine + expected.ToString() + Environment.NewLine}Actual:{Environment.NewLine + actual.ToString()}");
             }
         }
     }

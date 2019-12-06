@@ -24,7 +24,7 @@ namespace Neo.Test
             var script = new Script(rawScript);
 
             byte[] scriptConversion = script;
-            CollectionAssert.AreEqual(scriptConversion, rawScript);
+            CollectionAssert.AreEqual(rawScript, scriptConversion);
         }
 
         [TestMethod]
@@ -45,33 +45,33 @@ namespace Neo.Test
 
             var ins = script.GetInstruction(0);
 
-            Assert.AreEqual(ins.OpCode, OpCode.PUSH0);
+            Assert.AreEqual(OpCode.PUSH0, ins.OpCode);
             Assert.IsTrue(ins.Operand.IsEmpty);
-            Assert.AreEqual(ins.Size, 1);
+            Assert.AreEqual(1, ins.Size);
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var x = ins.TokenI16; });
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var x = ins.TokenU32; });
 
             ins = script.GetInstruction(1);
 
-            Assert.AreEqual(ins.OpCode, OpCode.CALL);
-            CollectionAssert.AreEqual(ins.Operand.ToArray(), new byte[] { 0x00, 0x01 });
-            Assert.AreEqual(ins.Size, 3);
-            Assert.AreEqual(ins.TokenI16, 256);
-            Assert.AreEqual(ins.TokenString, Encoding.ASCII.GetString(new byte[] { 0x00, 0x01 }));
+            Assert.AreEqual(OpCode.CALL, ins.OpCode);
+            CollectionAssert.AreEqual(new byte[] { 0x00, 0x01 }, ins.Operand.ToArray());
+            Assert.AreEqual(3, ins.Size);
+            Assert.AreEqual(256, ins.TokenI16);
+            Assert.AreEqual(Encoding.ASCII.GetString(new byte[] { 0x00, 0x01 }), ins.TokenString);
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var x = ins.TokenU32; });
 
             ins = script.GetInstruction(4);
 
-            Assert.AreEqual(ins.OpCode, OpCode.SYSCALL);
-            CollectionAssert.AreEqual(ins.Operand.ToArray(), new byte[] { 123, 0x00, 0x00, 0x00 });
-            Assert.AreEqual(ins.Size, 5);
-            Assert.AreEqual(ins.TokenI16, 123);
-            Assert.AreEqual(ins.TokenString, Encoding.ASCII.GetString(new byte[] { 123, 0x00, 0x00, 0x00 }));
-            Assert.AreEqual(ins.TokenU32, 123U);
+            Assert.AreEqual(OpCode.SYSCALL, ins.OpCode);
+            CollectionAssert.AreEqual(new byte[] { 123, 0x00, 0x00, 0x00 }, ins.Operand.ToArray());
+            Assert.AreEqual(5, ins.Size);
+            Assert.AreEqual(123, ins.TokenI16);
+            Assert.AreEqual(Encoding.ASCII.GetString(new byte[] { 123, 0x00, 0x00, 0x00 }), ins.TokenString);
+            Assert.AreEqual(123U, ins.TokenU32);
 
             ins = script.GetInstruction(100);
 
-            Assert.AreSame(ins, Instruction.RET);
+            Assert.AreSame(Instruction.RET, ins);
         }
     }
 }

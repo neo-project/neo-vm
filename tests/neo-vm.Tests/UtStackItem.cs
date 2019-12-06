@@ -15,18 +15,18 @@ namespace Neo.Test
             StackItem itemB = "NEO";
             StackItem itemC = "SmartEconomy";
 
-            Assert.AreEqual(itemA.GetHashCode(), itemB.GetHashCode());
-            Assert.AreNotEqual(itemA.GetHashCode(), itemC.GetHashCode());
+            Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
+            Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
         }
 
         [TestMethod]
         public void NullTest()
         {
             StackItem nullItem = new byte[0];
-            Assert.AreNotEqual(nullItem, StackItem.Null);
+            Assert.AreNotEqual(StackItem.Null, nullItem);
 
             nullItem = new Null();
-            Assert.AreEqual(nullItem, StackItem.Null);
+            Assert.AreEqual(StackItem.Null, nullItem);
         }
 
         [TestMethod]
@@ -38,11 +38,11 @@ namespace Neo.Test
             StackItem itemD = "Smarteconomy";
             StackItem itemE = "smarteconomy";
 
-            Assert.AreEqual(itemA, itemB);
-            Assert.AreNotEqual(itemA, itemC);
-            Assert.AreNotEqual(itemC, itemD);
-            Assert.AreNotEqual(itemD, itemE);
-            Assert.AreNotEqual(itemA, new object());
+            Assert.IsTrue(itemA.Equals(itemB));
+            Assert.IsFalse(itemA.Equals(itemC));
+            Assert.IsFalse(itemC.Equals(itemD));
+            Assert.IsFalse(itemD.Equals(itemE));
+            Assert.IsFalse(itemA.Equals(new object()));
         }
 
         [TestMethod]
