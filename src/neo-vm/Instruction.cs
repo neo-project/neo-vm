@@ -60,8 +60,12 @@ namespace Neo.VM
             OperandSizePrefixTable[(int)OpCode.PUSHDATA1] = 1;
             OperandSizePrefixTable[(int)OpCode.PUSHDATA2] = 2;
             OperandSizePrefixTable[(int)OpCode.PUSHDATA4] = 4;
-            for (int i = (int)OpCode.PUSHBYTES1; i <= (int)OpCode.PUSHBYTES75; i++)
-                OperandSizeTable[i] = i;
+            OperandSizeTable[(int)OpCode.PUSHINT8] = 1;
+            OperandSizeTable[(int)OpCode.PUSHINT16] = 2;
+            OperandSizeTable[(int)OpCode.PUSHINT32] = 4;
+            OperandSizeTable[(int)OpCode.PUSHINT64] = 8;
+            OperandSizeTable[(int)OpCode.PUSHINT128] = 16;
+            OperandSizeTable[(int)OpCode.PUSHINT256] = 32;
             OperandSizeTable[(int)OpCode.JMP] = 2;
             OperandSizeTable[(int)OpCode.JMPIF] = 2;
             OperandSizeTable[(int)OpCode.JMPIFNOT] = 2;

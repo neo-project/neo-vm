@@ -1,167 +1,139 @@
 {
-    "category": "Stack",
-    "name": "ISNULL",
-    "tests":
-    [
+  "category": "Stack",
+  "name": "ISNULL",
+  "tests": [
+    {
+      "name": "Without push",
+      "script": "0x70",
+      "steps": [
         {
-            "name": "Without push",
-            "script": "0x70",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Good definition",
-            "script": "0x5070",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "ISNULL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Null"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": true
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With empty bytearray",
-            "script": "0x0070",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "ISNULL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Good definition",
+      "script": "0b70",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "ISNULL",
+                "evaluationStack": [
+                  {
+                    "type": "Null"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "With empty bytearray",
+      "script": "1070",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "ISNULL",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

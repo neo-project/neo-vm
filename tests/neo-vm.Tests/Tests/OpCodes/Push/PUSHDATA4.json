@@ -1,65 +1,54 @@
 {
-    "category": "Push",
-    "name": "PUSHDATA4",
-    "tests":
-    [
+  "category": "Push",
+  "name": "PUSHDATA4",
+  "tests": [
+    {
+      "name": "More length than script",
+      "script": "0e00080000",
+      "steps": [
         {
-            "name": "Check limit (MaxItemSize = 1024 * 1024)",
-            "script": "0x4E0010000101020304",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Good definition",
-            "script": "0x4E0400000001020304",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "ByteArray",
-                                "value": "0x01020304"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Without enough length",
-            "script": "0x4E0500000001020304",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Good definition",
+      "script": "0e0400000001020304",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "ByteArray",
+                "value": "0x01020304"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Without enough length",
+      "script": "0e0500000001020304",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    }
+  ]
 }

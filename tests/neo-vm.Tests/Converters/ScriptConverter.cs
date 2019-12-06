@@ -15,17 +15,7 @@ namespace Neo.Test.Converters
         {
             if (reader.Value is byte[] data) return data;
             if (!(reader.Value is string str)) throw new FormatException();
-
-            if (str.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
-            {
-                data = str.FromHexString();
-            }
-            else
-            {
-                data = Convert.FromBase64String(str);
-            }
-
-            return data;
+            return str.FromHexString();
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

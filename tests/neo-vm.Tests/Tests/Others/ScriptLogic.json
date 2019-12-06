@@ -1,113 +1,94 @@
 {
-    "category": "Others",
-    "name": "ScriptLogic",
-    "tests":
-    [
+  "category": "Others",
+  "name": "ScriptLogic",
+  "tests": [
+    {
+      "name": "Script logic",
+      "script": "10919175",
+      "steps": [
         {
-            "name": "Script logic",
-            "script": "0x00919175",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "DROP",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt"
-                    }
-                }
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
             ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "DROP",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "RET"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt"
+          }
         }
-    ]
+      ]
+    }
+  ]
 }

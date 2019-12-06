@@ -1,1194 +1,985 @@
 {
-    "category": "Numeric",
-    "name": "NUMEQUAL same types",
-    "tests":
-    [
+  "category": "Numeric",
+  "name": "NUMEQUAL same types",
+  "tests": [
+    {
+      "name": "Without two pushes",
+      "script": "0x9C",
+      "steps": [
         {
-            "name": "Without two pushes",
-            "script": "0x9C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Without one push",
-            "script": "0x009C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Bool,Bool]=true",
-            "script": "0x009100919C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    },
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": true
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Bool,Bool]=false",
-            "script": "0x00910091919C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    },
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 6,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Integer,Integer]=true",
-            "script": "0x51519C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": true
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Integer,Integer]=false",
-            "script": "0x52519C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Array,Array]=Fault",
-            "script": "0x00C56B6D6D9C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                        ]
-                                    },
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ],
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Array,Array]=fault",
-            "script": "0x00C500C59C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                        ]
-                                    },
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Struct,Struct]=fault with clone",
-            "script": "0x00C66B6D6D9C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                        ]
-                                    },
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ],
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Struct,Struct]=fault without clone",
-            "script": "0x00C600C69C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                        ]
-                                    },
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Struct,Struct]=fault",
-            "script": "0x00C651C69C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                            {
-                                                "type": "Null"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Map,Map]=Fault",
-            "script": "0xC76B6D6D9C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-                                        }
-                                    },
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-                                        }
-                                    }
-                                ],
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Map,Map]=Fault",
-            "script": "0xC7C79C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-                                        }
-                                    },
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [ByteArray,ByteArray]=true",
-            "script": "0x1100000000000000000000000000000001231100000000000000000000000000000001239C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 36,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0000000000000000000000000000000123"
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0000000000000000000000000000000123"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 37,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": true
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [ByteArray,ByteArray]=false same length",
-            "script": "0x1100000000000000000000000000000001231100000000000000000000000000000001249C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 36,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0000000000000000000000000000000124"
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0000000000000000000000000000000123"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 37,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [ByteArray,ByteArray]=false different length",
-            "script": "0x11000000000000000000000000000000012310000000000000000000000000000001249C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 35,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x00000000000000000000000000000124"
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0000000000000000000000000000000123"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 36,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [ByteArray,ByteArray]=false different length",
-            "script": "0x11000000000000000000000000000000012310000000000000000000000000000001249C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 35,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x00000000000000000000000000000124"
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0000000000000000000000000000000123"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 36,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test with clone [Interop,Interop]=fault",
-            "script": "0x68777777776B6D6D9C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 6,
-                                "nextInstruction": "DUPFROMALTSTACK",
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 8,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    },
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ],
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Interop,Interop]=fault",
-            "script": "0x687777777768777777779C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 10,
-                                "nextInstruction": "NUMEQUAL",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    },
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Without one push",
+      "script": "109c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Bool,Bool]=true",
+      "script": "109110919c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  },
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Bool,Bool]=false",
+      "script": "10911091919c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  },
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Integer,Integer]=true",
+      "script": "11119c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Integer,Integer]=false",
+      "script": "12119c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Array,Array]=Fault",
+      "script": "10c56b6d6d9c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  },
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ],
+                "altStack": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Array,Array]=fault",
+      "script": "10c510c59c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  },
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Struct,Struct]=fault with clone",
+      "script": "10c66b6d6d9c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Struct",
+                    "value": []
+                  },
+                  {
+                    "type": "Struct",
+                    "value": []
+                  }
+                ],
+                "altStack": [
+                  {
+                    "type": "Struct",
+                    "value": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Struct,Struct]=fault without clone",
+      "script": "10c610c69c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Struct",
+                    "value": []
+                  },
+                  {
+                    "type": "Struct",
+                    "value": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Struct,Struct]=fault",
+      "script": "10c611c69c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Struct",
+                    "value": [
+                      {
+                        "type": "Null"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Struct",
+                    "value": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Map,Map]=Fault",
+      "script": "0xC76B6D6D9C",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value": {}
+                  },
+                  {
+                    "type": "Map",
+                    "value": {}
+                  }
+                ],
+                "altStack": [
+                  {
+                    "type": "Map",
+                    "value": {}
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Map,Map]=Fault",
+      "script": "0xC7C79C",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value": {}
+                  },
+                  {
+                    "type": "Map",
+                    "value": {}
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [ByteArray,ByteArray]=true",
+      "script": "0c1100000000000000000000000000000001230c1100000000000000000000000000000001239c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 38,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0000000000000000000000000000000123"
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0000000000000000000000000000000123"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 39,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [ByteArray,ByteArray]=false same length",
+      "script": "0c1100000000000000000000000000000001230c1100000000000000000000000000000001249c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 38,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0000000000000000000000000000000124"
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0000000000000000000000000000000123"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 39,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [ByteArray,ByteArray]=false different length",
+      "script": "0c1100000000000000000000000000000001230c10000000000000000000000000000001249c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 37,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x00000000000000000000000000000124"
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0000000000000000000000000000000123"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 38,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [ByteArray,ByteArray]=false different length",
+      "script": "0c1100000000000000000000000000000001230c10000000000000000000000000000001249c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 37,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x00000000000000000000000000000124"
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0000000000000000000000000000000123"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 38,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test with clone [Interop,Interop]=fault",
+      "script": "0x68777777776B6D6D9C",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "DUPFROMALTSTACK",
+                "altStack": [
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  },
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  }
+                ],
+                "altStack": [
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Interop,Interop]=fault",
+      "script": "0x687777777768777777779C",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "NUMEQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  },
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    }
+  ]
 }

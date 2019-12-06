@@ -1,82 +1,80 @@
 {
-    "category": "Limits",
-    "name": "Stack item limits",
-    "tests":
-    [
+  "category": "Limits",
+  "name": "Stack item limits",
+  "tests": [
+    {
+      "name": "Max boolean bytearray",
+      "script": "0c2100000000000000000000000000000000000000000000000000000000000000000091",
+      "steps": [
         {
-            "name": "Max boolean bytearray",
-            "script": "0x2100000000000000000000000000000000000000000000000000000000000000000091",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "nextInstruction": "NOT",
-                                "instructionPointer": 34,
-                                "evaluationStack":
-                                [
-
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x000000000000000000000000000000000000000000000000000000000000000000"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "nextInstruction": "RET",
-                                "instructionPointer": 35,
-                                "evaluationStack":
-                                [
-
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "nextInstruction": "NOT",
+                "instructionPointer": 35,
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x000000000000000000000000000000000000000000000000000000000000000000"
+                  }
+                ]
+              }
             ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "nextInstruction": "RET",
+                "instructionPointer": 36,
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Max items with PUSHDATA (2048+1)",
+      "script": "010004c5c201fe03c5c20c0101",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    }
+  ]
 }

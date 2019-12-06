@@ -1,48 +1,40 @@
 {
-    "category": "Push",
-    "name": "PUSHDATA2",
-    "tests":
-    [
+  "category": "Push",
+  "name": "PUSHDATA2",
+  "tests": [
+    {
+      "name": "Good definition",
+      "script": "0d040001020304",
+      "steps": [
         {
-            "name": "Good definition",
-            "script": "0x4D040001020304",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "ByteArray",
-                                "value": "0x01020304"
-                            }
-                        ]
-                    }
-                }
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "ByteArray",
+                "value": "0x01020304"
+              }
             ]
-        },
-        {
-            "name": "Without enough length",
-            "script": "0x4D050001020304",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Without enough length",
+      "script": "0d050001020304",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    }
+  ]
 }

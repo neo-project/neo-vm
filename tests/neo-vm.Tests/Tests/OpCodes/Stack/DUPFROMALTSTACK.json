@@ -1,185 +1,155 @@
 {
-    "category": "Stack",
-    "name": "DUPFROMALTSTACK",
-    "tests":
-    [
+  "category": "Stack",
+  "name": "DUPFROMALTSTACK",
+  "tests": [
+    {
+      "name": "Without push",
+      "script": "0x6D",
+      "steps": [
         {
-            "name": "Without push",
-            "script": "0x6D",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [BigInteger]",
-            "script": "0x556B6D",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "DUPFROMALTSTACK",
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ],
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Integer",
-                                "value": 5
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Interop]",
-            "script": "0x68777777776B6D",
-            "message": "0x00",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 6,
-                                "nextInstruction": "DUPFROMALTSTACK",
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 7,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ],
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Interop",
-                                "value": "Object"
-                            }
-                        ]
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Real test [BigInteger]",
+      "script": "156b6d",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "DUPFROMALTSTACK",
+                "altStack": [
+                  {
+                    "type": "Integer",
+                    "value": 5
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 5
+                  }
+                ],
+                "altStack": [
+                  {
+                    "type": "Integer",
+                    "value": 5
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 5
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Interop]",
+      "script": "0x68777777776B6D",
+      "message": "0x00",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "DUPFROMALTSTACK",
+                "altStack": [
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  }
+                ],
+                "altStack": [
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Interop",
+                "value": "Object"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

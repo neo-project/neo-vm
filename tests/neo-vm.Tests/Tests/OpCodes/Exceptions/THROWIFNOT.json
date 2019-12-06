@@ -1,77 +1,64 @@
 {
-    "category": "Exceptions",
-    "name": "THROWIFNOT",
-    "tests":
-    [
+  "category": "Exceptions",
+  "name": "THROWIFNOT",
+  "tests": [
+    {
+      "script": "1091f1",
+      "name": "Without throw exception",
+      "steps": [
         {
-            "script": "0x0091F1",
-            "name": "Without throw exception",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET"
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt"
-                    }
-                }
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "RET"
+              }
             ]
+          }
         },
         {
-            "script": "0x00F1",
-            "name": "Throw exception (with PUSH)",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "script": "0xF1",
-            "name": "Throw exception (without PUSH - FAULT)",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "script": "10f1",
+      "name": "Throw exception (with PUSH)",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "script": "0xF1",
+      "name": "Throw exception (without PUSH - FAULT)",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    }
+  ]
 }

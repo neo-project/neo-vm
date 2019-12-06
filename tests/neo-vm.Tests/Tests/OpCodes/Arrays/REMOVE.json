@@ -1,298 +1,252 @@
 {
-    "category": "Arrays",
-    "name": "REMOVE",
-    "tests":
-    [
+  "category": "Arrays",
+  "name": "REMOVE",
+  "tests": [
+    {
+      "name": "Without push",
+      "script": "11ca",
+      "steps": [
         {
-            "name": "Without push",
-            "script": "0x51CA",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Without array",
-            "script": "0x5152CA",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong key",
-            "script": "0x52C7CA",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Out of bounds",
-            "script": "0x565552C152CA",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Array]",
-            "script": "0x565552C16B6D00CA6CC2",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 7,
-                                "nextInstruction": "REMOVE",
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                            {
-                                                "type": "Integer",
-                                                "value": 5
-                                            },
-                                            {
-                                                "type": "Integer",
-                                                "value": 6
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    },
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                            {
-                                                "type": "Integer",
-                                                "value": 5
-                                            },
-                                            {
-                                                "type": "Integer",
-                                                "value": 6
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 8,
-                                "nextInstruction": "FROMALTSTACK",
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                            {
-                                                "type": "Integer",
-                                                "value": 6
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Integer",
-                                "value": 1
-                            },
-                            {
-                                "type": "Integer",
-                                "value": 6
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [Struct]",
-            "script": "0x00C67655C86B6D00CA6CC2",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 8,
-                                "nextInstruction": "REMOVE",
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                            {
-                                                "type": "Integer",
-                                                "value": 5
-                                            }
-                                        ]
-                                    }
-                                ],
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    },
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                            {
-                                                "type": "Integer",
-                                                "value": 5
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 9,
-                                "nextInstruction": "FROMALTSTACK",
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Integer",
-                                "value": 0
-                            }
-                        ]
-                    }
-                }
-            ]
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Without array",
+      "script": "1112ca",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wrong key",
+      "script": "12c7ca",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Out of bounds",
+      "script": "161512c112ca",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Array]",
+      "script": "161512c16b6d10ca6cc2",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "REMOVE",
+                "altStack": [
+                  {
+                    "type": "Array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 5
+                      },
+                      {
+                        "type": "Integer",
+                        "value": 6
+                      }
+                    ]
+                  }
+                ],
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 5
+                      },
+                      {
+                        "type": "Integer",
+                        "value": 6
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "FROMALTSTACK",
+                "altStack": [
+                  {
+                    "type": "Array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 6
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 1
+              },
+              {
+                "type": "Integer",
+                "value": 6
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Struct]",
+      "script": "10c67615c86b6d10ca6cc2",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "REMOVE",
+                "altStack": [
+                  {
+                    "type": "Struct",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 5
+                      }
+                    ]
+                  }
+                ],
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Struct",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 5
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
+                "nextInstruction": "FROMALTSTACK",
+                "altStack": [
+                  {
+                    "type": "Struct",
+                    "value": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

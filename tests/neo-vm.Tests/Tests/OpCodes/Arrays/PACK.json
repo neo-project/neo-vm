@@ -1,126 +1,105 @@
 {
-    "category": "Arrays",
-    "name": "PACK",
-    "tests":
-    [
+  "category": "Arrays",
+  "name": "PACK",
+  "tests": [
+    {
+      "name": "Real test",
+      "script": "151612c1",
+      "steps": [
         {
-            "name": "Real test",
-            "script": "0x555652C1",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Array",
-                                "value":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 6
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Integer",
+                    "value": 6
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 5
+                  }
+                ]
+              }
             ]
-        },
-        {
-            "name": "Not enough size",
-            "script": "0x5552C1",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong type [Map]",
-            "script": "0xC7C1",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong type [Array]",
-            "script": "0x51C5C1",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong type [Struct]",
-            "script": "0x51C6C1",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Without items",
-            "script": "0xC1",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Not enough size",
+      "script": "1512c1",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wrong type [Map]",
+      "script": "0xC7C1",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wrong type [Array]",
+      "script": "11c5c1",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wrong type [Struct]",
+      "script": "11c6c1",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Without items",
+      "script": "0xC1",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    }
+  ]
 }

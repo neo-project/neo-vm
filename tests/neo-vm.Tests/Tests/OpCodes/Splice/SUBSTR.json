@@ -1,514 +1,429 @@
 {
-    "category": "Splice",
-    "name": "SUBSTR",
-    "tests":
-    [
+  "category": "Splice",
+  "name": "SUBSTR",
+  "tests": [
+    {
+      "name": "Without 3 items",
+      "script": "12137f",
+      "steps": [
         {
-            "name": "Without 3 items",
-            "script": "0x52537F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "SUBSTR",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 3
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "SUBSTR",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 3
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  }
+                ]
+              }
             ]
+          }
         },
         {
-            "name": "With negative count",
-            "script": "0x00004F7F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "SUBSTR",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": -1
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With map as string",
-            "script": "0xC700007F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "SUBSTR",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    },
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With map as count",
-            "script": "0x0000C77F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "SUBSTR",
-                                "evaluationStack":
-                                [
-
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-
-                                        }
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With map as index",
-            "script": "0x00C7007F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "SUBSTR",
-                                "evaluationStack":
-                                [
-
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    },
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-
-                                        }
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With negative index",
-            "script": "0x004F007F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "SUBSTR",
-                                "evaluationStack":
-                                [
-
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": -1
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": ""
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Overflow string index",
-            "script": "0x02000159527F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "SUBSTR",
-                                "evaluationStack":
-                                [
-
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 9
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0001"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Overflow string count",
-            "script": "0x0A0001020304050607080952597F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 13,
-                                "nextInstruction": "SUBSTR",
-                                "evaluationStack":
-                                [
-
-                                    {
-                                        "type": "Integer",
-                                        "value": 9
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x00010203040506070809"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "ByteArray",
-                                "value": "0x0203040506070809"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test",
-            "script": "0x0A0001020304050607080952517F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 13,
-                                "nextInstruction": "SUBSTR",
-                                "evaluationStack":
-                                [
-
-                                    {
-                                        "type": "Integer",
-                                        "value": 1
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x00010203040506070809"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "ByteArray",
-                                "value": "0x02"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Integer overflow Test",
-            "script": "0x4Cff41414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414104fd0000000403ffff7f7F",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "ByteArray",
-                                "value": "QUE="
-                            }
-                        ]
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "With negative count",
+      "script": "10100f7f",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "SUBSTR",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": -1
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "With map as string",
+      "script": "c710107f",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "SUBSTR",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Map",
+                    "value": {}
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "With map as count",
+      "script": "1010c77f",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "SUBSTR",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value": {}
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "With map as index",
+      "script": "10c7107f",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "SUBSTR",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Map",
+                    "value": {}
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "With negative index",
+      "script": "100f107f",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "SUBSTR",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Integer",
+                    "value": -1
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Overflow string index",
+      "script": "0c02000119127f",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "SUBSTR",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 9
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0001"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Overflow string count",
+      "script": "0c0a0001020304050607080912197f",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 14,
+                "nextInstruction": "SUBSTR",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 9
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x00010203040506070809"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "ByteArray",
+                "value": "0x0203040506070809"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test",
+      "script": "0c0a0001020304050607080912117f",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 14,
+                "nextInstruction": "SUBSTR",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x00010203040506070809"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "ByteArray",
+                "value": "0x02"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Integer overflow Test",
+      "script": "0cff4141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141410c04fd0000000c0403ffff7f7f",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "ByteArray",
+                "value": "4141"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

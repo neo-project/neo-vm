@@ -1,115 +1,96 @@
 {
-    "category": "Stack",
-    "name": "FROMALTSTACK",
-    "tests":
-    [
+  "category": "Stack",
+  "name": "FROMALTSTACK",
+  "tests": [
+    {
+      "name": "Without push",
+      "script": "0x6C",
+      "steps": [
         {
-            "name": "Without push",
-            "script": "0x6C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Without push in Alt Stack",
-            "script": "0x556C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real Test",
-            "script": "0x556B6C",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "FROMALTSTACK",
-                                "altStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 5
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Integer",
-                                "value": 5
-                            }
-                        ]
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Without push in Alt Stack",
+      "script": "156c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real Test",
+      "script": "156b6c",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "FROMALTSTACK",
+                "altStack": [
+                  {
+                    "type": "Integer",
+                    "value": 5
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 5
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 5
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

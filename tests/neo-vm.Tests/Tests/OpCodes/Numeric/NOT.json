@@ -1,609 +1,503 @@
 {
-    "category": "Numeric",
-    "name": "NOT",
-    "tests":
-    [
+  "category": "Numeric",
+  "name": "NOT",
+  "tests": [
+    {
+      "name": "Without push",
+      "script": "0x91",
+      "steps": [
         {
-            "name": "Without push",
-            "script": "0x91",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With bool",
-            "script": "0x519191",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": true
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With integer 0x03",
-            "script": "0x5391",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 3
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With map",
-            "script": "0xC791",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With array",
-            "script": "0x00C591",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Array",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With struct",
-            "script": "0x00C691",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Struct",
-                                        "value":
-                                        [
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With byte array 0x0000",
-            "script": "0x02000091",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0000"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": true
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": true
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With byte array 0x0001",
-            "script": "0x02000191",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 3,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0001"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 4,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "With interop",
-            "script": "0x687777777791",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "NOT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 6,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Boolean",
-                                        "value": false
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Boolean",
-                                "value": false
-                            }
-                        ]
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "With bool",
+      "script": "119191",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "With integer 0x03",
+      "script": "1391",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 3
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "With map",
+      "script": "0xC791",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value": {}
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "With array",
+      "script": "10c591",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "With struct",
+      "script": "10c691",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "Struct",
+                    "value": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "With byte array 0x0000",
+      "script": "0c02000091",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0000"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": true
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "With byte array 0x0001",
+      "script": "0c02000191",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0001"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "With interop",
+      "script": "0x687777777791",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "NOT",
+                "evaluationStack": [
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": false
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

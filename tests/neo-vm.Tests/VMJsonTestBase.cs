@@ -138,16 +138,7 @@ namespace Neo.Test
                 case VMUTStackItemType.ByteArray:
                     {
                         var value = ret["value"].Value<string>();
-
-                        if (value.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            ret["value"] = value.FromHexString();
-                        }
-                        else
-                        {
-                            ret["value"] = Convert.FromBase64String(value);
-                        }
-
+                        ret["value"] = value.FromHexString();
                         break;
                     }
                 case VMUTStackItemType.Integer:

@@ -1,141 +1,117 @@
 {
-    "category": "Control",
-    "name": "SYSCALL",
-    "tests":
-    [
+  "category": "Control",
+  "name": "SYSCALL",
+  "tests": [
+    {
+      "name": "Syscall that does not exist",
+      "script": "0x6800",
+      "steps": [
         {
-            "name": "Syscall that does not exist",
-            "script": "0x6800",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "Execute"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong script",
-            "script": "0x682A53797374656D2E457865637574696F6E456E67696E652E476574536372697074436F6E7461696E6572",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test [IMessageProvider]",
-            "script": "0x6877777777",
-            "message": "0x00",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Interop",
-                                        "value": "Object"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Interop",
-                                "value": "Object"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong script",
-            "script": "0x68FDFFFF00",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong script",
-            "script": "0x68FEFFFFFFFF00",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong script",
-            "script": "0x68FFFFFFFFFFFFFFFFFF00",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Wrong script",
+      "script": "682a53797374656d2e0c457865637574696f6e456e67696e652e476574536372697074436f6e7461696e6572",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [IMessageProvider]",
+      "script": "0x6877777777",
+      "message": "0x00",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Interop",
+                    "value": "Object"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Interop",
+                "value": "Object"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wrong script",
+      "script": "0x68FDFFFF00",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wrong script",
+      "script": "68feffffffff10",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wrong script",
+      "script": "68ffffffffffffffffff10",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    }
+  ]
 }

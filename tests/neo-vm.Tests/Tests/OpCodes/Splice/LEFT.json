@@ -1,273 +1,229 @@
 {
-    "category": "Splice",
-    "name": "LEFT",
-    "tests":
-    [
+  "category": "Splice",
+  "name": "LEFT",
+  "tests": [
+    {
+      "name": "Without push",
+      "script": "1b80",
+      "steps": [
         {
-            "name": "Without push",
-            "script": "0x5B80",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Wrong type [Map]",
-            "script": "0x54C780",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 2,
-                                "nextInstruction": "LEFT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Map",
-                                        "value":
-                                        {
-                                        }
-                                    },
-                                    {
-                                        "type": "Integer",
-                                        "value": 4
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Negative value",
-            "script": "0x030102034F80",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "LEFT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": -1
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x010203"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Overflow string",
-            "script": "0x030102035480",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "LEFT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 4
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x010203"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 6,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x010203"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "ByteArray",
-                                "value": "0x010203"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Real test",
-            "script": "0x030102035280",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto",
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 5,
-                                "nextInstruction": "LEFT",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Integer",
-                                        "value": 2
-                                    },
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x010203"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 6,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "ByteArray",
-                                        "value": "0x0102"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "ByteArray",
-                                "value": "0x0102"
-                            }
-                        ]
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Wrong type [Map]",
+      "script": "14c780",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "LEFT",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value": {}
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 4
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Negative value",
+      "script": "0c030102030f80",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "LEFT",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": -1
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x010203"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Overflow string",
+      "script": "0c030102031480",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "LEFT",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 4
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x010203"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x010203"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "ByteArray",
+                "value": "0x010203"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test",
+      "script": "0c030102031280",
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "LEFT",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x010203"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "ByteArray",
+                    "value": "0x0102"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "ByteArray",
+                "value": "0x0102"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
 }

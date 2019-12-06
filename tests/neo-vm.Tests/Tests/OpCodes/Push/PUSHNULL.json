@@ -1,53 +1,44 @@
 {
-    "category": "Push",
-    "name": "PUSHNULL",
-    "tests":
-    [
+  "category": "Push",
+  "name": "PUSHNULL",
+  "tests": [
+    {
+      "name": "Good definition",
+      "script": "0b",
+      "steps": [
         {
-            "name": "Good definition",
-            "script": "0x50",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 1,
-                                "nextInstruction": "RET",
-                                "evaluationStack":
-                                [
-                                    {
-                                        "type": "Null"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                },
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt",
-                        "resultStack":
-                        [
-                            {
-                                "type": "Null"
-                            }
-                        ]
-                    }
-                }
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Null"
+                  }
+                ]
+              }
             ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Null"
+              }
+            ]
+          }
         }
-    ]
+      ]
+    }
+  ]
 }
