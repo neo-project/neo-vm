@@ -16,6 +16,9 @@ namespace Neo.VM
         PUSHINT128 = 0x04,
         [OperandSize(Size = 32)]
         PUSHINT256 = 0x05,
+        /// <summary>
+        /// Convert the next four bytes to an address, and push the address onto the stack.
+        /// </summary>
         [OperandSize(Size = 4)]
         PUSHA = 0x0A,
         /// <summary>
@@ -112,6 +115,9 @@ namespace Neo.VM
 
         // Flow control
 
+        /// <summary>
+        /// Pop an address of a function from the stack, and call the function.
+        /// </summary>
         CALLA = 0x3A,
         /// <summary>
         ///  Does nothing.
