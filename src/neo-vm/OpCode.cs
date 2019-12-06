@@ -4,11 +4,17 @@ namespace Neo.VM
     {
         // Constants
 
+        [OperandSize(Size = 1)]
         PUSHINT8 = 0x00,
+        [OperandSize(Size = 2)]
         PUSHINT16 = 0x01,
+        [OperandSize(Size = 4)]
         PUSHINT32 = 0x02,
+        [OperandSize(Size = 8)]
         PUSHINT64 = 0x03,
+        [OperandSize(Size = 16)]
         PUSHINT128 = 0x04,
+        [OperandSize(Size = 32)]
         PUSHINT256 = 0x05,
         /// <summary>
         /// The item null is pushed onto the stack.
@@ -17,14 +23,17 @@ namespace Neo.VM
         /// <summary>
         /// The next byte contains the number of bytes to be pushed onto the stack.
         /// </summary>
+        [OperandSize(SizePrefix = 1)]
         PUSHDATA1 = 0x0C,
         /// <summary>
         /// The next two bytes contain the number of bytes to be pushed onto the stack.
         /// </summary>
+        [OperandSize(SizePrefix = 2)]
         PUSHDATA2 = 0x0D,
         /// <summary>
         /// The next four bytes contain the number of bytes to be pushed onto the stack.
         /// </summary>
+        [OperandSize(SizePrefix = 4)]
         PUSHDATA4 = 0x0E,
         /// <summary>
         /// The number -1 is pushed onto the stack.
@@ -107,18 +116,22 @@ namespace Neo.VM
         /// <summary>
         /// Reads a 2-byte value n and a jump is performed to relative position n (counting from opcode JMP address).
         /// </summary>
+        [OperandSize(Size = 2)]
         JMP = 0x62,
         /// <summary>
         /// A boolean value b is taken from main stack and reads a 2-byte value n, if b is True then a jump is performed to relative position n (counting from opcode JMPIF address).
         /// </summary>
+        [OperandSize(Size = 2)]
         JMPIF = 0x63,
         /// <summary>
         /// A boolean value b is taken from main stack and reads a 2-byte value n, if b is False then a jump is performed to relative position n (counting from opcode JMPIFNOT address).
         /// </summary>
+        [OperandSize(Size = 2)]
         JMPIFNOT = 0x64,
         /// <summary>
         /// Current context is copied to the invocation stack. Reads a 2-byte value n and a jump is performed to relative position n.
         /// </summary>
+        [OperandSize(Size = 2)]
         CALL = 0x65,
         /// <summary>
         /// Stops the execution if invocation stack is empty.
@@ -127,6 +140,7 @@ namespace Neo.VM
         /// <summary>
         /// Reads a string and executes the corresponding operation.
         /// </summary>
+        [OperandSize(Size = 4)]
         SYSCALL = 0x68,
 
 
