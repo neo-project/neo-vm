@@ -116,7 +116,7 @@ namespace Neo.VM
         // Flow control
 
         /// <summary>
-        /// Pop an address of a function from the stack, and call the function.
+        /// Pop the address of a function from the stack, and call the function.
         /// </summary>
         CALLA = 0x3A,
         /// <summary>

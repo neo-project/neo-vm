@@ -1,0 +1,74 @@
+{
+  "category": "Push",
+  "name": "PUSHA",
+  "tests": [
+    {
+      "name": "Out of range [-1]",
+      "script": "0Affffffff",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Out of range [>length]",
+      "script": "0Affffff7f",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test",
+      "script": "0A00000000",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Pointer",
+                "value": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [=length]",
+      "script": "0A05000000",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt",
+            "resultStack": [
+              {
+                "type": "Pointer",
+                "value": 5
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
