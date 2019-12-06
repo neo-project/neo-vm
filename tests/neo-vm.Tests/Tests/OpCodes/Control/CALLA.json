@@ -3,6 +3,40 @@
   "name": "CALLA",
   "tests": [
     {
+      "name": "Wrong type",
+      "script": "0x123A",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "CALLA",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "Real test",
       "script": "0x0A070000003A661066",
       "steps": [
