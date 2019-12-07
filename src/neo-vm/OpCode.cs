@@ -22,7 +22,7 @@ namespace Neo.VM
         [OperandSize(Size = 4)]
         PUSHA = 0x0A,
         /// <summary>
-        /// The item null is pushed onto the stack.
+        /// The item <see langword="null"/> is pushed onto the stack.
         /// </summary>
         PUSHNULL = 0x0B,
         /// <summary>
@@ -118,53 +118,107 @@ namespace Neo.VM
         #region Flow control
 
         /// <summary>
-        ///  Does nothing.
+        /// The <see cref="NOP"/> operation does nothing. It is intended to fill in space if opcodes are patched.
         /// </summary>
         NOP = 0x21,
         /// <summary>
-        /// The <see cref="JMP"/> instruction unconditionally transfers control to a target instruction. The target instruction is represented as a 1-byte signed offset from the beginning of the instruction following the current instruction.
+        /// Unconditionally transfers control to a target instruction. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
         /// </summary>
         [OperandSize(Size = 1)]
         JMP = 0x22,
         /// <summary>
-        /// The <see cref="JMP_L"/> instruction unconditionally transfers control to a target instruction. The target instruction is represented as a 4-bytes signed offset from the beginning of the instruction following the current instruction.
+        /// Unconditionally transfers control to a target instruction. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
         /// </summary>
         [OperandSize(Size = 4)]
         JMP_L = 0x23,
+        /// <summary>
+        /// Transfers control to a target instruction if the value is <see langword="true"/>, not <see langword="null"/>, or non-zero. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 1)]
         JMPIF = 0x24,
+        /// <summary>
+        /// Transfers control to a target instruction if the value is <see langword="true"/>, not <see langword="null"/>, or non-zero. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 4)]
         JMPIF_L = 0x25,
+        /// <summary>
+        /// Transfers control to a target instruction if the value is <see langword="false"/>, a <see langword="null"/> reference, or zero. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 1)]
         JMPIFNOT = 0x26,
+        /// <summary>
+        /// Transfers control to a target instruction if the value is <see langword="false"/>, a <see langword="null"/> reference, or zero. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 4)]
         JMPIFNOT_L = 0x27,
+        /// <summary>
+        /// Transfers control to a target instruction if two values are equal. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 1)]
         JMPEQ = 0x28,
+        /// <summary>
+        /// Transfers control to a target instruction if two values are equal. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 4)]
         JMPEQ_L = 0x29,
+        /// <summary>
+        /// Transfers control to a target instruction when two values are not equal. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 1)]
         JMPNE = 0x2A,
+        /// <summary>
+        /// Transfers control to a target instruction when two values are not equal. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 4)]
         JMPNE_L = 0x2B,
+        /// <summary>
+        /// Transfers control to a target instruction if the first value is greater than the second value. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 1)]
         JMPGT = 0x2C,
+        /// <summary>
+        /// Transfers control to a target instruction if the first value is greater than the second value. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 4)]
         JMPGT_L = 0x2D,
+        /// <summary>
+        /// Transfers control to a target instruction if the first value is greater than or equal to the second value. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 1)]
         JMPGE = 0x2E,
+        /// <summary>
+        /// Transfers control to a target instruction if the first value is greater than or equal to the second value. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 4)]
         JMPGE_L = 0x2F,
+        /// <summary>
+        /// Transfers control to a target instruction if the first value is less than the second value. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 1)]
         JMPLT = 0x30,
+        /// <summary>
+        /// Transfers control to a target instruction if the first value is less than the second value. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 4)]
         JMPLT_L = 0x31,
+        /// <summary>
+        /// Transfers control to a target instruction if the first value is less than or equal to the second value. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 1)]
         JMPLE = 0x32,
+        /// <summary>
+        /// Transfers control to a target instruction if the first value is less than or equal to the second value. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 4)]
         JMPLE_L = 0x33,
+        /// <summary>
+        /// Calls the function at the target address which is represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 1)]
         CALL = 0x34,
+        /// <summary>
+        /// Calls the function at the target address which is represented as a 4-bytes signed offset from the beginning of the current instruction.
+        /// </summary>
         [OperandSize(Size = 4)]
         CALL_L = 0x35,
         /// <summary>
@@ -179,9 +233,12 @@ namespace Neo.VM
         //ENDT = 0x3D,
         //ENDC = 0x3E,
         //ENDF = 0x3F,
+        /// <summary>
+        /// Returns from the current method.
+        /// </summary>
         RET = 0x40,
         /// <summary>
-        /// Reads a string and executes the corresponding operation.
+        /// Calls to an interop service.
         /// </summary>
         [OperandSize(Size = 4)]
         SYSCALL = 0x41,
