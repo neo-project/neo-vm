@@ -4,7 +4,7 @@
   "tests": [
     {
       "name": "More length than script",
-      "script": [ "PUSHDATA4", "00080000" ],
+      "script": [ "PUSHDATA4", "0x00080000" ],
       "steps": [
         {
           "actions": [
@@ -18,7 +18,7 @@
     },
     {
       "name": "Good definition",
-      "script": [ "PUSHDATA4", "04000000", "01020304" ],
+      "script": [ "PUSHDATA4", "0x04000000", "0x01020304" ],
       "steps": [
         {
           "actions": [
@@ -38,7 +38,7 @@
     },
     {
       "name": "Without enough length",
-      "script": [ "PUSHDATA4", "05000000", "01020304" ],
+      "script": [ "PUSHDATA4", "0x05000000", "0x01020304" ],
       "steps": [
         {
           "actions": [
