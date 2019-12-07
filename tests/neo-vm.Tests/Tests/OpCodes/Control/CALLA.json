@@ -38,7 +38,7 @@
     },
     {
       "name": "Real test",
-      "script": "0a07000000363e103e",
+      "script": "0a0700000036401040",
       "steps": [
         {
           "actions": [

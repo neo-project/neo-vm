@@ -4,7 +4,7 @@
   "tests": [
     {
       "name": "Syscall that does not exist",
-      "script": "3f00",
+      "script": "4100",
       "steps": [
         {
           "actions": [
@@ -18,7 +18,7 @@
     },
     {
       "name": "Wrong script",
-      "script": "3f2a53797374356d2e00000c457865637574696f6e456e67696e652e476574536372697074436f6e7461696e6572",
+      "script": "412a53797374356d2e00000c457865637574696f6e456e67696e652e476574536372697074436f6e7461696e6572",
       "steps": [
         {
           "actions": [
@@ -32,7 +32,7 @@
     },
     {
       "name": "Real test [IMessageProvider]",
-      "script": "3f77777777",
+      "script": "4177777777",
       "message": "0x00",
       "steps": [
         {
@@ -73,7 +73,7 @@
     },
     {
       "name": "Wrong script",
-      "script": "3ffdffff00",
+      "script": "41fdffff00",
       "steps": [
         {
           "actions": [
@@ -87,7 +87,7 @@
     },
     {
       "name": "Wrong script",
-      "script": "3ffeffffffff10",
+      "script": "41feffffffff10",
       "steps": [
         {
           "actions": [
@@ -101,7 +101,7 @@
     },
     {
       "name": "Wrong script",
-      "script": "3fffffffffffffffffff10",
+      "script": "41ffffffffffffffffff10",
       "steps": [
         {
           "actions": [

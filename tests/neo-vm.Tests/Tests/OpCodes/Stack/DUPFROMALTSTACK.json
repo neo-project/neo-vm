@@ -85,7 +85,7 @@
     },
     {
       "name": "Real test [Interop]",
-      "script": "3f777777776b6d",
+      "script": "41777777776b6d",
       "message": "0x00",
       "steps": [
         {

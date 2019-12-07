@@ -878,7 +878,7 @@
     },
     {
       "name": "Real test with clone [Interop,Interop]=fault",
-      "script": "3f777777776b6d6d9c",
+      "script": "41777777776b6d6d9c",
       "steps": [
         {
           "actions": [
@@ -944,7 +944,7 @@
     },
     {
       "name": "Real test [Interop,Interop]=fault",
-      "script": "3f777777773f777777779c",
+      "script": "417777777741777777779c",
       "steps": [
         {
           "actions": [

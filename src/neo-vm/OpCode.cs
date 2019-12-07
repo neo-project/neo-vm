@@ -176,13 +176,15 @@ namespace Neo.VM
         THROWIFNOT = 0x39,
         //TRY = 0x3B,
         //TRY_L = 0x3C,
-        //ENDTRY = 0x3D,
-        RET = 0x3E,
+        //ENDT = 0x3D,
+        //ENDC = 0x3E,
+        //ENDF = 0x3F,
+        RET = 0x40,
         /// <summary>
         /// Reads a string and executes the corresponding operation.
         /// </summary>
         [OperandSize(Size = 4)]
-        SYSCALL = 0x3F,
+        SYSCALL = 0x41,
 
         #endregion
 

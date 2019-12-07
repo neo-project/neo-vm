@@ -4,7 +4,7 @@
   "tests": [
     {
       "name": "Init script",
-      "script": "3e",
+      "script": "40",
       "steps": [
         {
           "result": {
@@ -21,7 +21,7 @@
     },
     {
       "name": "Init script",
-      "script": "3e",
+      "script": "40",
       "steps": [
         {
           "actions": [

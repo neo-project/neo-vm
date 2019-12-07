@@ -4,7 +4,7 @@
   "tests": [
     {
       "name": "Step Into",
-      "script": "113404133e123e",
+      "script": "11340413401240",
       "steps": [
         {
           "result": {
@@ -183,7 +183,7 @@
     },
     {
       "name": "Step Out",
-      "script": "113404133e123e",
+      "script": "11340413401240",
       "steps": [
         {
           "result": {
@@ -242,7 +242,7 @@
     },
     {
       "name": "Step Over",
-      "script": "113404133e123e",
+      "script": "11340413401240",
       "steps": [
         {
           "result": {
@@ -353,7 +353,7 @@
     },
     {
       "name": "Execute",
-      "script": "113404133e123e",
+      "script": "11340413401240",
       "steps": [
         {
           "result": {

@@ -4,7 +4,7 @@
   "tests": [
     {
       "name": "Real test",
-      "script": "3e",
+      "script": "40",
       "steps": [
         {
           "actions": [
