@@ -42,6 +42,21 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void TestEmitCall()
+        {
+            using (var script = new ScriptBuilder())
+            {
+                script.EmitCall(0);
+                CollectionAssert.AreEqual(new[] { (byte)OpCode.CALL, (byte)0 }, script.ToArray());
+            }
+            using (var script = new ScriptBuilder())
+            {
+                script.EmitCall(12345);
+                CollectionAssert.AreEqual(new[] { (byte)OpCode.CALL_L }.Concat(BitConverter.GetBytes(12345)).ToArray(), script.ToArray());
+            }
+        }
+
+        [TestMethod]
         public void TestEmitJump()
         {
             var offset_i8 = sbyte.MaxValue;
