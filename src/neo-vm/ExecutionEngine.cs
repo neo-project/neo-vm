@@ -459,43 +459,29 @@ namespace Neo.VM
                 // Bitwise logic
                 case OpCode.INVERT:
                     {
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
-                        Push(~x);
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        Push(~x.ToBigInteger());
                         break;
                     }
                 case OpCode.AND:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 & x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() & x2.ToBigInteger());
                         break;
                     }
                 case OpCode.OR:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 | x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() | x2.ToBigInteger());
                         break;
                     }
                 case OpCode.XOR:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 ^ x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() ^ x2.ToBigInteger());
                         break;
                     }
                 case OpCode.EQUAL:
@@ -509,46 +495,38 @@ namespace Neo.VM
                 // Numeric
                 case OpCode.INC:
                     {
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
-                        x += 1;
-                        if (!CheckBigInteger(x)) return false;
-                        Push(x);
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        BigInteger r = x.ToBigInteger() + 1;
+                        if (!CheckBigInteger(r)) return false;
+                        Push(r);
                         break;
                     }
                 case OpCode.DEC:
                     {
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
-                        x -= 1;
-                        if (!CheckBigInteger(x)) return false;
-                        Push(x);
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        BigInteger r = x.ToBigInteger() - 1;
+                        if (!CheckBigInteger(r)) return false;
+                        Push(r);
                         break;
                     }
                 case OpCode.SIGN:
                     {
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
-                        Push(x.Sign);
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        Push(x.ToBigInteger().Sign);
                         break;
                     }
                 case OpCode.NEGATE:
                     {
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
-                        Push(-x);
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        Push(-x.ToBigInteger());
                         break;
                     }
                 case OpCode.ABS:
                     {
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
-                        Push(BigInteger.Abs(x));
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        BigInteger r = BigInteger.Abs(x.ToBigInteger());
+                        if (!CheckBigInteger(r)) return false;
+                        Push(r);
                         break;
                     }
                 case OpCode.NOT:
@@ -559,71 +537,49 @@ namespace Neo.VM
                     }
                 case OpCode.NZ:
                     {
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
-                        Push(!x.IsZero);
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        Push(!x.ToBigInteger().IsZero);
                         break;
                     }
                 case OpCode.ADD:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        BigInteger result = x1 + x2;
-                        if (!CheckBigInteger(result)) return false;
-                        Push(result);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        BigInteger r = x1.ToBigInteger() + x2.ToBigInteger();
+                        if (!CheckBigInteger(r)) return false;
+                        Push(r);
                         break;
                     }
                 case OpCode.SUB:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        BigInteger result = x1 - x2;
-                        if (!CheckBigInteger(result)) return false;
-                        Push(result);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        BigInteger r = x1.ToBigInteger() - x2.ToBigInteger();
+                        if (!CheckBigInteger(r)) return false;
+                        Push(r);
                         break;
                     }
                 case OpCode.MUL:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        BigInteger result = x1 * x2;
-                        if (!CheckBigInteger(result)) return false;
-                        Push(result);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        BigInteger r = x1.ToBigInteger() * x2.ToBigInteger();
+                        if (!CheckBigInteger(r)) return false;
+                        Push(r);
                         break;
                     }
                 case OpCode.DIV:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 / x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() / x2.ToBigInteger());
                         break;
                     }
                 case OpCode.MOD:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 % x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() % x2.ToBigInteger());
                         break;
                     }
                 case OpCode.SHL:
@@ -632,12 +588,10 @@ namespace Neo.VM
                         int shift = (int)item_shift.ToBigInteger();
                         if (!CheckShift(shift)) return false;
                         if (shift == 0) break;
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
-                        x <<= shift;
-                        if (!CheckBigInteger(x)) return false;
-                        Push(x);
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        BigInteger r = x.ToBigInteger() << shift;
+                        if (!CheckBigInteger(r)) return false;
+                        Push(r);
                         break;
                     }
                 case OpCode.SHR:
@@ -646,12 +600,10 @@ namespace Neo.VM
                         int shift = (int)item_shift.ToBigInteger();
                         if (!CheckShift(shift)) return false;
                         if (shift == 0) break;
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
-                        x >>= shift;
-                        if (!CheckBigInteger(x)) return false;
-                        Push(x);
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        BigInteger r = x.ToBigInteger() >> shift;
+                        if (!CheckBigInteger(r)) return false;
+                        Push(r);
                         break;
                     }
                 case OpCode.BOOLAND:
@@ -670,103 +622,68 @@ namespace Neo.VM
                     }
                 case OpCode.NUMEQUAL:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 == x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() == x2.ToBigInteger());
                         break;
                     }
                 case OpCode.NUMNOTEQUAL:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 != x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() != x2.ToBigInteger());
                         break;
                     }
                 case OpCode.LT:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 < x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() < x2.ToBigInteger());
                         break;
                     }
                 case OpCode.GT:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 > x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() > x2.ToBigInteger());
                         break;
                     }
                 case OpCode.LTE:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 <= x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() <= x2.ToBigInteger());
                         break;
                     }
                 case OpCode.GTE:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(x1 >= x2);
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(x1.ToBigInteger() >= x2.ToBigInteger());
                         break;
                     }
                 case OpCode.MIN:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(BigInteger.Min(x1, x2));
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(BigInteger.Min(x1.ToBigInteger(), x2.ToBigInteger()));
                         break;
                     }
                 case OpCode.MAX:
                     {
-                        if (!TryPop(out PrimitiveType item_x2)) return false;
-                        BigInteger x2 = item_x2.ToBigInteger();
-                        if (!CheckBigInteger(x2)) return false;
-                        if (!TryPop(out PrimitiveType item_x1)) return false;
-                        BigInteger x1 = item_x1.ToBigInteger();
-                        if (!CheckBigInteger(x1)) return false;
-                        Push(BigInteger.Max(x1, x2));
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        Push(BigInteger.Max(x1.ToBigInteger(), x2.ToBigInteger()));
                         break;
                     }
                 case OpCode.WITHIN:
                     {
                         if (!TryPop(out PrimitiveType item_b)) return false;
-                        BigInteger b = item_b.ToBigInteger();
-                        if (!CheckBigInteger(b)) return false;
                         if (!TryPop(out PrimitiveType item_a)) return false;
-                        BigInteger a = item_a.ToBigInteger();
-                        if (!CheckBigInteger(a)) return false;
                         if (!TryPop(out PrimitiveType item_x)) return false;
+                        BigInteger b = item_b.ToBigInteger();
+                        BigInteger a = item_a.ToBigInteger();
                         BigInteger x = item_x.ToBigInteger();
-                        if (!CheckBigInteger(x)) return false;
                         Push(a <= x && x < b);
                         break;
                     }

@@ -32,6 +32,8 @@ namespace Neo.VM.Types
 
         public virtual BigInteger ToBigInteger()
         {
+            if (GetByteLength() > ExecutionEngine.MaxSizeForBigInteger)
+                throw new InvalidCastException();
             return new BigInteger(ToByteArray());
         }
 
