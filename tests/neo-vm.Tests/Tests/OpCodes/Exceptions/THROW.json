@@ -1,23 +1,19 @@
 {
-    "category": "Exceptions",
-    "name": "THROW",
-    "tests":
-    [
+  "category": "Exceptions",
+  "name": "THROW",
+  "tests": [
+    {
+      "script": "37",
+      "steps": [
         {
-            "script": "0xF0",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Fault"
+          }
         }
-    ]
+      ]
+    }
+  ]
 }

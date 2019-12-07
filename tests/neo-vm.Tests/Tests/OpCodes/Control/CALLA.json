@@ -4,7 +4,7 @@
   "tests": [
     {
       "name": "Wrong type",
-      "script": "0x123A",
+      "script": "1236",
       "steps": [
         {
           "actions": [
@@ -38,7 +38,7 @@
     },
     {
       "name": "Real test",
-      "script": "0x0A070000003A661066",
+      "script": "0a07000000363e103e",
       "steps": [
         {
           "actions": [

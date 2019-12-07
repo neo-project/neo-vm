@@ -1,24 +1,20 @@
 {
-    "category": "Control",
-    "name": "RET",
-    "tests":
-    [
+  "category": "Control",
+  "name": "RET",
+  "tests": [
+    {
+      "name": "Real test",
+      "script": "3e",
+      "steps": [
         {
-            "name": "Real test",
-            "script": "0x66",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt"
-                    }
-                }
-            ]
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt"
+          }
         }
-    ]
+      ]
+    }
+  ]
 }

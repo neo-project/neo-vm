@@ -441,7 +441,7 @@
     },
     {
       "name": "With interop",
-      "script": "0x687777777791",
+      "script": "3f7777777791",
       "steps": [
         {
           "actions": [

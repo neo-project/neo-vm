@@ -3,7 +3,7 @@
   "name": "THROWIFNOT",
   "tests": [
     {
-      "script": "1091f1",
+      "script": "109139",
       "name": "Without throw exception",
       "steps": [
         {
@@ -33,7 +33,7 @@
       ]
     },
     {
-      "script": "10f1",
+      "script": "1039",
       "name": "Throw exception (with PUSH)",
       "steps": [
         {
@@ -47,7 +47,7 @@
       ]
     },
     {
-      "script": "0xF1",
+      "script": "39",
       "name": "Throw exception (without PUSH - FAULT)",
       "steps": [
         {

@@ -4,7 +4,7 @@
   "tests": [
     {
       "name": "More than 1024 ExecutionContext",
-      "script": "0c0200048b6b6c8c766b64060065f9ff66",
+      "script": "0c0200048b6b6c8c766b260434fa3e",
       "steps": [
         {
           "actions": [
@@ -77,7 +77,7 @@
               },
               {
                 "nextInstruction": "RET",
-                "instructionPointer": 16,
+                "instructionPointer": 14,
                 "altStack": [
                   {
                     "type": "Integer",

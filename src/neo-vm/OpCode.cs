@@ -2,7 +2,7 @@ namespace Neo.VM
 {
     public enum OpCode : byte
     {
-        // Constants
+        #region Constants
 
         [OperandSize(Size = 1)]
         PUSHINT8 = 0x00,
@@ -113,46 +113,78 @@ namespace Neo.VM
         /// </summary>
         PUSH16 = 0x20,
 
-        // Flow control
+        #endregion
 
-        /// <summary>
-        /// Pop the address of a function from the stack, and call the function.
-        /// </summary>
-        CALLA = 0x3A,
+        #region Flow control
+
         /// <summary>
         ///  Does nothing.
         /// </summary>
-        NOP = 0x61,
+        NOP = 0x21,
         /// <summary>
-        /// Reads a 2-byte value n and a jump is performed to relative position n (counting from opcode JMP address).
+        /// The <see cref="JMP"/> instruction unconditionally transfers control to a target instruction. The target instruction is represented as a 1-byte signed offset from the beginning of the instruction following the current instruction.
         /// </summary>
-        [OperandSize(Size = 2)]
-        JMP = 0x62,
+        [OperandSize(Size = 1)]
+        JMP = 0x22,
         /// <summary>
-        /// A boolean value b is taken from main stack and reads a 2-byte value n, if b is True then a jump is performed to relative position n (counting from opcode JMPIF address).
+        /// The <see cref="JMP_L"/> instruction unconditionally transfers control to a target instruction. The target instruction is represented as a 4-bytes signed offset from the beginning of the instruction following the current instruction.
         /// </summary>
-        [OperandSize(Size = 2)]
-        JMPIF = 0x63,
+        [OperandSize(Size = 4)]
+        JMP_L = 0x23,
+        [OperandSize(Size = 1)]
+        JMPIF = 0x24,
+        [OperandSize(Size = 4)]
+        JMPIF_L = 0x25,
+        [OperandSize(Size = 1)]
+        JMPIFNOT = 0x26,
+        [OperandSize(Size = 4)]
+        JMPIFNOT_L = 0x27,
+        [OperandSize(Size = 1)]
+        JMPEQ = 0x28,
+        [OperandSize(Size = 4)]
+        JMPEQ_L = 0x29,
+        [OperandSize(Size = 1)]
+        JMPNE = 0x2A,
+        [OperandSize(Size = 4)]
+        JMPNE_L = 0x2B,
+        [OperandSize(Size = 1)]
+        JMPGT = 0x2C,
+        [OperandSize(Size = 4)]
+        JMPGT_L = 0x2D,
+        [OperandSize(Size = 1)]
+        JMPGE = 0x2E,
+        [OperandSize(Size = 4)]
+        JMPGE_L = 0x2F,
+        [OperandSize(Size = 1)]
+        JMPLT = 0x30,
+        [OperandSize(Size = 4)]
+        JMPLT_L = 0x31,
+        [OperandSize(Size = 1)]
+        JMPLE = 0x32,
+        [OperandSize(Size = 4)]
+        JMPLE_L = 0x33,
+        [OperandSize(Size = 1)]
+        CALL = 0x34,
+        [OperandSize(Size = 4)]
+        CALL_L = 0x35,
         /// <summary>
-        /// A boolean value b is taken from main stack and reads a 2-byte value n, if b is False then a jump is performed to relative position n (counting from opcode JMPIFNOT address).
+        /// Pop the address of a function from the stack, and call the function.
         /// </summary>
-        [OperandSize(Size = 2)]
-        JMPIFNOT = 0x64,
-        /// <summary>
-        /// Current context is copied to the invocation stack. Reads a 2-byte value n and a jump is performed to relative position n.
-        /// </summary>
-        [OperandSize(Size = 2)]
-        CALL = 0x65,
-        /// <summary>
-        /// Stops the execution if invocation stack is empty.
-        /// </summary>
-        RET = 0x66,
+        CALLA = 0x36,
+        THROW = 0x37,
+        THROWIF = 0x38,
+        THROWIFNOT = 0x39,
+        //TRY = 0x3B,
+        //TRY_L = 0x3C,
+        //ENDTRY = 0x3D,
+        RET = 0x3E,
         /// <summary>
         /// Reads a string and executes the corresponding operation.
         /// </summary>
         [OperandSize(Size = 4)]
-        SYSCALL = 0x68,
+        SYSCALL = 0x3F,
 
+        #endregion
 
         // Stack
         /// <summary>
@@ -439,16 +471,5 @@ namespace Neo.VM
         /// A map is taken from top of the main stack. The values of this map are put on top of the main stack.
         /// </summary>
         VALUES = 0xCD,
-
-
-        // Exceptions
-        /// <summary>
-        /// Halts the execution of the vm by setting VMState.FAULT.
-        /// </summary>
-        THROW = 0xF0,
-        /// <summary>
-        /// Removes top stack item n, and halts the execution of the vm by setting VMState.FAULT only if n is False.
-        /// </summary>
-        THROWIFNOT = 0xF1
     }
 }

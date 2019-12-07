@@ -35,13 +35,13 @@ namespace Neo.Test
             using (var builder = new ScriptBuilder())
             {
                 builder.Emit(OpCode.PUSH0);
-                builder.Emit(OpCode.CALL, new byte[] { 0x00, 0x01 });
+                builder.Emit(OpCode.CALL_L, new byte[] { 0x00, 0x01, 0x00, 0x00 });
                 builder.EmitSysCall(123);
 
                 script = new Script(builder.ToArray());
             }
 
-            Assert.AreEqual(9, script.Length);
+            Assert.AreEqual(11, script.Length);
 
             var ins = script.GetInstruction(0);
 
@@ -53,14 +53,13 @@ namespace Neo.Test
 
             ins = script.GetInstruction(1);
 
-            Assert.AreEqual(OpCode.CALL, ins.OpCode);
-            CollectionAssert.AreEqual(new byte[] { 0x00, 0x01 }, ins.Operand.ToArray());
-            Assert.AreEqual(3, ins.Size);
-            Assert.AreEqual(256, ins.TokenI16);
-            Assert.AreEqual(Encoding.ASCII.GetString(new byte[] { 0x00, 0x01 }), ins.TokenString);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var x = ins.TokenU32; });
+            Assert.AreEqual(OpCode.CALL_L, ins.OpCode);
+            CollectionAssert.AreEqual(new byte[] { 0x00, 0x01, 0x00, 0x00 }, ins.Operand.ToArray());
+            Assert.AreEqual(5, ins.Size);
+            Assert.AreEqual(256, ins.TokenI32);
+            Assert.AreEqual(Encoding.ASCII.GetString(new byte[] { 0x00, 0x01, 0x00, 0x00 }), ins.TokenString);
 
-            ins = script.GetInstruction(4);
+            ins = script.GetInstruction(6);
 
             Assert.AreEqual(OpCode.SYSCALL, ins.OpCode);
             CollectionAssert.AreEqual(new byte[] { 123, 0x00, 0x00, 0x00 }, ins.Operand.ToArray());
