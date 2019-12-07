@@ -31,6 +31,13 @@ namespace Neo.VM
             return this;
         }
 
+        public ScriptBuilder EmitRaw(byte[] arg = null)
+        {
+            if (arg != null)
+                writer.Write(arg);
+            return this;
+        }
+
         public ScriptBuilder EmitJump(OpCode op, short offset)
         {
             if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT && op != OpCode.CALL)
