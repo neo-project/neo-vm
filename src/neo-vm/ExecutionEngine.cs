@@ -101,6 +101,7 @@ namespace Neo.VM
             return State;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteCall(int position)
         {
             if (position < 0 || position > CurrentContext.Script.Length) return false;
@@ -1000,6 +1001,7 @@ namespace Neo.VM
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteJump(bool condition, int offset)
         {
             offset = checked(CurrentContext.InstructionPointer + offset);
