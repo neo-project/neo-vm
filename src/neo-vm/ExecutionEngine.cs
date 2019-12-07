@@ -273,13 +273,13 @@ namespace Neo.VM
                     }
                 case OpCode.CALL:
                     {
-                        if (!ExecuteCall(context.InstructionPointer + instruction.TokenI8))
+                        if (!ExecuteCall(checked(context.InstructionPointer + instruction.TokenI8)))
                             return false;
                         break;
                     }
                 case OpCode.CALL_L:
                     {
-                        if (!ExecuteCall(context.InstructionPointer + instruction.TokenI32))
+                        if (!ExecuteCall(checked(context.InstructionPointer + instruction.TokenI32)))
                             return false;
                         break;
                     }
@@ -1002,7 +1002,7 @@ namespace Neo.VM
 
         private bool ExecuteJump(bool condition, int offset)
         {
-            offset += CurrentContext.InstructionPointer;
+            offset = checked(CurrentContext.InstructionPointer + offset);
             if (offset < 0 || offset > CurrentContext.Script.Length) return false;
             if (condition)
                 CurrentContext.InstructionPointer = offset;
