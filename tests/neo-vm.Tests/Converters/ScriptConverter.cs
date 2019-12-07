@@ -1,8 +1,8 @@
-using System;
 using Neo.Test.Extensions;
 using Neo.VM;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace Neo.Test.Converters
 {
@@ -29,11 +29,9 @@ namespace Neo.Test.Converters
                     }
                 case JsonToken.StartArray:
                     {
-                        var array = JArray.Load(reader);
-
                         using (var script = new ScriptBuilder())
                         {
-                            foreach (var entry in array)
+                            foreach (var entry in JArray.Load(reader))
                             {
                                 if (Enum.TryParse<OpCode>(entry.Value<string>(), out var opCode))
                                 {
