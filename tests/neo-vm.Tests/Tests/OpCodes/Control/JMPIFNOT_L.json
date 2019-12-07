@@ -3,54 +3,6 @@
   "name": "JMPIFNOT_L",
   "tests": [
     {
-      "name": "Real test [0]",
-      "script": "1027060000002140",
-      "steps": [
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 1,
-                "nextInstruction": "JMPIFNOT_L",
-                "evaluationStack": [
-                  {
-                    "type": "Integer",
-                    "value": 0
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 7,
-                "nextInstruction": "RET"
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Halt"
-          }
-        }
-      ]
-    },
-    {
       "name": "Real test [1]",
       "script": "1127060000002140",
       "steps": [
@@ -84,6 +36,54 @@
               {
                 "instructionPointer": 6,
                 "nextInstruction": "NOP"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "RET"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [0]",
+      "script": "1027060000002140",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "JMPIFNOT_L",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
               }
             ]
           }
