@@ -31,9 +31,6 @@ namespace Neo.Test
         public void TestOpCodesNumeric() => TestJson("./Tests/OpCodes/Numeric");
 
         [TestMethod]
-        public void TestOpCodesExceptions() => TestJson("./Tests/OpCodes/Exceptions");
-
-        [TestMethod]
         public void TestOpCodesBitwiseLogic() => TestJson("./Tests/OpCodes/BitwiseLogic");
 
         private void TestJson(string path)
