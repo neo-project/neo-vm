@@ -5,7 +5,8 @@
     {
       "name": "More length than script",
       "script": [
-        "0x0e00080000"
+        "PUSHDATA4",
+        "0x00080000"
       ],
       "steps": [
         {
@@ -45,7 +46,8 @@
     {
       "name": "Without enough length",
       "script": [
-        "0x0e0500000001020304"
+        "PUSHDATA4",
+        "0x0500000001020304"
       ],
       "steps": [
         {

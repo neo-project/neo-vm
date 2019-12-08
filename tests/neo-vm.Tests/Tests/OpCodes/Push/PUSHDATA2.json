@@ -29,7 +29,8 @@
     {
       "name": "Without enough length",
       "script": [
-        "0x0d050001020304"
+        "PUSHDATA2",
+        "0x050001020304"
       ],
       "steps": [
         {

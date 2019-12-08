@@ -75,7 +75,8 @@ namespace Neo.Test.Converters
                         }
 
                         if (!instruction.Operand.IsEmpty)
-                        {    // Data
+                        {
+                            // Data
 
                             array.Add(instruction.Operand.ToArray().ToHexString());
                         }
@@ -87,7 +88,17 @@ namespace Neo.Test.Converters
                 {
                     // Something was wrong, but maybe it's intentioned
 
-                    array.Add(data[ip..].ToHexString());
+                    if (Enum.IsDefined(typeof(OpCode), data[ip]))
+                    {
+                        // Check if it was the content and not the opcode
+
+                        array.Add(((OpCode)data[ip]).ToString().ToUpperInvariant());
+                        array.Add(data[(ip + 1)..].ToHexString());
+                    }
+                    else
+                    {
+                        array.Add(data[ip..].ToHexString());
+                    }
                 }
 
                 // Write the script
