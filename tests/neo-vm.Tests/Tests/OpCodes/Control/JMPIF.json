@@ -1,10 +1,10 @@
 {
   "category": "Control",
-  "name": "NOP",
+  "name": "JMPIF",
   "tests": [
     {
-      "name": "Real test",
-      "script": "2121212121",
+      "name": "Real test [1]",
+      "script": "1124032140",
       "steps": [
         {
           "actions": [
@@ -15,7 +15,13 @@
             "invocationStack": [
               {
                 "instructionPointer": 1,
-                "nextInstruction": "NOP"
+                "nextInstruction": "JMPIF",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  }
+                ]
               }
             ]
           }
@@ -28,8 +34,42 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 2,
-                "nextInstruction": "NOP"
+                "instructionPointer": 4,
+                "nextInstruction": "RET"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [0]",
+      "script": "1024032140",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "JMPIF",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
               }
             ]
           }
@@ -57,20 +97,6 @@
             "invocationStack": [
               {
                 "instructionPointer": 4,
-                "nextInstruction": "NOP"
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 5,
                 "nextInstruction": "RET"
               }
             ]

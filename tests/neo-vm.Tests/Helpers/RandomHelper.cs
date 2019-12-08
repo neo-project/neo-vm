@@ -36,14 +36,5 @@ namespace Neo.Test.Helpers
 
             return new string(stringChars);
         }
-
-        /// <summary>
-        /// Get random short
-        /// </summary>
-        /// <returns>Int16</returns>
-        public static short RandInt16()
-        {
-            return (short)_rand.Next(short.MaxValue);
-        }
     }
 }

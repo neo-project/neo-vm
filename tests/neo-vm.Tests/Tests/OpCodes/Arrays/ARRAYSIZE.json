@@ -4,7 +4,7 @@
   "tests": [
     {
       "name": "Wrong type SYSCALL[0x77777777]\u002BARRAYSIZE",
-      "script": "0x6877777777C0",
+      "script": "4177777777c0",
       "message": "0x00",
       "steps": [
         {

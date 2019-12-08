@@ -1,17 +1,16 @@
 {
   "category": "Control",
-  "name": "RET",
+  "name": "THROW",
   "tests": [
     {
-      "name": "Real test",
-      "script": "40",
+      "script": "37",
       "steps": [
         {
           "actions": [
             "StepInto"
           ],
           "result": {
-            "state": "Halt"
+            "state": "Fault"
           }
         }
       ]

@@ -1,0 +1,68 @@
+{
+  "category": "Control",
+  "name": "THROWIF",
+  "tests": [
+    {
+      "script": "1038",
+      "name": "Without throw exception",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "THROWIF",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Halt"
+          }
+        }
+      ]
+    },
+    {
+      "script": "1138",
+      "name": "Throw exception (with PUSH)",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    },
+    {
+      "script": "38",
+      "name": "Throw exception (without PUSH - FAULT)",
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "Fault"
+          }
+        }
+      ]
+    }
+  ]
+}

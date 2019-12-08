@@ -48,6 +48,15 @@ namespace Neo.VM
             }
         }
 
+        public sbyte TokenI8
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return (sbyte)Operand.Span[0];
+            }
+        }
+
         public string TokenString
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

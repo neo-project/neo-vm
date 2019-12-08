@@ -101,25 +101,14 @@ namespace Neo.VM
             return State;
         }
 
-        internal protected void ExecuteNext()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool ExecuteCall(int position)
         {
-            if (InvocationStack.Count == 0)
-            {
-                State = VMState.HALT;
-            }
-            else
-            {
-                try
-                {
-                    Instruction instruction = CurrentContext.CurrentInstruction;
-                    if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
-                        State = VMState.FAULT;
-                }
-                catch
-                {
-                    State = VMState.FAULT;
-                }
-            }
+            if (position < 0 || position > CurrentContext.Script.Length) return false;
+            ExecutionContext context_call = CurrentContext.Clone();
+            context_call.InstructionPointer = position;
+            LoadContext(context_call);
+            return true;
         }
 
         private bool ExecuteInstruction()
@@ -184,42 +173,132 @@ namespace Neo.VM
                 // Control
                 case OpCode.NOP: break;
                 case OpCode.JMP:
+                    {
+                        return ExecuteJump(true, instruction.TokenI8);
+                    }
+                case OpCode.JMP_L:
+                    {
+                        return ExecuteJump(true, instruction.TokenI32);
+                    }
                 case OpCode.JMPIF:
+                    {
+                        if (!TryPop(out StackItem x)) return false;
+                        return ExecuteJump(x.ToBoolean(), instruction.TokenI8);
+                    }
+                case OpCode.JMPIF_L:
+                    {
+                        if (!TryPop(out StackItem x)) return false;
+                        return ExecuteJump(x.ToBoolean(), instruction.TokenI32);
+                    }
                 case OpCode.JMPIFNOT:
                     {
-                        int offset = context.InstructionPointer + instruction.TokenI16;
-                        if (offset < 0 || offset > context.Script.Length) return false;
-                        bool fValue = true;
-                        if (instruction.OpCode > OpCode.JMP)
-                        {
-                            if (!TryPop(out StackItem x)) return false;
-                            fValue = x.ToBoolean();
-                            if (instruction.OpCode == OpCode.JMPIFNOT)
-                                fValue = !fValue;
-                        }
-                        if (fValue)
-                            context.InstructionPointer = offset;
-                        else
-                            context.InstructionPointer += 3;
-                        return true;
+                        if (!TryPop(out StackItem x)) return false;
+                        return ExecuteJump(!x.ToBoolean(), instruction.TokenI8);
+                    }
+                case OpCode.JMPIFNOT_L:
+                    {
+                        if (!TryPop(out StackItem x)) return false;
+                        return ExecuteJump(!x.ToBoolean(), instruction.TokenI32);
+                    }
+                case OpCode.JMPEQ:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() == x2.ToBigInteger(), instruction.TokenI8);
+                    }
+                case OpCode.JMPEQ_L:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() == x2.ToBigInteger(), instruction.TokenI32);
+                    }
+                case OpCode.JMPNE:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() != x2.ToBigInteger(), instruction.TokenI8);
+                    }
+                case OpCode.JMPNE_L:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() != x2.ToBigInteger(), instruction.TokenI32);
+                    }
+                case OpCode.JMPGT:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() > x2.ToBigInteger(), instruction.TokenI8);
+                    }
+                case OpCode.JMPGT_L:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() > x2.ToBigInteger(), instruction.TokenI32);
+                    }
+                case OpCode.JMPGE:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() >= x2.ToBigInteger(), instruction.TokenI8);
+                    }
+                case OpCode.JMPGE_L:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() >= x2.ToBigInteger(), instruction.TokenI32);
+                    }
+                case OpCode.JMPLT:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() < x2.ToBigInteger(), instruction.TokenI8);
+                    }
+                case OpCode.JMPLT_L:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() < x2.ToBigInteger(), instruction.TokenI32);
+                    }
+                case OpCode.JMPLE:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() <= x2.ToBigInteger(), instruction.TokenI8);
+                    }
+                case OpCode.JMPLE_L:
+                    {
+                        if (!TryPop(out PrimitiveType x2)) return false;
+                        if (!TryPop(out PrimitiveType x1)) return false;
+                        return ExecuteJump(x1.ToBigInteger() <= x2.ToBigInteger(), instruction.TokenI32);
                     }
                 case OpCode.CALL:
+                    {
+                        if (!ExecuteCall(checked(context.InstructionPointer + instruction.TokenI8)))
+                            return false;
+                        break;
+                    }
+                case OpCode.CALL_L:
+                    {
+                        if (!ExecuteCall(checked(context.InstructionPointer + instruction.TokenI32)))
+                            return false;
+                        break;
+                    }
                 case OpCode.CALLA:
                     {
-                        int position;
-                        if (instruction.OpCode == OpCode.CALLA)
-                        {
-                            if (!TryPop(out Pointer x)) return false;
-                            position = x.Position;
-                        }
-                        else
-                        {
-                            position = context.InstructionPointer + instruction.TokenI16;
-                        }
-                        ExecutionContext context_call = context.Clone();
-                        context_call.InstructionPointer = position;
-                        if (context_call.InstructionPointer < 0 || context_call.InstructionPointer > context_call.Script.Length) return false;
-                        LoadContext(context_call);
+                        if (!TryPop(out Pointer x)) return false;
+                        if (!ExecuteCall(x.Position)) return false;
+                        break;
+                    }
+                case OpCode.THROW:
+                    {
+                        return false;
+                    }
+                case OpCode.THROWIF:
+                case OpCode.THROWIFNOT:
+                    {
+                        if (!TryPop(out StackItem x)) return false;
+                        if (x.ToBoolean() ^ (instruction.OpCode == OpCode.THROWIFNOT)) return false;
                         break;
                     }
                 case OpCode.RET:
@@ -915,22 +994,44 @@ namespace Neo.VM
                         break;
                     }
 
-                // Exceptions
-                case OpCode.THROW:
-                    {
-                        return false;
-                    }
-                case OpCode.THROWIFNOT:
-                    {
-                        if (!TryPop(out StackItem x)) return false;
-                        if (!x.ToBoolean()) return false;
-                        break;
-                    }
                 default:
                     return false;
             }
             context.MoveNext();
             return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool ExecuteJump(bool condition, int offset)
+        {
+            offset = checked(CurrentContext.InstructionPointer + offset);
+            if (offset < 0 || offset > CurrentContext.Script.Length) return false;
+            if (condition)
+                CurrentContext.InstructionPointer = offset;
+            else
+                CurrentContext.MoveNext();
+            return true;
+        }
+
+        internal protected void ExecuteNext()
+        {
+            if (InvocationStack.Count == 0)
+            {
+                State = VMState.HALT;
+            }
+            else
+            {
+                try
+                {
+                    Instruction instruction = CurrentContext.CurrentInstruction;
+                    if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
+                        State = VMState.FAULT;
+                }
+                catch
+                {
+                    State = VMState.FAULT;
+                }
+            }
         }
 
         protected virtual void LoadContext(ExecutionContext context)

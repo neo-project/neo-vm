@@ -31,11 +31,24 @@ namespace Neo.VM
             return this;
         }
 
-        public ScriptBuilder EmitJump(OpCode op, short offset)
+        public ScriptBuilder EmitCall(int offset)
         {
-            if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT && op != OpCode.CALL)
-                throw new ArgumentException();
-            return Emit(op, BitConverter.GetBytes(offset));
+            if (offset < sbyte.MinValue || offset > sbyte.MaxValue)
+                return Emit(OpCode.CALL_L, BitConverter.GetBytes(offset));
+            else
+                return Emit(OpCode.CALL, new[] { (byte)offset });
+        }
+
+        public ScriptBuilder EmitJump(OpCode op, int offset)
+        {
+            if (op < OpCode.JMP || op > OpCode.JMPLE_L)
+                throw new ArgumentOutOfRangeException(nameof(op));
+            if ((int)op % 2 == 0 && (offset < sbyte.MinValue || offset > sbyte.MaxValue))
+                op += 1;
+            if ((int)op % 2 == 0)
+                return Emit(op, new[] { (byte)offset });
+            else
+                return Emit(op, BitConverter.GetBytes(offset));
         }
 
         public ScriptBuilder EmitPush(BigInteger number)
