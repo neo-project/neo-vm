@@ -1,39 +1,52 @@
-{
+﻿{
   "category": "Push",
   "name": "PUSHINT8 to PUSHINT256",
   "tests": [
     {
-      "script": "00ff01feff02fdffffff03fcffffffffffffff04fbffffffffffffffffffffffffffffff05faffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "script": [
+        "PUSHINT8",
+        "0xff",
+        "PUSHINT16",
+        "0xfeff",
+        "PUSHINT32",
+        "0xfdffffff",
+        "PUSHINT64",
+        "0xfcffffffffffffff",
+        "PUSHINT128",
+        "0xfbffffffffffffffffffffffffffffff",
+        "PUSHINT256",
+        "0xfaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": -6
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": -5
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": -4
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": -3
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": -2
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": -1
               }
             ]

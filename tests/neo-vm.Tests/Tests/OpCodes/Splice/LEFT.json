@@ -1,44 +1,51 @@
-{
+﻿{
   "category": "Splice",
   "name": "LEFT",
   "tests": [
     {
       "name": "Without push",
-      "script": "1b80",
+      "script": [
+        "PUSH11",
+        "LEFT"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Wrong type [Map]",
-      "script": "14c780",
+      "script": [
+        "PUSH4",
+        "NEWMAP",
+        "LEFT"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "LEFT",
                 "evaluationStack": [
                   {
-                    "type": "Map",
+                    "type": "map",
                     "value": {}
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 4
                   }
                 ]
@@ -48,36 +55,42 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Negative value",
-      "script": "0c030102030f80",
+      "script": [
+        "PUSHDATA1",
+        "0x03",
+        "0x010203",
+        "PUSHM1",
+        "LEFT"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 6,
                 "nextInstruction": "LEFT",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": -1
                   },
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x010203"
                   }
                 ]
@@ -87,36 +100,42 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Overflow string",
-      "script": "0c030102031480",
+      "script": [
+        "PUSHDATA1",
+        "0x03",
+        "0x010203",
+        "PUSH4",
+        "LEFT"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 6,
                 "nextInstruction": "LEFT",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 4
                   },
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x010203"
                   }
                 ]
@@ -126,17 +145,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 7,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x010203"
                   }
                 ]
@@ -146,13 +165,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "ByteArray",
+                "type": "byteArray",
                 "value": "0x010203"
               }
             ]
@@ -162,26 +181,32 @@
     },
     {
       "name": "Real test",
-      "script": "0c030102031280",
+      "script": [
+        "PUSHDATA1",
+        "0x03",
+        "0x010203",
+        "PUSH2",
+        "LEFT"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 6,
                 "nextInstruction": "LEFT",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x010203"
                   }
                 ]
@@ -191,17 +216,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 7,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x0102"
                   }
                 ]
@@ -211,13 +236,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "ByteArray",
+                "type": "byteArray",
                 "value": "0x0102"
               }
             ]

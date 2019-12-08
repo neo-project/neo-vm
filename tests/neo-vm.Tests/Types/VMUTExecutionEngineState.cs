@@ -1,3 +1,4 @@
+using Neo.Test.Converters;
 using Neo.VM;
 using Newtonsoft.Json;
 
@@ -5,7 +6,7 @@ namespace Neo.Test.Types
 {
     public class VMUTExecutionEngineState
     {
-        [JsonProperty]
+        [JsonProperty, JsonConverter(typeof(UppercaseEnum))]
         public VMState State { get; set; }
 
         [JsonProperty]

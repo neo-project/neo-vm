@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -37,14 +38,23 @@ namespace Neo.Test
         {
             foreach (var file in Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
             {
-                var json = File.ReadAllText(file, Encoding.UTF8);
+                var realFile = Path.GetFullPath(file);
+                var json = File.ReadAllText(realFile, Encoding.UTF8);
                 var ut = json.DeserializeJson<VMUT>();
 
-                if (ut.Name != Path.GetFileNameWithoutExtension(file))
+                if (string.IsNullOrEmpty(ut.Name))
                 {
                     // Add filename
 
-                    ut.Name += $" [{Path.GetFileNameWithoutExtension(file)}]";
+                    ut.Name += $" [{Path.GetFileNameWithoutExtension(realFile)}]";
+                }
+
+                if (json != ut.ToJson().Replace("\r\n", "\n"))
+                {
+                    // Format json
+
+                    Console.WriteLine($"The file '{realFile}' was optimized");
+                    File.WriteAllText(realFile, ut.ToJson().Replace("\r\n", "\n"), Encoding.UTF8);
                 }
 
                 ExecuteTest(ut);

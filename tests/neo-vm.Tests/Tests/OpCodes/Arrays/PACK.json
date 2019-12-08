@@ -1,20 +1,25 @@
-{
+﻿{
   "category": "Arrays",
   "name": "PACK",
   "tests": [
     {
       "name": "Real test",
-      "script": "151612c1",
+      "script": [
+        "PUSH5",
+        "PUSH6",
+        "PUSH2",
+        "PACK"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Array",
+                "type": "array",
                 "value": [
                   {
                     "type": "Integer",
@@ -33,70 +38,87 @@
     },
     {
       "name": "Not enough size",
-      "script": "1512c1",
+      "script": [
+        "PUSH5",
+        "PUSH2",
+        "PACK"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Wrong type [Map]",
-      "script": "0xC7C1",
+      "script": [
+        "NEWMAP",
+        "PACK"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Wrong type [Array]",
-      "script": "11c5c1",
+      "script": [
+        "PUSH1",
+        "NEWARRAY",
+        "PACK"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Wrong type [Struct]",
-      "script": "11c6c1",
+      "script": [
+        "PUSH1",
+        "NEWSTRUCT",
+        "PACK"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Without items",
-      "script": "0xC1",
+      "script": [
+        "PACK"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]

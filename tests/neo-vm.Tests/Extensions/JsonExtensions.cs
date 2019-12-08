@@ -16,7 +16,8 @@ namespace Neo.Test.Extensions
             _settings = new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
             };
 
             _settings.Converters.Add(new StringEnumConverter(true));

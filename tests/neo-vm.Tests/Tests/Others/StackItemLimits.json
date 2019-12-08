@@ -1,24 +1,29 @@
-{
+﻿{
   "category": "Limits",
-  "name": "Stack item limits",
+  "name": "Stack item limits [StackItemLimits] [StackItemLimits] [StackItemLimits]",
   "tests": [
     {
       "name": "Max boolean bytearray",
-      "script": "0c2100000000000000000000000000000000000000000000000000000000000000000091",
+      "script": [
+        "PUSHDATA1",
+        "0x21",
+        "0x000000000000000000000000000000000000000000000000000000000000000000",
+        "NOT"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
-                "nextInstruction": "NOT",
                 "instructionPointer": 35,
+                "nextInstruction": "NOT",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x000000000000000000000000000000000000000000000000000000000000000000"
                   }
                 ]
@@ -28,17 +33,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
-                "nextInstruction": "RET",
                 "instructionPointer": 36,
+                "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Boolean",
+                    "type": "boolean",
                     "value": false
                   }
                 ]
@@ -48,13 +53,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Boolean",
+                "type": "boolean",
                 "value": false
               }
             ]
@@ -64,14 +69,26 @@
     },
     {
       "name": "Max items with PUSHDATA (2048+1)",
-      "script": "010004c5c201fe03c5c20c0101",
+      "script": [
+        "PUSHINT16",
+        "0x0004",
+        "NEWARRAY",
+        "UNPACK",
+        "PUSHINT16",
+        "0xfe03",
+        "NEWARRAY",
+        "UNPACK",
+        "PUSHDATA1",
+        "0x01",
+        "0x01"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]

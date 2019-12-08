@@ -1,19 +1,23 @@
-{
+﻿{
   "category": "Control",
   "name": "THROWIFNOT",
   "tests": [
     {
-      "script": "109139",
       "name": "Without throw exception",
+      "script": [
+        "PUSH0",
+        "NOT",
+        "THROWIFNOT"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 3,
@@ -24,38 +28,43 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt"
+            "state": "HALT"
           }
         }
       ]
     },
     {
-      "script": "1039",
       "name": "Throw exception (with PUSH)",
+      "script": [
+        "PUSH0",
+        "THROWIFNOT"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
-      "script": "39",
       "name": "Throw exception (without PUSH - FAULT)",
+      "script": [
+        "THROWIFNOT"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]

@@ -1,29 +1,35 @@
-{
+﻿{
   "category": "Numeric",
   "name": "SHL",
   "tests": [
     {
-      "name": "Exception - Above the limit 0 \u003C\u003C 257",
-      "script": "100c02010198",
+      "name": "Exception - Above the limit 0 << 257",
+      "script": [
+        "PUSH0",
+        "PUSHDATA1",
+        "0x02",
+        "0x0101",
+        "SHL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "SHL",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x0101"
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   }
                 ]
@@ -33,36 +39,42 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
-      "name": "Exception - Below the limit 0 \u003C\u003C -257",
-      "script": "100c02fffe98",
+      "name": "Exception - Below the limit 0 << -257",
+      "script": [
+        "PUSH0",
+        "PUSHDATA1",
+        "0x02",
+        "0xfffe",
+        "SHL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "SHL",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0xFFFE"
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   }
                 ]
@@ -72,36 +84,42 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
-      "name": "Real test 0 \u003C\u003C 256",
-      "script": "100c02000198",
+      "name": "Real test 0 << 256",
+      "script": [
+        "PUSH0",
+        "PUSHDATA1",
+        "0x02",
+        "0x0001",
+        "SHL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "SHL",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x0001"
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   }
                 ]
@@ -111,13 +129,13 @@
         },
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 0
               }
             ]
@@ -126,27 +144,31 @@
       ]
     },
     {
-      "name": "Real test 16 \u003C\u003C 4",
-      "script": "201498",
+      "name": "Real test 16 << 4",
+      "script": [
+        "PUSH16",
+        "PUSH4",
+        "SHL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "SHL",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 4
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 16
                   }
                 ]
@@ -156,13 +178,13 @@
         },
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 256
               }
             ]
@@ -171,27 +193,31 @@
       ]
     },
     {
-      "name": "Real test 16 \u003C\u003C 0",
-      "script": "201098",
+      "name": "Real test 16 << 0",
+      "script": [
+        "PUSH16",
+        "PUSH0",
+        "SHL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "SHL",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 16
                   }
                 ]
@@ -201,13 +227,13 @@
         },
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 16
               }
             ]
