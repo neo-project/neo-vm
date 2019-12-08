@@ -1,10 +1,10 @@
 {
   "category": "Control",
-  "name": "CALLA",
+  "name": "JMPIFNOT",
   "tests": [
     {
-      "name": "Wrong type",
-      "script": "1236",
+      "name": "Real test [1]",
+      "script": "1126032140",
       "steps": [
         {
           "actions": [
@@ -15,45 +15,11 @@
             "invocationStack": [
               {
                 "instructionPointer": 1,
-                "nextInstruction": "CALLA",
+                "nextInstruction": "JMPIFNOT",
                 "evaluationStack": [
                   {
                     "type": "Integer",
-                    "value": 2
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "FAULT"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Real test",
-      "script": "0a0700000036401040",
-      "steps": [
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 5,
-                "nextInstruction": "CALLA",
-                "evaluationStack": [
-                  {
-                    "type": "Pointer",
-                    "value": 7
+                    "value": 1
                   }
                 ]
               }
@@ -68,11 +34,21 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 7,
-                "nextInstruction": "PUSH0"
-              },
+                "instructionPointer": 3,
+                "nextInstruction": "NOP"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer": 4,
                 "nextInstruction": "RET"
               }
             ]
@@ -83,21 +59,25 @@
             "StepInto"
           ],
           "result": {
+            "state": "Halt"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [0]",
+      "script": "1026032140",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 8,
-                "nextInstruction": "RET",
-                "evaluationStack": [
-                  {
-                    "type": "Integer",
-                    "value": 0
-                  }
-                ]
-              },
-              {
-                "instructionPointer": 6,
-                "nextInstruction": "RET",
+                "instructionPointer": 1,
+                "nextInstruction": "JMPIFNOT",
                 "evaluationStack": [
                   {
                     "type": "Integer",
@@ -116,14 +96,8 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "RET",
-                "evaluationStack": [
-                  {
-                    "type": "Integer",
-                    "value": 0
-                  }
-                ]
+                "instructionPointer": 4,
+                "nextInstruction": "RET"
               }
             ]
           }
@@ -133,13 +107,7 @@
             "StepInto"
           ],
           "result": {
-            "state": "Halt",
-            "resultStack": [
-              {
-                "type": "Integer",
-                "value": 0
-              }
-            ]
+            "state": "Halt"
           }
         }
       ]

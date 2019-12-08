@@ -1,44 +1,10 @@
 {
   "category": "Control",
-  "name": "CALLA",
+  "name": "CALL_L",
   "tests": [
     {
-      "name": "Wrong type",
-      "script": "1236",
-      "steps": [
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 1,
-                "nextInstruction": "CALLA",
-                "evaluationStack": [
-                  {
-                    "type": "Integer",
-                    "value": 2
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "FAULT"
-          }
-        }
-      ]
-    },
-    {
       "name": "Real test",
-      "script": "0a0700000036401040",
+      "script": "3506000000401040",
       "steps": [
         {
           "actions": [
@@ -48,31 +14,11 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 5,
-                "nextInstruction": "CALLA",
-                "evaluationStack": [
-                  {
-                    "type": "Pointer",
-                    "value": 7
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 7,
+                "instructionPointer": 6,
                 "nextInstruction": "PUSH0"
               },
               {
-                "instructionPointer": 6,
+                "instructionPointer": 5,
                 "nextInstruction": "RET"
               }
             ]
@@ -86,7 +32,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 7,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -96,7 +42,7 @@
                 ]
               },
               {
-                "instructionPointer": 6,
+                "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -116,7 +62,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {

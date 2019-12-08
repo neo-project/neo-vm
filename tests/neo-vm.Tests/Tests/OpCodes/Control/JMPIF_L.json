@@ -1,10 +1,10 @@
 {
   "category": "Control",
-  "name": "NOP",
+  "name": "JMPIF_L",
   "tests": [
     {
-      "name": "Real test",
-      "script": "2121212121",
+      "name": "Real test [1]",
+      "script": "1125060000002140",
       "steps": [
         {
           "actions": [
@@ -15,6 +15,74 @@
             "invocationStack": [
               {
                 "instructionPointer": 1,
+                "nextInstruction": "JMPIF_L",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "RET"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [0]",
+      "script": "1025060000002140",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "JMPIF_L",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
                 "nextInstruction": "NOP"
               }
             ]
@@ -28,49 +96,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 2,
-                "nextInstruction": "NOP"
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 3,
-                "nextInstruction": "NOP"
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 4,
-                "nextInstruction": "NOP"
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 5,
+                "instructionPointer": 7,
                 "nextInstruction": "RET"
               }
             ]

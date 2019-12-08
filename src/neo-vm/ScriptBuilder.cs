@@ -31,18 +31,24 @@ namespace Neo.VM
             return this;
         }
 
-        public ScriptBuilder EmitRaw(byte[] arg = null)
+        public ScriptBuilder EmitCall(int offset)
         {
-            if (arg != null)
-                writer.Write(arg);
-            return this;
+            if (offset < sbyte.MinValue || offset > sbyte.MaxValue)
+                return Emit(OpCode.CALL_L, BitConverter.GetBytes(offset));
+            else
+                return Emit(OpCode.CALL, new[] { (byte)offset });
         }
 
-        public ScriptBuilder EmitJump(OpCode op, short offset)
+        public ScriptBuilder EmitJump(OpCode op, int offset)
         {
-            if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT && op != OpCode.CALL)
-                throw new ArgumentException();
-            return Emit(op, BitConverter.GetBytes(offset));
+            if (op < OpCode.JMP || op > OpCode.JMPLE_L)
+                throw new ArgumentOutOfRangeException(nameof(op));
+            if ((int)op % 2 == 0 && (offset < sbyte.MinValue || offset > sbyte.MaxValue))
+                op += 1;
+            if ((int)op % 2 == 0)
+                return Emit(op, new[] { (byte)offset });
+            else
+                return Emit(op, BitConverter.GetBytes(offset));
         }
 
         public ScriptBuilder EmitPush(BigInteger number)
@@ -91,6 +97,13 @@ namespace Neo.VM
         public ScriptBuilder EmitPush(string data)
         {
             return EmitPush(Encoding.UTF8.GetBytes(data));
+        }
+
+        public ScriptBuilder EmitRaw(byte[] arg = null)
+        {
+            if (arg != null)
+                writer.Write(arg);
+            return this;
         }
 
         public ScriptBuilder EmitSysCall(uint api)

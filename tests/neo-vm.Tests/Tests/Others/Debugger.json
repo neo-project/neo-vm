@@ -4,7 +4,7 @@
   "tests": [
     {
       "name": "Step Into",
-      "script": "1165050013661266",
+      "script": "11340413401240",
       "steps": [
         {
           "result": {
@@ -45,7 +45,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer": 5,
                 "nextInstruction": "PUSH2",
                 "evaluationStack": [
                   {
@@ -55,7 +55,7 @@
                 ]
               },
               {
-                "instructionPointer": 4,
+                "instructionPointer": 3,
                 "nextInstruction": "PUSH3",
                 "evaluationStack": [
                   {
@@ -75,7 +75,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 7,
+                "instructionPointer": 6,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -89,7 +89,31 @@
                 ]
               },
               {
-                "instructionPointer": 4,
+                "instructionPointer": 3,
+                "nextInstruction": "PUSH3",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
                 "nextInstruction": "PUSH3",
                 "evaluationStack": [
                   {
@@ -114,30 +138,6 @@
             "invocationStack": [
               {
                 "instructionPointer": 4,
-                "nextInstruction": "PUSH3",
-                "evaluationStack": [
-                  {
-                    "type": "Integer",
-                    "value": 2
-                  },
-                  {
-                    "type": "Integer",
-                    "value": 1
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "StepInto"
-          ],
-          "result": {
-            "state": "Break",
-            "invocationStack": [
-              {
-                "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -183,7 +183,7 @@
     },
     {
       "name": "Step Out",
-      "script": "1165050013661266",
+      "script": "11340413401240",
       "steps": [
         {
           "result": {
@@ -242,7 +242,7 @@
     },
     {
       "name": "Step Over",
-      "script": "1165050013661266",
+      "script": "11340413401240",
       "steps": [
         {
           "result": {
@@ -283,7 +283,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 4,
+                "instructionPointer": 3,
                 "nextInstruction": "PUSH3",
                 "evaluationStack": [
                   {
@@ -307,7 +307,7 @@
             "state": "Break",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 4,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -353,7 +353,7 @@
     },
     {
       "name": "Execute",
-      "script": "1165050013661266",
+      "script": "11340413401240",
       "steps": [
         {
           "result": {

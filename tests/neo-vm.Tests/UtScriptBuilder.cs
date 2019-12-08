@@ -21,13 +21,13 @@ namespace Neo.Test
                 script.Emit(OpCode.NOP);
                 Assert.AreEqual(1, script.Offset);
 
-                CollectionAssert.AreEqual(new byte[] { 0x61 }, script.ToArray());
+                CollectionAssert.AreEqual(new byte[] { 0x21 }, script.ToArray());
             }
 
             using (var script = new ScriptBuilder())
             {
                 script.Emit(OpCode.NOP, new byte[] { 0x66 });
-                CollectionAssert.AreEqual(new byte[] { 0x61, 0x66 }, script.ToArray());
+                CollectionAssert.AreEqual(new byte[] { 0x21, 0x66 }, script.ToArray());
             }
         }
 
@@ -42,22 +42,43 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void TestEmitCall()
+        {
+            using (var script = new ScriptBuilder())
+            {
+                script.EmitCall(0);
+                CollectionAssert.AreEqual(new[] { (byte)OpCode.CALL, (byte)0 }, script.ToArray());
+            }
+            using (var script = new ScriptBuilder())
+            {
+                script.EmitCall(12345);
+                CollectionAssert.AreEqual(new[] { (byte)OpCode.CALL_L }.Concat(BitConverter.GetBytes(12345)).ToArray(), script.ToArray());
+            }
+        }
+
+        [TestMethod]
         public void TestEmitJump()
         {
-            var offset = RandomHelper.RandInt16();
+            var offset_i8 = sbyte.MaxValue;
+            var offset_i32 = int.MaxValue;
 
             foreach (OpCode op in Enum.GetValues(typeof(OpCode)))
             {
                 using (var script = new ScriptBuilder())
                 {
-                    if (op != OpCode.JMP && op != OpCode.JMPIF && op != OpCode.JMPIFNOT && op != OpCode.CALL)
+                    if (op < OpCode.JMP || op > OpCode.JMPLE_L)
                     {
-                        Assert.ThrowsException<ArgumentException>(() => script.EmitJump(op, offset));
+                        Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i8));
+                        Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i32));
                     }
                     else
                     {
-                        script.EmitJump(op, offset);
-                        CollectionAssert.AreEqual(new byte[] { (byte)op }.Concat(BitConverter.GetBytes(offset)).ToArray(), script.ToArray());
+                        script.EmitJump(op, offset_i8);
+                        script.EmitJump(op, offset_i32);
+                        if ((int)op % 2 == 0)
+                            CollectionAssert.AreEqual(new[] { (byte)op, (byte)offset_i8, (byte)(op + 1) }.Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
+                        else
+                            CollectionAssert.AreEqual(new[] { (byte)op }.Concat(BitConverter.GetBytes((int)offset_i8)).Concat(new[] { (byte)op }).Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
                     }
                 }
             }

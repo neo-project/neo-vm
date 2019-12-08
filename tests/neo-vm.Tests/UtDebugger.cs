@@ -74,7 +74,7 @@ namespace Neo.Test
                    │  │  RET
                    └> │  PUSH0  
                     └─┘  RET */
-                script.EmitJump(OpCode.CALL, 5);
+                script.EmitCall(4);
                 script.Emit(OpCode.NOT);
                 script.Emit(OpCode.RET);
                 script.Emit(OpCode.PUSH0);
@@ -90,7 +90,7 @@ namespace Neo.Test
                 Assert.AreEqual(VMState.BREAK, debugger.StepOver());
 
                 Assert.IsNull(engine.CurrentContext.CallingScript);
-                Assert.AreEqual(3, engine.CurrentContext.InstructionPointer);
+                Assert.AreEqual(2, engine.CurrentContext.InstructionPointer);
                 Assert.AreEqual(VMState.BREAK, engine.State);
                 Assert.AreEqual(OpCode.RET, engine.CurrentContext.NextInstruction.OpCode);
 
@@ -117,7 +117,7 @@ namespace Neo.Test
                    │  │  RET
                    └> │  PUSH0
                     └─┘  RET */
-                script.EmitJump(OpCode.CALL, 5);
+                script.EmitCall(4);
                 script.Emit(OpCode.NOT);
                 script.Emit(OpCode.RET);
                 script.Emit(OpCode.PUSH0);
@@ -173,7 +173,7 @@ namespace Neo.Test
                    │  │  RET
                    └>X│  PUSH0
                      └┘  RET */
-                script.EmitJump(OpCode.CALL, 5);
+                script.EmitCall(4);
                 script.Emit(OpCode.NOT);
                 script.Emit(OpCode.RET);
                 script.Emit(OpCode.PUSH0);

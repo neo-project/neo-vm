@@ -1,44 +1,37 @@
 {
-    "category": "Others",
-    "name": "Init",
-    "tests":
-    [
+  "category": "Others",
+  "name": "Init",
+  "tests": [
+    {
+      "name": "Init script",
+      "script": "40",
+      "steps": [
         {
-            "name": "Init script",
-            "script": "0x66",
-            "steps":
-            [
-                {
-                    "result":
-                    {
-                        "state": "Break",
-                        "invocationStack":
-                        [
-                            {
-                                "instructionPointer": 0,
-                                "nextInstruction": "RET"
-                            }
-                        ]
-                    }
-                }
+          "result": {
+            "state": "Break",
+            "invocationStack": [
+              {
+                "instructionPointer": 0,
+                "nextInstruction": "RET"
+              }
             ]
-        },
-        {
-            "name": "Init script",
-            "script": "0x66",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt"
-                    }
-                }
-            ]
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Init script",
+      "script": "40",
+      "steps": [
+        {
+          "actions": [
+            "StepInto"
+          ],
+          "result": {
+            "state": "Halt"
+          }
+        }
+      ]
+    }
+  ]
 }
