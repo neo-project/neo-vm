@@ -14,12 +14,7 @@ namespace Neo.VM
         /// <summary>
         /// Max value for SHL and SHR
         /// </summary>
-        public virtual int Max_SHL_SHR => 256;
-
-        /// <summary>
-        /// Min value for SHL and SHR
-        /// </summary>
-        public virtual int Min_SHL_SHR => -256;
+        public virtual int MaxShift => 256;
 
         /// <summary>
         /// The max size in bytes allowed size for BigInteger
@@ -79,7 +74,7 @@ namespace Neo.VM
         /// <param name="shift">Shift</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckShift(int shift) => shift <= Max_SHL_SHR && shift >= Min_SHL_SHR;
+        public bool CheckShift(int shift) => shift <= MaxShift && shift >= 0;
 
         #endregion
 
