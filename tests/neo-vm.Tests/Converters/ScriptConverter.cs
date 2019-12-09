@@ -4,11 +4,24 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Neo.Test.Converters
 {
     internal class ScriptConverter : JsonConverter
     {
+        // This regex is for iterate the same hex string
+        // Allowed formats (Hex)*Count:
+        //   (0x01fF)*145
+        //   0x0a0b0C*123
+        //   01*1234
+
+        private static readonly Regex _multiplyRegex = new Regex
+            (
+            @"\(?(0x)?(?<data>[a-fA-F0-9]+)\)?\*(?<count>[0-9]+)",
+            RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Singleline
+            );
+
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(byte[]) || objectType == typeof(string);
@@ -34,13 +47,35 @@ namespace Neo.Test.Converters
                         {
                             foreach (var entry in JArray.Load(reader))
                             {
-                                if (Enum.TryParse<OpCode>(entry.Value<string>(), out var opCode))
+                                var mul = 1;
+                                var value = entry.Value<string>();
+                                var match = _multiplyRegex.Match(value);
+                                if (match.Success)
                                 {
-                                    script.Emit(opCode);
+                                    value = match.Groups["data"].Value;
+                                    mul = Convert.ToInt32(match.Groups["count"].Value);
+                                }
+
+                                if (Enum.IsDefined(typeof(OpCode), value) &&
+                                    Enum.TryParse<OpCode>(value, out var opCode))
+                                {
+                                    for (int x = 0; x < mul; x++)
+                                    {
+                                        script.Emit(opCode);
+                                    }
                                 }
                                 else
                                 {
-                                    script.EmitRaw(entry.Value<string>().FromHexString());
+                                    try
+                                    {
+                                        for (int x = 0; x < mul; x++)
+                                        {
+                                            script.EmitRaw(value.FromHexString());
+                                        }
+                                    }
+                                    catch
+                                    {
+                                    }
                                 }
                             }
 

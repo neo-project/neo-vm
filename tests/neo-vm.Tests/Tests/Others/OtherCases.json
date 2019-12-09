@@ -1,11 +1,11 @@
-﻿{
+{
   "category": "Limits",
   "name": "OtherCases",
   "tests": [
     {
       "name": "Wrong script",
       "script": [
-        "255"
+        "0xff"
       ],
       "steps": [
         {

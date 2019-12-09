@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Control",
   "name": "SYSCALL",
   "tests": [
@@ -106,7 +106,7 @@
       "script": [
         "SYSCALL",
         "0xfeffffff",
-        "255",
+        "0xff",
         "PUSH0"
       ],
       "steps": [
@@ -125,11 +125,7 @@
       "script": [
         "SYSCALL",
         "0xffffffff",
-        "255",
-        "255",
-        "255",
-        "255",
-        "255",
+        "0xffffffffFF",
         "PUSH0"
       ],
       "steps": [
