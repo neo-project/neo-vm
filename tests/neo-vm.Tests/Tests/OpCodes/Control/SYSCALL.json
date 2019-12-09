@@ -125,7 +125,7 @@
       "script": [
         "SYSCALL",
         "0xffffffff",
-        "0xffffffffFF",
+        "0xffffffffff",
         "PUSH0"
       ],
       "steps": [
