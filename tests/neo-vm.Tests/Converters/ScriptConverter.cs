@@ -15,10 +15,11 @@ namespace Neo.Test.Converters
         //   (0x01fF)*145
         //   0x0a0b0C*123
         //   01*1234
+        //   PUSH0*(4096)
 
         private static readonly Regex _multiplyRegex = new Regex
             (
-            @"\(?(0x)?(?<data>[a-fA-F0-9]+)\)?\*(?<count>[0-9]+)",
+            @"\(?(0x)?(?<data>[a-zA-Z0-9]+)\)?\*\(?(?<count>[0-9]+)\)?",
             RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Singleline
             );
 
@@ -50,6 +51,7 @@ namespace Neo.Test.Converters
                                 var mul = 1;
                                 var value = entry.Value<string>();
                                 var match = _multiplyRegex.Match(value);
+
                                 if (match.Success)
                                 {
                                     value = match.Groups["data"].Value;
@@ -57,7 +59,7 @@ namespace Neo.Test.Converters
                                 }
 
                                 if (Enum.IsDefined(typeof(OpCode), value) &&
-                                    Enum.TryParse<OpCode>(value, out var opCode))
+                                        Enum.TryParse<OpCode>(value, out var opCode))
                                 {
                                     for (int x = 0; x < mul; x++)
                                     {
@@ -66,15 +68,9 @@ namespace Neo.Test.Converters
                                 }
                                 else
                                 {
-                                    try
+                                    for (int x = 0; x < mul; x++)
                                     {
-                                        for (int x = 0; x < mul; x++)
-                                        {
-                                            script.EmitRaw(value.FromHexString());
-                                        }
-                                    }
-                                    catch
-                                    {
+                                        script.EmitRaw(value.FromHexString());
                                     }
                                 }
                             }

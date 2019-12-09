@@ -54,7 +54,7 @@ namespace Neo.Test
                     // Format json
 
                     Console.WriteLine($"The file '{realFile}' was optimized");
-                    File.WriteAllText(realFile, ut.ToJson().Replace("\r\n", "\n"), Encoding.UTF8);
+                    //File.WriteAllText(realFile, ut.ToJson().Replace("\r\n", "\n"), Encoding.UTF8);
                 }
 
                 ExecuteTest(ut);
