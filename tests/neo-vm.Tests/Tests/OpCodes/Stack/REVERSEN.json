@@ -42,7 +42,76 @@
       ]
     },
     {
-      "name": "With push",
+      "name": "Reverse 0 item",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "PUSH0",
+        "REVERSEN"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "REVERSEN",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "integer",
+                    "value": 3
+                  },
+                  {
+                    "type": "integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "integer",
+                "value": 3
+              },
+              {
+                "type": "integer",
+                "value": 2
+              },
+              {
+                "type": "integer",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reverse 3 items",
       "script": [
         "PUSH1",
         "PUSH2",
