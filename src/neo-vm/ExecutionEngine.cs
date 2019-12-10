@@ -418,12 +418,12 @@ namespace Neo.VM
                     }
                 case OpCode.REVERSE3:
                     {
-                        context.EvaluationStack.Reverse(3);
+                        if (!context.EvaluationStack.Reverse(3)) return false;
                         break;
                     }
                 case OpCode.REVERSE4:
                     {
-                        context.EvaluationStack.Reverse(4);
+                        if (!context.EvaluationStack.Reverse(4)) return false;
                         break;
                     }
                 case OpCode.REVERSEN:
