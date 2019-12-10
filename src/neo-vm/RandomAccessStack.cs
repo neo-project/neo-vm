@@ -78,6 +78,14 @@ namespace Neo.VM
             return item;
         }
 
+        public bool Reverse(int n)
+        {
+            if (n < 0 || n > list.Count) return false;
+            if (n <= 1) return true;
+            list.Reverse(list.Count - n, n);
+            return true;
+        }
+
         public void Set(int index, T item)
         {
             if (index >= list.Count) throw new InvalidOperationException();
