@@ -1,34 +1,41 @@
-{
+﻿{
   "category": "Push",
   "name": "PUSHDATA4",
   "tests": [
     {
       "name": "More length than script",
-      "script": "0e00080000",
+      "script": [
+        "PUSHDATA4",
+        "0x00080000"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Good definition",
-      "script": "0e0400000001020304",
+      "script": [
+        "PUSHDATA4",
+        "0x04000000",
+        "0x01020304"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "ByteArray",
+                "type": "byteArray",
                 "value": "0x01020304"
               }
             ]
@@ -38,14 +45,17 @@
     },
     {
       "name": "Without enough length",
-      "script": "0e0500000001020304",
+      "script": [
+        "PUSHDATA4",
+        "0x0500000001020304"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]

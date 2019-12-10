@@ -1,24 +1,29 @@
-{
+﻿{
   "category": "Others",
   "name": "ScriptLogic",
   "tests": [
     {
       "name": "Script logic",
-      "script": "10919175",
+      "script": [
+        "PUSH0",
+        "NOT",
+        "NOT",
+        "DROP"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 1,
                 "nextInstruction": "NOT",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   }
                 ]
@@ -28,17 +33,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "NOT",
                 "evaluationStack": [
                   {
-                    "type": "Boolean",
+                    "type": "boolean",
                     "value": true
                   }
                 ]
@@ -48,17 +53,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 3,
                 "nextInstruction": "DROP",
                 "evaluationStack": [
                   {
-                    "type": "Boolean",
+                    "type": "boolean",
                     "value": false
                   }
                 ]
@@ -68,10 +73,10 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
@@ -82,10 +87,10 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt"
+            "state": "HALT"
           }
         }
       ]

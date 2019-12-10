@@ -1,53 +1,61 @@
-{
+﻿{
   "category": "Stack",
   "name": "XSWAP",
   "tests": [
     {
       "name": "Without push",
-      "script": "0x72",
+      "script": [
+        "XSWAP"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Pick outside",
-      "script": "1112131472",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "PUSH4",
+        "XSWAP"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "XSWAP",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 4
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -57,46 +65,52 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Less than 0",
-      "script": "1112130f72",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "PUSHM1",
+        "XSWAP"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "XSWAP",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": -1
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -106,46 +120,52 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Wrong type",
-      "script": "111213c772",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "NEWMAP",
+        "XSWAP"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "XSWAP",
                 "evaluationStack": [
                   {
-                    "type": "Map",
+                    "type": "map",
                     "value": {}
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -155,46 +175,52 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Real test",
-      "script": "1312111272",
+      "script": [
+        "PUSH3",
+        "PUSH2",
+        "PUSH1",
+        "PUSH2",
+        "XSWAP"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "XSWAP",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   }
                 ]
@@ -204,25 +230,25 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -232,21 +258,21 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 3
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 2
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               }
             ]
@@ -256,36 +282,42 @@
     },
     {
       "name": "Real test with 0",
-      "script": "1312111072",
+      "script": [
+        "PUSH3",
+        "PUSH2",
+        "PUSH1",
+        "PUSH0",
+        "XSWAP"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "XSWAP",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   }
                 ]
@@ -295,25 +327,25 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   }
                 ]
@@ -323,21 +355,21 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 2
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 3
               }
             ]

@@ -1,86 +1,119 @@
-{
+﻿{
   "category": "Arrays",
   "name": "REMOVE",
   "tests": [
     {
       "name": "Without push",
-      "script": "11ca",
+      "script": [
+        "PUSH1",
+        "REMOVE"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Without array",
-      "script": "1112ca",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "REMOVE"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Wrong key",
-      "script": "12c7ca",
+      "script": [
+        "PUSH2",
+        "NEWMAP",
+        "REMOVE"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Out of bounds",
-      "script": "161512c112ca",
+      "script": [
+        "PUSH6",
+        "PUSH5",
+        "PUSH2",
+        "PACK",
+        "PUSH2",
+        "REMOVE"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Real test [Array]",
-      "script": "161512c16b6d10ca6cc2",
+      "script": [
+        "PUSH6",
+        "PUSH5",
+        "PUSH2",
+        "PACK",
+        "TOALTSTACK",
+        "DUPFROMALTSTACK",
+        "PUSH0",
+        "REMOVE",
+        "FROMALTSTACK",
+        "UNPACK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 7,
                 "nextInstruction": "REMOVE",
-                "altStack": [
+                "evaluationStack": [
                   {
-                    "type": "Array",
+                    "type": "integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "array",
                     "value": [
                       {
                         "type": "Integer",
@@ -93,13 +126,9 @@
                     ]
                   }
                 ],
-                "evaluationStack": [
+                "altStack": [
                   {
-                    "type": "Integer",
-                    "value": 0
-                  },
-                  {
-                    "type": "Array",
+                    "type": "array",
                     "value": [
                       {
                         "type": "Integer",
@@ -118,17 +147,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 8,
                 "nextInstruction": "FROMALTSTACK",
                 "altStack": [
                   {
-                    "type": "Array",
+                    "type": "array",
                     "value": [
                       {
                         "type": "Integer",
@@ -143,17 +172,17 @@
         },
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 6
               }
             ]
@@ -163,28 +192,44 @@
     },
     {
       "name": "Real test [Struct]",
-      "script": "10c67615c86b6d10ca6cc2",
+      "script": [
+        "PUSH0",
+        "NEWSTRUCT",
+        "DUP",
+        "PUSH5",
+        "APPEND",
+        "TOALTSTACK",
+        "DUPFROMALTSTACK",
+        "PUSH0",
+        "REMOVE",
+        "FROMALTSTACK",
+        "UNPACK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 8,
                 "nextInstruction": "REMOVE",
-                "altStack": [
+                "evaluationStack": [
                   {
-                    "type": "Struct",
+                    "type": "integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "struct",
                     "value": [
                       {
                         "type": "Integer",
@@ -193,13 +238,9 @@
                     ]
                   }
                 ],
-                "evaluationStack": [
+                "altStack": [
                   {
-                    "type": "Integer",
-                    "value": 0
-                  },
-                  {
-                    "type": "Struct",
+                    "type": "struct",
                     "value": [
                       {
                         "type": "Integer",
@@ -214,17 +255,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 9,
                 "nextInstruction": "FROMALTSTACK",
                 "altStack": [
                   {
-                    "type": "Struct",
+                    "type": "struct",
                     "value": []
                   }
                 ]
@@ -234,13 +275,13 @@
         },
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 0
               }
             ]

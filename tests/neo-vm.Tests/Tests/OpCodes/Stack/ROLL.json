@@ -1,53 +1,61 @@
-{
+﻿{
   "category": "Stack",
   "name": "ROLL",
   "tests": [
     {
       "name": "Without push",
-      "script": "0x7A",
+      "script": [
+        "ROLL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Pick outside",
-      "script": "111213147a",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "PUSH4",
+        "ROLL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "ROLL",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 4
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -57,46 +65,52 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Less than 0",
-      "script": "1112130f7a",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "PUSHM1",
+        "ROLL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "ROLL",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": -1
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -106,46 +120,52 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "With 0",
-      "script": "111213107a",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "PUSH0",
+        "ROLL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "ROLL",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -155,25 +175,25 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -183,21 +203,21 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 3
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 2
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               }
             ]
@@ -207,36 +227,42 @@
     },
     {
       "name": "Wrong type",
-      "script": "111213c77a",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "NEWMAP",
+        "ROLL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "ROLL",
                 "evaluationStack": [
                   {
-                    "type": "Map",
+                    "type": "map",
                     "value": {}
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -246,46 +272,52 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Real test",
-      "script": "131211127a",
+      "script": [
+        "PUSH3",
+        "PUSH2",
+        "PUSH1",
+        "PUSH2",
+        "ROLL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "ROLL",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   }
                 ]
@@ -295,25 +327,25 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   }
                 ]
@@ -323,21 +355,21 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 3
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 2
               }
             ]

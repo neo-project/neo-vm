@@ -1,48 +1,57 @@
-{
+﻿{
   "category": "Push",
   "name": "PUSHA",
   "tests": [
     {
       "name": "Out of range [-1]",
-      "script": "0Affffffff",
+      "script": [
+        "PUSHA",
+        "0xffffffff"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Out of range [>length]",
-      "script": "0Affffff7f",
+      "script": [
+        "PUSHA",
+        "0xffffff7f"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Real test",
-      "script": "0A00000000",
+      "script": [
+        "PUSHA",
+        "0x00000000"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Pointer",
+                "type": "pointer",
                 "value": 0
               }
             ]
@@ -52,17 +61,20 @@
     },
     {
       "name": "Real test [=length]",
-      "script": "0A05000000",
+      "script": [
+        "PUSHA",
+        "0x05000000"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Pointer",
+                "type": "pointer",
                 "value": 5
               }
             ]

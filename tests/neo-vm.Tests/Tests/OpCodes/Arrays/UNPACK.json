@@ -1,56 +1,67 @@
-{
+﻿{
   "category": "Arrays",
   "name": "UNPACK",
   "tests": [
     {
       "name": "Without array",
-      "script": "1ac2",
+      "script": [
+        "PUSH10",
+        "UNPACK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Without push",
-      "script": "0xC2",
+      "script": [
+        "UNPACK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Without push",
-      "script": "151612c1c2",
+      "script": [
+        "PUSH5",
+        "PUSH6",
+        "PUSH2",
+        "PACK",
+        "UNPACK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "UNPACK",
                 "evaluationStack": [
                   {
-                    "type": "Array",
+                    "type": "array",
                     "value": [
                       {
                         "type": "Integer",
@@ -69,25 +80,25 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 6
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 5
                   }
                 ]
@@ -97,21 +108,21 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 2
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 6
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 5
               }
             ]

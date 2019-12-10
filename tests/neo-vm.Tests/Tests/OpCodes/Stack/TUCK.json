@@ -1,38 +1,43 @@
-{
+﻿{
   "category": "Stack",
   "name": "TUCK",
   "tests": [
     {
       "name": "Without push",
-      "script": "0x7D",
+      "script": [
+        "TUCK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Outside",
-      "script": "107d",
+      "script": [
+        "PUSH0",
+        "TUCK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 1,
                 "nextInstruction": "TUCK",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   }
                 ]
@@ -42,36 +47,40 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Real test - Last item",
-      "script": "11127d",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "TUCK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "TUCK",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -81,25 +90,25 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 3,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   }
                 ]
@@ -109,21 +118,21 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 2
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 2
               }
             ]
@@ -133,31 +142,36 @@
     },
     {
       "name": "Real test",
-      "script": "1112137d",
+      "script": [
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "TUCK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 3,
                 "nextInstruction": "TUCK",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -167,29 +181,29 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -199,25 +213,25 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 3
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 2
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 3
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               }
             ]

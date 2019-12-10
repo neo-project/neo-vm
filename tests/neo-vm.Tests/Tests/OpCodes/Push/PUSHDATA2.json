@@ -1,20 +1,24 @@
-{
+﻿{
   "category": "Push",
   "name": "PUSHDATA2",
   "tests": [
     {
       "name": "Good definition",
-      "script": "0d040001020304",
+      "script": [
+        "PUSHDATA2",
+        "0x0400",
+        "0x01020304"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "ByteArray",
+                "type": "byteArray",
                 "value": "0x01020304"
               }
             ]
@@ -24,14 +28,17 @@
     },
     {
       "name": "Without enough length",
-      "script": "0d050001020304",
+      "script": [
+        "PUSHDATA2",
+        "0x050001020304"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]

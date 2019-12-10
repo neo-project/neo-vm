@@ -1,17 +1,19 @@
-{
+﻿{
   "category": "Control",
   "name": "RET",
   "tests": [
     {
       "name": "Real test",
-      "script": "40",
+      "script": [
+        "RET"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt"
+            "state": "HALT"
           }
         }
       ]

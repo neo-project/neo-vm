@@ -99,6 +99,13 @@ namespace Neo.VM
             return EmitPush(Encoding.UTF8.GetBytes(data));
         }
 
+        public ScriptBuilder EmitRaw(byte[] arg = null)
+        {
+            if (arg != null)
+                writer.Write(arg);
+            return this;
+        }
+
         public ScriptBuilder EmitSysCall(uint api)
         {
             return Emit(OpCode.SYSCALL, BitConverter.GetBytes(api));

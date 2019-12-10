@@ -1,14 +1,18 @@
-{
+﻿{
   "category": "Control",
   "name": "JMP_L",
   "tests": [
     {
       "name": "Out of range [<0]",
-      "script": "23FFFFFFFF40",
+      "script": [
+        "JMP_L",
+        "0xffffffff",
+        "RET"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
             "state": "FAULT"
@@ -18,11 +22,15 @@
     },
     {
       "name": "Out of range [>length]",
-      "script": "23FFFFFF7F40",
+      "script": [
+        "JMP_L",
+        "0xffffff7f",
+        "RET"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
             "state": "FAULT"
@@ -32,14 +40,18 @@
     },
     {
       "name": "Real test",
-      "script": "230500000040",
+      "script": [
+        "JMP_L",
+        "0x05000000",
+        "RET"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
@@ -50,10 +62,10 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt"
+            "state": "HALT"
           }
         }
       ]

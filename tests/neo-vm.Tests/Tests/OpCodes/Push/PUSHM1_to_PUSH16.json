@@ -1,108 +1,128 @@
-{
+﻿{
   "category": "Push",
   "name": "From PUSHM1 to PUSH16 [-1 to 16]",
   "tests": [
     {
-      "script": "0f101112131415161718191a1b1c1d1e1f2040",
+      "script": [
+        "PUSHM1",
+        "PUSH0",
+        "PUSH1",
+        "PUSH2",
+        "PUSH3",
+        "PUSH4",
+        "PUSH5",
+        "PUSH6",
+        "PUSH7",
+        "PUSH8",
+        "PUSH9",
+        "PUSH10",
+        "PUSH11",
+        "PUSH12",
+        "PUSH13",
+        "PUSH14",
+        "PUSH15",
+        "PUSH16",
+        "RET"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 18,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 16
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 15
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 14
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 13
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 12
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 11
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 10
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 9
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 8
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 7
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 6
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 5
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 4
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   },
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": -1
                   }
                 ]
@@ -112,81 +132,81 @@
         },
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 16
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 15
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 14
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 13
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 12
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 11
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 10
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 9
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 8
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 7
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 6
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 5
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 4
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 3
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 2
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 0
               },
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": -1
               }
             ]

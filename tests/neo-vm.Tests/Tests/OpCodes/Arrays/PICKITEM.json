@@ -1,58 +1,69 @@
-{
+﻿{
   "category": "Arrays",
   "name": "PICKITEM",
   "tests": [
     {
       "name": "Wrong array",
-      "script": "1010c3",
+      "script": [
+        "PUSH0",
+        "PUSH0",
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Without push",
-      "script": "0xC3",
+      "script": [
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Wrong key type",
-      "script": "11c5c7c3",
+      "script": [
+        "PUSH1",
+        "NEWARRAY",
+        "NEWMAP",
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 3,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
-                    "type": "Map",
+                    "type": "map",
                     "value": {}
                   },
                   {
-                    "type": "Array",
+                    "type": "array",
                     "value": [
                       {
                         "type": "Null"
@@ -66,37 +77,42 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Out of bounds [Array]",
-      "script": "12c513c3",
+      "script": [
+        "PUSH2",
+        "NEWARRAY",
+        "PUSH3",
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 3,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Array",
+                    "type": "array",
                     "value": [
                       {
                         "type": "Null"
@@ -113,37 +129,42 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Out of bounds [Struct]",
-      "script": "12c613c3",
+      "script": [
+        "PUSH2",
+        "NEWSTRUCT",
+        "PUSH3",
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 3,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   },
                   {
-                    "type": "Struct",
+                    "type": "struct",
                     "value": [
                       {
                         "type": "Null"
@@ -160,51 +181,70 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Real test [Array]",
-      "script": "13c56b6d1011c46d1112c46d1213c46c12c3",
+      "script": [
+        "PUSH3",
+        "NEWARRAY",
+        "TOALTSTACK",
+        "DUPFROMALTSTACK",
+        "PUSH0",
+        "PUSH1",
+        "SETITEM",
+        "DUPFROMALTSTACK",
+        "PUSH1",
+        "PUSH2",
+        "SETITEM",
+        "DUPFROMALTSTACK",
+        "PUSH2",
+        "PUSH3",
+        "SETITEM",
+        "FROMALTSTACK",
+        "PUSH2",
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 17,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Array",
+                    "type": "array",
                     "value": [
                       {
                         "type": "Integer",
@@ -227,17 +267,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 18,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   }
                 ]
@@ -247,13 +287,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 3
               }
             ]
@@ -263,41 +303,60 @@
     },
     {
       "name": "Real test [Struct]",
-      "script": "13c66b6d1011c46d1112c46d1213c46c12c3",
+      "script": [
+        "PUSH3",
+        "NEWSTRUCT",
+        "TOALTSTACK",
+        "DUPFROMALTSTACK",
+        "PUSH0",
+        "PUSH1",
+        "SETITEM",
+        "DUPFROMALTSTACK",
+        "PUSH1",
+        "PUSH2",
+        "SETITEM",
+        "DUPFROMALTSTACK",
+        "PUSH2",
+        "PUSH3",
+        "SETITEM",
+        "FROMALTSTACK",
+        "PUSH2",
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 17,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 2
                   },
                   {
-                    "type": "Struct",
+                    "type": "struct",
                     "value": [
                       {
                         "type": "Integer",
@@ -320,17 +379,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 18,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   }
                 ]
@@ -340,13 +399,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 3
               }
             ]
@@ -356,26 +415,32 @@
     },
     {
       "name": "OutOfBounds with -1 [ByteArray]",
-      "script": "0c0201020fc3",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0102",
+        "PUSHM1",
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": -1
                   },
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x0102"
                   }
                 ]
@@ -385,36 +450,42 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "OutOfBounds with more than length [ByteArray]",
-      "script": "0c02010214c3",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0102",
+        "PUSH4",
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 4
                   },
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x0102"
                   }
                 ]
@@ -424,36 +495,42 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Real test [ByteArray]",
-      "script": "0c02010210c3",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0102",
+        "PUSH0",
+        "PICKITEM"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   },
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x0102"
                   }
                 ]
@@ -463,17 +540,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 6,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -483,13 +560,13 @@
         },
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               }
             ]

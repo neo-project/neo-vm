@@ -1,26 +1,41 @@
-{
+﻿{
   "category": "Limits",
-  "name": "Invocation limits",
+  "name": "Invocation limits [InvocationLimits] [InvocationLimits] [InvocationLimits]",
   "tests": [
     {
       "name": "More than 1024 ExecutionContext",
-      "script": "0c0200048b6b6c8c766b260434fa40",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0004",
+        "INC",
+        "TOALTSTACK",
+        "FROMALTSTACK",
+        "DEC",
+        "DUP",
+        "TOALTSTACK",
+        "JMPIFNOT",
+        "0x04",
+        "CALL",
+        "0xfa",
+        "RET"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
-                "nextInstruction": "FROMALTSTACK",
                 "instructionPointer": 6,
+                "nextInstruction": "FROMALTSTACK",
                 "altStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1025
                   }
                 ]
@@ -30,26 +45,26 @@
         },
         {
           "actions": [
-            "StepInto",
-            "StepInto",
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
-                "nextInstruction": "JMPIFNOT",
                 "instructionPointer": 10,
+                "nextInstruction": "JMPIFNOT",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1024
                   }
                 ],
                 "altStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1024
                   }
                 ]
@@ -59,28 +74,28 @@
         },
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
-                "nextInstruction": "FROMALTSTACK",
                 "instructionPointer": 6,
+                "nextInstruction": "FROMALTSTACK",
                 "altStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1024
                   }
                 ]
               },
               {
-                "nextInstruction": "RET",
                 "instructionPointer": 14,
+                "nextInstruction": "RET",
                 "altStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1024
                   }
                 ]
@@ -90,10 +105,10 @@
         },
         {
           "actions": [
-            "Execute"
+            "execute"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]

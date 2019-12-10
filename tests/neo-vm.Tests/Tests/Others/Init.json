@@ -1,14 +1,16 @@
-{
+﻿{
   "category": "Others",
   "name": "Init",
   "tests": [
     {
       "name": "Init script",
-      "script": "40",
+      "script": [
+        "RET"
+      ],
       "steps": [
         {
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 0,
@@ -21,14 +23,16 @@
     },
     {
       "name": "Init script",
-      "script": "40",
+      "script": [
+        "RET"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt"
+            "state": "HALT"
           }
         }
       ]

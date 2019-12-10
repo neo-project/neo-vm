@@ -1,39 +1,44 @@
-{
+﻿{
   "category": "Stack",
   "name": "TOALTSTACK",
   "tests": [
     {
       "name": "Without push",
-      "script": "0x6B",
+      "script": [
+        "TOALTSTACK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Real test",
-      "script": "156b",
+      "script": [
+        "PUSH5",
+        "TOALTSTACK"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "RET",
                 "altStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 5
                   }
                 ]
@@ -43,10 +48,10 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt"
+            "state": "HALT"
           }
         }
       ]

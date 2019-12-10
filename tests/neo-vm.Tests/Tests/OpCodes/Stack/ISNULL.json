@@ -1,38 +1,43 @@
-{
+﻿{
   "category": "Stack",
   "name": "ISNULL",
   "tests": [
     {
       "name": "Without push",
-      "script": "0x70",
+      "script": [
+        "ISNULL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "Good definition",
-      "script": "0b70",
+      "script": [
+        "PUSHNULL",
+        "ISNULL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 1,
                 "nextInstruction": "ISNULL",
                 "evaluationStack": [
                   {
-                    "type": "Null"
+                    "type": "null"
                   }
                 ]
               }
@@ -41,17 +46,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Boolean",
+                    "type": "boolean",
                     "value": true
                   }
                 ]
@@ -61,13 +66,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Boolean",
+                "type": "boolean",
                 "value": true
               }
             ]
@@ -77,21 +82,24 @@
     },
     {
       "name": "With empty bytearray",
-      "script": "1070",
+      "script": [
+        "PUSH0",
+        "ISNULL"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 1,
                 "nextInstruction": "ISNULL",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   }
                 ]
@@ -101,17 +109,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Boolean",
+                    "type": "boolean",
                     "value": false
                   }
                 ]
@@ -121,13 +129,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Boolean",
+                "type": "boolean",
                 "value": false
               }
             ]

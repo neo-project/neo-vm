@@ -1,39 +1,45 @@
-{
+﻿{
   "category": "Numeric",
   "name": "SIGN",
   "tests": [
     {
       "name": "Without push",
-      "script": "0x8D",
+      "script": [
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "With bool",
-      "script": "11918d",
+      "script": [
+        "PUSH1",
+        "NOT",
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "Boolean",
+                    "type": "boolean",
                     "value": false
                   }
                 ]
@@ -43,17 +49,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 3,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   }
                 ]
@@ -63,13 +69,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 0
               }
             ]
@@ -79,21 +85,24 @@
     },
     {
       "name": "With integer 0x03",
-      "script": "138d",
+      "script": [
+        "PUSH3",
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 1,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 3
                   }
                 ]
@@ -103,17 +112,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -123,13 +132,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               }
             ]
@@ -139,21 +148,24 @@
     },
     {
       "name": "With integer -1",
-      "script": "0f8d",
+      "script": [
+        "PUSHM1",
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 1,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": -1
                   }
                 ]
@@ -163,17 +175,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": -1
                   }
                 ]
@@ -183,13 +195,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": -1
               }
             ]
@@ -199,21 +211,24 @@
     },
     {
       "name": "With map",
-      "script": "0xC78D",
+      "script": [
+        "NEWMAP",
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 1,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "Map",
+                    "type": "map",
                     "value": {}
                   }
                 ]
@@ -223,32 +238,36 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "With array",
-      "script": "10c58d",
+      "script": [
+        "PUSH0",
+        "NEWARRAY",
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "Array",
+                    "type": "array",
                     "value": []
                   }
                 ]
@@ -258,32 +277,36 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "With struct",
-      "script": "10c68d",
+      "script": [
+        "PUSH0",
+        "NEWSTRUCT",
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto",
-            "StepInto"
+            "stepInto",
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 2,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "Struct",
+                    "type": "struct",
                     "value": []
                   }
                 ]
@@ -293,31 +316,36 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]
     },
     {
       "name": "With byte array 0x0000",
-      "script": "0c0200008d",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0000",
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x0000"
                   }
                 ]
@@ -327,17 +355,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 0
                   }
                 ]
@@ -347,13 +375,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 0
               }
             ]
@@ -363,21 +391,26 @@
     },
     {
       "name": "With byte array 0x0001",
-      "script": "0c0200018d",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0001",
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 4,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "ByteArray",
+                    "type": "byteArray",
                     "value": "0x0001"
                   }
                 ]
@@ -387,17 +420,17 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
+                    "type": "integer",
                     "value": 1
                   }
                 ]
@@ -407,13 +440,13 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Halt",
+            "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
+                "type": "integer",
                 "value": 1
               }
             ]
@@ -423,21 +456,25 @@
     },
     {
       "name": "With interop",
-      "script": "41777777778d",
+      "script": [
+        "SYSCALL",
+        "0x77777777",
+        "SIGN"
+      ],
       "steps": [
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Break",
+            "state": "BREAK",
             "invocationStack": [
               {
                 "instructionPointer": 5,
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "Interop",
+                    "type": "interop",
                     "value": "Object"
                   }
                 ]
@@ -447,10 +484,10 @@
         },
         {
           "actions": [
-            "StepInto"
+            "stepInto"
           ],
           "result": {
-            "state": "Fault"
+            "state": "FAULT"
           }
         }
       ]

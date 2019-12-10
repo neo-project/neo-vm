@@ -1,41 +1,36 @@
 {
-    "category": "Limits",
-    "name": "OtherCases",
-    "tests":
-    [
+  "category": "Limits",
+  "name": "OtherCases",
+  "tests": [
+    {
+      "name": "Wrong script",
+      "script": [
+        "0xff"
+      ],
+      "steps": [
         {
-            "name": "Wrong script",
-            "script": "0xFF",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Fault"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Without script",
-            "script": "",
-            "steps":
-            [
-                {
-                    "actions":
-                    [
-                        "StepInto"
-                    ],
-                    "result":
-                    {
-                        "state": "Halt"
-                    }
-                }
-            ]
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "name": "Without script",
+      "script": [],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "HALT"
+          }
+        }
+      ]
+    }
+  ]
 }
