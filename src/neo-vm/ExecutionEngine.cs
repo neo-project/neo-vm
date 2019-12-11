@@ -1016,7 +1016,7 @@ namespace Neo.VM
 
         public ExecutionContext LoadScript(Script script, int rvcount = -1)
         {
-            ExecutionContext context = new ExecutionContext(script, CurrentContext?.Script, rvcount, ReferenceCounter);
+            ExecutionContext context = new ExecutionContext(script, rvcount, ReferenceCounter);
             LoadContext(context);
             return context;
         }
