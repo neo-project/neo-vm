@@ -19,6 +19,24 @@
       ]
     },
     {
+      "name": "N = -1",
+      "script": [
+        "PUSH1",
+        "PUSHM1",
+        "REVERSEN"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "N < DEPTH",
       "script": [
         "PUSH1",
