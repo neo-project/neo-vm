@@ -5,6 +5,7 @@ using Neo.VM.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Neo.Test
@@ -78,13 +79,13 @@ namespace Neo.Test
         /// <param name="stack">Stack</param>
         /// <param name="result">Result</param>
         /// <param name="message">Message</param>
-        private void AssertResult(VMUTExecutionContextState[] result, RandomAccessStack<ExecutionContext> stack, string message)
+        private void AssertResult(VMUTExecutionContextState[] result, Stack<ExecutionContext> stack, string message)
         {
             AssertAreEqual(result == null ? 0 : result.Length, stack.Count, message + "Stack is different");
 
-            for (int x = 0, max = stack.Count; x < max; x++)
+            int x = 0;
+            foreach (var context in stack)
             {
-                var context = stack.Peek(x);
                 var opcode = context.InstructionPointer >= context.Script.Length ? OpCode.RET : context.Script[context.InstructionPointer];
 
                 AssertAreEqual(result[x].NextInstruction, opcode, message + "Next instruction is different");
@@ -92,6 +93,8 @@ namespace Neo.Test
 
                 AssertResult(result[x].EvaluationStack, context.EvaluationStack, message + " [EvaluationStack]");
                 AssertResult(result[x].AltStack, context.AltStack, message + " [AltStack]");
+
+                x++;
             }
         }
 

@@ -1,3 +1,4 @@
+using Neo.VM.Collections;
 using Neo.VM.Types;
 using System.Collections.Generic;
 using System.Linq;
