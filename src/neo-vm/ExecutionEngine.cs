@@ -349,6 +349,7 @@ namespace Neo.VM
                     {
                         if (!TryPop(out PrimitiveType item_n)) return false;
                         int n = (int)item_n.ToBigInteger();
+                        if (n < 0) return false;
                         if (!context.EvaluationStack.TryRemove(n, out StackItem _)) return false;
                         break;
                     }
@@ -396,6 +397,7 @@ namespace Neo.VM
                     {
                         if (!TryPop(out PrimitiveType item_n)) return false;
                         int n = (int)item_n.ToBigInteger();
+                        if (n < 0) return false;
                         if (n == 0) break;
                         if (!context.EvaluationStack.TryRemove(n, out StackItem x)) return false;
                         Push(x);
