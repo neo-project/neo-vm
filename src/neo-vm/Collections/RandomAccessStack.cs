@@ -5,10 +5,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Neo.VM
+namespace Neo.VM.Collections
 {
     [DebuggerDisplay("Count={Count}")]
-    public class RandomAccessStack<T> : IReadOnlyCollection<T>
+    internal class RandomAccessStack<T> : IReadOnlyCollection<T>
     {
         private readonly List<T> list = new List<T>();
 

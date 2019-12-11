@@ -39,7 +39,7 @@ namespace Neo.VM
         #endregion
 
         public ReferenceCounter ReferenceCounter { get; } = new ReferenceCounter();
-        public RandomAccessStack<ExecutionContext> InvocationStack { get; } = new RandomAccessStack<ExecutionContext>();
+        public Stack<ExecutionContext> InvocationStack { get; } = new Stack<ExecutionContext>();
         public ExecutionContext CurrentContext { get; private set; }
         public ExecutionContext EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }

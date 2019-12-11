@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Neo.VM
+namespace Neo.VM.Collections
 {
     internal sealed class ReferenceEqualityComparer : IEqualityComparer, IEqualityComparer<object>
     {
