@@ -92,7 +92,6 @@ namespace Neo.Test
                 AssertAreEqual(result[x].InstructionPointer, context.InstructionPointer, message + "Instruction pointer is different");
 
                 AssertResult(result[x].EvaluationStack, context.EvaluationStack, message + " [EvaluationStack]");
-                AssertResult(result[x].AltStack, context.AltStack, message + " [AltStack]");
 
                 x++;
             }

@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Arrays",
   "name": "REMOVE",
   "tests": [
@@ -79,20 +79,23 @@
     {
       "name": "Real test [Array]",
       "script": [
+        "INITSSLOT",
+        "01",
         "PUSH6",
         "PUSH5",
         "PUSH2",
         "PACK",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
+        "STSFLD0",
+        "LDSFLD0",
         "PUSH0",
         "REMOVE",
-        "FROMALTSTACK",
+        "LDSFLD0",
         "UNPACK"
       ],
       "steps": [
         {
           "actions": [
+            "stepInto",
             "stepInto",
             "stepInto",
             "stepInto",
@@ -105,7 +108,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 7,
+                "instructionPointer": 9,
                 "nextInstruction": "REMOVE",
                 "evaluationStack": [
                   {
@@ -153,8 +156,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
-                "nextInstruction": "FROMALTSTACK",
+                "instructionPointer": 10,
+                "nextInstruction": "LDSFLD0",
                 "altStack": [
                   {
                     "type": "array",
@@ -193,21 +196,24 @@
     {
       "name": "Real test [Struct]",
       "script": [
+        "INITSSLOT",
+        "01",
         "PUSH0",
         "NEWSTRUCT",
         "DUP",
         "PUSH5",
         "APPEND",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
+        "STSFLD0",
+        "LDSFLD0",
         "PUSH0",
         "REMOVE",
-        "FROMALTSTACK",
+        "LDSFLD0",
         "UNPACK"
       ],
       "steps": [
         {
           "actions": [
+            "stepInto",
             "stepInto",
             "stepInto",
             "stepInto",
@@ -221,7 +227,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 10,
                 "nextInstruction": "REMOVE",
                 "evaluationStack": [
                   {
@@ -261,8 +267,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 9,
-                "nextInstruction": "FROMALTSTACK",
+                "instructionPointer": 11,
+                "nextInstruction": "LDSFLD0",
                 "altStack": [
                   {
                     "type": "struct",

@@ -75,6 +75,24 @@ namespace Neo.VM
             }
         }
 
+        public byte TokenU8
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return Operand.Span[0];
+            }
+        }
+
+        public byte TokenU8_1
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return Operand.Span[1];
+            }
+        }
+
         static Instruction()
         {
             foreach (FieldInfo field in typeof(OpCode).GetFields(BindingFlags.Public | BindingFlags.Static))

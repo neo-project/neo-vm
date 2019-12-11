@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Arrays",
   "name": "SETITEM",
   "tests": [
@@ -229,17 +229,20 @@
     {
       "name": "Real test [Map]",
       "script": [
+        "INITSSLOT",
+        "01",
         "NEWMAP",
         "DUP",
-        "TOALTSTACK",
+        "STSFLD0",
         "PUSH1",
         "PUSH2",
         "SETITEM",
-        "FROMALTSTACK"
+        "LDSFLD0"
       ],
       "steps": [
         {
           "actions": [
+            "stepInto",
             "stepInto",
             "stepInto",
             "stepInto"
@@ -248,7 +251,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 3,
+                "instructionPointer": 5,
                 "nextInstruction": "PUSH1",
                 "evaluationStack": [
                   {
@@ -275,7 +278,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 7,
                 "nextInstruction": "SETITEM",
                 "evaluationStack": [
                   {
@@ -309,8 +312,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "FROMALTSTACK",
+                "instructionPointer": 8,
+                "nextInstruction": "LDSFLD0",
                 "altStack": [
                   {
                     "type": "map",
@@ -334,7 +337,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 7,
+                "instructionPointer": 9,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -577,32 +580,35 @@
     {
       "name": "Clone test [Array]",
       "script": [
+        "INITSSLOT",
+        "01",
         "PUSH1",
         "NEWARRAY",
         "DUP",
         "PUSH0",
         "PUSH5",
         "SETITEM",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
+        "STSFLD0",
+        "LDSFLD0",
         "DUP",
         "PUSH0",
         "PUSH4",
         "SETITEM",
-        "FROMALTSTACK"
+        "LDSFLD0"
       ],
       "steps": [
         {
           "actions": [
             "stepInto",
             "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 3,
+                "instructionPointer": 5,
                 "nextInstruction": "PUSH0",
                 "evaluationStack": [
                   {
@@ -636,8 +642,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "TOALTSTACK",
+                "instructionPointer": 8,
+                "nextInstruction": "STSFLD0",
                 "evaluationStack": [
                   {
                     "type": "array",
@@ -663,7 +669,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 9,
+                "instructionPointer": 11,
                 "nextInstruction": "PUSH0",
                 "evaluationStack": [
                   {
@@ -710,8 +716,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 12,
-                "nextInstruction": "FROMALTSTACK",
+                "instructionPointer": 14,
+                "nextInstruction": "LDSFLD0",
                 "evaluationStack": [
                   {
                     "type": "array",
@@ -746,7 +752,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 13,
+                "instructionPointer": 15,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -805,32 +811,35 @@
     {
       "name": "Clone test [Struct]",
       "script": [
+        "INITSSLOT",
+        "01",
         "PUSH1",
         "NEWSTRUCT",
         "DUP",
         "PUSH0",
         "PUSH5",
         "SETITEM",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
+        "STSFLD0",
+        "LDSFLD0",
         "DUP",
         "PUSH0",
         "PUSH4",
         "SETITEM",
-        "FROMALTSTACK"
+        "LDSFLD0"
       ],
       "steps": [
         {
           "actions": [
             "stepInto",
             "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 3,
+                "instructionPointer": 5,
                 "nextInstruction": "PUSH0",
                 "evaluationStack": [
                   {
@@ -864,8 +873,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "TOALTSTACK",
+                "instructionPointer": 8,
+                "nextInstruction": "STSFLD0",
                 "evaluationStack": [
                   {
                     "type": "struct",
@@ -891,7 +900,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 9,
+                "instructionPointer": 11,
                 "nextInstruction": "PUSH0",
                 "evaluationStack": [
                   {
@@ -938,8 +947,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 12,
-                "nextInstruction": "FROMALTSTACK",
+                "instructionPointer": 14,
+                "nextInstruction": "LDSFLD0",
                 "evaluationStack": [
                   {
                     "type": "struct",
@@ -974,7 +983,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 13,
+                "instructionPointer": 15,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {

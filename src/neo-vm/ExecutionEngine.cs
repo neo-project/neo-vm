@@ -311,10 +311,12 @@ namespace Neo.VM
                             if (rvcount > 0)
                                 context_pop.EvaluationStack.CopyTo(stack_eval);
                         }
-                        if (InvocationStack.Count == 0 || context_pop.AltStack != CurrentContext.AltStack)
+                        if (InvocationStack.Count == 0 || context_pop.StaticFields != CurrentContext.StaticFields)
                         {
-                            context_pop.AltStack.Clear();
+                            context_pop.StaticFields?.ClearReferences();
                         }
+                        context_pop.LocalVariables?.ClearReferences();
+                        context_pop.Arguments?.ClearReferences();
                         if (InvocationStack.Count == 0)
                         {
                             State = VMState.HALT;
@@ -417,32 +419,277 @@ namespace Neo.VM
                         if (!context.EvaluationStack.Reverse((int)n.ToBigInteger())) return false;
                         break;
                     }
-                case OpCode.DUPFROMALTSTACKBOTTOM:
-                    {
-                        Push(context.AltStack.Peek(-1));
-                        break;
-                    }
-                case OpCode.DUPFROMALTSTACK:
-                    {
-                        Push(context.AltStack.Peek());
-                        break;
-                    }
-                case OpCode.TOALTSTACK:
-                    {
-                        if (!TryPop(out StackItem x)) return false;
-                        context.AltStack.Push(x);
-                        break;
-                    }
-                case OpCode.FROMALTSTACK:
-                    {
-                        if (!context.AltStack.TryPop(out StackItem x)) return false;
-                        Push(x);
-                        break;
-                    }
                 case OpCode.ISNULL:
                     {
                         if (!TryPop(out StackItem x)) return false;
                         Push(x.IsNull);
+                        break;
+                    }
+
+                //Slot
+                case OpCode.INITSSLOT:
+                    {
+                        if (instruction.TokenU8 == 0) break;
+                        if (context.StaticFields != null) return false;
+                        context.StaticFields = new Slot(instruction.TokenU8, ReferenceCounter);
+                        break;
+                    }
+                case OpCode.INITSLOT:
+                    {
+                        if (instruction.TokenU8 > 0)
+                        {
+                            if (context.LocalVariables != null) return false;
+                            context.LocalVariables = new Slot(instruction.TokenU8, ReferenceCounter);
+                        }
+                        if (instruction.TokenU8_1 > 0)
+                        {
+                            if (context.Arguments != null) return false;
+                            StackItem[] items = new StackItem[instruction.TokenU8_1];
+                            for (int i = instruction.TokenU8_1; i >= 0; i--)
+                                if (!TryPop(out items[i]))
+                                    return false;
+                            context.Arguments = new Slot(items, ReferenceCounter);
+                        }
+                        break;
+                    }
+                case OpCode.LDSFLD0:
+                    {
+                        if (!ExecuteLoadFromSlot(context.StaticFields, 0)) return false;
+                        break;
+                    }
+                case OpCode.LDSFLD1:
+                    {
+                        if (!ExecuteLoadFromSlot(context.StaticFields, 1)) return false;
+                        break;
+                    }
+                case OpCode.LDSFLD2:
+                    {
+                        if (!ExecuteLoadFromSlot(context.StaticFields, 2)) return false;
+                        break;
+                    }
+                case OpCode.LDSFLD3:
+                    {
+                        if (!ExecuteLoadFromSlot(context.StaticFields, 3)) return false;
+                        break;
+                    }
+                case OpCode.LDSFLD4:
+                    {
+                        if (!ExecuteLoadFromSlot(context.StaticFields, 4)) return false;
+                        break;
+                    }
+                case OpCode.LDSFLD5:
+                    {
+                        if (!ExecuteLoadFromSlot(context.StaticFields, 5)) return false;
+                        break;
+                    }
+                case OpCode.LDSFLD6:
+                    {
+                        if (!ExecuteLoadFromSlot(context.StaticFields, 6)) return false;
+                        break;
+                    }
+                case OpCode.LDSFLD:
+                    {
+                        if (!ExecuteLoadFromSlot(context.StaticFields, instruction.TokenU8)) return false;
+                        break;
+                    }
+                case OpCode.STSFLD0:
+                    {
+                        if (!ExecuteStoreToSlot(context.StaticFields, 0)) return false;
+                        break;
+                    }
+                case OpCode.STSFLD1:
+                    {
+                        if (!ExecuteStoreToSlot(context.StaticFields, 1)) return false;
+                        break;
+                    }
+                case OpCode.STSFLD2:
+                    {
+                        if (!ExecuteStoreToSlot(context.StaticFields, 2)) return false;
+                        break;
+                    }
+                case OpCode.STSFLD3:
+                    {
+                        if (!ExecuteStoreToSlot(context.StaticFields, 3)) return false;
+                        break;
+                    }
+                case OpCode.STSFLD4:
+                    {
+                        if (!ExecuteStoreToSlot(context.StaticFields, 4)) return false;
+                        break;
+                    }
+                case OpCode.STSFLD5:
+                    {
+                        if (!ExecuteStoreToSlot(context.StaticFields, 5)) return false;
+                        break;
+                    }
+                case OpCode.STSFLD6:
+                    {
+                        if (!ExecuteStoreToSlot(context.StaticFields, 6)) return false;
+                        break;
+                    }
+                case OpCode.STSFLD:
+                    {
+                        if (!ExecuteStoreToSlot(context.StaticFields, instruction.TokenU8)) return false;
+                        break;
+                    }
+                case OpCode.LDLOC0:
+                    {
+                        if (!ExecuteLoadFromSlot(context.LocalVariables, 0)) return false;
+                        break;
+                    }
+                case OpCode.LDLOC1:
+                    {
+                        if (!ExecuteLoadFromSlot(context.LocalVariables, 1)) return false;
+                        break;
+                    }
+                case OpCode.LDLOC2:
+                    {
+                        if (!ExecuteLoadFromSlot(context.LocalVariables, 2)) return false;
+                        break;
+                    }
+                case OpCode.LDLOC3:
+                    {
+                        if (!ExecuteLoadFromSlot(context.LocalVariables, 3)) return false;
+                        break;
+                    }
+                case OpCode.LDLOC4:
+                    {
+                        if (!ExecuteLoadFromSlot(context.LocalVariables, 4)) return false;
+                        break;
+                    }
+                case OpCode.LDLOC5:
+                    {
+                        if (!ExecuteLoadFromSlot(context.LocalVariables, 5)) return false;
+                        break;
+                    }
+                case OpCode.LDLOC6:
+                    {
+                        if (!ExecuteLoadFromSlot(context.LocalVariables, 6)) return false;
+                        break;
+                    }
+                case OpCode.LDLOC:
+                    {
+                        if (!ExecuteLoadFromSlot(context.LocalVariables, instruction.TokenU8)) return false;
+                        break;
+                    }
+                case OpCode.STLOC0:
+                    {
+                        if (!ExecuteStoreToSlot(context.LocalVariables, 0)) return false;
+                        break;
+                    }
+                case OpCode.STLOC1:
+                    {
+                        if (!ExecuteStoreToSlot(context.LocalVariables, 1)) return false;
+                        break;
+                    }
+                case OpCode.STLOC2:
+                    {
+                        if (!ExecuteStoreToSlot(context.LocalVariables, 2)) return false;
+                        break;
+                    }
+                case OpCode.STLOC3:
+                    {
+                        if (!ExecuteStoreToSlot(context.LocalVariables, 3)) return false;
+                        break;
+                    }
+                case OpCode.STLOC4:
+                    {
+                        if (!ExecuteStoreToSlot(context.LocalVariables, 4)) return false;
+                        break;
+                    }
+                case OpCode.STLOC5:
+                    {
+                        if (!ExecuteStoreToSlot(context.LocalVariables, 5)) return false;
+                        break;
+                    }
+                case OpCode.STLOC6:
+                    {
+                        if (!ExecuteStoreToSlot(context.LocalVariables, 6)) return false;
+                        break;
+                    }
+                case OpCode.STLOC:
+                    {
+                        if (!ExecuteStoreToSlot(context.LocalVariables, instruction.TokenU8)) return false;
+                        break;
+                    }
+                case OpCode.LDARG0:
+                    {
+                        if (!ExecuteLoadFromSlot(context.Arguments, 0)) return false;
+                        break;
+                    }
+                case OpCode.LDARG1:
+                    {
+                        if (!ExecuteLoadFromSlot(context.Arguments, 1)) return false;
+                        break;
+                    }
+                case OpCode.LDARG2:
+                    {
+                        if (!ExecuteLoadFromSlot(context.Arguments, 2)) return false;
+                        break;
+                    }
+                case OpCode.LDARG3:
+                    {
+                        if (!ExecuteLoadFromSlot(context.Arguments, 3)) return false;
+                        break;
+                    }
+                case OpCode.LDARG4:
+                    {
+                        if (!ExecuteLoadFromSlot(context.Arguments, 4)) return false;
+                        break;
+                    }
+                case OpCode.LDARG5:
+                    {
+                        if (!ExecuteLoadFromSlot(context.Arguments, 5)) return false;
+                        break;
+                    }
+                case OpCode.LDARG6:
+                    {
+                        if (!ExecuteLoadFromSlot(context.Arguments, 6)) return false;
+                        break;
+                    }
+                case OpCode.LDARG:
+                    {
+                        if (!ExecuteLoadFromSlot(context.Arguments, instruction.TokenU8)) return false;
+                        break;
+                    }
+                case OpCode.STARG0:
+                    {
+                        if (!ExecuteStoreToSlot(context.Arguments, 0)) return false;
+                        break;
+                    }
+                case OpCode.STARG1:
+                    {
+                        if (!ExecuteStoreToSlot(context.Arguments, 1)) return false;
+                        break;
+                    }
+                case OpCode.STARG2:
+                    {
+                        if (!ExecuteStoreToSlot(context.Arguments, 2)) return false;
+                        break;
+                    }
+                case OpCode.STARG3:
+                    {
+                        if (!ExecuteStoreToSlot(context.Arguments, 3)) return false;
+                        break;
+                    }
+                case OpCode.STARG4:
+                    {
+                        if (!ExecuteStoreToSlot(context.Arguments, 4)) return false;
+                        break;
+                    }
+                case OpCode.STARG5:
+                    {
+                        if (!ExecuteStoreToSlot(context.Arguments, 5)) return false;
+                        break;
+                    }
+                case OpCode.STARG6:
+                    {
+                        if (!ExecuteStoreToSlot(context.Arguments, 6)) return false;
+                        break;
+                    }
+                case OpCode.STARG:
+                    {
+                        if (!ExecuteStoreToSlot(context.Arguments, instruction.TokenU8)) return false;
                         break;
                     }
 
@@ -982,6 +1229,14 @@ namespace Neo.VM
             return true;
         }
 
+        private bool ExecuteLoadFromSlot(Slot slot, int index)
+        {
+            if (slot is null) return false;
+            if (index < 0 || index >= slot.Count) return false;
+            Push(slot[index]);
+            return true;
+        }
+
         internal protected void ExecuteNext()
         {
             if (InvocationStack.Count == 0)
@@ -1001,6 +1256,15 @@ namespace Neo.VM
                     State = VMState.FAULT;
                 }
             }
+        }
+
+        private bool ExecuteStoreToSlot(Slot slot, int index)
+        {
+            if (slot is null) return false;
+            if (index < 0 || index >= slot.Count) return false;
+            if (!TryPop(out StackItem item)) return false;
+            slot[index] = item;
+            return true;
         }
 
         protected virtual void LoadContext(ExecutionContext context)

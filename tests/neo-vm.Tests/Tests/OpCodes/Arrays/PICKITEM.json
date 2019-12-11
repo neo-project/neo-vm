@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Arrays",
   "name": "PICKITEM",
   "tests": [
@@ -192,22 +192,24 @@
     {
       "name": "Real test [Array]",
       "script": [
+        "INITSSLOT",
+        "01",
         "PUSH3",
         "NEWARRAY",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
+        "STSFLD0",
+        "LDSFLD0",
         "PUSH0",
         "PUSH1",
         "SETITEM",
-        "DUPFROMALTSTACK",
+        "LDSFLD0",
         "PUSH1",
         "PUSH2",
         "SETITEM",
-        "DUPFROMALTSTACK",
+        "LDSFLD0",
         "PUSH2",
         "PUSH3",
         "SETITEM",
-        "FROMALTSTACK",
+        "LDSFLD0",
         "PUSH2",
         "PICKITEM"
       ],
@@ -230,13 +232,14 @@
             "stepInto",
             "stepInto",
             "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 17,
+                "instructionPointer": 19,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
@@ -273,7 +276,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 18,
+                "instructionPointer": 20,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -304,22 +307,24 @@
     {
       "name": "Real test [Struct]",
       "script": [
+        "INITSSLOT",
+        "01",
         "PUSH3",
         "NEWSTRUCT",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
+        "STSFLD0",
+        "LDSFLD0",
         "PUSH0",
         "PUSH1",
         "SETITEM",
-        "DUPFROMALTSTACK",
+        "LDSFLD0",
         "PUSH1",
         "PUSH2",
         "SETITEM",
-        "DUPFROMALTSTACK",
+        "LDSFLD0",
         "PUSH2",
         "PUSH3",
         "SETITEM",
-        "FROMALTSTACK",
+        "LDSFLD0",
         "PUSH2",
         "PICKITEM"
       ],
@@ -342,13 +347,14 @@
             "stepInto",
             "stepInto",
             "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 17,
+                "instructionPointer": 19,
                 "nextInstruction": "PICKITEM",
                 "evaluationStack": [
                   {
@@ -385,7 +391,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 18,
+                "instructionPointer": 20,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
