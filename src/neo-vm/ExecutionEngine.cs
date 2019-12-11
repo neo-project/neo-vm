@@ -17,11 +17,6 @@ namespace Neo.VM
         public virtual int MaxShift => 256;
 
         /// <summary>
-        /// The max size in bytes allowed size for BigInteger
-        /// </summary>
-        public const int MaxSizeForBigInteger = 32;
-
-        /// <summary>
         /// Set the max Stack Size
         /// </summary>
         public virtual uint MaxStackSize => 2 * 1024;
@@ -66,7 +61,7 @@ namespace Neo.VM
         /// <param name="value">Value</param>
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckBigInteger(BigInteger value) => value.GetByteCount() <= MaxSizeForBigInteger;
+        public bool CheckBigInteger(BigInteger value) => value.GetByteCount() <= Integer.MaxSize;
 
         /// <summary>
         /// Check if the number is allowed from SHL and SHR
