@@ -69,12 +69,10 @@ namespace Neo.VM
             referenceCounter.AddStackReference(item);
         }
 
-        internal void Set(int index, StackItem item)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal bool Reverse(int n)
         {
-            StackItem old_item = innerStack.Peek(index);
-            referenceCounter.RemoveStackReference(old_item);
-            innerStack.Set(index, item);
-            referenceCounter.AddStackReference(item);
+            return innerStack.Reverse(n);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -85,7 +83,7 @@ namespace Neo.VM
 
         internal bool TryRemove<T>(int index, out T item) where T : StackItem
         {
-            if (!innerStack.TryRemove(index, out StackItem stackItem))
+            if (index < 0 || !innerStack.TryRemove(index, out StackItem stackItem))
             {
                 item = null;
                 return false;

@@ -32,15 +32,13 @@ namespace Neo.VM.Types
 
         public virtual BigInteger ToBigInteger()
         {
-            if (GetByteLength() > ExecutionEngine.MaxSizeForBigInteger)
-                throw new InvalidCastException();
             return new BigInteger(ToByteArray());
         }
 
         public override bool ToBoolean()
         {
             ReadOnlySpan<byte> value = ToByteArray();
-            if (value.Length > ExecutionEngine.MaxSizeForBigInteger)
+            if (value.Length > Integer.MaxSize)
                 return true;
             return Unsafe.NotZero(value);
         }

@@ -17,11 +17,6 @@ namespace Neo.VM
         public virtual int MaxShift => 256;
 
         /// <summary>
-        /// The max size in bytes allowed size for BigInteger
-        /// </summary>
-        public const int MaxSizeForBigInteger = 32;
-
-        /// <summary>
         /// Set the max Stack Size
         /// </summary>
         public virtual uint MaxStackSize => 2 * 1024;
@@ -59,14 +54,6 @@ namespace Neo.VM
         /// <returns>Return True if are allowed, otherwise False</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CheckMaxItemSize(int length) => length >= 0 && length <= MaxItemSize;
-
-        /// <summary>
-        /// Check if the BigInteger is allowed for numeric operations
-        /// </summary>
-        /// <param name="value">Value</param>
-        /// <returns>Return True if are allowed, otherwise False</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckBigInteger(BigInteger value) => value.GetByteCount() <= MaxSizeForBigInteger;
 
         /// <summary>
         /// Check if the number is allowed from SHL and SHR
@@ -112,6 +99,7 @@ namespace Neo.VM
             Instruction instruction = context.CurrentInstruction;
             switch (instruction.OpCode)
             {
+                //Push
                 case OpCode.PUSHINT8:
                 case OpCode.PUSHINT16:
                 case OpCode.PUSHINT32:
@@ -342,6 +330,93 @@ namespace Neo.VM
                     }
 
                 // Stack ops
+                case OpCode.DEPTH:
+                    {
+                        Push(context.EvaluationStack.Count);
+                        break;
+                    }
+                case OpCode.DROP:
+                    {
+                        if (!TryPop(out StackItem _)) return false;
+                        break;
+                    }
+                case OpCode.NIP:
+                    {
+                        if (!context.EvaluationStack.TryRemove(1, out StackItem _)) return false;
+                        break;
+                    }
+                case OpCode.XDROP:
+                    {
+                        if (!TryPop(out PrimitiveType item_n)) return false;
+                        int n = (int)item_n.ToBigInteger();
+                        if (!context.EvaluationStack.TryRemove(n, out StackItem _)) return false;
+                        break;
+                    }
+                case OpCode.CLEAR:
+                    {
+                        context.EvaluationStack.Clear();
+                        break;
+                    }
+                case OpCode.DUP:
+                    {
+                        Push(Peek());
+                        break;
+                    }
+                case OpCode.OVER:
+                    {
+                        Push(Peek(1));
+                        break;
+                    }
+                case OpCode.PICK:
+                    {
+                        if (!TryPop(out PrimitiveType item_n)) return false;
+                        int n = (int)item_n.ToBigInteger();
+                        if (n < 0) return false;
+                        Push(Peek(n));
+                        break;
+                    }
+                case OpCode.TUCK:
+                    {
+                        context.EvaluationStack.Insert(2, Peek());
+                        break;
+                    }
+                case OpCode.SWAP:
+                    {
+                        if (!context.EvaluationStack.TryRemove(1, out StackItem x)) return false;
+                        Push(x);
+                        break;
+                    }
+                case OpCode.ROT:
+                    {
+                        if (!context.EvaluationStack.TryRemove(2, out StackItem x)) return false;
+                        Push(x);
+                        break;
+                    }
+                case OpCode.ROLL:
+                    {
+                        if (!TryPop(out PrimitiveType item_n)) return false;
+                        int n = (int)item_n.ToBigInteger();
+                        if (n == 0) break;
+                        if (!context.EvaluationStack.TryRemove(n, out StackItem x)) return false;
+                        Push(x);
+                        break;
+                    }
+                case OpCode.REVERSE3:
+                    {
+                        if (!context.EvaluationStack.Reverse(3)) return false;
+                        break;
+                    }
+                case OpCode.REVERSE4:
+                    {
+                        if (!context.EvaluationStack.Reverse(4)) return false;
+                        break;
+                    }
+                case OpCode.REVERSEN:
+                    {
+                        if (!TryPop(out PrimitiveType n)) return false;
+                        if (!context.EvaluationStack.Reverse((int)n.ToBigInteger())) return false;
+                        break;
+                    }
                 case OpCode.DUPFROMALTSTACKBOTTOM:
                     {
                         Push(context.AltStack.Peek(-1));
@@ -370,93 +445,8 @@ namespace Neo.VM
                         Push(x.IsNull);
                         break;
                     }
-                case OpCode.XDROP:
-                    {
-                        if (!TryPop(out PrimitiveType item_n)) return false;
-                        int n = (int)item_n.ToBigInteger();
-                        if (n < 0) return false;
-                        if (!context.EvaluationStack.TryRemove(n, out StackItem _)) return false;
-                        break;
-                    }
-                case OpCode.XSWAP:
-                    {
-                        if (!TryPop(out PrimitiveType item_n)) return false;
-                        int n = (int)item_n.ToBigInteger();
-                        if (n < 0) return false;
-                        if (n == 0) break;
-                        StackItem xn = Peek(n);
-                        context.EvaluationStack.Set(n, Peek());
-                        context.EvaluationStack.Set(0, xn);
-                        break;
-                    }
-                case OpCode.XTUCK:
-                    {
-                        if (!TryPop(out PrimitiveType item_n)) return false;
-                        int n = (int)item_n.ToBigInteger();
-                        if (n <= 0) return false;
-                        context.EvaluationStack.Insert(n, Peek());
-                        break;
-                    }
-                case OpCode.DEPTH:
-                    {
-                        Push(context.EvaluationStack.Count);
-                        break;
-                    }
-                case OpCode.DROP:
-                    {
-                        if (!TryPop(out StackItem _)) return false;
-                        break;
-                    }
-                case OpCode.DUP:
-                    {
-                        Push(Peek());
-                        break;
-                    }
-                case OpCode.NIP:
-                    {
-                        if (!context.EvaluationStack.TryRemove(1, out StackItem _)) return false;
-                        break;
-                    }
-                case OpCode.OVER:
-                    {
-                        Push(Peek(1));
-                        break;
-                    }
-                case OpCode.PICK:
-                    {
-                        if (!TryPop(out PrimitiveType item_n)) return false;
-                        int n = (int)item_n.ToBigInteger();
-                        if (n < 0) return false;
-                        Push(Peek(n));
-                        break;
-                    }
-                case OpCode.ROLL:
-                    {
-                        if (!TryPop(out PrimitiveType item_n)) return false;
-                        int n = (int)item_n.ToBigInteger();
-                        if (n < 0) return false;
-                        if (n == 0) break;
-                        if (!context.EvaluationStack.TryRemove(n, out StackItem x)) return false;
-                        Push(x);
-                        break;
-                    }
-                case OpCode.ROT:
-                    {
-                        if (!context.EvaluationStack.TryRemove(2, out StackItem x)) return false;
-                        Push(x);
-                        break;
-                    }
-                case OpCode.SWAP:
-                    {
-                        if (!context.EvaluationStack.TryRemove(1, out StackItem x)) return false;
-                        Push(x);
-                        break;
-                    }
-                case OpCode.TUCK:
-                    {
-                        context.EvaluationStack.Insert(2, Peek());
-                        break;
-                    }
+
+                // Splice
                 case OpCode.CAT:
                     {
                         if (!TryPop(out PrimitiveType item_x2)) return false;
@@ -570,17 +560,13 @@ namespace Neo.VM
                 case OpCode.INC:
                     {
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = x.ToBigInteger() + 1;
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x.ToBigInteger() + 1);
                         break;
                     }
                 case OpCode.DEC:
                     {
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = x.ToBigInteger() - 1;
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x.ToBigInteger() - 1);
                         break;
                     }
                 case OpCode.SIGN:
@@ -598,9 +584,7 @@ namespace Neo.VM
                 case OpCode.ABS:
                     {
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = BigInteger.Abs(x.ToBigInteger());
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(BigInteger.Abs(x.ToBigInteger()));
                         break;
                     }
                 case OpCode.NOT:
@@ -619,27 +603,21 @@ namespace Neo.VM
                     {
                         if (!TryPop(out PrimitiveType x2)) return false;
                         if (!TryPop(out PrimitiveType x1)) return false;
-                        BigInteger r = x1.ToBigInteger() + x2.ToBigInteger();
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x1.ToBigInteger() + x2.ToBigInteger());
                         break;
                     }
                 case OpCode.SUB:
                     {
                         if (!TryPop(out PrimitiveType x2)) return false;
                         if (!TryPop(out PrimitiveType x1)) return false;
-                        BigInteger r = x1.ToBigInteger() - x2.ToBigInteger();
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x1.ToBigInteger() - x2.ToBigInteger());
                         break;
                     }
                 case OpCode.MUL:
                     {
                         if (!TryPop(out PrimitiveType x2)) return false;
                         if (!TryPop(out PrimitiveType x1)) return false;
-                        BigInteger r = x1.ToBigInteger() * x2.ToBigInteger();
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x1.ToBigInteger() * x2.ToBigInteger());
                         break;
                     }
                 case OpCode.DIV:
@@ -663,9 +641,7 @@ namespace Neo.VM
                         if (!CheckShift(shift)) return false;
                         if (shift == 0) break;
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = x.ToBigInteger() << shift;
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x.ToBigInteger() << shift);
                         break;
                     }
                 case OpCode.SHR:
@@ -675,9 +651,7 @@ namespace Neo.VM
                         if (!CheckShift(shift)) return false;
                         if (shift == 0) break;
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = x.ToBigInteger() >> shift;
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x.ToBigInteger() >> shift);
                         break;
                     }
                 case OpCode.BOOLAND:
