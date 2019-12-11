@@ -56,14 +56,6 @@ namespace Neo.VM
         public bool CheckMaxItemSize(int length) => length >= 0 && length <= MaxItemSize;
 
         /// <summary>
-        /// Check if the BigInteger is allowed for numeric operations
-        /// </summary>
-        /// <param name="value">Value</param>
-        /// <returns>Return True if are allowed, otherwise False</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool CheckBigInteger(BigInteger value) => value.GetByteCount() <= Integer.MaxSize;
-
-        /// <summary>
         /// Check if the number is allowed from SHL and SHR
         /// </summary>
         /// <param name="shift">Shift</param>
@@ -565,17 +557,13 @@ namespace Neo.VM
                 case OpCode.INC:
                     {
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = x.ToBigInteger() + 1;
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x.ToBigInteger() + 1);
                         break;
                     }
                 case OpCode.DEC:
                     {
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = x.ToBigInteger() - 1;
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x.ToBigInteger() - 1);
                         break;
                     }
                 case OpCode.SIGN:
@@ -593,9 +581,7 @@ namespace Neo.VM
                 case OpCode.ABS:
                     {
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = BigInteger.Abs(x.ToBigInteger());
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(BigInteger.Abs(x.ToBigInteger()));
                         break;
                     }
                 case OpCode.NOT:
@@ -614,27 +600,21 @@ namespace Neo.VM
                     {
                         if (!TryPop(out PrimitiveType x2)) return false;
                         if (!TryPop(out PrimitiveType x1)) return false;
-                        BigInteger r = x1.ToBigInteger() + x2.ToBigInteger();
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x1.ToBigInteger() + x2.ToBigInteger());
                         break;
                     }
                 case OpCode.SUB:
                     {
                         if (!TryPop(out PrimitiveType x2)) return false;
                         if (!TryPop(out PrimitiveType x1)) return false;
-                        BigInteger r = x1.ToBigInteger() - x2.ToBigInteger();
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x1.ToBigInteger() - x2.ToBigInteger());
                         break;
                     }
                 case OpCode.MUL:
                     {
                         if (!TryPop(out PrimitiveType x2)) return false;
                         if (!TryPop(out PrimitiveType x1)) return false;
-                        BigInteger r = x1.ToBigInteger() * x2.ToBigInteger();
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x1.ToBigInteger() * x2.ToBigInteger());
                         break;
                     }
                 case OpCode.DIV:
@@ -658,9 +638,7 @@ namespace Neo.VM
                         if (!CheckShift(shift)) return false;
                         if (shift == 0) break;
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = x.ToBigInteger() << shift;
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x.ToBigInteger() << shift);
                         break;
                     }
                 case OpCode.SHR:
@@ -670,9 +648,7 @@ namespace Neo.VM
                         if (!CheckShift(shift)) return false;
                         if (shift == 0) break;
                         if (!TryPop(out PrimitiveType x)) return false;
-                        BigInteger r = x.ToBigInteger() >> shift;
-                        if (!CheckBigInteger(r)) return false;
-                        Push(r);
+                        Push(x.ToBigInteger() >> shift);
                         break;
                     }
                 case OpCode.BOOLAND:
