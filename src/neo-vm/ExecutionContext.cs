@@ -56,31 +56,27 @@ namespace Neo.VM
             }
         }
 
-        public Script CallingScript { get; }
-
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="script">Script</param>
-        /// <param name="callingScript">The calling script</param>
         /// <param name="rvcount">Number of items to be returned</param>
-        internal ExecutionContext(Script script, Script callingScript, int rvcount, ReferenceCounter referenceCounter)
-            : this(script, callingScript, rvcount, new EvaluationStack(referenceCounter), new EvaluationStack(referenceCounter))
+        internal ExecutionContext(Script script, int rvcount, ReferenceCounter referenceCounter)
+            : this(script, rvcount, new EvaluationStack(referenceCounter), new EvaluationStack(referenceCounter))
         {
         }
 
-        private ExecutionContext(Script script, Script callingScript, int rvcount, EvaluationStack stack, EvaluationStack alt)
+        private ExecutionContext(Script script, int rvcount, EvaluationStack stack, EvaluationStack alt)
         {
             this.RVCount = rvcount;
             this.Script = script;
             this.EvaluationStack = stack;
             this.AltStack = alt;
-            this.CallingScript = callingScript;
         }
 
         internal ExecutionContext Clone()
         {
-            return new ExecutionContext(Script, Script, 0, EvaluationStack, AltStack);
+            return new ExecutionContext(Script, 0, EvaluationStack, AltStack);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
