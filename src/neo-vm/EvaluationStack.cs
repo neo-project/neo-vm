@@ -82,7 +82,7 @@ namespace Neo.VM
 
         internal bool TryRemove<T>(int index, out T item) where T : StackItem
         {
-            if (!innerStack.TryRemove(index, out StackItem stackItem))
+            if (index < 0 || !innerStack.TryRemove(index, out StackItem stackItem))
             {
                 item = null;
                 return false;

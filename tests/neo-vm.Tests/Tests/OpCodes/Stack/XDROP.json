@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Stack",
   "name": "XDROP",
   "tests": [
@@ -11,6 +11,23 @@
         {
           "actions": [
             "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "With -1",
+      "script": [
+        "PUSHM1",
+        "XDROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
           ],
           "result": {
             "state": "FAULT"
