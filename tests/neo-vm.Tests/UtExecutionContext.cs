@@ -10,7 +10,7 @@ namespace Neo.Test
         [TestMethod]
         public void StateTest()
         {
-            var context = new ExecutionContext(null, null, 0, new ReferenceCounter());
+            var context = new ExecutionContext(null, 0, new ReferenceCounter());
 
             var stack = context.GetState<Stack<int>>();
             Assert.AreEqual(0, stack.Count);
