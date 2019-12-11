@@ -245,7 +245,73 @@ namespace Neo.VM
 
         #endregion
 
-        // Stack
+        #region Stack
+
+        /// <summary>
+        /// Puts the number of stack items onto the stack.
+        /// </summary>
+        DEPTH = 0x43,
+        /// <summary>
+        /// Removes the top stack item.
+        /// </summary>
+        DROP = 0x45,
+        /// <summary>
+        /// Removes the second-to-top stack item.
+        /// </summary>
+        NIP = 0x46,
+        /// <summary>
+        /// The item n back in the main stack is removed.
+        /// </summary>
+        XDROP = 0x48,
+        /// <summary>
+        /// Clear the stack
+        /// </summary>
+        CLEAR = 0x49,
+        /// <summary>
+        /// Duplicates the top stack item.
+        /// </summary>
+        DUP = 0x4A,
+        /// <summary>
+        /// Copies the second-to-top stack item to the top.
+        /// </summary>
+        OVER = 0x4B,
+        /// <summary>
+        /// The item n back in the stack is copied to the top.
+        /// </summary>
+        PICK = 0x4D,
+        /// <summary>
+        /// The item at the top of the stack is copied and inserted before the second-to-top item.
+        /// </summary>
+        TUCK = 0x4E,
+        /// <summary>
+        /// The top two items on the stack are swapped.
+        /// </summary>
+        SWAP = 0x50,
+        /// <summary>
+        /// The top three items on the stack are rotated to the left.
+        /// </summary>
+        ROT = 0x51,
+        /// <summary>
+        /// The item n back in the stack is moved to the top.
+        /// </summary>
+        ROLL = 0x52,
+        /// <summary>
+        /// Reverse the order of the top 3 items on the stack.
+        /// </summary>
+        REVERSE3 = 0x53,
+        /// <summary>
+        /// Reverse the order of the top 4 items on the stack.
+        /// </summary>
+        REVERSE4 = 0x54,
+        /// <summary>
+        /// Pop the number N on the stack, and reverse the order of the top N items on the stack.
+        /// </summary>
+        REVERSEN = 0x55,
+
+        #endregion
+
+        #region Old opcodes
+
         /// <summary>
         /// Puts the input onto the top of the alt stack. Removes it from the main stack.
         /// </summary>
@@ -266,58 +332,6 @@ namespace Neo.VM
         /// Returns true if the input is null. Returns false otherwise.
         /// </summary>
         ISNULL = 0x70,
-        /// <summary>
-        /// The item n back in the main stack is removed.
-        /// </summary>
-        XDROP = 0x71,
-        /// <summary>
-        /// The item n back in the main stack in swapped with top stack item.
-        /// </summary>
-        XSWAP = 0x72,
-        /// <summary>
-        /// The item on top of the main stack is copied and inserted to the position n in the main stack.
-        /// </summary>
-        XTUCK = 0x73,
-        /// <summary>
-        /// Puts the number of stack items onto the stack.
-        /// </summary>
-        DEPTH = 0x74,
-        /// <summary>
-        /// Removes the top stack item.
-        /// </summary>
-        DROP = 0x75,
-        /// <summary>
-        /// Duplicates the top stack item.
-        /// </summary>
-        DUP = 0x76,
-        /// <summary>
-        /// Removes the second-to-top stack item.
-        /// </summary>
-        NIP = 0x77,
-        /// <summary>
-        /// Copies the second-to-top stack item to the top.
-        /// </summary>
-        OVER = 0x78,
-        /// <summary>
-        /// The item n back in the stack is copied to the top.
-        /// </summary>
-        PICK = 0x79,
-        /// <summary>
-        /// The item n back in the stack is moved to the top.
-        /// </summary>
-        ROLL = 0x7A,
-        /// <summary>
-        /// The top three items on the stack are rotated to the left.
-        /// </summary>
-        ROT = 0x7B,
-        /// <summary>
-        /// The top two items on the stack are swapped.
-        /// </summary>
-        SWAP = 0x7C,
-        /// <summary>
-        /// The item at the top of the stack is copied and inserted before the second-to-top item.
-        /// </summary>
-        TUCK = 0x7D,
 
 
         // Splice
@@ -530,5 +544,7 @@ namespace Neo.VM
         /// A map is taken from top of the main stack. The values of this map are put on top of the main stack.
         /// </summary>
         VALUES = 0xCD,
+
+        #endregion
     }
 }
