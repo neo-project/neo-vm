@@ -1,3 +1,4 @@
+using Neo.VM.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Neo.VM.Types
     {
         public const int MaxKeySize = 64;
 
-        private readonly Dictionary<PrimitiveType, StackItem> dictionary;
+        private readonly OrderedDictionary<PrimitiveType, StackItem> dictionary = new OrderedDictionary<PrimitiveType, StackItem>();
 
         public StackItem this[PrimitiveType key]
         {
@@ -41,23 +42,9 @@ namespace Neo.VM.Types
         internal override int SubItemsCount => dictionary.Count * 2;
         public IEnumerable<StackItem> Values => dictionary.Values;
 
-        public Map(Dictionary<PrimitiveType, StackItem> value = null)
-            : this(null, value)
-        {
-        }
-
-        public Map(ReferenceCounter referenceCounter, Dictionary<PrimitiveType, StackItem> value = null)
+        public Map(ReferenceCounter referenceCounter = null)
             : base(referenceCounter)
         {
-            dictionary = value ?? new Dictionary<PrimitiveType, StackItem>();
-            if (referenceCounter != null)
-                foreach (var pair in dictionary)
-                {
-                    if (pair.Key.GetByteLength() > MaxKeySize)
-                        throw new ArgumentException();
-                    referenceCounter.AddReference(pair.Key, this);
-                    referenceCounter.AddReference(pair.Value, this);
-                }
         }
 
         public bool ContainsKey(PrimitiveType key)
@@ -67,12 +54,12 @@ namespace Neo.VM.Types
 
         IEnumerator<KeyValuePair<PrimitiveType, StackItem>> IEnumerable<KeyValuePair<PrimitiveType, StackItem>>.GetEnumerator()
         {
-            return dictionary.GetEnumerator();
+            return ((IDictionary<PrimitiveType, StackItem>)dictionary).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return dictionary.GetEnumerator();
+            return ((IDictionary<PrimitiveType, StackItem>)dictionary).GetEnumerator();
         }
 
         public bool Remove(PrimitiveType key)
