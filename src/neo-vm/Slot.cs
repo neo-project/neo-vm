@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Neo.VM
 {
-    internal class Slot : IReadOnlyList<StackItem>
+    public class Slot : IReadOnlyList<StackItem>
     {
         private readonly ReferenceCounter referenceCounter;
         private readonly StackItem[] items;
@@ -16,7 +16,7 @@ namespace Neo.VM
             {
                 return items[index];
             }
-            set
+            internal set
             {
                 referenceCounter.RemoveStackReference(items[index]);
                 items[index] = value;
@@ -39,7 +39,7 @@ namespace Neo.VM
         {
         }
 
-        public void ClearReferences()
+        internal void ClearReferences()
         {
             foreach (StackItem item in items)
                 referenceCounter.RemoveStackReference(item);
