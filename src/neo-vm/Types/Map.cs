@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +9,8 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     {
+        public const int MaxKeySize = 64;
+
         private readonly Dictionary<PrimitiveType, StackItem> dictionary;
 
         public StackItem this[PrimitiveType key]
@@ -18,6 +21,8 @@ namespace Neo.VM.Types
             }
             set
             {
+                if (key.GetByteLength() > MaxKeySize)
+                    throw new ArgumentException();
                 if (ReferenceCounter != null)
                 {
                     if (dictionary.TryGetValue(key, out StackItem old_value))
@@ -48,6 +53,8 @@ namespace Neo.VM.Types
             if (referenceCounter != null)
                 foreach (var pair in dictionary)
                 {
+                    if (pair.Key.GetByteLength() > MaxKeySize)
+                        throw new ArgumentException();
                     referenceCounter.AddReference(pair.Key, this);
                     referenceCounter.AddReference(pair.Value, this);
                 }

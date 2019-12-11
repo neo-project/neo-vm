@@ -8,11 +8,22 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Value={value}")]
     public class Integer : PrimitiveType
     {
-        private int _length = -1;
+        public const int MaxSize = 32;
+
+        private readonly int _length;
         private readonly BigInteger value;
 
         public Integer(BigInteger value)
         {
+            if (value.IsZero)
+            {
+                _length = 0;
+            }
+            else
+            {
+                _length = value.GetByteCount();
+                if (_length > MaxSize) throw new ArgumentException();
+            }
             this.value = value;
         }
 
@@ -26,8 +37,6 @@ namespace Neo.VM.Types
 
         public override int GetByteLength()
         {
-            if (_length == -1)
-                _length = value.GetByteCount();
             return _length;
         }
 
