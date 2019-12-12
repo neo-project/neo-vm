@@ -75,7 +75,7 @@
               {
                 "instructionPointer": 8,
                 "nextInstruction": "PUSH0",
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -107,7 +107,7 @@
                     "value": []
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -150,7 +150,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -207,6 +207,21 @@
                             "value": "6"
                           }
                         ]
+                      }
+                    ]
+                  }
+                ],
+                "staticFields": [
+                  {
+                    "type": "array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": "5"
+                      },
+                      {
+                        "type": "Integer",
+                        "value": "6"
                       }
                     ]
                   }
@@ -296,7 +311,7 @@
               {
                 "instructionPointer": 8,
                 "nextInstruction": "PUSH0",
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": [
@@ -328,7 +343,7 @@
                     "value": []
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": [
@@ -371,7 +386,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": [
@@ -424,6 +439,21 @@
                             "value": 5
                           }
                         ]
+                      }
+                    ]
+                  }
+                ],
+                "staticFields": [
+                  {
+                    "type": "struct",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 5
+                      },
+                      {
+                        "type": "Integer",
+                        "value": 6
                       }
                     ]
                   }

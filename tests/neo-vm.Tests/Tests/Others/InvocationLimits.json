@@ -36,7 +36,7 @@
               {
                 "instructionPointer": 8,
                 "nextInstruction": "LDSFLD0",
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "integer",
                     "value": 1025
@@ -65,7 +65,7 @@
                     "value": 1024
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "integer",
                     "value": 1024
@@ -86,7 +86,7 @@
               {
                 "instructionPointer": 8,
                 "nextInstruction": "LDSFLD0",
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "integer",
                     "value": 1024
@@ -96,7 +96,7 @@
               {
                 "instructionPointer": 16,
                 "nextInstruction": "RET",
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "integer",
                     "value": 1024

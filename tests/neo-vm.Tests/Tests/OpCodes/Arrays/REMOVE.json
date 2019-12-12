@@ -129,7 +129,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -158,7 +158,7 @@
               {
                 "instructionPointer": 10,
                 "nextInstruction": "LDSFLD0",
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -244,7 +244,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": [
@@ -269,7 +269,7 @@
               {
                 "instructionPointer": 11,
                 "nextInstruction": "LDSFLD0",
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": []

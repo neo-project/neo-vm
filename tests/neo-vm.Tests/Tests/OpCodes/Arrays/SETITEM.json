@@ -259,7 +259,7 @@
                     "value": {}
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "map",
                     "value": {}
@@ -294,7 +294,7 @@
                     "value": {}
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "map",
                     "value": {}
@@ -314,7 +314,7 @@
               {
                 "instructionPointer": 8,
                 "nextInstruction": "LDSFLD0",
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "map",
                     "value": {
@@ -340,6 +340,17 @@
                 "instructionPointer": 9,
                 "nextInstruction": "RET",
                 "evaluationStack": [
+                  {
+                    "type": "map",
+                    "value": {
+                      "0x01": {
+                        "type": "Integer",
+                        "value": 2
+                      }
+                    }
+                  }
+                ],
+                "staticFields": [
                   {
                     "type": "map",
                     "value": {
@@ -627,6 +638,11 @@
                       }
                     ]
                   }
+                ],
+                "staticFields": [
+                  {
+                    "type": "Null"
+                  }
                 ]
               }
             ]
@@ -653,6 +669,11 @@
                         "value": 5
                       }
                     ]
+                  }
+                ],
+                "staticFields": [
+                  {
+                    "type": "Null"
                   }
                 ]
               }
@@ -691,7 +712,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -729,7 +750,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -764,6 +785,17 @@
                       }
                     ]
                   },
+                  {
+                    "type": "array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 4
+                      }
+                    ]
+                  }
+                ],
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -858,6 +890,11 @@
                       }
                     ]
                   }
+                ],
+                "staticFields": [
+                  {
+                    "type": "Null"
+                  }
                 ]
               }
             ]
@@ -884,6 +921,11 @@
                         "value": 5
                       }
                     ]
+                  }
+                ],
+                "staticFields": [
+                  {
+                    "type": "Null"
                   }
                 ]
               }
@@ -922,7 +964,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": [
@@ -960,7 +1002,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": [
@@ -995,6 +1037,17 @@
                       }
                     ]
                   },
+                  {
+                    "type": "struct",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 4
+                      }
+                    ]
+                  }
+                ],
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": [

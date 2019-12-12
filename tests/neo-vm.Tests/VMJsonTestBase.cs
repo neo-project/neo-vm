@@ -91,7 +91,15 @@ namespace Neo.Test
                 AssertAreEqual(result[x].NextInstruction, opcode, message + "Next instruction is different");
                 AssertAreEqual(result[x].InstructionPointer, context.InstructionPointer, message + "Instruction pointer is different");
 
+                // Check stack
+
                 AssertResult(result[x].EvaluationStack, context.EvaluationStack, message + " [EvaluationStack]");
+
+                // Check slots
+
+                AssertResult(result[x].Arguments, context.Arguments, message + " [Arguments]");
+                AssertResult(result[x].LocalVariables, context.LocalVariables, message + " [LocalVariables]");
+                AssertResult(result[x].StaticFields, context.StaticFields, message + " [StaticFields]");
 
                 x++;
             }
@@ -105,11 +113,27 @@ namespace Neo.Test
         /// <param name="message">Message</param>
         private void AssertResult(VMUTStackItem[] result, EvaluationStack stack, string message)
         {
-            AssertAreEqual(result == null ? 0 : result.Length, stack.Count, message + "Stack is different");
+            AssertAreEqual(stack.Count, result == null ? 0 : result.Length, message + "Stack is different");
 
             for (int x = 0, max = stack.Count; x < max; x++)
             {
-                AssertAreEqual(PrepareJsonItem(result[x]).ToString(Formatting.None), ItemToJson(stack.Peek(x)).ToString(Formatting.None), message + "Stack item is different");
+                AssertAreEqual(ItemToJson(stack.Peek(x)).ToString(Formatting.None), PrepareJsonItem(result[x]).ToString(Formatting.None), message + "Stack item is different");
+            }
+        }
+
+        /// <summary>
+        /// Assert result slot
+        /// </summary>
+        /// <param name="slot">Slot</param>
+        /// <param name="result">Result</param>
+        /// <param name="message">Message</param>
+        private void AssertResult(VMUTStackItem[] result, Slot slot, string message)
+        {
+            AssertAreEqual(slot == null ? 0 : slot.Count, result == null ? 0 : result.Length, message + "Slot is different");
+
+            for (int x = 0, max = slot == null ? 0 : slot.Count; x < max; x++)
+            {
+                AssertAreEqual(ItemToJson(slot[x]).ToString(Formatting.None), PrepareJsonItem(result[x]).ToString(Formatting.None), message + "Stack item is different");
             }
         }
 

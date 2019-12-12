@@ -57,7 +57,14 @@ namespace Neo.Test
                     //File.WriteAllText(realFile, ut.ToJson().Replace("\r\n", "\n"), Encoding.UTF8);
                 }
 
-                ExecuteTest(ut);
+                try
+                {
+                    ExecuteTest(ut);
+                }
+                catch (Exception ex)
+                {
+                    throw new AggregateException("Error in file: " + realFile, ex);
+                }
             }
         }
     }
