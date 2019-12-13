@@ -74,7 +74,7 @@ namespace Neo.VM
             InvocationStack.Clear();
         }
 
-        public VMState Execute()
+        public virtual VMState Execute()
         {
             if (State == VMState.BREAK)
                 State = VMState.NONE;
