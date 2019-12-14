@@ -1,19 +1,21 @@
-﻿{
+{
   "category": "Limits",
   "name": "Invocation limits [InvocationLimits] [InvocationLimits] [InvocationLimits]",
   "tests": [
     {
       "name": "More than 1024 ExecutionContext",
       "script": [
+        "INITSSLOT",
+        "01",
         "PUSHDATA1",
         "0x02",
         "0x0004",
         "INC",
-        "TOALTSTACK",
-        "FROMALTSTACK",
+        "STSFLD0",
+        "LDSFLD0",
         "DEC",
         "DUP",
-        "TOALTSTACK",
+        "STSFLD0",
         "JMPIFNOT",
         "0x04",
         "CALL",
@@ -25,15 +27,16 @@
           "actions": [
             "stepInto",
             "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "FROMALTSTACK",
-                "altStack": [
+                "instructionPointer": 8,
+                "nextInstruction": "LDSFLD0",
+                "staticFields": [
                   {
                     "type": "integer",
                     "value": 1025
@@ -54,7 +57,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 10,
+                "instructionPointer": 12,
                 "nextInstruction": "JMPIFNOT",
                 "evaluationStack": [
                   {
@@ -62,7 +65,7 @@
                     "value": 1024
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "integer",
                     "value": 1024
@@ -81,9 +84,9 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "FROMALTSTACK",
-                "altStack": [
+                "instructionPointer": 8,
+                "nextInstruction": "LDSFLD0",
+                "staticFields": [
                   {
                     "type": "integer",
                     "value": 1024
@@ -91,9 +94,9 @@
                 ]
               },
               {
-                "instructionPointer": 14,
+                "instructionPointer": 16,
                 "nextInstruction": "RET",
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "integer",
                     "value": 1024

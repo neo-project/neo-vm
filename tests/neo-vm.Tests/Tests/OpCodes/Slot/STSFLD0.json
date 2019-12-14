@@ -1,16 +1,16 @@
-﻿{
-  "category": "Stack",
-  "name": "TOALTSTACK",
+{
+  "category": "Slot",
+  "name": "STSFLD0",
   "tests": [
     {
-      "name": "Without push",
+      "name": "Without slot",
       "script": [
-        "TOALTSTACK"
+        "STSFLD0"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto"
+            "Execute"
           ],
           "result": {
             "state": "FAULT"
@@ -21,25 +21,28 @@
     {
       "name": "Real test",
       "script": [
-        "PUSH5",
-        "TOALTSTACK"
+        "INITSSLOT",
+        "0x01",
+        "PUSH1",
+        "STSFLD0"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto"
+            "StepInto",
+            "StepInto",
+            "StepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 2,
+                "instructionPointer": 4,
                 "nextInstruction": "RET",
-                "altStack": [
+                "staticFields": [
                   {
-                    "type": "integer",
-                    "value": 5
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -48,7 +51,7 @@
         },
         {
           "actions": [
-            "stepInto"
+            "Execute"
           ],
           "result": {
             "state": "HALT"

@@ -17,7 +17,15 @@ namespace Neo.Test.Types
         [JsonProperty]
         public VMUTStackItem[] EvaluationStack { get; set; }
 
+        // Slots
+
         [JsonProperty]
-        public VMUTStackItem[] AltStack { get; set; }
+        public VMUTStackItem[] StaticFields { get; set; }
+
+        [JsonProperty]
+        public VMUTStackItem[] Arguments { get; set; }
+
+        [JsonProperty]
+        public VMUTStackItem[] LocalVariables { get; set; }
     }
 }

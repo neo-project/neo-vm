@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Arrays",
   "name": "APPEND",
   "tests": [
@@ -40,21 +40,23 @@
     {
       "name": "Clone test [Array]",
       "script": [
+        "INITSSLOT",
+        "01",
         "PUSH0",
         "NEWARRAY",
         "DUP",
         "PUSH5",
         "APPEND",
-        "TOALTSTACK",
+        "STSFLD0",
         "PUSH0",
         "NEWARRAY",
         "DUP",
-        "DUPFROMALTSTACK",
+        "LDSFLD0",
         "APPEND",
-        "DUPFROMALTSTACK",
+        "LDSFLD0",
         "PUSH6",
         "APPEND",
-        "FROMALTSTACK"
+        "LDSFLD0"
       ],
       "steps": [
         {
@@ -64,31 +66,6 @@
             "stepInto",
             "stepInto",
             "stepInto",
-            "stepInto"
-          ],
-          "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 6,
-                "nextInstruction": "PUSH0",
-                "altStack": [
-                  {
-                    "type": "array",
-                    "value": [
-                      {
-                        "type": "Integer",
-                        "value": 5
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
             "stepInto",
             "stepInto"
           ],
@@ -97,6 +74,32 @@
             "invocationStack": [
               {
                 "instructionPointer": 8,
+                "nextInstruction": "PUSH0",
+                "staticFields": [
+                  {
+                    "type": "array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 5
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
                 "nextInstruction": "DUP",
                 "evaluationStack": [
                   {
@@ -104,7 +107,7 @@
                     "value": []
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -129,8 +132,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 11,
-                "nextInstruction": "DUPFROMALTSTACK",
+                "instructionPointer": 13,
+                "nextInstruction": "LDSFLD0",
                 "evaluationStack": [
                   {
                     "type": "array",
@@ -147,7 +150,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "array",
                     "value": [
@@ -173,7 +176,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 15,
+                "instructionPointer": 17,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -204,6 +207,21 @@
                             "value": "6"
                           }
                         ]
+                      }
+                    ]
+                  }
+                ],
+                "staticFields": [
+                  {
+                    "type": "array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": "5"
+                      },
+                      {
+                        "type": "Integer",
+                        "value": "6"
                       }
                     ]
                   }
@@ -258,21 +276,23 @@
     {
       "name": "Clone test [Struct]",
       "script": [
+        "INITSSLOT",
+        "01",
         "PUSH0",
         "NEWSTRUCT",
         "DUP",
         "PUSH5",
         "APPEND",
-        "TOALTSTACK",
+        "STSFLD0",
         "PUSH0",
         "NEWSTRUCT",
         "DUP",
-        "DUPFROMALTSTACK",
+        "LDSFLD0",
         "APPEND",
-        "DUPFROMALTSTACK",
+        "LDSFLD0",
         "PUSH6",
         "APPEND",
-        "FROMALTSTACK"
+        "LDSFLD0"
       ],
       "steps": [
         {
@@ -282,31 +302,6 @@
             "stepInto",
             "stepInto",
             "stepInto",
-            "stepInto"
-          ],
-          "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 6,
-                "nextInstruction": "PUSH0",
-                "altStack": [
-                  {
-                    "type": "struct",
-                    "value": [
-                      {
-                        "type": "Integer",
-                        "value": 5
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
             "stepInto",
             "stepInto"
           ],
@@ -315,6 +310,32 @@
             "invocationStack": [
               {
                 "instructionPointer": 8,
+                "nextInstruction": "PUSH0",
+                "staticFields": [
+                  {
+                    "type": "struct",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 5
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
                 "nextInstruction": "DUP",
                 "evaluationStack": [
                   {
@@ -322,7 +343,7 @@
                     "value": []
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": [
@@ -347,8 +368,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 11,
-                "nextInstruction": "DUPFROMALTSTACK",
+                "instructionPointer": 13,
+                "nextInstruction": "LDSFLD0",
                 "evaluationStack": [
                   {
                     "type": "struct",
@@ -365,7 +386,7 @@
                     ]
                   }
                 ],
-                "altStack": [
+                "staticFields": [
                   {
                     "type": "struct",
                     "value": [
@@ -391,7 +412,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 15,
+                "instructionPointer": 17,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
@@ -418,6 +439,21 @@
                             "value": 5
                           }
                         ]
+                      }
+                    ]
+                  }
+                ],
+                "staticFields": [
+                  {
+                    "type": "struct",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 5
+                      },
+                      {
+                        "type": "Integer",
+                        "value": 6
                       }
                     ]
                   }

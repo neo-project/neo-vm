@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Numeric",
   "name": "NUMNOTEQUAL same types",
   "tests": [
@@ -338,16 +338,12 @@
       "script": [
         "PUSH0",
         "NEWARRAY",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
-        "DUPFROMALTSTACK",
+        "DUP",
         "NUMNOTEQUAL"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto",
             "stepInto",
             "stepInto",
             "stepInto"
@@ -356,19 +352,13 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 3,
                 "nextInstruction": "NUMNOTEQUAL",
                 "evaluationStack": [
                   {
                     "type": "array",
                     "value": []
                   },
-                  {
-                    "type": "array",
-                    "value": []
-                  }
-                ],
-                "altStack": [
                   {
                     "type": "array",
                     "value": []
@@ -440,16 +430,12 @@
       "script": [
         "PUSH0",
         "NEWSTRUCT",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
-        "DUPFROMALTSTACK",
+        "DUP",
         "NUMNOTEQUAL"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto",
             "stepInto",
             "stepInto",
             "stepInto"
@@ -458,19 +444,13 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 3,
                 "nextInstruction": "NUMNOTEQUAL",
                 "evaluationStack": [
                   {
                     "type": "struct",
                     "value": []
                   },
-                  {
-                    "type": "struct",
-                    "value": []
-                  }
-                ],
-                "altStack": [
                   {
                     "type": "struct",
                     "value": []
@@ -592,16 +572,12 @@
       "name": "Real test [Map,Map]=Fault",
       "script": [
         "NEWMAP",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
-        "DUPFROMALTSTACK",
+        "DUP",
         "NUMNOTEQUAL"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto",
             "stepInto",
             "stepInto"
           ],
@@ -609,19 +585,13 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 4,
+                "instructionPointer": 2,
                 "nextInstruction": "NUMNOTEQUAL",
                 "evaluationStack": [
                   {
                     "type": "map",
                     "value": {}
                   },
-                  {
-                    "type": "map",
-                    "value": {}
-                  }
-                ],
-                "altStack": [
                   {
                     "type": "map",
                     "value": {}
@@ -981,24 +951,21 @@
       "script": [
         "SYSCALL",
         "0x77777777",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
-        "DUPFROMALTSTACK",
+        "DUP",
         "NUMNOTEQUAL"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "DUPFROMALTSTACK",
-                "altStack": [
+                "instructionPointer": 5,
+                "nextInstruction": "DUP",
+                "evaluationStack": [
                   {
                     "type": "interop",
                     "value": "Object"
@@ -1010,26 +977,19 @@
         },
         {
           "actions": [
-            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 6,
                 "nextInstruction": "NUMNOTEQUAL",
                 "evaluationStack": [
                   {
                     "type": "interop",
                     "value": "Object"
                   },
-                  {
-                    "type": "interop",
-                    "value": "Object"
-                  }
-                ],
-                "altStack": [
                   {
                     "type": "interop",
                     "value": "Object"

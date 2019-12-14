@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Bitwise Logic",
   "name": "EQUAL same types",
   "tests": [
@@ -338,16 +338,12 @@
       "script": [
         "PUSH0",
         "NEWARRAY",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
-        "DUPFROMALTSTACK",
+        "DUP",
         "EQUAL"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto",
             "stepInto",
             "stepInto",
             "stepInto"
@@ -356,19 +352,13 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 3,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
                     "type": "array",
                     "value": []
                   },
-                  {
-                    "type": "array",
-                    "value": []
-                  }
-                ],
-                "altStack": [
                   {
                     "type": "array",
                     "value": []
@@ -386,18 +376,12 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer": 4,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
                     "type": "boolean",
                     "value": true
-                  }
-                ],
-                "altStack": [
-                  {
-                    "type": "array",
-                    "value": []
                   }
                 ]
               }
@@ -498,16 +482,12 @@
       "script": [
         "PUSH0",
         "NEWSTRUCT",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
-        "DUPFROMALTSTACK",
+        "DUP",
         "EQUAL"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto",
             "stepInto",
             "stepInto",
             "stepInto"
@@ -516,19 +496,13 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 3,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
                     "type": "struct",
                     "value": []
                   },
-                  {
-                    "type": "struct",
-                    "value": []
-                  }
-                ],
-                "altStack": [
                   {
                     "type": "struct",
                     "value": []
@@ -546,18 +520,12 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer": 4,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
                     "type": "boolean",
                     "value": true
-                  }
-                ],
-                "altStack": [
-                  {
-                    "type": "struct",
-                    "value": []
                   }
                 ]
               }
@@ -734,16 +702,12 @@
       "name": "Real test [Map,Map]=true",
       "script": [
         "NEWMAP",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
-        "DUPFROMALTSTACK",
+        "DUP",
         "EQUAL"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto",
             "stepInto",
             "stepInto"
           ],
@@ -751,19 +715,13 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 4,
+                "instructionPointer": 2,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
                     "type": "map",
                     "value": {}
                   },
-                  {
-                    "type": "map",
-                    "value": {}
-                  }
-                ],
-                "altStack": [
                   {
                     "type": "map",
                     "value": {}
@@ -781,18 +739,12 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 3,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
                     "type": "boolean",
                     "value": true
-                  }
-                ],
-                "altStack": [
-                  {
-                    "type": "map",
-                    "value": {}
                   }
                 ]
               }
@@ -1181,24 +1133,21 @@
       "script": [
         "SYSCALL",
         "0x77777777",
-        "TOALTSTACK",
-        "DUPFROMALTSTACK",
-        "DUPFROMALTSTACK",
+        "DUP",
         "EQUAL"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "DUPFROMALTSTACK",
-                "altStack": [
+                "instructionPointer": 5,
+                "nextInstruction": "DUP",
+                "evaluationStack": [
                   {
                     "type": "interop",
                     "value": "Object"
@@ -1210,14 +1159,13 @@
         },
         {
           "actions": [
-            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 6,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
@@ -1228,12 +1176,6 @@
                     "type": "interop",
                     "value": "Object"
                   }
-                ],
-                "altStack": [
-                  {
-                    "type": "interop",
-                    "value": "Object"
-                  }
                 ]
               }
             ]
@@ -1247,18 +1189,12 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 9,
+                "instructionPointer": 7,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
                     "type": "boolean",
                     "value": true
-                  }
-                ],
-                "altStack": [
-                  {
-                    "type": "interop",
-                    "value": "Object"
                   }
                 ]
               }

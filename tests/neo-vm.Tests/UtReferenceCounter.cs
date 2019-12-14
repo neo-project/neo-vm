@@ -10,18 +10,19 @@ namespace Neo.Test
         public void TestCircularReferences()
         {
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitPush(0); //{0}{}:1
-            sb.Emit(OpCode.NEWARRAY); //{A[]}|{}:1
-            sb.Emit(OpCode.DUP); //{A[],A[]}|{}:2
-            sb.Emit(OpCode.DUP); //{A[],A[],A[]}|{}:3
-            sb.Emit(OpCode.APPEND); //{A[A]}|{}:2
-            sb.Emit(OpCode.DUP); //{A[A],A[A]}|{}:3
-            sb.EmitPush(0); //{A[A],A[A],0}|{}:4
-            sb.Emit(OpCode.NEWARRAY); //{A[A],A[A],B[]}|{}:4
-            sb.Emit(OpCode.TOALTSTACK); //{A[A],A[A]}|{B[]}:4
-            sb.Emit(OpCode.DUPFROMALTSTACK); //{A[A],A[A],B[]}|{B[]}:5
+            sb.Emit(OpCode.INITSSLOT, new byte[] { 1 }); //{}|{null}:1
+            sb.EmitPush(0); //{0}|{null}:2
+            sb.Emit(OpCode.NEWARRAY); //{A[]}|{null}:2
+            sb.Emit(OpCode.DUP); //{A[],A[]}|{null}:3
+            sb.Emit(OpCode.DUP); //{A[],A[],A[]}|{null}:4
+            sb.Emit(OpCode.APPEND); //{A[A]}|{null}:3
+            sb.Emit(OpCode.DUP); //{A[A],A[A]}|{null}:4
+            sb.EmitPush(0); //{A[A],A[A],0}|{null}:5
+            sb.Emit(OpCode.NEWARRAY); //{A[A],A[A],B[]}|{null}:5
+            sb.Emit(OpCode.STSFLD0); //{A[A],A[A]}|{B[]}:4
+            sb.Emit(OpCode.LDSFLD0); //{A[A],A[A],B[]}|{B[]}:5
             sb.Emit(OpCode.APPEND); //{A[A,B]}|{B[]}:4
-            sb.Emit(OpCode.DUPFROMALTSTACK); //{A[A,B],B[]}|{B[]}:5
+            sb.Emit(OpCode.LDSFLD0); //{A[A,B],B[]}|{B[]}:5
             sb.EmitPush(0); //{A[A,B],B[],0}|{B[]}:6
             sb.Emit(OpCode.NEWARRAY); //{A[A,B],B[],C[]}|{B[]}:6
             sb.Emit(OpCode.TUCK); //{A[A,B],C[],B[],C[]}|{B[]}:7
@@ -30,14 +31,14 @@ namespace Neo.Test
             sb.Emit(OpCode.NEWARRAY); //{A[A,B],C[],D[]}|{B[C]}:7
             sb.Emit(OpCode.TUCK); //{A[A,B],D[],C[],D[]}|{B[C]}:8
             sb.Emit(OpCode.APPEND); //{A[A,B],D[]}|{B[C[D]]}:7
-            sb.Emit(OpCode.DUPFROMALTSTACK); //{A[A,B],D[],B[C]}|{B[C[D]]}:8
+            sb.Emit(OpCode.LDSFLD0); //{A[A,B],D[],B[C]}|{B[C[D]]}:8
             sb.Emit(OpCode.APPEND); //{A[A,B]}|{B[C[D[B]]]}:7
-            sb.Emit(OpCode.FROMALTSTACK); //{A[A,B],B[C[D[B]]]}|{}:7
-            sb.Emit(OpCode.DROP); //{A[A,B[C[D[B]]]]}|{}:6
-            sb.Emit(OpCode.DUP); //{A[A,B[C[D[B]]]],A[A,B]}|{}:7
-            sb.EmitPush(1); //{A[A,B[C[D[B]]]],A[A,B],1}|{}:8
-            sb.Emit(OpCode.REMOVE); //{A[A]}|{}:2
-            sb.Emit(OpCode.TOALTSTACK); //{}|{A[A]}:2
+            sb.Emit(OpCode.PUSHNULL); //{A[A,B],null}|{B[C[D[B]]]}:8
+            sb.Emit(OpCode.STSFLD0); //{A[A,B[C[D[B]]]]}|{null}:7
+            sb.Emit(OpCode.DUP); //{A[A,B[C[D[B]]]],A[A,B]}|{null}:8
+            sb.EmitPush(1); //{A[A,B[C[D[B]]]],A[A,B],1}|{null}:9
+            sb.Emit(OpCode.REMOVE); //{A[A]}|{null}:3
+            sb.Emit(OpCode.STSFLD0); //{}|{A[A]}:2
             sb.Emit(OpCode.RET); //{}:0
             using ExecutionEngine engine = new ExecutionEngine();
             Debugger debugger = new Debugger(engine);
@@ -45,21 +46,19 @@ namespace Neo.Test
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+            Assert.AreEqual(4, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(4, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(4, engine.ReferenceCounter.Count);
-            Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(4, engine.ReferenceCounter.Count);
+            Assert.AreEqual(5, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(5, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
@@ -67,6 +66,10 @@ namespace Neo.Test
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(5, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
+            Assert.AreEqual(4, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.BREAK, debugger.StepInto());
+            Assert.AreEqual(5, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(6, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(6, engine.ReferenceCounter.Count);
@@ -87,15 +90,15 @@ namespace Neo.Test
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(7, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(7, engine.ReferenceCounter.Count);
-            Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(6, engine.ReferenceCounter.Count);
+            Assert.AreEqual(8, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(7, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(8, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+            Assert.AreEqual(9, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.BREAK, debugger.StepInto());
+            Assert.AreEqual(3, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.HALT, debugger.Execute());
@@ -106,13 +109,14 @@ namespace Neo.Test
         public void TestRemoveReferrer()
         {
             using ScriptBuilder sb = new ScriptBuilder();
-            sb.EmitPush(0); //{0}{}:1
-            sb.Emit(OpCode.NEWARRAY); //{A[]}|{}:1
-            sb.Emit(OpCode.DUP); //{A[],A[]}|{}:2
-            sb.EmitPush(0); //{A[],A[],0}|{}:3
-            sb.Emit(OpCode.NEWARRAY); //{A[],A[],B[]}|{}:3
-            sb.Emit(OpCode.TOALTSTACK); //{A[],A[]}|{B[]}:3
-            sb.Emit(OpCode.DUPFROMALTSTACK); //{A[],A[],B[]}|{B[]}:4
+            sb.Emit(OpCode.INITSSLOT, new byte[] { 1 }); //{}|{null}:1
+            sb.EmitPush(0); //{0}|{null}:2
+            sb.Emit(OpCode.NEWARRAY); //{A[]}|{null}:2
+            sb.Emit(OpCode.DUP); //{A[],A[]}|{null}:3
+            sb.EmitPush(0); //{A[],A[],0}|{null}:4
+            sb.Emit(OpCode.NEWARRAY); //{A[],A[],B[]}|{null}:4
+            sb.Emit(OpCode.STSFLD0); //{A[],A[]}|{B[]}:3
+            sb.Emit(OpCode.LDSFLD0); //{A[],A[],B[]}|{B[]}:4
             sb.Emit(OpCode.APPEND); //{A[B]}|{B[]}:3
             sb.Emit(OpCode.DROP); //{}|{B[]}:1
             sb.Emit(OpCode.RET); //{}:0
@@ -122,13 +126,15 @@ namespace Neo.Test
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-            Assert.AreEqual(3, engine.ReferenceCounter.Count);
+            Assert.AreEqual(4, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.BREAK, debugger.StepInto());
+            Assert.AreEqual(4, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());

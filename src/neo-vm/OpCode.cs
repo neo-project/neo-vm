@@ -310,74 +310,270 @@ namespace Neo.VM
 
         #endregion
 
+        #region Slot
+
+        /// <summary>
+        /// Initialize the static field list for the current execution context.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        INITSSLOT = 0x56,
+        /// <summary>
+        /// Initialize the argument slot and the local variable list for the current execution context.
+        /// </summary>
+        [OperandSize(Size = 2)]
+        INITSLOT = 0x57,
+        /// <summary>
+        /// Loads the static field at index 0 onto the evaluation stack.
+        /// </summary>
+        LDSFLD0 = 0x58,
+        /// <summary>
+        /// Loads the static field at index 1 onto the evaluation stack.
+        /// </summary>
+        LDSFLD1 = 0x59,
+        /// <summary>
+        /// Loads the static field at index 2 onto the evaluation stack.
+        /// </summary>
+        LDSFLD2 = 0x5A,
+        /// <summary>
+        /// Loads the static field at index 3 onto the evaluation stack.
+        /// </summary>
+        LDSFLD3 = 0x5B,
+        /// <summary>
+        /// Loads the static field at index 4 onto the evaluation stack.
+        /// </summary>
+        LDSFLD4 = 0x5C,
+        /// <summary>
+        /// Loads the static field at index 5 onto the evaluation stack.
+        /// </summary>
+        LDSFLD5 = 0x5D,
+        /// <summary>
+        /// Loads the static field at index 6 onto the evaluation stack.
+        /// </summary>
+        LDSFLD6 = 0x5E,
+        /// <summary>
+        /// Loads the static field at a specified index onto the evaluation stack. The index is represented as a 1-byte unsigned integer.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        LDSFLD = 0x5F,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the static field list at index 0.
+        /// </summary>
+        STSFLD0 = 0x60,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the static field list at index 1.
+        /// </summary>
+        STSFLD1 = 0x61,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the static field list at index 2.
+        /// </summary>
+        STSFLD2 = 0x62,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the static field list at index 3.
+        /// </summary>
+        STSFLD3 = 0x63,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the static field list at index 4.
+        /// </summary>
+        STSFLD4 = 0x64,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the static field list at index 5.
+        /// </summary>
+        STSFLD5 = 0x65,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the static field list at index 6.
+        /// </summary>
+        STSFLD6 = 0x66,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the static field list at a specified index. The index is represented as a 1-byte unsigned integer.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        STSFLD = 0x67,
+        /// <summary>
+        /// Loads the local variable at index 0 onto the evaluation stack.
+        /// </summary>
+        LDLOC0 = 0x68,
+        /// <summary>
+        /// Loads the local variable at index 1 onto the evaluation stack.
+        /// </summary>
+        LDLOC1 = 0x69,
+        /// <summary>
+        /// Loads the local variable at index 2 onto the evaluation stack.
+        /// </summary>
+        LDLOC2 = 0x6A,
+        /// <summary>
+        /// Loads the local variable at index 3 onto the evaluation stack.
+        /// </summary>
+        LDLOC3 = 0x6B,
+        /// <summary>
+        /// Loads the local variable at index 4 onto the evaluation stack.
+        /// </summary>
+        LDLOC4 = 0x6C,
+        /// <summary>
+        /// Loads the local variable at index 5 onto the evaluation stack.
+        /// </summary>
+        LDLOC5 = 0x6D,
+        /// <summary>
+        /// Loads the local variable at index 6 onto the evaluation stack.
+        /// </summary>
+        LDLOC6 = 0x6E,
+        /// <summary>
+        /// Loads the local variable at a specified index onto the evaluation stack. The index is represented as a 1-byte unsigned integer.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        LDLOC = 0x6F,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the local variable list at index 0.
+        /// </summary>
+        STLOC0 = 0x70,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the local variable list at index 1.
+        /// </summary>
+        STLOC1 = 0x71,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the local variable list at index 2.
+        /// </summary>
+        STLOC2 = 0x72,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the local variable list at index 3.
+        /// </summary>
+        STLOC3 = 0x73,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the local variable list at index 4.
+        /// </summary>
+        STLOC4 = 0x74,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the local variable list at index 5.
+        /// </summary>
+        STLOC5 = 0x75,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the local variable list at index 6.
+        /// </summary>
+        STLOC6 = 0x76,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the local variable list at a specified index. The index is represented as a 1-byte unsigned integer.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        STLOC = 0x77,
+        /// <summary>
+        /// Loads the argument at index 0 onto the evaluation stack.
+        /// </summary>
+        LDARG0 = 0x78,
+        /// <summary>
+        /// Loads the argument at index 1 onto the evaluation stack.
+        /// </summary>
+        LDARG1 = 0x79,
+        /// <summary>
+        /// Loads the argument at index 2 onto the evaluation stack.
+        /// </summary>
+        LDARG2 = 0x7A,
+        /// <summary>
+        /// Loads the argument at index 3 onto the evaluation stack.
+        /// </summary>
+        LDARG3 = 0x7B,
+        /// <summary>
+        /// Loads the argument at index 4 onto the evaluation stack.
+        /// </summary>
+        LDARG4 = 0x7C,
+        /// <summary>
+        /// Loads the argument at index 5 onto the evaluation stack.
+        /// </summary>
+        LDARG5 = 0x7D,
+        /// <summary>
+        /// Loads the argument at index 6 onto the evaluation stack.
+        /// </summary>
+        LDARG6 = 0x7E,
+        /// <summary>
+        /// Loads the argument at a specified index onto the evaluation stack. The index is represented as a 1-byte unsigned integer.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        LDARG = 0x7F,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the argument slot at index 0.
+        /// </summary>
+        STARG0 = 0x80,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the argument slot at index 1.
+        /// </summary>
+        STARG1 = 0x81,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the argument slot at index 2.
+        /// </summary>
+        STARG2 = 0x82,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the argument slot at index 3.
+        /// </summary>
+        STARG3 = 0x83,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the argument slot at index 4.
+        /// </summary>
+        STARG4 = 0x84,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the argument slot at index 5.
+        /// </summary>
+        STARG5 = 0x85,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the argument slot at index 6.
+        /// </summary>
+        STARG6 = 0x86,
+        /// <summary>
+        /// Stores the value on top of the evaluation stack in the argument slot at a specified index. The index is represented as a 1-byte unsigned integer.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        STARG = 0x87,
+
+        #endregion
+
         #region Old opcodes
 
         /// <summary>
-        /// Puts the input onto the top of the alt stack. Removes it from the main stack.
-        /// </summary>
-        TOALTSTACK = 0x6B,
-        /// <summary>
-        /// Puts the input onto the top of the main stack. Removes it from the alt stack.
-        /// </summary>
-        FROMALTSTACK = 0x6C,
-        /// <summary>
-        /// Duplicates the item on top of alt stack and put it on top of main stack.
-        /// </summary>
-        DUPFROMALTSTACK = 0x6D,
-        /// <summary>
-        /// Copies the bottom of alt stack and put it on top of main stack.
-        /// </summary> 
-        DUPFROMALTSTACKBOTTOM = 0x6E,
-        /// <summary>
         /// Returns true if the input is null. Returns false otherwise.
         /// </summary>
-        ISNULL = 0x70,
-
+        ISNULL = 0xD0,
 
         // Splice
         /// <summary>
         /// Concatenates two strings.
         /// </summary>
-        CAT = 0x7E,
+        CAT = 0xDE,
         /// <summary>
         /// Returns a section of a string.
         /// </summary>
-        SUBSTR = 0x7F,
+        SUBSTR = 0xDF,
         /// <summary>
         /// Keeps only characters left of the specified point in a string.
         /// </summary>
-        LEFT = 0x80,
+        LEFT = 0xE0,
         /// <summary>
         /// Keeps only characters right of the specified point in a string.
         /// </summary>
-        RIGHT = 0x81,
+        RIGHT = 0xE1,
         /// <summary>
         /// Returns the length of the input string.
         /// </summary>
-        SIZE = 0x82,
+        SIZE = 0xE2,
 
 
         // Bitwise logic
         /// <summary>
         /// Flips all of the bits in the input.
         /// </summary>
-        INVERT = 0x83,
+        INVERT = 0xE3,
         /// <summary>
         /// Boolean and between each bit in the inputs.
         /// </summary>
-        AND = 0x84,
+        AND = 0xE4,
         /// <summary>
         /// Boolean or between each bit in the inputs.
         /// </summary>
-        OR = 0x85,
+        OR = 0xE5,
         /// <summary>
         /// Boolean exclusive or between each bit in the inputs.
         /// </summary>
-        XOR = 0x86,
+        XOR = 0xE6,
         /// <summary>
         /// Returns 1 if the inputs are exactly equal, 0 otherwise.
         /// </summary>
-        EQUAL = 0x87,
+        EQUAL = 0xE7,
 
 
         // Arithmetic

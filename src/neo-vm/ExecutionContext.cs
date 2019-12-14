@@ -25,10 +25,11 @@ namespace Neo.VM
         /// </summary>
         public EvaluationStack EvaluationStack { get; }
 
-        /// <summary>
-        /// Alternative stack
-        /// </summary>
-        public EvaluationStack AltStack { get; }
+        public Slot StaticFields { get; internal set; }
+
+        public Slot LocalVariables { get; internal set; }
+
+        public Slot Arguments { get; internal set; }
 
         /// <summary>
         /// Instruction pointer
@@ -62,22 +63,21 @@ namespace Neo.VM
         /// <param name="script">Script</param>
         /// <param name="rvcount">Number of items to be returned</param>
         internal ExecutionContext(Script script, int rvcount, ReferenceCounter referenceCounter)
-            : this(script, rvcount, new EvaluationStack(referenceCounter), new EvaluationStack(referenceCounter), new Dictionary<Type, object>())
+            : this(script, rvcount, new EvaluationStack(referenceCounter), new Dictionary<Type, object>())
         {
         }
 
-        private ExecutionContext(Script script, int rvcount, EvaluationStack stack, EvaluationStack alt, Dictionary<Type, object> states)
+        private ExecutionContext(Script script, int rvcount, EvaluationStack stack, Dictionary<Type, object> states)
         {
             this.RVCount = rvcount;
             this.Script = script;
             this.EvaluationStack = stack;
-            this.AltStack = alt;
             this.states = states;
         }
 
         internal ExecutionContext Clone()
         {
-            return new ExecutionContext(Script, 0, EvaluationStack, AltStack, states);
+            return new ExecutionContext(Script, 0, EvaluationStack, states) { StaticFields = StaticFields };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

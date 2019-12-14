@@ -20,6 +20,9 @@ namespace Neo.Test
         public void TestOpCodesStack() => TestJson("./Tests/OpCodes/Stack");
 
         [TestMethod]
+        public void TestOpCodesSlot() => TestJson("./Tests/OpCodes/Slot");
+
+        [TestMethod]
         public void TestOpCodesSplice() => TestJson("./Tests/OpCodes/Splice");
 
         [TestMethod]
@@ -57,7 +60,14 @@ namespace Neo.Test
                     //File.WriteAllText(realFile, ut.ToJson().Replace("\r\n", "\n"), Encoding.UTF8);
                 }
 
-                ExecuteTest(ut);
+                try
+                {
+                    ExecuteTest(ut);
+                }
+                catch (Exception ex)
+                {
+                    throw new AggregateException("Error in file: " + realFile, ex);
+                }
             }
         }
     }
