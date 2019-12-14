@@ -3,6 +3,34 @@
   "name": "INITSLOT",
   "tests": [
     {
+      "name": "Without enough items",
+      "script": [
+        "INITSLOT",
+        "0x0101"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "RET",
+                "localVariables": [
+                  {
+                    "type": "Null"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "Real test [LocalVariables]",
       "script": [
         "INITSLOT",
@@ -117,6 +145,53 @@
           ],
           "result": {
             "state": "HALT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Initialize twice",
+      "script": [
+        "PUSH0",
+        "INITSLOT",
+        "0x0101",
+        "PUSH0",
+        "INITSLOT",
+        "0x0101"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "PUSH0",
+                "localVariables": [
+                  {
+                    "type": "Null"
+                  }
+                ],
+                "arguments": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT"
           }
         }
       ]
