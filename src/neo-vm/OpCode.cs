@@ -523,35 +523,31 @@ namespace Neo.VM
 
         #endregion
 
-        #region Old opcodes
+        #region Splice
 
-        /// <summary>
-        /// Returns true if the input is null. Returns false otherwise.
-        /// </summary>
-        ISNULL = 0xD0,
-
-        // Splice
+        NEWBUFFER = 0x88,
+        MEMCPY = 0x89,
+        SETBYTE = 0x8A,
         /// <summary>
         /// Concatenates two strings.
         /// </summary>
-        CAT = 0xDE,
+        CAT = 0x8B,
         /// <summary>
         /// Returns a section of a string.
         /// </summary>
-        SUBSTR = 0xDF,
+        SUBSTR = 0x8C,
         /// <summary>
         /// Keeps only characters left of the specified point in a string.
         /// </summary>
-        LEFT = 0xE0,
+        LEFT = 0x8D,
         /// <summary>
         /// Keeps only characters right of the specified point in a string.
         /// </summary>
-        RIGHT = 0xE1,
-        /// <summary>
-        /// Returns the length of the input string.
-        /// </summary>
-        SIZE = 0xE2,
+        RIGHT = 0x8E,
 
+        #endregion
+
+        #region Old opcodes
 
         // Bitwise logic
         /// <summary>
@@ -574,21 +570,24 @@ namespace Neo.VM
         /// Returns 1 if the inputs are exactly equal, 0 otherwise.
         /// </summary>
         EQUAL = 0xE7,
-
+        /// <summary>
+        /// Returns true if the input is null. Returns false otherwise.
+        /// </summary>
+        ISNULL = 0xD0,
 
         // Arithmetic
         /// <summary>
         /// 1 is added to the input.
         /// </summary>
-        INC = 0x8B,
+        INC = 0xFB,
         /// <summary>
         /// 1 is subtracted from the input.
         /// </summary>
-        DEC = 0x8C,
+        DEC = 0xFC,
         /// <summary>
         /// Puts the sign of top stack item on top of the main stack. If value is negative, put -1; if positive, put 1; if value is zero, put 0.
         /// </summary>
-        SIGN = 0x8D,
+        SIGN = 0xFD,
         /// <summary>
         /// The sign of the input is flipped.
         /// </summary>
