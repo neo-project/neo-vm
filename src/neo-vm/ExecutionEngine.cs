@@ -431,21 +431,20 @@ namespace Neo.VM
                 //Slot
                 case OpCode.INITSSLOT:
                     {
-                        if (instruction.TokenU8 == 0) break;
                         if (context.StaticFields != null) return false;
+                        if (instruction.TokenU8 == 0) break;
                         context.StaticFields = new Slot(instruction.TokenU8, ReferenceCounter);
                         break;
                     }
                 case OpCode.INITSLOT:
                     {
+                        if (context.LocalVariables != null || context.Arguments != null) return false;
                         if (instruction.TokenU8 > 0)
                         {
-                            if (context.LocalVariables != null) return false;
                             context.LocalVariables = new Slot(instruction.TokenU8, ReferenceCounter);
                         }
                         if (instruction.TokenU8_1 > 0)
                         {
-                            if (context.Arguments != null) return false;
                             StackItem[] items = new StackItem[instruction.TokenU8_1];
                             for (int i = instruction.TokenU8_1 - 1; i >= 0; i--)
                                 if (!TryPop(out items[i]))
