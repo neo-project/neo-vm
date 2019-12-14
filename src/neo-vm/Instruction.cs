@@ -66,6 +66,15 @@ namespace Neo.VM
             }
         }
 
+        public ushort TokenU16
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return BinaryPrimitives.ReadUInt16LittleEndian(Operand.Span);
+            }
+        }
+
         public uint TokenU32
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

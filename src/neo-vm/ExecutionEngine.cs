@@ -432,13 +432,14 @@ namespace Neo.VM
                 case OpCode.INITSSLOT:
                     {
                         if (context.StaticFields != null) return false;
-                        if (instruction.TokenU8 == 0) break;
+                        if (instruction.TokenU8 == 0) return false;
                         context.StaticFields = new Slot(instruction.TokenU8, ReferenceCounter);
                         break;
                     }
                 case OpCode.INITSLOT:
                     {
                         if (context.LocalVariables != null || context.Arguments != null) return false;
+                        if (instruction.TokenU16 == 0) return false;
                         if (instruction.TokenU8 > 0)
                         {
                             context.LocalVariables = new Slot(instruction.TokenU8, ReferenceCounter);
