@@ -454,38 +454,15 @@ namespace Neo.VM
                         break;
                     }
                 case OpCode.LDSFLD0:
-                    {
-                        if (!ExecuteLoadFromSlot(context.StaticFields, 0)) return false;
-                        break;
-                    }
                 case OpCode.LDSFLD1:
-                    {
-                        if (!ExecuteLoadFromSlot(context.StaticFields, 1)) return false;
-                        break;
-                    }
                 case OpCode.LDSFLD2:
-                    {
-                        if (!ExecuteLoadFromSlot(context.StaticFields, 2)) return false;
-                        break;
-                    }
                 case OpCode.LDSFLD3:
-                    {
-                        if (!ExecuteLoadFromSlot(context.StaticFields, 3)) return false;
-                        break;
-                    }
                 case OpCode.LDSFLD4:
-                    {
-                        if (!ExecuteLoadFromSlot(context.StaticFields, 4)) return false;
-                        break;
-                    }
                 case OpCode.LDSFLD5:
-                    {
-                        if (!ExecuteLoadFromSlot(context.StaticFields, 5)) return false;
-                        break;
-                    }
                 case OpCode.LDSFLD6:
                     {
-                        if (!ExecuteLoadFromSlot(context.StaticFields, 6)) return false;
+                        if (!ExecuteLoadFromSlot(context.StaticFields, instruction.OpCode - OpCode.LDSFLD0))
+                            return false;
                         break;
                     }
                 case OpCode.LDSFLD:
@@ -494,38 +471,15 @@ namespace Neo.VM
                         break;
                     }
                 case OpCode.STSFLD0:
-                    {
-                        if (!ExecuteStoreToSlot(context.StaticFields, 0)) return false;
-                        break;
-                    }
                 case OpCode.STSFLD1:
-                    {
-                        if (!ExecuteStoreToSlot(context.StaticFields, 1)) return false;
-                        break;
-                    }
                 case OpCode.STSFLD2:
-                    {
-                        if (!ExecuteStoreToSlot(context.StaticFields, 2)) return false;
-                        break;
-                    }
                 case OpCode.STSFLD3:
-                    {
-                        if (!ExecuteStoreToSlot(context.StaticFields, 3)) return false;
-                        break;
-                    }
                 case OpCode.STSFLD4:
-                    {
-                        if (!ExecuteStoreToSlot(context.StaticFields, 4)) return false;
-                        break;
-                    }
                 case OpCode.STSFLD5:
-                    {
-                        if (!ExecuteStoreToSlot(context.StaticFields, 5)) return false;
-                        break;
-                    }
                 case OpCode.STSFLD6:
                     {
-                        if (!ExecuteStoreToSlot(context.StaticFields, 6)) return false;
+                        if (!ExecuteStoreToSlot(context.StaticFields, instruction.OpCode - OpCode.STSFLD0))
+                            return false;
                         break;
                     }
                 case OpCode.STSFLD:
@@ -534,38 +488,15 @@ namespace Neo.VM
                         break;
                     }
                 case OpCode.LDLOC0:
-                    {
-                        if (!ExecuteLoadFromSlot(context.LocalVariables, 0)) return false;
-                        break;
-                    }
                 case OpCode.LDLOC1:
-                    {
-                        if (!ExecuteLoadFromSlot(context.LocalVariables, 1)) return false;
-                        break;
-                    }
                 case OpCode.LDLOC2:
-                    {
-                        if (!ExecuteLoadFromSlot(context.LocalVariables, 2)) return false;
-                        break;
-                    }
                 case OpCode.LDLOC3:
-                    {
-                        if (!ExecuteLoadFromSlot(context.LocalVariables, 3)) return false;
-                        break;
-                    }
                 case OpCode.LDLOC4:
-                    {
-                        if (!ExecuteLoadFromSlot(context.LocalVariables, 4)) return false;
-                        break;
-                    }
                 case OpCode.LDLOC5:
-                    {
-                        if (!ExecuteLoadFromSlot(context.LocalVariables, 5)) return false;
-                        break;
-                    }
                 case OpCode.LDLOC6:
                     {
-                        if (!ExecuteLoadFromSlot(context.LocalVariables, 6)) return false;
+                        if (!ExecuteLoadFromSlot(context.LocalVariables, instruction.OpCode - OpCode.LDLOC0))
+                            return false;
                         break;
                     }
                 case OpCode.LDLOC:
@@ -574,38 +505,15 @@ namespace Neo.VM
                         break;
                     }
                 case OpCode.STLOC0:
-                    {
-                        if (!ExecuteStoreToSlot(context.LocalVariables, 0)) return false;
-                        break;
-                    }
                 case OpCode.STLOC1:
-                    {
-                        if (!ExecuteStoreToSlot(context.LocalVariables, 1)) return false;
-                        break;
-                    }
                 case OpCode.STLOC2:
-                    {
-                        if (!ExecuteStoreToSlot(context.LocalVariables, 2)) return false;
-                        break;
-                    }
                 case OpCode.STLOC3:
-                    {
-                        if (!ExecuteStoreToSlot(context.LocalVariables, 3)) return false;
-                        break;
-                    }
                 case OpCode.STLOC4:
-                    {
-                        if (!ExecuteStoreToSlot(context.LocalVariables, 4)) return false;
-                        break;
-                    }
                 case OpCode.STLOC5:
-                    {
-                        if (!ExecuteStoreToSlot(context.LocalVariables, 5)) return false;
-                        break;
-                    }
                 case OpCode.STLOC6:
                     {
-                        if (!ExecuteStoreToSlot(context.LocalVariables, 6)) return false;
+                        if (!ExecuteStoreToSlot(context.LocalVariables, instruction.OpCode - OpCode.STLOC0))
+                            return false;
                         break;
                     }
                 case OpCode.STLOC:
@@ -614,38 +522,15 @@ namespace Neo.VM
                         break;
                     }
                 case OpCode.LDARG0:
-                    {
-                        if (!ExecuteLoadFromSlot(context.Arguments, 0)) return false;
-                        break;
-                    }
                 case OpCode.LDARG1:
-                    {
-                        if (!ExecuteLoadFromSlot(context.Arguments, 1)) return false;
-                        break;
-                    }
                 case OpCode.LDARG2:
-                    {
-                        if (!ExecuteLoadFromSlot(context.Arguments, 2)) return false;
-                        break;
-                    }
                 case OpCode.LDARG3:
-                    {
-                        if (!ExecuteLoadFromSlot(context.Arguments, 3)) return false;
-                        break;
-                    }
                 case OpCode.LDARG4:
-                    {
-                        if (!ExecuteLoadFromSlot(context.Arguments, 4)) return false;
-                        break;
-                    }
                 case OpCode.LDARG5:
-                    {
-                        if (!ExecuteLoadFromSlot(context.Arguments, 5)) return false;
-                        break;
-                    }
                 case OpCode.LDARG6:
                     {
-                        if (!ExecuteLoadFromSlot(context.Arguments, 6)) return false;
+                        if (!ExecuteLoadFromSlot(context.Arguments, instruction.OpCode - OpCode.LDARG0))
+                            return false;
                         break;
                     }
                 case OpCode.LDARG:
@@ -654,38 +539,15 @@ namespace Neo.VM
                         break;
                     }
                 case OpCode.STARG0:
-                    {
-                        if (!ExecuteStoreToSlot(context.Arguments, 0)) return false;
-                        break;
-                    }
                 case OpCode.STARG1:
-                    {
-                        if (!ExecuteStoreToSlot(context.Arguments, 1)) return false;
-                        break;
-                    }
                 case OpCode.STARG2:
-                    {
-                        if (!ExecuteStoreToSlot(context.Arguments, 2)) return false;
-                        break;
-                    }
                 case OpCode.STARG3:
-                    {
-                        if (!ExecuteStoreToSlot(context.Arguments, 3)) return false;
-                        break;
-                    }
                 case OpCode.STARG4:
-                    {
-                        if (!ExecuteStoreToSlot(context.Arguments, 4)) return false;
-                        break;
-                    }
                 case OpCode.STARG5:
-                    {
-                        if (!ExecuteStoreToSlot(context.Arguments, 5)) return false;
-                        break;
-                    }
                 case OpCode.STARG6:
                     {
-                        if (!ExecuteStoreToSlot(context.Arguments, 6)) return false;
+                        if (!ExecuteStoreToSlot(context.Arguments, instruction.OpCode - OpCode.STARG0))
+                            return false;
                         break;
                     }
                 case OpCode.STARG:
