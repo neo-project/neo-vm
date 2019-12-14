@@ -14,18 +14,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "invocationStack": [
-              {
-                "instructionPointer": 3,
-                "nextInstruction": "RET",
-                "localVariables": [
-                  {
-                    "type": "Null"
-                  }
-                ]
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]
