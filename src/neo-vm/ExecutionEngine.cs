@@ -421,12 +421,6 @@ namespace Neo.VM
                         if (!context.EvaluationStack.Reverse((int)n.ToBigInteger())) return false;
                         break;
                     }
-                case OpCode.ISNULL:
-                    {
-                        if (!TryPop(out StackItem x)) return false;
-                        Push(x.IsNull);
-                        break;
-                    }
 
                 //Slot
                 case OpCode.INITSSLOT:
@@ -624,12 +618,6 @@ namespace Neo.VM
                         Push(x);
                         break;
                     }
-                case OpCode.SIZE:
-                    {
-                        if (!TryPop(out PrimitiveType x)) return false;
-                        Push(x.GetByteLength());
-                        break;
-                    }
 
                 // Bitwise logic
                 case OpCode.INVERT:
@@ -664,6 +652,12 @@ namespace Neo.VM
                         if (!TryPop(out StackItem x2)) return false;
                         if (!TryPop(out StackItem x1)) return false;
                         Push(x1.Equals(x2));
+                        break;
+                    }
+                case OpCode.ISNULL:
+                    {
+                        if (!TryPop(out StackItem x)) return false;
+                        Push(x.IsNull);
                         break;
                     }
 
