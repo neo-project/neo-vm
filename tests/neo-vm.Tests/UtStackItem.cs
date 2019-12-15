@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM.Types;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace Neo.Test
@@ -88,15 +87,7 @@ namespace Neo.Test
             item = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
 
             Assert.IsInstanceOfType(item, typeof(ByteArray));
-            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, ((ByteArray)item).ToByteArray().ToArray());
-
-            // Interop
-
-            var interop = new InteropInterface<Dictionary<int, int>>(new Dictionary<int, int>() { { 1, 1 } });
-
-            Dictionary<int, int> value = interop;
-            Assert.AreEqual(1, value.Count);
-
+            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, ((ByteArray)item).Memory.ToArray());
         }
     }
 }

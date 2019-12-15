@@ -235,7 +235,7 @@ namespace Neo.Test
                         };
                     }
                 case VM.Types.Integer v: value = new JValue(v.ToBigInteger().ToString()); break;
-                case VM.Types.ByteArray v: value = new JValue(v.ToByteArray().ToArray()); break;
+                case VM.Types.ByteArray v: value = new JValue(v.Memory.ToArray()); break;
                 //case VM.Types.Struct v:
                 case VM.Types.Array v:
                     {
@@ -255,7 +255,7 @@ namespace Neo.Test
 
                         foreach (var entry in v)
                         {
-                            jdic.Add(entry.Key.ToByteArray().ToArray().ToHexString(), ItemToJson(entry.Value));
+                            jdic.Add(entry.Key.Memory.ToArray().ToHexString(), ItemToJson(entry.Value));
                         }
 
                         value = jdic;

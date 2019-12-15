@@ -10,34 +10,30 @@ namespace Neo.VM.Types
     {
         public const int MaxSize = 32;
 
-        private readonly int _length;
         private readonly BigInteger value;
+
+        public override ReadOnlyMemory<byte> Memory => value.IsZero ? ReadOnlyMemory<byte>.Empty : value.ToByteArray();
+        public override int Size { get; }
 
         public Integer(BigInteger value)
         {
             if (value.IsZero)
             {
-                _length = 0;
+                Size = 0;
             }
             else
             {
-                _length = value.GetByteCount();
-                if (_length > MaxSize) throw new ArgumentException();
+                Size = value.GetByteCount();
+                if (Size > MaxSize) throw new ArgumentException();
             }
             this.value = value;
         }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(PrimitiveType other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (other is null) return false;
             if (other is Integer i) return value == i.value;
             return base.Equals(other);
-        }
-
-        public override int GetByteLength()
-        {
-            return _length;
         }
 
         public override BigInteger ToBigInteger()
@@ -48,11 +44,6 @@ namespace Neo.VM.Types
         public override bool ToBoolean()
         {
             return !value.IsZero;
-        }
-
-        internal override ReadOnlyMemory<byte> ToMemory()
-        {
-            return value.IsZero ? ReadOnlyMemory<byte>.Empty : value.ToByteArray();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

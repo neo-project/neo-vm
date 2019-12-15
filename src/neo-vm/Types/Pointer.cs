@@ -12,10 +12,10 @@ namespace Neo.VM.Types
             this.Position = position;
         }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(object obj)
         {
-            if (other == this) return true;
-            if (other is Pointer p) return Position == p.Position;
+            if (obj == this) return true;
+            if (obj is Pointer p) return Position == p.Position;
             return false;
         }
 

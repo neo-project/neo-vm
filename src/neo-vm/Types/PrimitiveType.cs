@@ -6,17 +6,21 @@ namespace Neo.VM.Types
 {
     public abstract class PrimitiveType : StackItem
     {
-        public override bool Equals(StackItem other)
+        public abstract ReadOnlyMemory<byte> Memory { get; }
+        public virtual int Size => Memory.Length;
+        public virtual ReadOnlySpan<byte> Span => Memory.Span;
+
+        public sealed override bool Equals(object obj)
         {
-            if (ReferenceEquals(this, other)) return true;
-            if (other is null) return false;
-            if (!(other is PrimitiveType p)) return false;
-            return Unsafe.MemoryEquals(ToByteArray(), p.ToByteArray());
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj is PrimitiveType p) return Equals(p);
+            return false;
         }
 
-        public virtual int GetByteLength()
+        public virtual bool Equals(PrimitiveType other)
         {
-            return ToByteArray().Length;
+            if (ReferenceEquals(this, other)) return true;
+            return Span.SequenceEqual(other.Span);
         }
 
         public sealed override int GetHashCode()
@@ -24,7 +28,7 @@ namespace Neo.VM.Types
             unchecked
             {
                 int hash = 17;
-                foreach (byte element in ToByteArray())
+                foreach (byte element in Span)
                     hash = hash * 31 + element;
                 return hash;
             }
@@ -32,25 +36,22 @@ namespace Neo.VM.Types
 
         public virtual BigInteger ToBigInteger()
         {
-            if (GetByteLength() > Integer.MaxSize) throw new InvalidCastException();
-            return new BigInteger(ToByteArray());
+            if (Size > Integer.MaxSize) throw new InvalidCastException();
+            return new BigInteger(Span);
         }
 
         public override bool ToBoolean()
         {
-            ReadOnlySpan<byte> value = ToByteArray();
-            if (value.Length > Integer.MaxSize)
-                return true;
-            return Unsafe.NotZero(value);
+            if (Size > Integer.MaxSize) return true;
+            return Unsafe.NotZero(Span);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<byte> ToByteArray()
+        public int ToInt32()
         {
-            return ToMemory().Span;
+            BigInteger i = ToBigInteger();
+            if (i < int.MinValue || i > int.MaxValue) throw new InvalidCastException();
+            return (int)i;
         }
-
-        internal abstract ReadOnlyMemory<byte> ToMemory();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator PrimitiveType(int value)

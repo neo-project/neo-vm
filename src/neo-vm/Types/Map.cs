@@ -22,7 +22,7 @@ namespace Neo.VM.Types
             }
             set
             {
-                if (key.GetByteLength() > MaxKeySize)
+                if (key.Size > MaxKeySize)
                     throw new ArgumentException();
                 if (ReferenceCounter != null)
                 {

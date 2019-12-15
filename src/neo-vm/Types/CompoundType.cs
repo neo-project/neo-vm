@@ -18,9 +18,9 @@ namespace Neo.VM.Types
 
         internal abstract int SubItemsCount { get; }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(object obj)
         {
-            return ReferenceEquals(this, other);
+            return ReferenceEquals(this, obj);
         }
 
         public override int GetHashCode()

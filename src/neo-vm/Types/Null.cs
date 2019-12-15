@@ -6,11 +6,11 @@ namespace Neo.VM.Types
     {
         internal Null() { }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(object obj)
         {
-            if (ReferenceEquals(this, other)) return true;
-            if (other is null) return true;
-            if (other is Null) return true;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj is null) return true;
+            if (obj is Null) return true;
             return false;
         }
 
