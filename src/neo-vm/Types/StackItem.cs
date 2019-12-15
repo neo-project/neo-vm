@@ -8,7 +8,9 @@ namespace Neo.VM.Types
     {
         public bool IsNull => this is Null;
 
+        public static StackItem False { get; } = 0;
         public static StackItem Null { get; } = new Null();
+        public static StackItem True { get; } = 1;
 
         public abstract bool Equals(StackItem other);
 
@@ -64,7 +66,7 @@ namespace Neo.VM.Types
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(bool value)
         {
-            return (Boolean)value;
+            return value ? True : False;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

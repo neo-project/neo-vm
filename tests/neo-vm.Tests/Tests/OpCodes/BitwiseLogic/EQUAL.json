@@ -48,154 +48,6 @@
       ]
     },
     {
-      "name": "Real test [Bool,Bool]=true",
-      "script": [
-        "PUSH0",
-        "NOT",
-        "PUSH0",
-        "NOT",
-        "EQUAL"
-      ],
-      "steps": [
-        {
-          "actions": [
-            "stepInto",
-            "stepInto",
-            "stepInto",
-            "stepInto"
-          ],
-          "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 4,
-                "nextInstruction": "EQUAL",
-                "evaluationStack": [
-                  {
-                    "type": "boolean",
-                    "value": true
-                  },
-                  {
-                    "type": "boolean",
-                    "value": true
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "stepInto"
-          ],
-          "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 5,
-                "nextInstruction": "RET",
-                "evaluationStack": [
-                  {
-                    "type": "boolean",
-                    "value": true
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "stepInto"
-          ],
-          "result": {
-            "state": "HALT",
-            "resultStack": [
-              {
-                "type": "boolean",
-                "value": true
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Real test [Bool,Bool]=false",
-      "script": [
-        "PUSH0",
-        "NOT",
-        "PUSH0",
-        "NOT",
-        "NOT",
-        "EQUAL"
-      ],
-      "steps": [
-        {
-          "actions": [
-            "stepInto",
-            "stepInto",
-            "stepInto",
-            "stepInto",
-            "stepInto"
-          ],
-          "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 5,
-                "nextInstruction": "EQUAL",
-                "evaluationStack": [
-                  {
-                    "type": "boolean",
-                    "value": false
-                  },
-                  {
-                    "type": "boolean",
-                    "value": true
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "stepInto"
-          ],
-          "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 6,
-                "nextInstruction": "RET",
-                "evaluationStack": [
-                  {
-                    "type": "boolean",
-                    "value": false
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "stepInto"
-          ],
-          "result": {
-            "state": "HALT",
-            "resultStack": [
-              {
-                "type": "boolean",
-                "value": false
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
       "name": "Real test [Integer,Integer]=true",
       "script": [
         "PUSH1",
@@ -240,8 +92,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": true
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -256,8 +108,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": true
+                "type": "Integer",
+                "value": 1
               }
             ]
           }
@@ -309,8 +161,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -325,8 +177,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }
@@ -380,8 +232,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": true
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -396,8 +248,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": true
+                "type": "Integer",
+                "value": 1
               }
             ]
           }
@@ -453,8 +305,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -469,8 +321,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }
@@ -524,8 +376,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": true
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -540,8 +392,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": true
+                "type": "Integer",
+                "value": 1
               }
             ]
           }
@@ -597,8 +449,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": true
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -613,8 +465,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": true
+                "type": "Integer",
+                "value": 1
               }
             ]
           }
@@ -674,8 +526,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -690,8 +542,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }
@@ -743,8 +595,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": true
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -759,8 +611,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": true
+                "type": "Integer",
+                "value": 1
               }
             ]
           }
@@ -812,8 +664,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -828,8 +680,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }
@@ -885,8 +737,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": true
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -901,8 +753,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": true
+                "type": "Integer",
+                "value": 1
               }
             ]
           }
@@ -958,8 +810,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -974,8 +826,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }
@@ -1031,8 +883,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -1047,8 +899,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }
@@ -1104,8 +956,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -1120,8 +972,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }
@@ -1193,8 +1045,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": true
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -1209,8 +1061,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": true
+                "type": "Integer",
+                "value": 1
               }
             ]
           }
@@ -1260,8 +1112,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }

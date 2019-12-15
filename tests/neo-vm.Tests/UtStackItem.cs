@@ -83,13 +83,6 @@ namespace Neo.Test
             Assert.IsInstanceOfType(item, typeof(Integer));
             Assert.AreEqual(new BigInteger(-1), ((Integer)item).ToBigInteger());
 
-            // Boolean
-
-            item = true;
-
-            Assert.IsInstanceOfType(item, typeof(Boolean));
-            Assert.IsTrue(item.ToBoolean());
-
             // ByteArray
 
             item = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
