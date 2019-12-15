@@ -552,54 +552,6 @@ namespace Neo.VM
                     }
 
                 // Splice
-                case OpCode.NEWBUFFER:
-                    {
-                        if (!TryPop(out PrimitiveType item_n)) return false;
-                        BigInteger n = item_n.ToBigInteger();
-                        if (n < 0 || n > MaxItemSize) return false;
-                        Push(new byte[(int)n]);
-                        break;
-                    }
-                case OpCode.MEMCPY:
-                    {
-                        if (!TryPop(out PrimitiveType item_n)) return false;
-                        BigInteger n = item_n.ToBigInteger();
-                        if (n < 0 || n > MaxItemSize) return false;
-                        if (!TryPop(out PrimitiveType item_si)) return false;
-                        BigInteger si = item_si.ToBigInteger();
-                        if (si < 0 || si + n > MaxItemSize) return false;
-                        if (!TryPop(out PrimitiveType item_src)) return false;
-                        ReadOnlySpan<byte> src = item_src.ToByteArray();
-                        if (si + n > src.Length) return false;
-                        if (!TryPop(out PrimitiveType item_di)) return false;
-                        BigInteger di = item_di.ToBigInteger();
-                        if (di < 0 || di + n > MaxItemSize) return false;
-                        if (!TryPop(out PrimitiveType item_dst)) return false;
-                        ReadOnlySpan<byte> dst = item_dst.ToByteArray();
-                        byte[] buffer = new byte[Math.Max((int)(di + n), dst.Length)];
-                        if (di > 0) dst[..(int)di].CopyTo(buffer);
-                        if (n > 0) src[(int)si..(int)(si + n)].CopyTo(buffer.AsSpan((int)di));
-                        if (di + n < dst.Length) dst[(int)(di + n)..].CopyTo(buffer.AsSpan((int)(di + n)));
-                        Push(buffer);
-                        break;
-                    }
-                case OpCode.SETBYTE:
-                    {
-                        if (!TryPop(out PrimitiveType item_b)) return false;
-                        BigInteger b = item_b.ToBigInteger();
-                        if (b < sbyte.MinValue || b > byte.MaxValue) return false;
-                        if (!TryPop(out PrimitiveType item_i)) return false;
-                        BigInteger i = item_i.ToBigInteger();
-                        if (i < 0 || i >= MaxItemSize) return false;
-                        if (!TryPop(out PrimitiveType item_x)) return false;
-                        ReadOnlySpan<byte> x = item_x.ToByteArray();
-                        if (i >= x.Length) return false;
-                        byte[] buffer = new byte[x.Length];
-                        x.CopyTo(buffer);
-                        buffer[(int)i] = (byte)(int)b;
-                        Push(buffer);
-                        break;
-                    }
                 case OpCode.CAT:
                     {
                         if (!TryPop(out PrimitiveType item_x2)) return false;
