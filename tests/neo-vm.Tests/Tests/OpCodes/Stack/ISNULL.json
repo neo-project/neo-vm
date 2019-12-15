@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Stack",
   "name": "ISNULL",
   "tests": [
@@ -56,8 +56,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": true
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -72,8 +72,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": true
+                "type": "Integer",
+                "value": 1
               }
             ]
           }
@@ -119,8 +119,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -135,8 +135,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }

@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Limits",
   "name": "Stack item limits [StackItemLimits] [StackItemLimits] [StackItemLimits]",
   "tests": [
@@ -43,8 +43,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }
@@ -59,8 +59,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "boolean",
-                "value": false
+                "type": "Integer",
+                "value": 0
               }
             ]
           }

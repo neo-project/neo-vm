@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Numeric",
   "name": "SIGN",
   "tests": [
@@ -39,8 +39,8 @@
                 "nextInstruction": "SIGN",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }

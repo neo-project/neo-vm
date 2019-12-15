@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Others",
   "name": "ScriptLogic",
   "tests": [
@@ -43,8 +43,8 @@
                 "nextInstruction": "NOT",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": true
+                    "type": "Integer",
+                    "value": 1
                   }
                 ]
               }
@@ -63,8 +63,8 @@
                 "nextInstruction": "DROP",
                 "evaluationStack": [
                   {
-                    "type": "boolean",
-                    "value": false
+                    "type": "Integer",
+                    "value": 0
                   }
                 ]
               }

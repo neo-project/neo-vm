@@ -83,12 +83,6 @@ namespace Neo.VM.Types
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator PrimitiveType(bool value)
-        {
-            return (Boolean)value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator PrimitiveType(byte[] value)
         {
             return (ByteArray)value;
