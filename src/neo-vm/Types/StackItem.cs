@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
-    public abstract class StackItem : IEquatable<StackItem>
+    public abstract class StackItem
     {
         public bool IsNull => this is Null;
 
@@ -12,21 +12,12 @@ namespace Neo.VM.Types
         public static StackItem Null { get; } = new Null();
         public static StackItem True { get; } = 1;
 
-        public abstract bool Equals(StackItem other);
+        public abstract override bool Equals(object obj);
 
-        public sealed override bool Equals(object obj)
-        {
-            if (ReferenceEquals(obj, this)) return true;
-            if (obj is StackItem other)
-                return Equals(other);
-            return false;
-        }
-
-        public static StackItem FromInterface<T>(T value)
-            where T : class
+        public static StackItem FromInterface(object value)
         {
             if (value is null) return Null;
-            return new InteropInterface<T>(value);
+            return new InteropInterface(value);
         }
 
         public abstract override int GetHashCode();

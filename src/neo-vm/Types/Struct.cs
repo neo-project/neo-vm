@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -44,9 +45,9 @@ namespace Neo.VM.Types
             return result;
         }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(object obj)
         {
-            if (other is null) return false;
+            if (!(obj is Struct other)) return false;
             Stack<StackItem> stack1 = new Stack<StackItem>();
             Stack<StackItem> stack2 = new Stack<StackItem>();
             stack1.Push(this);
@@ -71,6 +72,11 @@ namespace Neo.VM.Types
                 }
             }
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotSupportedException();
         }
     }
 }

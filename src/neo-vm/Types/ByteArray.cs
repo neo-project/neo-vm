@@ -8,21 +8,23 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(value.ToArray()).Replace(\"-\", string.Empty)}")]
     public class ByteArray : PrimitiveType
     {
-        private readonly ReadOnlyMemory<byte> value;
+        public override ReadOnlyMemory<byte> Memory { get; }
 
         public ByteArray(ReadOnlyMemory<byte> value)
         {
-            this.value = value;
+            this.Memory = value;
         }
 
-        public override int GetByteLength()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ReadOnlyMemory<byte>(ByteArray value)
         {
-            return value.Length;
+            return value.Memory;
         }
 
-        internal override ReadOnlyMemory<byte> ToMemory()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ReadOnlySpan<byte>(ByteArray value)
         {
-            return value;
+            return value.Memory.Span;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
