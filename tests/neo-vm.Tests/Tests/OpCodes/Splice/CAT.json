@@ -106,7 +106,7 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "Buffer",
                     "value": "0x010203"
                   }
                 ]
@@ -122,7 +122,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "Buffer",
                 "value": "0x010203"
               }
             ]
@@ -173,7 +173,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "Buffer",
                 "value": ""
               }
             ]
@@ -222,7 +222,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "Buffer",
                 "value": "0x01"
               }
             ]
@@ -271,7 +271,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "Buffer",
                 "value": "0x01"
               }
             ]

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(value.ToArray()).Replace(\"-\", string.Empty)}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(Memory.ToArray()).Replace(\"-\", string.Empty)}")]
     public class ByteArray : PrimitiveType
     {
         public override ReadOnlyMemory<byte> Memory { get; }

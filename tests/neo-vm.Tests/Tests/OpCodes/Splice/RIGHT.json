@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Splice",
   "name": "RIGHT",
   "tests": [
@@ -200,7 +200,7 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "Buffer",
                     "value": "0x0203"
                   }
                 ]
@@ -216,7 +216,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "Buffer",
                 "value": "0x0203"
               }
             ]
@@ -271,7 +271,7 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "Buffer",
                     "value": "0x010203"
                   }
                 ]
@@ -287,7 +287,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "Buffer",
                 "value": "0x010203"
               }
             ]

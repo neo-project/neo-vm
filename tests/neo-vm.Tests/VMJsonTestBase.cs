@@ -168,6 +168,7 @@ namespace Neo.Test
                         break;
                     }
                 case VMUTStackItemType.ByteArray:
+                case VMUTStackItemType.Buffer:
                     {
                         var value = ret["value"].Value<string>();
                         ret["value"] = value.FromHexString();
@@ -236,6 +237,7 @@ namespace Neo.Test
                     }
                 case VM.Types.Integer v: value = new JValue(v.ToBigInteger().ToString()); break;
                 case VM.Types.ByteArray v: value = new JValue(v.Memory.ToArray()); break;
+                case VM.Types.Buffer v: value = new JValue(v.InnerBuffer); break;
                 //case VM.Types.Struct v:
                 case VM.Types.Array v:
                     {

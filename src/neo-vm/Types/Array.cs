@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Array : CompoundType, IReadOnlyList<StackItem>
     {
         protected readonly List<StackItem> _array;

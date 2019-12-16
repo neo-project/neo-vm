@@ -2,12 +2,10 @@ using Neo.VM.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     {
         public const int MaxKeySize = 64;
