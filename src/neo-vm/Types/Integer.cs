@@ -12,8 +12,8 @@ namespace Neo.VM.Types
 
         private readonly BigInteger value;
 
-        public override ReadOnlyMemory<byte> Memory => value.IsZero ? ReadOnlyMemory<byte>.Empty : value.ToByteArray();
         public override int Size { get; }
+        public override ReadOnlySpan<byte> Span => value.IsZero ? ReadOnlySpan<byte>.Empty : value.ToByteArray();
 
         public Integer(BigInteger value)
         {
