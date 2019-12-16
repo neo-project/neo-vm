@@ -96,9 +96,34 @@
       ]
     },
     {
-      "name": "Real test",
+      "name": "Real test [Integer]",
       "script": [
         "PUSH10",
+        "NEWBUFFER"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Buffer",
+                "value": "0x00000000000000000000"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [ByteArray]",
+      "script": [
+        "PUSHDATA1",
+        "0x0A",
+        "0x00000000000000000000",
         "NEWBUFFER"
       ],
       "steps": [

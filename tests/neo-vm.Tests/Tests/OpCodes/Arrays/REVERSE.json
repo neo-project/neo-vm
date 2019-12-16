@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Arrays",
   "name": "REVERSE",
   "tests": [
@@ -37,7 +37,7 @@
       ]
     },
     {
-      "name": "Real test",
+      "name": "Real test [Array]",
       "script": [
         "PUSH9",
         "PUSH8",
@@ -100,6 +100,33 @@
                     "value": 8
                   }
                 ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Buffer]",
+      "script": [
+        "PUSHDATA1",
+        "0x03",
+        "0x010203",
+        "NEWBUFFER",
+        "DUP",
+        "REVERSE"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Buffer",
+                "value": "0x030201"
               }
             ]
           }
