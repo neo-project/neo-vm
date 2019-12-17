@@ -1119,6 +1119,168 @@
           }
         }
       ]
+    },
+    {
+      "name": "Real test [Buffer,Buffer]=false",
+      "script": [
+        "PUSHDATA1",
+        "01AA",
+        "NEWBUFFER",
+        "PUSHDATA1",
+        "01BB",
+        "NEWBUFFER",
+        "EQUAL"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "EQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Buffer",
+                    "value": "BB"
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Buffer,Buffer]=false",
+      "script": [
+        "PUSHDATA1",
+        "01AA",
+        "NEWBUFFER",
+        "PUSHDATA1",
+        "01AA",
+        "NEWBUFFER",
+        "EQUAL"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "EQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Buffer,Buffer]=true",
+      "script": [
+        "PUSHDATA1",
+        "01AA",
+        "NEWBUFFER",
+        "DUP",
+        "EQUAL"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "EQUAL",
+                "evaluationStack": [
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }
