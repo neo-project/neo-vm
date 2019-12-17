@@ -278,6 +278,141 @@
           }
         }
       ]
+    },
+    {
+      "name": "CAT Buffers",
+      "script": [
+        "PUSHDATA1",
+        "01AA",
+        "NEWBUFFER",
+        "PUSHDATA1",
+        "01BB",
+        "NEWBUFFER",
+        "INITSLOT",
+        "0002",
+        "LDARG0",
+        "LDARG1",
+        "CAT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "INITSLOT",
+                "evaluationStack": [
+                  {
+                    "type": "Buffer",
+                    "value": "BB"
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 11,
+                "nextInstruction": "LDARG0",
+                "arguments": [
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "BB"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 13,
+                "nextInstruction": "CAT",
+                "evaluationStack": [
+                  {
+                    "type": "Buffer",
+                    "value": "BB"
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  }
+                ],
+                "arguments": [
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "BB"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 14,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Buffer",
+                    "value": "AABB"
+                  }
+                ],
+                "arguments": [
+                  {
+                    "type": "Buffer",
+                    "value": "AA"
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "BB"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+
+      ]
     }
   ]
 }
