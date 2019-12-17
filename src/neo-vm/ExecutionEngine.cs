@@ -578,11 +578,11 @@ namespace Neo.VM
                         if (!TryPop(out int si)) return false;
                         if (si < 0) return false;
                         if (!TryPop(out ReadOnlySpan<byte> src)) return false;
-                        if (si + n > src.Length) return false;
+                        if (checked(si + n) > src.Length) return false;
                         if (!TryPop(out int di)) return false;
                         if (di < 0) return false;
                         if (!TryPop(out Buffer dst)) return false;
-                        if (di + n > dst.Size) return false;
+                        if (checked(di + n) > dst.Size) return false;
                         src.Slice(si, n).CopyTo(dst.InnerBuffer.AsSpan(di));
                         break;
                     }
