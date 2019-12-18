@@ -14,9 +14,9 @@ namespace Neo.VM.Types
 
         public virtual StackItem ConvertTo(StackItemType type)
         {
-            if (!Enum.IsDefined(typeof(StackItemType), type))
+            if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
                 throw new InvalidCastException();
-            if (type == StackItemType.Any || Type == type) return this;
+            if (Type == type) return this;
             throw new InvalidCastException();
         }
 

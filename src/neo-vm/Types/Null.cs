@@ -10,7 +10,7 @@ namespace Neo.VM.Types
 
         public override StackItem ConvertTo(StackItemType type)
         {
-            if (!Enum.IsDefined(typeof(StackItemType), type))
+            if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
                 throw new InvalidCastException();
             return this;
         }

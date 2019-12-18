@@ -3,11 +3,11 @@
   "name": "CONVERT",
   "tests": [
     {
-      "name": "Null to Null",
+      "name": "Null to Buffer",
       "script": [
         "PUSHNULL",
         "CONVERT",
-        "0x00"
+        "0x30"
       ],
       "steps": [
         {
@@ -422,13 +422,7 @@
             "Execute"
           ],
           "result": {
-            "state": "HALT",
-            "resultStack": [
-              {
-                "type": "Buffer",
-                "value": "0x0102"
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]
