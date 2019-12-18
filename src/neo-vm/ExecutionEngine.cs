@@ -956,6 +956,13 @@ namespace Neo.VM
                                     Push(index < buffer.Size);
                                     break;
                                 }
+                            case ByteArray array:
+                                {
+                                    int index = key.ToInt32();
+                                    if (index < 0) return false;
+                                    Push(index < array.Size);
+                                    break;
+                                }
                             default:
                                 return false;
                         }
