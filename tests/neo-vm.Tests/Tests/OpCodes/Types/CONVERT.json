@@ -171,13 +171,45 @@
             "Execute"
           ],
           "result": {
-            "state": "FAULT",
-            "resultStack": [
-              {
-                "type": "Buffer",
-                "value": "0xAA"
-              }
-            ]
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Array to non-defined",
+      "script": [
+        "0x00",
+        "NEWARRAY",
+        "CONVERT",
+        "0xFF"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Struct to non-defined",
+      "script": [
+        "0x00",
+        "NEWSTRUCT",
+        "CONVERT",
+        "0xFF"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT"
           }
         }
       ]
