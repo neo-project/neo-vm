@@ -3,6 +3,48 @@
   "name": "CONVERT",
   "tests": [
     {
+      "name": "Null to Null",
+      "script": [
+        "PUSHNULL",
+        "CONVERT",
+        "0x00"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "CONVERT",
+                "evaluationStack": [
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "Struct to Array",
       "script": [
         "PUSH1",
@@ -200,6 +242,24 @@
       "script": [
         "0x00",
         "NEWSTRUCT",
+        "CONVERT",
+        "0xFF"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Null to non-defined",
+      "script": [
+        "PUSHNULL",
         "CONVERT",
         "0xFF"
       ],
