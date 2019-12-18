@@ -173,6 +173,59 @@
       ]
     },
     {
+      "name": "Array to Integer",
+      "script": [
+        "PUSH1",
+        "NEWARRAY",
+        "DUP",
+        "PUSH0",
+        "PUSH4",
+        "SETITEM",
+        "CONVERT",
+        "0x20"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "CONVERT",
+                "evaluationStack": [
+                  {
+                    "type": "array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 4
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "Integer to ByteArray",
       "script": [
         "PUSHINT8",
@@ -331,6 +384,28 @@
       ]
     },
     {
+      "name": "Buffer to Integer (Exceed)",
+      "script": [
+        "PUSHDATA1",
+        "0x21",
+        "0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "CONVERT",
+        "0x30",
+        "CONVERT",
+        "0x20"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "Buffer to Any",
       "script": [
         "PUSHDATA1",
@@ -359,6 +434,28 @@
       ]
     },
     {
+      "name": "Buffer to Interop",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0102",
+        "CONVERT",
+        "0x30",
+        "CONVERT",
+        "0x60"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "ByteArray to non-defined",
       "script": [
         "PUSHDATA1",
@@ -381,8 +478,7 @@
     {
       "name": "Array to non-defined",
       "script": [
-        "0x00",
-        "NEWARRAY",
+        "NEWARRAY0",
         "CONVERT",
         "0xFF"
       ],
@@ -400,8 +496,7 @@
     {
       "name": "Struct to non-defined",
       "script": [
-        "0x00",
-        "NEWSTRUCT",
+        "NEWSTRUCT0",
         "CONVERT",
         "0xFF"
       ],
