@@ -669,14 +669,33 @@ namespace Neo.VM
                         Push(x1.Equals(x2));
                         break;
                     }
-                case OpCode.ISNULL:
+                case OpCode.NOTEQUAL:
                     {
-                        if (!TryPop(out StackItem x)) return false;
-                        Push(x.IsNull);
+                        if (!TryPop(out StackItem x2)) return false;
+                        if (!TryPop(out StackItem x1)) return false;
+                        Push(!x1.Equals(x2));
                         break;
                     }
 
                 // Numeric
+                case OpCode.SIGN:
+                    {
+                        if (!TryPop(out BigInteger x)) return false;
+                        Push(x.Sign);
+                        break;
+                    }
+                case OpCode.ABS:
+                    {
+                        if (!TryPop(out BigInteger x)) return false;
+                        Push(BigInteger.Abs(x));
+                        break;
+                    }
+                case OpCode.NEGATE:
+                    {
+                        if (!TryPop(out BigInteger x)) return false;
+                        Push(-x);
+                        break;
+                    }
                 case OpCode.INC:
                     {
                         if (!TryPop(out BigInteger x)) return false;
@@ -687,36 +706,6 @@ namespace Neo.VM
                     {
                         if (!TryPop(out BigInteger x)) return false;
                         Push(x - 1);
-                        break;
-                    }
-                case OpCode.SIGN:
-                    {
-                        if (!TryPop(out BigInteger x)) return false;
-                        Push(x.Sign);
-                        break;
-                    }
-                case OpCode.NEGATE:
-                    {
-                        if (!TryPop(out BigInteger x)) return false;
-                        Push(-x);
-                        break;
-                    }
-                case OpCode.ABS:
-                    {
-                        if (!TryPop(out BigInteger x)) return false;
-                        Push(BigInteger.Abs(x));
-                        break;
-                    }
-                case OpCode.NOT:
-                    {
-                        if (!TryPop(out bool x)) return false;
-                        Push(!x);
-                        break;
-                    }
-                case OpCode.NZ:
-                    {
-                        if (!TryPop(out BigInteger x)) return false;
-                        Push(!x.IsZero);
                         break;
                     }
                 case OpCode.ADD:
@@ -772,6 +761,12 @@ namespace Neo.VM
                         Push(x >> shift);
                         break;
                     }
+                case OpCode.NOT:
+                    {
+                        if (!TryPop(out bool x)) return false;
+                        Push(!x);
+                        break;
+                    }
                 case OpCode.BOOLAND:
                     {
                         if (!TryPop(out bool x2)) return false;
@@ -784,6 +779,12 @@ namespace Neo.VM
                         if (!TryPop(out bool x2)) return false;
                         if (!TryPop(out bool x1)) return false;
                         Push(x1 || x2);
+                        break;
+                    }
+                case OpCode.NZ:
+                    {
+                        if (!TryPop(out BigInteger x)) return false;
+                        Push(!x.IsZero);
                         break;
                     }
                 case OpCode.NUMEQUAL:
@@ -807,6 +808,13 @@ namespace Neo.VM
                         Push(x1 < x2);
                         break;
                     }
+                case OpCode.LE:
+                    {
+                        if (!TryPop(out BigInteger x2)) return false;
+                        if (!TryPop(out BigInteger x1)) return false;
+                        Push(x1 <= x2);
+                        break;
+                    }
                 case OpCode.GT:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
@@ -814,14 +822,7 @@ namespace Neo.VM
                         Push(x1 > x2);
                         break;
                     }
-                case OpCode.LTE:
-                    {
-                        if (!TryPop(out BigInteger x2)) return false;
-                        if (!TryPop(out BigInteger x1)) return false;
-                        Push(x1 <= x2);
-                        break;
-                    }
-                case OpCode.GTE:
+                case OpCode.GE:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
@@ -1117,6 +1118,13 @@ namespace Neo.VM
                             else
                                 newArray.Add(item);
                         Push(newArray);
+                        break;
+                    }
+
+                case OpCode.ISNULL:
+                    {
+                        if (!TryPop(out StackItem x)) return false;
+                        Push(x.IsNull);
                         break;
                     }
 

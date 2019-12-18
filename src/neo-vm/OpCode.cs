@@ -546,138 +546,141 @@ namespace Neo.VM
 
         #endregion
 
-        #region Old opcodes
+        #region Bitwise logic
 
-        // Bitwise logic
         /// <summary>
         /// Flips all of the bits in the input.
         /// </summary>
-        INVERT = 0xE3,
+        INVERT = 0x90,
         /// <summary>
         /// Boolean and between each bit in the inputs.
         /// </summary>
-        AND = 0xE4,
+        AND = 0x91,
         /// <summary>
         /// Boolean or between each bit in the inputs.
         /// </summary>
-        OR = 0xE5,
+        OR = 0x92,
         /// <summary>
         /// Boolean exclusive or between each bit in the inputs.
         /// </summary>
-        XOR = 0xE6,
+        XOR = 0x93,
         /// <summary>
         /// Returns 1 if the inputs are exactly equal, 0 otherwise.
         /// </summary>
-        EQUAL = 0xE7,
+        EQUAL = 0x97,
         /// <summary>
-        /// Returns true if the input is null. Returns false otherwise.
+        /// Returns 1 if the inputs are not equal, 0 otherwise.
         /// </summary>
-        ISNULL = 0xD0,
+        NOTEQUAL = 0x98,
 
-        // Arithmetic
-        /// <summary>
-        /// 1 is added to the input.
-        /// </summary>
-        INC = 0xFB,
-        /// <summary>
-        /// 1 is subtracted from the input.
-        /// </summary>
-        DEC = 0xFC,
+        #endregion
+
+        #region Arithmetic
+
         /// <summary>
         /// Puts the sign of top stack item on top of the main stack. If value is negative, put -1; if positive, put 1; if value is zero, put 0.
         /// </summary>
-        SIGN = 0xFD,
-        /// <summary>
-        /// The sign of the input is flipped.
-        /// </summary>
-        NEGATE = 0x8F,
+        SIGN = 0x99,
         /// <summary>
         /// The input is made positive.
         /// </summary>
-        ABS = 0x90,
+        ABS = 0x9A,
         /// <summary>
-        /// If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
+        /// The sign of the input is flipped.
         /// </summary>
-        NOT = 0x91,
+        NEGATE = 0x9B,
         /// <summary>
-        /// Returns 0 if the input is 0. 1 otherwise.
+        /// 1 is added to the input.
         /// </summary>
-        NZ = 0x92,
+        INC = 0x9C,
+        /// <summary>
+        /// 1 is subtracted from the input.
+        /// </summary>
+        DEC = 0x9D,
         /// <summary>
         /// a is added to b.
         /// </summary>
-        ADD = 0x93,
+        ADD = 0x9E,
         /// <summary>
         /// b is subtracted from a.
         /// </summary>
-        SUB = 0x94,
+        SUB = 0x9F,
         /// <summary>
         /// a is multiplied by b.
         /// </summary>
-        MUL = 0x95,
+        MUL = 0xA0,
         /// <summary>
         /// a is divided by b.
         /// </summary>
-        DIV = 0x96,
+        DIV = 0xA1,
         /// <summary>
         /// Returns the remainder after dividing a by b.
         /// </summary>
-        MOD = 0x97,
+        MOD = 0xA2,
         /// <summary>
         /// Shifts a left b bits, preserving sign.
         /// </summary>
-        SHL = 0x98,
+        SHL = 0xA8,
         /// <summary>
         /// Shifts a right b bits, preserving sign.
         /// </summary>
-        SHR = 0x99,
+        SHR = 0xA9,
+        /// <summary>
+        /// If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
+        /// </summary>
+        NOT = 0xAA,
         /// <summary>
         /// If both a and b are not 0, the output is 1. Otherwise 0.
         /// </summary>
-        BOOLAND = 0x9A,
+        BOOLAND = 0xAB,
         /// <summary>
         /// If a or b is not 0, the output is 1. Otherwise 0.
         /// </summary>
-        BOOLOR = 0x9B,
+        BOOLOR = 0xAC,
+        /// <summary>
+        /// Returns 0 if the input is 0. 1 otherwise.
+        /// </summary>
+        NZ = 0xB1,
         /// <summary>
         /// Returns 1 if the numbers are equal, 0 otherwise.
         /// </summary>
-        NUMEQUAL = 0x9C,
+        NUMEQUAL = 0xB3,
         /// <summary>
         /// Returns 1 if the numbers are not equal, 0 otherwise.
         /// </summary>
-        NUMNOTEQUAL = 0x9E,
+        NUMNOTEQUAL = 0xB4,
         /// <summary>
         /// Returns 1 if a is less than b, 0 otherwise.
         /// </summary>
-        LT = 0x9F,
-        /// <summary>
-        /// Returns 1 if a is greater than b, 0 otherwise.
-        /// </summary>
-        GT = 0xA0,
+        LT = 0xB5,
         /// <summary>
         /// Returns 1 if a is less than or equal to b, 0 otherwise.
         /// </summary>
-        LTE = 0xA1,
+        LE = 0xB6,
+        /// <summary>
+        /// Returns 1 if a is greater than b, 0 otherwise.
+        /// </summary>
+        GT = 0xB7,
         /// <summary>
         /// Returns 1 if a is greater than or equal to b, 0 otherwise.
         /// </summary>
-        GTE = 0xA2,
+        GE = 0xB8,
         /// <summary>
         /// Returns the smaller of a and b.
         /// </summary>
-        MIN = 0xA3,
+        MIN = 0xB9,
         /// <summary>
         /// Returns the larger of a and b.
         /// </summary>
-        MAX = 0xA4,
+        MAX = 0xBA,
         /// <summary>
         /// Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
         /// </summary>
-        WITHIN = 0xA5,
+        WITHIN = 0xBB,
 
-        //Reserved = 0xAC,
-        //Reserved = 0xAE,
+        #endregion
+
+        #region Old opcodes
 
         // Array
         /// <summary>
@@ -738,6 +741,11 @@ namespace Neo.VM
         /// A map is taken from top of the main stack. The values of this map are put on top of the main stack.
         /// </summary>
         VALUES = 0xCD,
+
+        /// <summary>
+        /// Returns true if the input is null. Returns false otherwise.
+        /// </summary>
+        ISNULL = 0xD0,
 
         #endregion
     }
