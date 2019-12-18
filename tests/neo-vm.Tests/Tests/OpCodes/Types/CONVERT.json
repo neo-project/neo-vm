@@ -249,6 +249,32 @@
       ]
     },
     {
+      "name": "ByteArray to Integer",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0A0B",
+        "CONVERT",
+        "0x20"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 2826
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "Buffer to ByteArray",
       "script": [
         "PUSHDATA1",
