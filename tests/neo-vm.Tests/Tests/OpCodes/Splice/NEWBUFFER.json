@@ -41,6 +41,43 @@
       ]
     },
     {
+      "name": "-1 Length",
+      "script": [
+        "PUSHM1",
+        "NEWBUFFER"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "NEWBUFFER",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": -1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "Wrong type [Array]",
       "script": [
         "PUSH0",
