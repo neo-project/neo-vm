@@ -23,6 +23,11 @@ namespace Neo.Test.Types
         String,
 
         /// <summary>
+        /// Mutable byte array
+        /// </summary>
+        Buffer,
+
+        /// <summary>
         /// String
         /// </summary>
         Interop,

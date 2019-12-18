@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Arrays",
   "name": "ARRAYSIZE",
   "tests": [
@@ -96,6 +96,30 @@
               {
                 "type": "integer",
                 "value": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test with Buffer",
+      "script": [
+        "PUSH10",
+        "NEWBUFFER",
+        "ARRAYSIZE"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 10
               }
             ]
           }

@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public class Struct : Array
     {
         public Struct(IEnumerable<StackItem> value = null)

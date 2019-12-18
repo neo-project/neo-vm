@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
+    [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public abstract class CompoundType : StackItem
     {
         protected readonly ReferenceCounter ReferenceCounter;

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Array = System.Array;
+using Buffer = Neo.VM.Types.Buffer;
 using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
@@ -549,28 +551,50 @@ namespace Neo.VM
                     }
 
                 // Splice
+                case OpCode.NEWBUFFER:
+                    {
+                        if (!TryPop(out PrimitiveType x)) return false;
+                        Buffer buffer;
+                        switch (x)
+                        {
+                            case Integer i:
+                                int n = i.ToInt32();
+                                if (n < 0 || n > MaxItemSize) return false;
+                                buffer = new Buffer(n);
+                                break;
+                            case ByteArray array:
+                                buffer = new Buffer(array.Span);
+                                break;
+                            default:
+                                return false;
+                        }
+                        Push(buffer);
+                        break;
+                    }
+                case OpCode.MEMCPY:
+                    {
+                        if (!TryPop(out int n)) return false;
+                        if (n < 0) return false;
+                        if (!TryPop(out int si)) return false;
+                        if (si < 0) return false;
+                        if (!TryPop(out ReadOnlySpan<byte> src)) return false;
+                        if (checked(si + n) > src.Length) return false;
+                        if (!TryPop(out int di)) return false;
+                        if (di < 0) return false;
+                        if (!TryPop(out Buffer dst)) return false;
+                        if (checked(di + n) > dst.Size) return false;
+                        src.Slice(si, n).CopyTo(dst.InnerBuffer.AsSpan(di));
+                        break;
+                    }
                 case OpCode.CAT:
                     {
-                        if (!TryPop(out ReadOnlyMemory<byte> x2)) return false;
-                        if (!TryPop(out ReadOnlyMemory<byte> x1)) return false;
-                        ByteArray result;
-                        if (x1.IsEmpty)
-                        {
-                            result = x2;
-                        }
-                        else if (x2.IsEmpty)
-                        {
-                            result = x1;
-                        }
-                        else
-                        {
-                            int length = x1.Length + x2.Length;
-                            if (!CheckMaxItemSize(length)) return false;
-                            byte[] dstBuffer = new byte[length];
-                            x1.CopyTo(dstBuffer);
-                            x2.CopyTo(dstBuffer.AsMemory(x1.Length));
-                            result = dstBuffer;
-                        }
+                        if (!TryPop(out ReadOnlySpan<byte> x2)) return false;
+                        if (!TryPop(out ReadOnlySpan<byte> x1)) return false;
+                        int length = x1.Length + x2.Length;
+                        if (!CheckMaxItemSize(length)) return false;
+                        Buffer result = new Buffer(length);
+                        x1.CopyTo(result.InnerBuffer);
+                        x2.CopyTo(result.InnerBuffer.AsSpan(x1.Length));
                         Push(result);
                         break;
                     }
@@ -578,32 +602,35 @@ namespace Neo.VM
                     {
                         if (!TryPop(out int count)) return false;
                         if (count < 0) return false;
-                        if (count > MaxItemSize) count = (int)MaxItemSize;
                         if (!TryPop(out int index)) return false;
                         if (index < 0) return false;
-                        if (!TryPop(out ReadOnlyMemory<byte> x)) return false;
-                        if (index > x.Length) return false;
-                        if (index + count > x.Length) count = x.Length - index;
-                        Push(x.Slice(index, count));
+                        if (!TryPop(out ReadOnlySpan<byte> x)) return false;
+                        if (index + count > x.Length) return false;
+                        Buffer result = new Buffer(count);
+                        x.Slice(index, count).CopyTo(result.InnerBuffer);
+                        Push(result);
                         break;
                     }
                 case OpCode.LEFT:
                     {
                         if (!TryPop(out int count)) return false;
                         if (count < 0) return false;
-                        if (!TryPop(out ReadOnlyMemory<byte> x)) return false;
-                        if (count < x.Length) x = x[0..count];
-                        Push(x);
+                        if (!TryPop(out ReadOnlySpan<byte> x)) return false;
+                        if (count > x.Length) return false;
+                        Buffer result = new Buffer(count);
+                        x[..count].CopyTo(result.InnerBuffer);
+                        Push(result);
                         break;
                     }
                 case OpCode.RIGHT:
                     {
                         if (!TryPop(out int count)) return false;
                         if (count < 0) return false;
-                        if (!TryPop(out ReadOnlyMemory<byte> x)) return false;
+                        if (!TryPop(out ReadOnlySpan<byte> x)) return false;
                         if (count > x.Length) return false;
-                        if (count < x.Length) x = x[^count..^0];
-                        Push(x);
+                        Buffer result = new Buffer(count);
+                        x[^count..^0].CopyTo(result.InnerBuffer);
+                        Push(result);
                         break;
                     }
 
@@ -836,6 +863,9 @@ namespace Neo.VM
                             case PrimitiveType primitive:
                                 Push(primitive.Size);
                                 break;
+                            case Buffer buffer:
+                                Push(buffer.Size);
+                                break;
                             default:
                                 return false;
                         }
@@ -890,6 +920,13 @@ namespace Neo.VM
                                     Push((BigInteger)byteArray[index]);
                                     break;
                                 }
+                            case Buffer buffer:
+                                {
+                                    int index = key.ToInt32();
+                                    if (index < 0 || index >= buffer.Size) return false;
+                                    Push((BigInteger)buffer.InnerBuffer[index]);
+                                    break;
+                                }
                             default:
                                 return false;
                         }
@@ -913,6 +950,16 @@ namespace Neo.VM
                             case Map map:
                                 {
                                     map[key] = value;
+                                    break;
+                                }
+                            case Buffer buffer:
+                                {
+                                    int index = key.ToInt32();
+                                    if (index < 0 || index >= buffer.Size) return false;
+                                    if (!(value is PrimitiveType p)) return false;
+                                    int b = p.ToInt32();
+                                    if (b < sbyte.MinValue || b > byte.MaxValue) return false;
+                                    buffer.InnerBuffer[index] = (byte)b;
                                     break;
                                 }
                             default:
@@ -979,8 +1026,18 @@ namespace Neo.VM
                     }
                 case OpCode.REVERSE:
                     {
-                        if (!TryPop(out VMArray array)) return false;
-                        array.Reverse();
+                        if (!TryPop(out StackItem x)) return false;
+                        switch (x)
+                        {
+                            case VMArray array:
+                                array.Reverse();
+                                break;
+                            case Buffer buffer:
+                                Array.Reverse(buffer.InnerBuffer);
+                                break;
+                            default:
+                                return false;
+                        }
                         break;
                     }
                 case OpCode.REMOVE:
@@ -1009,13 +1066,24 @@ namespace Neo.VM
                         switch (x)
                         {
                             case VMArray array:
-                                int index = key.ToInt32();
-                                if (index < 0) return false;
-                                Push(index < array.Count);
-                                break;
+                                {
+                                    int index = key.ToInt32();
+                                    if (index < 0) return false;
+                                    Push(index < array.Count);
+                                    break;
+                                }
                             case Map map:
-                                Push(map.ContainsKey(key));
-                                break;
+                                {
+                                    Push(map.ContainsKey(key));
+                                    break;
+                                }
+                            case Buffer buffer:
+                                {
+                                    int index = key.ToInt32();
+                                    if (index < 0) return false;
+                                    Push(index < buffer.Size);
+                                    break;
+                                }
                             default:
                                 return false;
                         }
@@ -1174,17 +1242,24 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryPop(out ReadOnlyMemory<byte> b)
+        public bool TryPop(out ReadOnlySpan<byte> b)
         {
-            if (TryPop(out PrimitiveType item))
-            {
-                b = item.Memory;
-                return true;
-            }
-            else
+            if (!TryPop(out StackItem item))
             {
                 b = default;
                 return false;
+            }
+            switch (item)
+            {
+                case PrimitiveType primitive:
+                    b = primitive.Span;
+                    return true;
+                case Buffer buffer:
+                    b = buffer.InnerBuffer;
+                    return true;
+                default:
+                    b = default;
+                    return false;
             }
         }
 

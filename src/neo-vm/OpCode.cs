@@ -525,6 +525,8 @@ namespace Neo.VM
 
         #region Splice
 
+        NEWBUFFER = 0x88,
+        MEMCPY = 0x89,
         /// <summary>
         /// Concatenates two strings.
         /// </summary>

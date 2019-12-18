@@ -1091,6 +1091,71 @@
           }
         }
       ]
+    },
+    {
+      "name": "Real test [Buffer]",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0102",
+        "NEWBUFFER",
+        "DUP",
+        "PUSH0",
+        "PUSH5",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "SETITEM",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 5
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "0x0102"
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "0x0102"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Buffer",
+                "value": "0x0502"
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

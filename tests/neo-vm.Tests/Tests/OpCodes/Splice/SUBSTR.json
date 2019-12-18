@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Splice",
   "name": "SUBSTR",
   "tests": [
@@ -387,13 +387,7 @@
             "execute"
           ],
           "result": {
-            "state": "HALT",
-            "resultStack": [
-              {
-                "type": "byteArray",
-                "value": "0x0203040506070809"
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]
@@ -447,7 +441,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "Buffer",
                 "value": "0x02"
               }
             ]
@@ -475,13 +469,7 @@
             "execute"
           ],
           "result": {
-            "state": "HALT",
-            "resultStack": [
-              {
-                "type": "byteArray",
-                "value": "4141"
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]

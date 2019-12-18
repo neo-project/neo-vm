@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Splice",
   "name": "LEFT",
   "tests": [
@@ -148,33 +148,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 7,
-                "nextInstruction": "RET",
-                "evaluationStack": [
-                  {
-                    "type": "byteArray",
-                    "value": "0x010203"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "stepInto"
-          ],
-          "result": {
-            "state": "HALT",
-            "resultStack": [
-              {
-                "type": "byteArray",
-                "value": "0x010203"
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]
@@ -226,7 +200,7 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "Buffer",
                     "value": "0x0102"
                   }
                 ]
@@ -242,7 +216,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "Buffer",
                 "value": "0x0102"
               }
             ]

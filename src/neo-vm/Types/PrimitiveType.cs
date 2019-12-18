@@ -6,9 +6,8 @@ namespace Neo.VM.Types
 {
     public abstract class PrimitiveType : StackItem
     {
-        public abstract ReadOnlyMemory<byte> Memory { get; }
-        public virtual int Size => Memory.Length;
-        public virtual ReadOnlySpan<byte> Span => Memory.Span;
+        public virtual int Size => Span.Length;
+        public abstract ReadOnlySpan<byte> Span { get; }
 
         public sealed override bool Equals(object obj)
         {
