@@ -691,7 +691,7 @@ namespace Neo.VM
         /// </summary>
         UNPACK = 0xC1,
         /// <summary>
-        /// A empty array (with size 0) is put on top of the main stack.
+        /// An empty array (with size 0) is put on top of the main stack.
         /// </summary>
         NEWARRAY0 = 0xC2,
         /// <summary>
@@ -704,7 +704,7 @@ namespace Neo.VM
         [OperandSize(Size = 1)]
         NEWARRAY_T = 0xC4,
         /// <summary>
-        /// A empty struct (with size 0) is put on top of the main stack.
+        /// An empty struct (with size 0) is put on top of the main stack.
         /// </summary>
         NEWSTRUCT0 = 0xC5,
         /// <summary>
