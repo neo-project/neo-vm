@@ -12,7 +12,7 @@
       "steps": [
         {
           "actions": [
-            "stepInto",
+            "stepInto"
           ],
           "result": {
             "state": "BREAK",
@@ -173,6 +173,56 @@
       ]
     },
     {
+      "name": "Integer to ByteArray",
+      "script": [
+        "PUSHINT8",
+        "0x0A",
+        "CONVERT",
+        "0x28"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "ByteArray",
+                "value": "0x0A"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Integer to Buffer",
+      "script": [
+        "PUSHINT8",
+        "0x0A",
+        "CONVERT",
+        "0x30"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Buffer",
+                "value": "0x0A"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "ByteArray to Buffer",
       "script": [
         "PUSHDATA1",
@@ -192,6 +242,91 @@
               {
                 "type": "Buffer",
                 "value": "0x00000000000000000000"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Buffer to ByteArray",
+      "script": [
+        "PUSHDATA1",
+        "0x0A",
+        "0x00000000000000000000",
+        "CONVERT",
+        "0x30",
+        "CONVERT",
+        "0x28"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "ByteArray",
+                "value": "0x00000000000000000000"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Buffer to Integer",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0102",
+        "CONVERT",
+        "0x30",
+        "CONVERT",
+        "0x20"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 513
+              }
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "Buffer to Any",
+      "script": [
+        "PUSHDATA1",
+        "0x02",
+        "0x0102",
+        "CONVERT",
+        "0x30",
+        "CONVERT",
+        "0x00"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Buffer",
+                "value": "0x0102"
               }
             ]
           }
