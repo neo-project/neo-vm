@@ -764,8 +764,14 @@ namespace Neo.VM
         /// Returns true if the input is null. Returns false otherwise.
         /// </summary>
         ISNULL = 0xD8,
+        /// <summary>
+        /// Returns true if the top item is of the specified type.
+        /// </summary>
         [OperandSize(Size = 1)]
         ISTYPE = 0xD9,
+        /// <summary>
+        /// Converts the top item to the specified type.
+        /// </summary>
         [OperandSize(Size = 1)]
         CONVERT = 0xDB,
 
