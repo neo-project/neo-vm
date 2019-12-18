@@ -6,11 +6,19 @@ namespace Neo.VM.Types
 {
     public abstract class StackItem
     {
-        public bool IsNull => this is Null;
-
         public static StackItem False { get; } = 0;
+        public bool IsNull => this is Null;
         public static StackItem Null { get; } = new Null();
         public static StackItem True { get; } = 1;
+        public abstract StackItemType Type { get; }
+
+        public virtual StackItem ConvertTo(StackItemType type)
+        {
+            if (!Enum.IsDefined(typeof(StackItemType), type))
+                throw new InvalidCastException();
+            if (type == StackItemType.Any || Type == type) return this;
+            throw new InvalidCastException();
+        }
 
         public abstract override bool Equals(object obj);
 

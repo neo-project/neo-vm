@@ -4,7 +4,16 @@ namespace Neo.VM.Types
 {
     public class Null : StackItem
     {
+        public override StackItemType Type => StackItemType.Any;
+
         internal Null() { }
+
+        public override StackItem ConvertTo(StackItemType type)
+        {
+            if (!Enum.IsDefined(typeof(StackItemType), type))
+                throw new InvalidCastException();
+            return this;
+        }
 
         public override bool Equals(object obj)
         {

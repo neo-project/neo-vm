@@ -284,10 +284,12 @@
       "script": [
         "PUSHDATA1",
         "01AA",
-        "NEWBUFFER",
+        "CONVERT",
+        "0x30",
         "PUSHDATA1",
         "01BB",
-        "NEWBUFFER",
+        "CONVERT",
+        "0x30",
         "INITSLOT",
         "0002",
         "LDARG0",
@@ -306,7 +308,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 10,
                 "nextInstruction": "INITSLOT",
                 "evaluationStack": [
                   {
@@ -330,7 +332,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 11,
+                "instructionPointer": 13,
                 "nextInstruction": "LDARG0",
                 "arguments": [
                   {
@@ -355,7 +357,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 13,
+                "instructionPointer": 15,
                 "nextInstruction": "CAT",
                 "evaluationStack": [
                   {
@@ -389,7 +391,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 14,
+                "instructionPointer": 16,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {

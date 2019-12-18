@@ -1,50 +1,18 @@
 {
-  "category": "Arrays",
-  "name": "REVERSE",
+  "category": "Types",
+  "name": "CONVERT",
   "tests": [
     {
-      "name": "Without push",
+      "name": "Struct to Array",
       "script": [
-        "REVERSE"
-      ],
-      "steps": [
-        {
-          "actions": [
-            "stepInto"
-          ],
-          "result": {
-            "state": "FAULT"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Without Array",
-      "script": [
-        "PUSH9",
-        "REVERSE"
-      ],
-      "steps": [
-        {
-          "actions": [
-            "stepInto",
-            "stepInto"
-          ],
-          "result": {
-            "state": "FAULT"
-          }
-        }
-      ]
-    },
-    {
-      "name": "Real test [Array]",
-      "script": [
-        "PUSH9",
-        "PUSH8",
-        "PUSH2",
-        "PACK",
+        "PUSH1",
+        "NEWSTRUCT",
         "DUP",
-        "REVERSE"
+        "PUSH0",
+        "PUSH5",
+        "SETITEM",
+        "CONVERT",
+        "0x40"
       ],
       "steps": [
         {
@@ -61,18 +29,14 @@
             "invocationStack": [
               {
                 "instructionPointer": 6,
-                "nextInstruction": "RET",
+                "nextInstruction": "CONVERT",
                 "evaluationStack": [
                   {
-                    "type": "array",
+                    "type": "struct",
                     "value": [
                       {
                         "type": "Integer",
-                        "value": 9
-                      },
-                      {
-                        "type": "Integer",
-                        "value": 8
+                        "value": 5
                       }
                     ]
                   }
@@ -83,7 +47,7 @@
         },
         {
           "actions": [
-            "stepInto"
+            "Execute"
           ],
           "result": {
             "state": "HALT",
@@ -93,11 +57,7 @@
                 "value": [
                   {
                     "type": "Integer",
-                    "value": 9
-                  },
-                  {
-                    "type": "Integer",
-                    "value": 8
+                    "value": 5
                   }
                 ]
               }
@@ -107,14 +67,77 @@
       ]
     },
     {
-      "name": "Real test [Buffer]",
+      "name": "Array to Struct",
+      "script": [
+        "PUSH1",
+        "NEWARRAY",
+        "DUP",
+        "PUSH0",
+        "PUSH5",
+        "SETITEM",
+        "CONVERT",
+        "0x41"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "CONVERT",
+                "evaluationStack": [
+                  {
+                    "type": "array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 5
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "struct",
+                "value": [
+                  {
+                    "type": "Integer",
+                    "value": 5
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "ByteArray to Buffer",
       "script": [
         "PUSHDATA1",
-        "0x03",
-        "0x010203",
-        "NEWBUFFER",
-        "DUP",
-        "REVERSE"
+        "0x0A",
+        "0x00000000000000000000",
+        "CONVERT",
+        "0x30"
       ],
       "steps": [
         {
@@ -126,7 +149,7 @@
             "resultStack": [
               {
                 "type": "Buffer",
-                "value": "0x030201"
+                "value": "0x00000000000000000000"
               }
             ]
           }

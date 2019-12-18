@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Arrays",
   "name": "NEWSTRUCT",
   "tests": [
@@ -113,7 +113,7 @@
       ]
     },
     {
-      "name": "Real test [Clone Array to Struct]",
+      "name": "Clone Array to Struct",
       "script": [
         "PUSH1",
         "NEWARRAY",
@@ -159,43 +159,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 7,
-                "nextInstruction": "RET",
-                "evaluationStack": [
-                  {
-                    "type": "struct",
-                    "value": [
-                      {
-                        "type": "Integer",
-                        "value": 5
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "stepInto"
-          ],
-          "result": {
-            "state": "HALT",
-            "resultStack": [
-              {
-                "type": "struct",
-                "value": [
-                  {
-                    "type": "Integer",
-                    "value": 5
-                  }
-                ]
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]

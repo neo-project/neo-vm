@@ -24,6 +24,7 @@ namespace Neo.VM.Types
         public override int Count => _array.Count;
         internal override IEnumerable<StackItem> SubItems => _array;
         internal override int SubItemsCount => _array.Count;
+        public override StackItemType Type => StackItemType.Array;
 
         public Array(IEnumerable<StackItem> value = null)
             : this(null, value)
@@ -48,6 +49,21 @@ namespace Neo.VM.Types
         {
             _array.Add(item);
             ReferenceCounter?.AddReference(item, this);
+        }
+
+        public override void Clear()
+        {
+            if (ReferenceCounter != null)
+                foreach (StackItem item in _array)
+                    ReferenceCounter.RemoveReference(item, this);
+            _array.Clear();
+        }
+
+        public override StackItem ConvertTo(StackItemType type)
+        {
+            if (Type == StackItemType.Array && type == StackItemType.Struct)
+                return new Struct(ReferenceCounter, new List<StackItem>(_array));
+            return base.ConvertTo(type);
         }
 
         IEnumerator IEnumerable.GetEnumerator()

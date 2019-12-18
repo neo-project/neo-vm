@@ -1,13 +1,13 @@
 {
   "category": "Arrays",
-  "name": "ARRAYSIZE",
+  "name": "SIZE",
   "tests": [
     {
-      "name": "Wrong type SYSCALL[0x77777777]+ARRAYSIZE",
+      "name": "Wrong type SYSCALL[0x77777777]+SIZE",
       "script": [
         "SYSCALL",
         "0x77777777",
-        "ARRAYSIZE"
+        "SIZE"
       ],
       "steps": [
         {
@@ -19,7 +19,7 @@
             "invocationStack": [
               {
                 "instructionPointer": 5,
-                "nextInstruction": "ARRAYSIZE",
+                "nextInstruction": "SIZE",
                 "evaluationStack": [
                   {
                     "type": "interop",
@@ -41,9 +41,9 @@
       ]
     },
     {
-      "name": "Without PUSH+ARRAYSIZE",
+      "name": "Without PUSH+SIZE",
       "script": [
-        "ARRAYSIZE"
+        "SIZE"
       ],
       "steps": [
         {
@@ -62,7 +62,7 @@
         "PUSHDATA1",
         "0x01",
         "0x00",
-        "ARRAYSIZE"
+        "SIZE"
       ],
       "steps": [
         {
@@ -107,7 +107,7 @@
       "script": [
         "PUSH10",
         "NEWBUFFER",
-        "ARRAYSIZE"
+        "SIZE"
       ],
       "steps": [
         {
@@ -131,7 +131,7 @@
       "script": [
         "PUSH3",
         "NEWARRAY",
-        "ARRAYSIZE"
+        "SIZE"
       ],
       "steps": [
         {
@@ -177,7 +177,7 @@
       "script": [
         "PUSH3",
         "NEWSTRUCT",
-        "ARRAYSIZE"
+        "SIZE"
       ],
       "steps": [
         {
@@ -222,7 +222,7 @@
       "name": "Real test with map",
       "script": [
         "NEWMAP",
-        "ARRAYSIZE"
+        "SIZE"
       ],
       "steps": [
         {

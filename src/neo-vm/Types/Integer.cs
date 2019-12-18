@@ -10,10 +10,12 @@ namespace Neo.VM.Types
     {
         public const int MaxSize = 32;
 
+        public static readonly Integer Zero = 0;
         private readonly BigInteger value;
 
+        internal override ReadOnlyMemory<byte> Memory => value.IsZero ? ReadOnlyMemory<byte>.Empty : value.ToByteArray();
         public override int Size { get; }
-        public override ReadOnlySpan<byte> Span => value.IsZero ? ReadOnlySpan<byte>.Empty : value.ToByteArray();
+        public override StackItemType Type => StackItemType.Integer;
 
         public Integer(BigInteger value)
         {
@@ -27,6 +29,12 @@ namespace Neo.VM.Types
                 if (Size > MaxSize) throw new ArgumentException();
             }
             this.value = value;
+        }
+
+        public override StackItem ConvertTo(StackItemType type)
+        {
+            if (type == StackItemType.ByteArray) return Memory;
+            return base.ConvertTo(type);
         }
 
         public override bool Equals(PrimitiveType other)

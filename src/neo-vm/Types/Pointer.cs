@@ -6,6 +6,7 @@ namespace Neo.VM.Types
     public class Pointer : StackItem
     {
         public int Position { get; }
+        public override StackItemType Type => StackItemType.Pointer;
 
         public Pointer(int position)
         {

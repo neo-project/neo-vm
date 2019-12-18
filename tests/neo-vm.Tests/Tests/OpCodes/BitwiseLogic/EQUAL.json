@@ -1125,10 +1125,12 @@
       "script": [
         "PUSHDATA1",
         "01AA",
-        "NEWBUFFER",
+        "CONVERT",
+        "0x30",
         "PUSHDATA1",
         "01BB",
-        "NEWBUFFER",
+        "CONVERT",
+        "0x30",
         "EQUAL"
       ],
       "steps": [
@@ -1143,7 +1145,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 10,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
@@ -1180,10 +1182,12 @@
       "script": [
         "PUSHDATA1",
         "01AA",
-        "NEWBUFFER",
+        "CONVERT",
+        "0x30",
         "PUSHDATA1",
         "01AA",
-        "NEWBUFFER",
+        "CONVERT",
+        "0x30",
         "EQUAL"
       ],
       "steps": [
@@ -1198,7 +1202,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 10,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
@@ -1235,7 +1239,8 @@
       "script": [
         "PUSHDATA1",
         "01AA",
-        "NEWBUFFER",
+        "CONVERT",
+        "0x30",
         "DUP",
         "EQUAL"
       ],
@@ -1250,7 +1255,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {

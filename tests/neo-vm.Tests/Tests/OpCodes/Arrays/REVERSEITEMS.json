@@ -1,11 +1,11 @@
 {
   "category": "Arrays",
-  "name": "NEWARRAY",
+  "name": "REVERSEITEMS",
   "tests": [
     {
       "name": "Without push",
       "script": [
-        "NEWARRAY"
+        "REVERSEITEMS"
       ],
       "steps": [
         {
@@ -19,28 +19,10 @@
       ]
     },
     {
-      "name": "With wrong type",
+      "name": "Without Array",
       "script": [
-        "NEWMAP",
-        "NEWARRAY"
-      ],
-      "steps": [
-        {
-          "actions": [
-            "stepInto",
-            "stepInto"
-          ],
-          "result": {
-            "state": "FAULT"
-          }
-        }
-      ]
-    },
-    {
-      "name": "With negative push",
-      "script": [
-        "PUSHM1",
-        "NEWARRAY"
+        "PUSH9",
+        "REVERSEITEMS"
       ],
       "steps": [
         {
@@ -55,14 +37,22 @@
       ]
     },
     {
-      "name": "Real test",
+      "name": "Real test [Array]",
       "script": [
+        "PUSH9",
+        "PUSH8",
         "PUSH2",
-        "NEWARRAY"
+        "PACK",
+        "DUP",
+        "REVERSEITEMS"
       ],
       "steps": [
         {
           "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
             "stepInto",
             "stepInto"
           ],
@@ -70,17 +60,19 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 2,
+                "instructionPointer": 6,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
                     "type": "array",
                     "value": [
                       {
-                        "type": "Null"
+                        "type": "Integer",
+                        "value": 9
                       },
                       {
-                        "type": "Null"
+                        "type": "Integer",
+                        "value": 8
                       }
                     ]
                   }
@@ -100,10 +92,12 @@
                 "type": "array",
                 "value": [
                   {
-                    "type": "Null"
+                    "type": "Integer",
+                    "value": 9
                   },
                   {
-                    "type": "Null"
+                    "type": "Integer",
+                    "value": 8
                   }
                 ]
               }
@@ -113,53 +107,29 @@
       ]
     },
     {
-      "name": "Clone Struct to Array",
+      "name": "Real test [Buffer]",
       "script": [
-        "PUSH1",
-        "NEWSTRUCT",
+        "PUSHDATA1",
+        "0x03",
+        "0x010203",
+        "CONVERT",
+        "0x30",
         "DUP",
-        "PUSH0",
-        "PUSH5",
-        "SETITEM",
-        "NEWARRAY"
+        "REVERSEITEMS"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto",
-            "stepInto",
-            "stepInto",
-            "stepInto",
-            "stepInto"
+            "Execute"
           ],
           "result": {
-            "state": "BREAK",
-            "invocationStack": [
+            "state": "HALT",
+            "resultStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "NEWARRAY",
-                "evaluationStack": [
-                  {
-                    "type": "struct",
-                    "value": [
-                      {
-                        "type": "Integer",
-                        "value": 5
-                      }
-                    ]
-                  }
-                ]
+                "type": "Buffer",
+                "value": "0x030201"
               }
             ]
-          }
-        },
-        {
-          "actions": [
-            "stepInto"
-          ],
-          "result": {
-            "state": "FAULT"
           }
         }
       ]

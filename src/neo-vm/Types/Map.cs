@@ -38,11 +38,23 @@ namespace Neo.VM.Types
         public IEnumerable<PrimitiveType> Keys => dictionary.Keys;
         internal override IEnumerable<StackItem> SubItems => Keys.Concat(Values);
         internal override int SubItemsCount => dictionary.Count * 2;
+        public override StackItemType Type => StackItemType.Map;
         public IEnumerable<StackItem> Values => dictionary.Values;
 
         public Map(ReferenceCounter referenceCounter = null)
             : base(referenceCounter)
         {
+        }
+
+        public override void Clear()
+        {
+            if (ReferenceCounter != null)
+                foreach (var pair in dictionary)
+                {
+                    ReferenceCounter.RemoveReference(pair.Key, this);
+                    ReferenceCounter.RemoveReference(pair.Value, this);
+                }
+            dictionary.Clear();
         }
 
         public bool ContainsKey(PrimitiveType key)
