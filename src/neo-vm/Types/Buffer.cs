@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace Neo.VM.Types
 {
@@ -24,13 +25,19 @@ namespace Neo.VM.Types
 
         public override StackItem ConvertTo(StackItemType type)
         {
-            if (type == StackItemType.ByteArray)
+            switch (type)
             {
-                byte[] clone = new byte[InnerBuffer.Length];
-                InnerBuffer.CopyTo(clone.AsSpan());
-                return clone;
+                case StackItemType.Integer:
+                    if (InnerBuffer.Length > Integer.MaxSize)
+                        throw new InvalidCastException();
+                    return new BigInteger(InnerBuffer);
+                case StackItemType.ByteArray:
+                    byte[] clone = new byte[InnerBuffer.Length];
+                    InnerBuffer.CopyTo(clone.AsSpan());
+                    return clone;
+                default:
+                    return base.ConvertTo(type);
             }
-            return base.ConvertTo(type);
         }
 
         public override bool Equals(object obj)
