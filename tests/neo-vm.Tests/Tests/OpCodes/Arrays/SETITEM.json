@@ -1098,7 +1098,8 @@
         "PUSHDATA1",
         "0x02",
         "0x0102",
-        "NEWBUFFER",
+        "CONVERT",
+        "0x30",
         "DUP",
         "PUSH0",
         "PUSH5",
@@ -1117,7 +1118,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 9,
                 "nextInstruction": "SETITEM",
                 "evaluationStack": [
                   {

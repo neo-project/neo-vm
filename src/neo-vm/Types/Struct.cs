@@ -5,6 +5,8 @@ namespace Neo.VM.Types
 {
     public class Struct : Array
     {
+        public override StackItemType Type => StackItemType.Struct;
+
         public Struct(IEnumerable<StackItem> value = null)
             : this(null, value)
         {
@@ -41,6 +43,13 @@ namespace Neo.VM.Types
                 }
             }
             return result;
+        }
+
+        public override StackItem ConvertTo(StackItemType type)
+        {
+            if (type == StackItemType.Array)
+                return new Array(ReferenceCounter, new List<StackItem>(_array));
+            return base.ConvertTo(type);
         }
 
         public override bool Equals(object obj)

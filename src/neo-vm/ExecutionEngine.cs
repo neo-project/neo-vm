@@ -1,6 +1,7 @@
 using Neo.VM.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Array = System.Array;
@@ -553,22 +554,9 @@ namespace Neo.VM
                 // Splice
                 case OpCode.NEWBUFFER:
                     {
-                        if (!TryPop(out PrimitiveType x)) return false;
-                        Buffer buffer;
-                        switch (x)
-                        {
-                            case Integer i:
-                                int n = i.ToInt32();
-                                if (n < 0 || n > MaxItemSize) return false;
-                                buffer = new Buffer(n);
-                                break;
-                            case ByteArray array:
-                                buffer = new Buffer(array.Span);
-                                break;
-                            default:
-                                return false;
-                        }
-                        Push(buffer);
+                        if (!TryPop(out int n)) return false;
+                        if (n < 0 || n > MaxItemSize) return false;
+                        Push(new Buffer(n));
                         break;
                     }
                 case OpCode.MEMCPY:
@@ -852,26 +840,7 @@ namespace Neo.VM
                         break;
                     }
 
-                // Array
-                case OpCode.ARRAYSIZE:
-                    {
-                        if (!TryPop(out StackItem x)) return false;
-                        switch (x)
-                        {
-                            case CompoundType compound:
-                                Push(compound.Count);
-                                break;
-                            case PrimitiveType primitive:
-                                Push(primitive.Size);
-                                break;
-                            case Buffer buffer:
-                                Push(buffer.Size);
-                                break;
-                            default:
-                                return false;
-                        }
-                        break;
-                    }
+                // Compound-type
                 case OpCode.PACK:
                     {
                         if (!TryPop(out int size)) return false;
@@ -892,6 +861,141 @@ namespace Neo.VM
                         for (int i = array.Count - 1; i >= 0; i--)
                             Push(array[i]);
                         Push(array.Count);
+                        break;
+                    }
+                case OpCode.NEWARRAY0:
+                    {
+                        Push(new VMArray(ReferenceCounter));
+                        break;
+                    }
+                case OpCode.NEWARRAY:
+                case OpCode.NEWARRAY_T:
+                    {
+                        if (!TryPop(out int n)) return false;
+                        if (n < 0 || n > MaxStackSize) return false;
+                        StackItem item;
+                        if (instruction.OpCode == OpCode.NEWARRAY_T)
+                        {
+                            StackItemType type = (StackItemType)instruction.TokenU8;
+                            if (!Enum.IsDefined(typeof(StackItemType), type)) return false;
+                            item = instruction.TokenU8 switch
+                            {
+                                (byte)StackItemType.Integer => Integer.Zero,
+                                (byte)StackItemType.ByteArray => ByteArray.Empty,
+                                _ => StackItem.Null
+                            };
+                        }
+                        else
+                        {
+                            item = StackItem.Null;
+                        }
+                        Push(new VMArray(ReferenceCounter, Enumerable.Repeat(item, n)));
+                        break;
+                    }
+                case OpCode.NEWSTRUCT0:
+                    {
+                        Push(new Struct(ReferenceCounter));
+                        break;
+                    }
+                case OpCode.NEWSTRUCT:
+                    {
+                        if (!TryPop(out int n)) return false;
+                        if (n < 0 || n > MaxStackSize) return false;
+                        Struct result = new Struct(ReferenceCounter);
+                        for (var i = 0; i < n; i++)
+                            result.Add(StackItem.Null);
+                        Push(result);
+                        break;
+                    }
+                case OpCode.NEWMAP:
+                    {
+                        Push(new Map(ReferenceCounter));
+                        break;
+                    }
+                case OpCode.SIZE:
+                    {
+                        if (!TryPop(out StackItem x)) return false;
+                        switch (x)
+                        {
+                            case CompoundType compound:
+                                Push(compound.Count);
+                                break;
+                            case PrimitiveType primitive:
+                                Push(primitive.Size);
+                                break;
+                            case Buffer buffer:
+                                Push(buffer.Size);
+                                break;
+                            default:
+                                return false;
+                        }
+                        break;
+                    }
+                case OpCode.HASKEY:
+                    {
+                        if (!TryPop(out PrimitiveType key)) return false;
+                        if (!TryPop(out StackItem x)) return false;
+                        switch (x)
+                        {
+                            case VMArray array:
+                                {
+                                    int index = key.ToInt32();
+                                    if (index < 0) return false;
+                                    Push(index < array.Count);
+                                    break;
+                                }
+                            case Map map:
+                                {
+                                    Push(map.ContainsKey(key));
+                                    break;
+                                }
+                            case Buffer buffer:
+                                {
+                                    int index = key.ToInt32();
+                                    if (index < 0) return false;
+                                    Push(index < buffer.Size);
+                                    break;
+                                }
+                            case ByteArray array:
+                                {
+                                    int index = key.ToInt32();
+                                    if (index < 0) return false;
+                                    Push(index < array.Size);
+                                    break;
+                                }
+                            default:
+                                return false;
+                        }
+                        break;
+                    }
+                case OpCode.KEYS:
+                    {
+                        if (!TryPop(out Map map)) return false;
+                        Push(new VMArray(ReferenceCounter, map.Keys));
+                        break;
+                    }
+                case OpCode.VALUES:
+                    {
+                        IEnumerable<StackItem> values;
+                        if (!TryPop(out StackItem x)) return false;
+                        switch (x)
+                        {
+                            case VMArray array:
+                                values = array;
+                                break;
+                            case Map map:
+                                values = map.Values;
+                                break;
+                            default:
+                                return false;
+                        }
+                        VMArray newArray = new VMArray(ReferenceCounter);
+                        foreach (StackItem item in values)
+                            if (item is Struct s)
+                                newArray.Add(s.Clone());
+                            else
+                                newArray.Add(item);
+                        Push(newArray);
                         break;
                     }
                 case OpCode.PICKITEM:
@@ -933,6 +1037,14 @@ namespace Neo.VM
                         }
                         break;
                     }
+                case OpCode.APPEND:
+                    {
+                        if (!TryPop(out StackItem newItem)) return false;
+                        if (!TryPop(out VMArray array)) return false;
+                        if (newItem is Struct s) newItem = s.Clone();
+                        array.Add(newItem);
+                        break;
+                    }
                 case OpCode.SETITEM:
                     {
                         if (!TryPop(out StackItem value)) return false;
@@ -968,64 +1080,7 @@ namespace Neo.VM
                         }
                         break;
                     }
-                case OpCode.NEWARRAY:
-                case OpCode.NEWSTRUCT:
-                    {
-                        if (!TryPop(out StackItem x)) return false;
-                        switch (x)
-                        {
-                            // Allow to convert between array and struct
-                            case VMArray array:
-                                {
-                                    VMArray result;
-                                    if (array is Struct)
-                                    {
-                                        if (instruction.OpCode == OpCode.NEWSTRUCT)
-                                            result = array;
-                                        else
-                                            result = new VMArray(ReferenceCounter, array);
-                                    }
-                                    else
-                                    {
-                                        if (instruction.OpCode == OpCode.NEWARRAY)
-                                            result = array;
-                                        else
-                                            result = new Struct(ReferenceCounter, array);
-                                    }
-                                    Push(result);
-                                }
-                                break;
-                            case PrimitiveType primitive:
-                                {
-                                    int count = primitive.ToInt32();
-                                    if (count < 0 || count > MaxStackSize) return false;
-                                    VMArray result = instruction.OpCode == OpCode.NEWARRAY
-                                        ? new VMArray(ReferenceCounter)
-                                        : new Struct(ReferenceCounter);
-                                    for (var i = 0; i < count; i++)
-                                        result.Add(StackItem.Null);
-                                    Push(result);
-                                }
-                                break;
-                            default:
-                                return false;
-                        }
-                        break;
-                    }
-                case OpCode.NEWMAP:
-                    {
-                        Push(new Map(ReferenceCounter));
-                        break;
-                    }
-                case OpCode.APPEND:
-                    {
-                        if (!TryPop(out StackItem newItem)) return false;
-                        if (!TryPop(out VMArray array)) return false;
-                        if (newItem is Struct s) newItem = s.Clone();
-                        array.Add(newItem);
-                        break;
-                    }
-                case OpCode.REVERSE:
+                case OpCode.REVERSEITEMS:
                     {
                         if (!TryPop(out StackItem x)) return false;
                         switch (x)
@@ -1060,71 +1115,33 @@ namespace Neo.VM
                         }
                         break;
                     }
-                case OpCode.HASKEY:
+                case OpCode.CLEARITEMS:
                     {
-                        if (!TryPop(out PrimitiveType key)) return false;
-                        if (!TryPop(out StackItem x)) return false;
-                        switch (x)
-                        {
-                            case VMArray array:
-                                {
-                                    int index = key.ToInt32();
-                                    if (index < 0) return false;
-                                    Push(index < array.Count);
-                                    break;
-                                }
-                            case Map map:
-                                {
-                                    Push(map.ContainsKey(key));
-                                    break;
-                                }
-                            case Buffer buffer:
-                                {
-                                    int index = key.ToInt32();
-                                    if (index < 0) return false;
-                                    Push(index < buffer.Size);
-                                    break;
-                                }
-                            default:
-                                return false;
-                        }
-                        break;
-                    }
-                case OpCode.KEYS:
-                    {
-                        if (!TryPop(out Map map)) return false;
-                        Push(new VMArray(ReferenceCounter, map.Keys));
-                        break;
-                    }
-                case OpCode.VALUES:
-                    {
-                        IEnumerable<StackItem> values;
-                        if (!TryPop(out StackItem x)) return false;
-                        switch (x)
-                        {
-                            case VMArray array:
-                                values = array;
-                                break;
-                            case Map map:
-                                values = map.Values;
-                                break;
-                            default:
-                                return false;
-                        }
-                        VMArray newArray = new VMArray(ReferenceCounter);
-                        foreach (StackItem item in values)
-                            if (item is Struct s)
-                                newArray.Add(s.Clone());
-                            else
-                                newArray.Add(item);
-                        Push(newArray);
+                        if (!TryPop(out CompoundType x)) return false;
+                        x.Clear();
                         break;
                     }
 
+                //Types
                 case OpCode.ISNULL:
                     {
                         if (!TryPop(out StackItem x)) return false;
                         Push(x.IsNull);
+                        break;
+                    }
+                case OpCode.ISTYPE:
+                    {
+                        if (!TryPop(out StackItem x)) return false;
+                        StackItemType type = (StackItemType)instruction.TokenU8;
+                        if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
+                            return false;
+                        Push(x.Type == type);
+                        break;
+                    }
+                case OpCode.CONVERT:
+                    {
+                        if (!TryPop(out StackItem x)) return false;
+                        Push(x.ConvertTo((StackItemType)instruction.TokenU8));
                         break;
                     }
 

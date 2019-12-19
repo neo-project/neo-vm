@@ -680,55 +680,45 @@ namespace Neo.VM
 
         #endregion
 
-        #region Old opcodes
+        #region Compound-type
 
-        // Array
-        /// <summary>
-        /// An array is removed from top of the main stack. Its size is put on top of the main stack.
-        /// </summary>
-        ARRAYSIZE = 0xC0,
         /// <summary>
         /// A value n is taken from top of main stack. The next n items on main stack are removed, put inside n-sized array and this array is put on top of the main stack.
         /// </summary>
-        PACK = 0xC1,
+        PACK = 0xC0,
         /// <summary>
         /// An array is removed from top of the main stack. Its elements are put on top of the main stack (in reverse order) and the array size is also put on main stack.
         /// </summary>
-        UNPACK = 0xC2,
+        UNPACK = 0xC1,
         /// <summary>
-        /// An input index n (or key) and an array (or map) are taken from main stack. Element array[n] (or map[n]) is put on top of the main stack.
+        /// An empty array (with size 0) is put on top of the main stack.
         /// </summary>
-        PICKITEM = 0xC3,
+        NEWARRAY0 = 0xC2,
         /// <summary>
-        /// A value v, index n (or key) and an array (or map) are taken from main stack. Attribution array[n]=v (or map[n]=v) is performed.
+        /// A value n is taken from top of main stack. A null-filled array with size n is put on top of the main stack.
         /// </summary>
-        SETITEM = 0xC4,
+        NEWARRAY = 0xC3,
         /// <summary>
-        /// A value n is taken from top of main stack. A zero-filled array type with size n is put on top of the main stack.
-        /// OR a struct is taken from top of main stack and is converted to an array.
+        /// A value n is taken from top of main stack. An array of type T with size n is put on top of the main stack.
         /// </summary>
-        NEWARRAY = 0xC5,
+        [OperandSize(Size = 1)]
+        NEWARRAY_T = 0xC4,
         /// <summary>
-        /// A value n is taken from top of main stack. A zero-filled struct type with size n is put on top of the main stack.
-        /// OR an array is taken from top of main stack and is converted to a struct.
+        /// An empty struct (with size 0) is put on top of the main stack.
+        /// </summary>
+        NEWSTRUCT0 = 0xC5,
+        /// <summary>
+        /// A value n is taken from top of main stack. A zero-filled struct with size n is put on top of the main stack.
         /// </summary>
         NEWSTRUCT = 0xC6,
         /// <summary>
         /// A Map is created and put on top of the main stack.
         /// </summary>
-        NEWMAP = 0xC7,
+        NEWMAP = 0xC8,
         /// <summary>
-        /// The item on top of main stack is removed and appended to the second item on top of the main stack.
+        /// An array is removed from top of the main stack. Its size is put on top of the main stack.
         /// </summary>
-        APPEND = 0xC8,
-        /// <summary>
-        /// An array is removed from the top of the main stack and its elements are reversed.
-        /// </summary>
-        REVERSE = 0xC9,
-        /// <summary>
-        /// An input index n (or key) and an array (or map) are removed from the top of the main stack. Element array[n] (or map[n]) is removed.
-        /// </summary>
-        REMOVE = 0xCA,
+        SIZE = 0xCA,
         /// <summary>
         /// An input index n (or key) and an array (or map) are removed from the top of the main stack. Puts True on top of main stack if array[n] (or map[n]) exist, and False otherwise.
         /// </summary>
@@ -741,11 +731,49 @@ namespace Neo.VM
         /// A map is taken from top of the main stack. The values of this map are put on top of the main stack.
         /// </summary>
         VALUES = 0xCD,
+        /// <summary>
+        /// An input index n (or key) and an array (or map) are taken from main stack. Element array[n] (or map[n]) is put on top of the main stack.
+        /// </summary>
+        PICKITEM = 0xCE,
+        /// <summary>
+        /// The item on top of main stack is removed and appended to the second item on top of the main stack.
+        /// </summary>
+        APPEND = 0xCF,
+        /// <summary>
+        /// A value v, index n (or key) and an array (or map) are taken from main stack. Attribution array[n]=v (or map[n]=v) is performed.
+        /// </summary>
+        SETITEM = 0xD0,
+        /// <summary>
+        /// An array is removed from the top of the main stack and its elements are reversed.
+        /// </summary>
+        REVERSEITEMS = 0xD1,
+        /// <summary>
+        /// An input index n (or key) and an array (or map) are removed from the top of the main stack. Element array[n] (or map[n]) is removed.
+        /// </summary>
+        REMOVE = 0xD2,
+        /// <summary>
+        /// Remove all the items from the compound-type.
+        /// </summary>
+        CLEARITEMS = 0xD3,
+
+        #endregion
+
+        #region Types
 
         /// <summary>
         /// Returns true if the input is null. Returns false otherwise.
         /// </summary>
-        ISNULL = 0xD0,
+        ISNULL = 0xD8,
+        /// <summary>
+        /// Returns true if the top item is of the specified type.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        ISTYPE = 0xD9,
+        /// <summary>
+        /// Converts the top item to the specified type.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        CONVERT = 0xDB,
 
         #endregion
     }

@@ -37,6 +37,9 @@ namespace Neo.Test
         [TestMethod]
         public void TestOpCodesBitwiseLogic() => TestJson("./Tests/OpCodes/BitwiseLogic");
 
+        [TestMethod]
+        public void TestOpCodesTypes() => TestJson("./Tests/OpCodes/Types");
+
         private void TestJson(string path)
         {
             foreach (var file in Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))

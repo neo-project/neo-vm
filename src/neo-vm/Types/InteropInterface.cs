@@ -8,6 +8,8 @@ namespace Neo.VM.Types
     {
         private readonly object _object;
 
+        public override StackItemType Type => StackItemType.InteropInterface;
+
         public InteropInterface(object value)
         {
             _object = value ?? throw new ArgumentException();

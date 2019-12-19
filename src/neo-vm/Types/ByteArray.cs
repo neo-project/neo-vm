@@ -5,29 +5,35 @@ using System.Text;
 
 namespace Neo.VM.Types
 {
-    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(memory.ToArray()).Replace(\"-\", string.Empty)}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(Memory.ToArray()).Replace(\"-\", string.Empty)}")]
     public class ByteArray : PrimitiveType
     {
-        private readonly ReadOnlyMemory<byte> memory;
+        public static readonly ByteArray Empty = ReadOnlyMemory<byte>.Empty;
 
-        public override int Size => memory.Length;
-        public override ReadOnlySpan<byte> Span => memory.Span;
+        internal override ReadOnlyMemory<byte> Memory { get; }
+        public override StackItemType Type => StackItemType.ByteArray;
 
         public ByteArray(ReadOnlyMemory<byte> value)
         {
-            this.memory = value;
+            this.Memory = value;
+        }
+
+        public override StackItem ConvertTo(StackItemType type)
+        {
+            if (type == StackItemType.Integer) return ToBigInteger();
+            return base.ConvertTo(type);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator ReadOnlyMemory<byte>(ByteArray value)
         {
-            return value.memory;
+            return value.Memory;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator ReadOnlySpan<byte>(ByteArray value)
         {
-            return value.memory.Span;
+            return value.Memory.Span;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

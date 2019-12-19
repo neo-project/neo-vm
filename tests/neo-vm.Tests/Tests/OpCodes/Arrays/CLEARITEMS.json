@@ -1,16 +1,16 @@
 {
   "category": "Arrays",
-  "name": "REVERSE",
+  "name": "CLEARITEMS",
   "tests": [
     {
       "name": "Without push",
       "script": [
-        "REVERSE"
+        "CLEARITEMS"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto"
+            "Execute"
           ],
           "result": {
             "state": "FAULT"
@@ -19,16 +19,15 @@
       ]
     },
     {
-      "name": "Without Array",
+      "name": "Wrong type",
       "script": [
-        "PUSH9",
-        "REVERSE"
+        "PUSH2",
+        "CLEARITEMS"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto"
+            "Execute"
           ],
           "result": {
             "state": "FAULT"
@@ -39,40 +38,38 @@
     {
       "name": "Real test [Array]",
       "script": [
-        "PUSH9",
-        "PUSH8",
+        "PUSH0",
+        "PUSH1",
         "PUSH2",
         "PACK",
         "DUP",
-        "REVERSE"
+        "CLEARITEMS"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
-            "stepInto",
-            "stepInto",
-            "stepInto",
-            "stepInto",
-            "stepInto"
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
-                "nextInstruction": "RET",
+                "instructionPointer": 4,
+                "nextInstruction": "DUP",
                 "evaluationStack": [
                   {
-                    "type": "array",
+                    "type": "Array",
                     "value": [
                       {
                         "type": "Integer",
-                        "value": 9
+                        "value": 1
                       },
                       {
                         "type": "Integer",
-                        "value": 8
+                        "value": 0
                       }
                     ]
                   }
@@ -83,23 +80,14 @@
         },
         {
           "actions": [
-            "stepInto"
+            "Execute"
           ],
           "result": {
             "state": "HALT",
             "resultStack": [
               {
-                "type": "array",
-                "value": [
-                  {
-                    "type": "Integer",
-                    "value": 9
-                  },
-                  {
-                    "type": "Integer",
-                    "value": 8
-                  }
-                ]
+                "type": "Array",
+                "value": []
               }
             ]
           }
@@ -107,14 +95,15 @@
       ]
     },
     {
-      "name": "Real test [Buffer]",
+      "name": "Real test [Map]",
       "script": [
-        "PUSHDATA1",
-        "0x03",
-        "0x010203",
-        "NEWBUFFER",
+        "NEWMAP",
         "DUP",
-        "REVERSE"
+        "PUSH0",
+        "PUSH0",
+        "SETITEM",
+        "DUP",
+        "CLEARITEMS"
       ],
       "steps": [
         {
@@ -125,8 +114,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Buffer",
-                "value": "0x030201"
+                "type": "Map",
+                "value": {}
               }
             ]
           }
