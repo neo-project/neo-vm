@@ -43,8 +43,8 @@
                 "nextInstruction": "NOT",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
-                    "value": 1
+                    "type": "Boolean",
+                    "value": true
                   }
                 ]
               }
@@ -63,8 +63,8 @@
                 "nextInstruction": "DROP",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
-                    "value": 0
+                    "type": "Boolean",
+                    "value": false
                   }
                 ]
               }

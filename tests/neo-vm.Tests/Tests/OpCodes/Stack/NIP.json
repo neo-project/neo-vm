@@ -80,8 +80,8 @@
                 "nextInstruction": "NIP",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
-                    "value": 1
+                    "type": "Boolean",
+                    "value": true
                   },
                   {
                     "type": "integer",
@@ -104,8 +104,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
-                    "value": 1
+                    "type": "Boolean",
+                    "value": true
                   }
                 ]
               }
@@ -120,8 +120,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }

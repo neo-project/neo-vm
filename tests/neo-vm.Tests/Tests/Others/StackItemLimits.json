@@ -43,8 +43,8 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Integer",
-                    "value": 0
+                    "type": "Boolean",
+                    "value": false
                   }
                 ]
               }
@@ -59,8 +59,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 0
+                "type": "Boolean",
+                "value": false
               }
             ]
           }

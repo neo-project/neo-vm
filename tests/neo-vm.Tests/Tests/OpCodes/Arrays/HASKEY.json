@@ -84,8 +84,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }
