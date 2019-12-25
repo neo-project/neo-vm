@@ -12,8 +12,14 @@ namespace Neo.VM.Types
 
         public override StackItem ConvertTo(StackItemType type)
         {
-            if (type == StackItemType.Buffer) return new Buffer(Span);
-            return base.ConvertTo(type);
+            if (type == Type) return this;
+            return type switch
+            {
+                StackItemType.Integer => ToBigInteger(),
+                StackItemType.ByteArray => Memory,
+                StackItemType.Buffer => new Buffer(Span),
+                _ => base.ConvertTo(type)
+            };
         }
 
         public sealed override bool Equals(object obj)
@@ -87,6 +93,12 @@ namespace Neo.VM.Types
         public static implicit operator PrimitiveType(BigInteger value)
         {
             return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(bool value)
+        {
+            return (Boolean)value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

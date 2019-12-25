@@ -880,6 +880,7 @@ namespace Neo.VM
                             if (!Enum.IsDefined(typeof(StackItemType), type)) return false;
                             item = instruction.TokenU8 switch
                             {
+                                (byte)StackItemType.Boolean => StackItem.False,
                                 (byte)StackItemType.Integer => Integer.Zero,
                                 (byte)StackItemType.ByteArray => ByteArray.Empty,
                                 _ => StackItem.Null
