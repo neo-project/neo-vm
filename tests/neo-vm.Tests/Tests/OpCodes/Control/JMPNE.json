@@ -5,7 +5,8 @@
     {
       "name": "Without all items",
       "script": [
-        "JMPNE"
+        "JMPNE",
+        "0x00"
       ],
       "steps": [
         {
@@ -22,7 +23,8 @@
       "name": "Without one",
       "script": [
         "PUSH1",
-        "JMPNE"
+        "JMPNE",
+        "0x00"
       ],
       "steps": [
         {

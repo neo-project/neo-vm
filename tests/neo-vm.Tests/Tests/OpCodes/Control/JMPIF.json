@@ -5,7 +5,8 @@
     {
       "name": "Without items",
       "script": [
-        "JMPIF"
+        "JMPIF",
+        "0x00"
       ],
       "steps": [
         {

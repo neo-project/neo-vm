@@ -5,7 +5,8 @@
     {
       "name": "Without all items",
       "script": [
-        "JMPEQ_L"
+        "JMPEQ_L",
+        "0x00000000"
       ],
       "steps": [
         {
@@ -22,7 +23,8 @@
       "name": "Without one",
       "script": [
         "PUSH1",
-        "JMPEQ_L"
+        "JMPEQ_L",
+        "0x00000000"
       ],
       "steps": [
         {
