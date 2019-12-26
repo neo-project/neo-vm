@@ -182,7 +182,7 @@
         "PUSH4",
         "SETITEM",
         "CONVERT",
-        "0x20"
+        "0x21"
       ],
       "steps": [
         {
@@ -308,7 +308,7 @@
         "0x02",
         "0x0A0B",
         "CONVERT",
-        "0x20"
+        "0x21"
       ],
       "steps": [
         {
@@ -364,7 +364,7 @@
         "CONVERT",
         "0x30",
         "CONVERT",
-        "0x20"
+        "0x21"
       ],
       "steps": [
         {
@@ -392,7 +392,7 @@
         "CONVERT",
         "0x30",
         "CONVERT",
-        "0x20"
+        "0x21"
       ],
       "steps": [
         {

@@ -13,6 +13,11 @@ namespace Neo.Test.Types
         Pointer,
 
         /// <summary>
+        /// Boolean (true,false)
+        /// </summary>
+        Boolean,
+
+        /// <summary>
         /// ByteArray
         /// </summary>
         ByteArray,

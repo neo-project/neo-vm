@@ -6,17 +6,16 @@ namespace Neo.VM.Types
 {
     public abstract class StackItem
     {
-        public static StackItem False { get; } = 0;
+        public static StackItem False { get; } = new Boolean(false);
         public bool IsNull => this is Null;
         public static StackItem Null { get; } = new Null();
-        public static StackItem True { get; } = 1;
+        public static StackItem True { get; } = new Boolean(true);
         public abstract StackItemType Type { get; }
 
         public virtual StackItem ConvertTo(StackItemType type)
         {
-            if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
-                throw new InvalidCastException();
-            if (Type == type) return this;
+            if (type == Type) return this;
+            if (type == StackItemType.Boolean) return ToBoolean();
             throw new InvalidCastException();
         }
 

@@ -31,12 +31,6 @@ namespace Neo.VM.Types
             this.value = value;
         }
 
-        public override StackItem ConvertTo(StackItemType type)
-        {
-            if (type == StackItemType.ByteArray) return Memory;
-            return base.ConvertTo(type);
-        }
-
         public override bool Equals(PrimitiveType other)
         {
             if (ReferenceEquals(this, other)) return true;

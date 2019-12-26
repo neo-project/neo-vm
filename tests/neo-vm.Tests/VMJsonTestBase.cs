@@ -235,6 +235,7 @@ namespace Neo.Test
                             ["value"] = p.Position
                         };
                     }
+                case VM.Types.Boolean v: value = new JValue(v.ToBoolean()); break;
                 case VM.Types.Integer v: value = new JValue(v.ToBigInteger().ToString()); break;
                 case VM.Types.ByteArray v: value = new JValue(v.Span.ToArray()); break;
                 case VM.Types.Buffer v: value = new JValue(v.InnerBuffer); break;

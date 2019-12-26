@@ -69,7 +69,7 @@
       "script": [
         "PUSH2",
         "NEWARRAY_T",
-        "0x20"
+        "0x21"
       ],
       "steps": [
         {

@@ -18,12 +18,6 @@ namespace Neo.VM.Types
             this.Memory = value;
         }
 
-        public override StackItem ConvertTo(StackItemType type)
-        {
-            if (type == StackItemType.Integer) return ToBigInteger();
-            return base.ConvertTo(type);
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator ReadOnlyMemory<byte>(ByteArray value)
         {

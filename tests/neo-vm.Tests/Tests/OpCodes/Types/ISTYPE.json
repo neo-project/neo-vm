@@ -18,8 +18,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }
@@ -43,8 +43,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }
@@ -68,8 +68,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }
@@ -81,7 +81,7 @@
       "script": [
         "PUSH0",
         "ISTYPE",
-        "0x20"
+        "0x21"
       ],
       "steps": [
         {
@@ -92,8 +92,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }
@@ -117,8 +117,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }
@@ -141,8 +141,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }
@@ -165,8 +165,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 0
+                "type": "Boolean",
+                "value": false
               }
             ]
           }
@@ -190,8 +190,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }
@@ -214,8 +214,8 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Integer",
-                "value": 1
+                "type": "Boolean",
+                "value": true
               }
             ]
           }
