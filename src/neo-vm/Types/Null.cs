@@ -10,9 +10,18 @@ namespace Neo.VM.Types
 
         public override StackItem ConvertTo(StackItemType type)
         {
-            if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
-                throw new InvalidCastException();
-            return this;
+            switch (type)
+            {
+                case StackItemType.Boolean: return ToBoolean();
+                case StackItemType.Any: throw new InvalidCastException();
+                default:
+                    {
+                        if (!Enum.IsDefined(typeof(StackItemType), type))
+                            throw new InvalidCastException();
+
+                        return this;
+                    }
+            }
         }
 
         public override bool Equals(object obj)
