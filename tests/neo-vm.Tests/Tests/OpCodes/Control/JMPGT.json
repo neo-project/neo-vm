@@ -1,7 +1,41 @@
-﻿{
+{
   "category": "Control",
   "name": "JMPGT",
   "tests": [
+    {
+      "name": "Without all items",
+      "script": [
+        "JMPGT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Without one",
+      "script": [
+        "PUSH1",
+        "JMPGT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
     {
       "name": "Real test [>]",
       "script": [

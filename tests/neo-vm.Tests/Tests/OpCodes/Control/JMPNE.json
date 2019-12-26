@@ -1,7 +1,41 @@
-﻿{
+{
   "category": "Control",
   "name": "JMPNE",
   "tests": [
+    {
+      "name": "Without all items",
+      "script": [
+        "JMPNE"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Without one",
+      "script": [
+        "PUSH1",
+        "JMPNE"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
     {
       "name": "Real test [>]",
       "script": [
