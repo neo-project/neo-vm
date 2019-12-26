@@ -3,6 +3,23 @@
   "name": "INITSSLOT",
   "tests": [
     {
+      "name": "Without 0 items",
+      "script": [
+        "INITSSLOT",
+        "0x00"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "Real test",
       "script": [
         "INITSSLOT",
