@@ -67,6 +67,23 @@ namespace Neo.Test
             Assert.AreEqual(3, slot.Count);
 
             CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, slot.ToArray());
+
+            // Empty
+
+            slot = CreateOrderedSlot(0);
+
+            CollectionAssert.AreEqual(new Integer[] { }, slot.ToArray());
+
+            // Test IEnumerable
+
+            enumerable = (IEnumerable)slot;
+            enumerator = enumerable.GetEnumerator();
+
+            CollectionAssert.AreEqual(new Integer[] { }, GetEnumerable(enumerator).Cast<Integer>().ToArray());
+
+            Assert.AreEqual(0, slot.Count);
+
+            CollectionAssert.AreEqual(new Integer[] { }, slot.ToArray());
         }
     }
 }
