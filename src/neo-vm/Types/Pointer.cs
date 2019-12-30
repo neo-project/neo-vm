@@ -24,7 +24,7 @@ namespace Neo.VM.Types
 
         public override int GetHashCode()
         {
-            return Position.GetHashCode() * Script.GetHashCode();
+            return Position.GetHashCode() + (31 * Script.GetHashCode());
         }
 
         public override bool ToBoolean()
