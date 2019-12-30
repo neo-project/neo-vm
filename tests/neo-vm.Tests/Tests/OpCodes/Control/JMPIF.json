@@ -1,7 +1,24 @@
-﻿{
+{
   "category": "Control",
   "name": "JMPIF",
   "tests": [
+    {
+      "name": "Without items",
+      "script": [
+        "JMPIF",
+        "0x00"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
     {
       "name": "Real test [1]",
       "script": [

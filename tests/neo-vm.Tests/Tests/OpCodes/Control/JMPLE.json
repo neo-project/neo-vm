@@ -1,7 +1,43 @@
-﻿{
+{
   "category": "Control",
   "name": "JMPLE",
   "tests": [
+    {
+      "name": "Without all items",
+      "script": [
+        "JMPLE",
+        "0x00"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Without one",
+      "script": [
+        "PUSH1",
+        "JMPLE",
+        "0x00"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
     {
       "name": "Real test [>]",
       "script": [

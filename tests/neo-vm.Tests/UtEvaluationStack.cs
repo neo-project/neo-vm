@@ -91,6 +91,8 @@ namespace Neo.Test
             Assert.AreEqual(3, stack.Peek(0));
             Assert.AreEqual(2, stack.Peek(1));
             Assert.AreEqual(1, stack.Peek(-1));
+
+            Assert.ThrowsException<InvalidOperationException>(() => stack.Peek(-4));
         }
 
         [TestMethod]
@@ -114,6 +116,18 @@ namespace Neo.Test
             Assert.IsTrue(stack.TryPop(out item) && item.Equals(2));
             Assert.IsTrue(stack.TryPop(out item) && item.Equals(1));
             Assert.IsFalse(stack.TryPop(out item) && item.Equals(0));
+        }
+
+        [TestMethod]
+        public void TestTryRemove()
+        {
+            var stack = CreateOrderedStack(3);
+
+            Assert.IsTrue(stack.TryRemove(0, out Integer item) && item.Equals(3));
+            Assert.IsTrue(stack.TryRemove(0, out item) && item.Equals(2));
+            Assert.IsTrue(stack.TryRemove(-1, out item) && item.Equals(1));
+            Assert.IsFalse(stack.TryRemove(0, out item) && item.Equals(0));
+            Assert.IsFalse(stack.TryRemove(-1, out item) && item.Equals(0));
         }
 
         [TestMethod]

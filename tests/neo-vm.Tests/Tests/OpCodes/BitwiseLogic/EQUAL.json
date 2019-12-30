@@ -44,6 +44,14 @@
               }
             ]
           }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
         }
       ]
     },

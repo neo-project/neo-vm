@@ -237,7 +237,16 @@
         "PUSH1",
         "PUSH2",
         "SETITEM",
-        "LDSFLD0"
+        "LDSFLD0",
+        "PUSH3",
+        "PUSH4",
+        "SETITEM",
+        "LDSFLD0",
+        "PUSH1",
+        "PUSH2",
+        "SETITEM",
+        "LDSFLD0",
+        "RET"
       ],
       "steps": [
         {
@@ -338,7 +347,7 @@
             "invocationStack": [
               {
                 "instructionPointer": 9,
-                "nextInstruction": "RET",
+                "nextInstruction": "PUSH3",
                 "evaluationStack": [
                   {
                     "type": "map",
@@ -367,6 +376,57 @@
         },
         {
           "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 13,
+                "nextInstruction": "PUSH1",
+                "evaluationStack": [
+                  {
+                    "type": "map",
+                    "value": {
+                      "0x01": {
+                        "type": "Integer",
+                        "value": 2
+                      },
+                      "0x03": {
+                        "type": "Integer",
+                        "value": 4
+                      }
+                    }
+                  }
+                ],
+                "staticFields": [
+                  {
+                    "type": "map",
+                    "value": {
+                      "0x01": {
+                        "type": "Integer",
+                        "value": 2
+                      },
+                      "0x03": {
+                        "type": "Integer",
+                        "value": 4
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
@@ -378,6 +438,10 @@
                   "0x01": {
                     "type": "Integer",
                     "value": 2
+                  },
+                  "0x03": {
+                    "type": "Integer",
+                    "value": 4
                   }
                 }
               }
