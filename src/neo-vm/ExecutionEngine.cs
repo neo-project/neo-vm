@@ -117,7 +117,7 @@ namespace Neo.VM
                     {
                         int position = instruction.TokenI32;
                         if (position < 0 || position > CurrentContext.Script.Length) return false;
-                        Push(new Pointer(position));
+                        Push(new Pointer(context.Script, position));
                         break;
                     }
                 case OpCode.PUSHNULL:
@@ -273,6 +273,7 @@ namespace Neo.VM
                 case OpCode.CALLA:
                     {
                         if (!TryPop(out Pointer x)) return false;
+                        if (!x.Script.Equals(context.Script)) return false;
                         if (!ExecuteCall(x.Position)) return false;
                         break;
                     }

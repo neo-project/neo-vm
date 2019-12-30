@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Neo.VM;
 using Neo.VM.Types;
 using System;
 using System.Numerics;
@@ -59,9 +60,10 @@ namespace Neo.Test
 
             Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
 
-            itemA = new Pointer(123);
-            itemB = new Pointer(123);
-            itemC = new Pointer(1234);
+            var script = new Script(new byte[0]);
+            itemA = new Pointer(script, 123);
+            itemB = new Pointer(script, 123);
+            itemC = new Pointer(script, 1234);
 
             Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
             Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());

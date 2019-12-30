@@ -5,8 +5,9 @@ using System.Runtime.CompilerServices;
 namespace Neo.VM
 {
     [DebuggerDisplay("Length={Length}")]
-    public class Script
+    public class Script : IEqualityComparer<Script>
     {
+        private int _hashCode = -1;
         private readonly byte[] _value;
         private readonly Dictionary<int, Instruction> _instructions = new Dictionary<int, Instruction>();
 
@@ -54,6 +55,55 @@ namespace Neo.VM
                 _instructions.Add(ip, instruction);
             }
             return instruction;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Script script)) return false;
+            return Equals(script, this);
+        }
+
+        public bool Equals(Script x, Script y)
+        {
+            if (x == null || y == null) return x == y;
+            if (ReferenceEquals(x, y)) return true;
+
+            return Unsafe.MemoryEquals(x._value, y._value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override int GetHashCode()
+        {
+            return GetHashCode(this);
+        }
+
+        public unsafe int GetHashCode(Script obj)
+        {
+            if (_hashCode != -1) return _hashCode;
+            if (obj is null) return 0;
+
+            int len = obj._value.Length;
+            if (len == 0) return 0;
+
+            _hashCode = 1;
+            fixed (byte* xp = obj._value)
+            {
+                int* xlp = (int*)xp;
+                for (; len >= 4; len -= 4)
+                {
+                    _hashCode *= *xlp;
+                    xlp++;
+                }
+                byte* xbp = (byte*)xlp;
+                for (; len > 0; len--)
+                {
+                    _hashCode *= *xbp;
+                    xbp++;
+                }
+            }
+
+            return _hashCode;
         }
 
         public static implicit operator byte[](Script script) => script._value;
