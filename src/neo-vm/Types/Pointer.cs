@@ -18,7 +18,7 @@ namespace Neo.VM.Types
         public override bool Equals(object obj)
         {
             if (obj == this) return true;
-            if (obj is Pointer p) return Position == p.Position && Script == p.Script;
+            if (obj is Pointer p) return Position == p.Position && Script.Equals(p.Script);
             return false;
         }
 
