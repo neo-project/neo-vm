@@ -442,7 +442,7 @@ namespace Neo.VM
                         if (instruction.TokenU8_1 > 0)
                         {
                             StackItem[] items = new StackItem[instruction.TokenU8_1];
-                            for (int i = instruction.TokenU8_1 - 1; i >= 0; i--)
+                            for (int i = 0; i< instruction.TokenU8_1; i++)
                                 if (!TryPop(out items[i]))
                                     return false;
                             context.Arguments = new Slot(items, ReferenceCounter);
@@ -735,7 +735,8 @@ namespace Neo.VM
                 case OpCode.SHL:
                     {
                         if (!TryPop(out int shift)) return false;
-                        if (!CheckShift(shift)) return false;
+                        //shift allow >32 and <0 ,got a  %32 value
+                        //if (!CheckShift(shift)) return false;
                         if (shift == 0) break;
                         if (!TryPop(out BigInteger x)) return false;
                         Push(x << shift);
@@ -744,7 +745,8 @@ namespace Neo.VM
                 case OpCode.SHR:
                     {
                         if (!TryPop(out int shift)) return false;
-                        if (!CheckShift(shift)) return false;
+                        //if (!CheckShift(shift)) return false;
+                        //shift allow >32 and <0 ,got a  %32 value
                         if (shift == 0) break;
                         if (!TryPop(out BigInteger x)) return false;
                         Push(x >> shift);
