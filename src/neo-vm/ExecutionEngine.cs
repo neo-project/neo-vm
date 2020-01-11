@@ -442,7 +442,7 @@ namespace Neo.VM
                         if (instruction.TokenU8_1 > 0)
                         {
                             StackItem[] items = new StackItem[instruction.TokenU8_1];
-                            for (int i = 0; i< instruction.TokenU8_1; i++)
+                            for (int i = 0; i < instruction.TokenU8_1; i++)
                                 if (!TryPop(out items[i]))
                                     return false;
                             context.Arguments = new Slot(items, ReferenceCounter);
