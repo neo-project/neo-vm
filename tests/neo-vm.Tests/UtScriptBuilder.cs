@@ -54,6 +54,11 @@ namespace Neo.Test
                 script.EmitCall(12345);
                 CollectionAssert.AreEqual(new[] { (byte)OpCode.CALL_L }.Concat(BitConverter.GetBytes(12345)).ToArray(), script.ToArray());
             }
+            using (var script = new ScriptBuilder())
+            {
+                script.EmitCall(-12345);
+                CollectionAssert.AreEqual(new[] { (byte)OpCode.CALL_L }.Concat(BitConverter.GetBytes(-12345)).ToArray(), script.ToArray());
+            }
         }
 
         [TestMethod]
@@ -61,6 +66,30 @@ namespace Neo.Test
         {
             var offset_i8 = sbyte.MaxValue;
             var offset_i32 = int.MaxValue;
+
+            foreach (OpCode op in Enum.GetValues(typeof(OpCode)))
+            {
+                using (var script = new ScriptBuilder())
+                {
+                    if (op < OpCode.JMP || op > OpCode.JMPLE_L)
+                    {
+                        Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i8));
+                        Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i32));
+                    }
+                    else
+                    {
+                        script.EmitJump(op, offset_i8);
+                        script.EmitJump(op, offset_i32);
+                        if ((int)op % 2 == 0)
+                            CollectionAssert.AreEqual(new[] { (byte)op, (byte)offset_i8, (byte)(op + 1) }.Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
+                        else
+                            CollectionAssert.AreEqual(new[] { (byte)op }.Concat(BitConverter.GetBytes((int)offset_i8)).Concat(new[] { (byte)op }).Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
+                    }
+                }
+            }
+
+            offset_i8 = sbyte.MinValue;
+            offset_i32 = int.MinValue;
 
             foreach (OpCode op in Enum.GetValues(typeof(OpCode)))
             {
@@ -120,6 +149,10 @@ namespace Neo.Test
             CollectionAssert.AreEqual("030000000000000080".FromHexString(), new ScriptBuilder().EmitPush(long.MinValue).ToArray());
             CollectionAssert.AreEqual("03ffffffffffffff7f".FromHexString(), new ScriptBuilder().EmitPush(long.MaxValue).ToArray());
             CollectionAssert.AreEqual("04ffffffffffffffff0000000000000000".FromHexString(), new ScriptBuilder().EmitPush(ulong.MaxValue).ToArray());
+            CollectionAssert.AreEqual("050100000000000000feffffffffffffff00000000000000000000000000000000".FromHexString(), new ScriptBuilder().EmitPush(new BigInteger(ulong.MaxValue) * new BigInteger(ulong.MaxValue)).ToArray());
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new ScriptBuilder().EmitPush(
+                new BigInteger("050100000000000000feffffffffffffff0100000000000000feffffffffffffff00000000000000000000000000000000".FromHexString())));
         }
 
         [TestMethod]

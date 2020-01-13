@@ -69,6 +69,203 @@
       ]
     },
     {
+      "name": "Negative di",
+      "script": [
+        "PUSH4",
+        "NEWBUFFER", //dst
+        "PUSHM1", //di
+        "PUSHDATA1", //src
+        "0x02",
+        "0x1111",
+        "PUSH0", //si
+        "PUSH2", //n
+        "MEMCPY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
+                "nextInstruction": "MEMCPY",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x1111"
+                  },
+                  {
+                    "type": "Integer",
+                    "value": -1
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "0x00000000"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Negative si",
+      "script": [
+        "PUSH4",
+        "NEWBUFFER", //dst
+        "PUSHINT32", //di
+        "0x00001000",
+        "PUSHDATA1", //src
+        "0x02",
+        "0x1111",
+        "PUSHM1", //si
+        "PUSH2", //n
+        "MEMCPY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 13,
+                "nextInstruction": "MEMCPY",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "Integer",
+                    "value": -1
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x1111"
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 1048576
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "0x00000000"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Negative n",
+      "script": [
+        "PUSH4",
+        "NEWBUFFER", //dst
+        "PUSHINT32", //di
+        "0x00001000",
+        "PUSHDATA1", //src
+        "0x02",
+        "0x1111",
+        "PUSH0", //si
+        "PUSHM1", //n
+        "MEMCPY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 13,
+                "nextInstruction": "MEMCPY",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": -1
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "ByteArray",
+                    "value": "0x1111"
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 1048576
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": "0x00000000"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "Wrong type [Array]",
       "script": [
         "PUSH0", //dst (wrong type: Array)

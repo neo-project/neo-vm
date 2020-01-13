@@ -1,7 +1,41 @@
-﻿{
+{
   "category": "Control",
   "name": "CALL_L",
   "tests": [
+    {
+      "name": "Error negative",
+      "script": [
+        "CALL_L",
+        "0x000000FF"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error out of bounds",
+      "script": [
+        "CALL_L",
+        "0x0A000000"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
     {
       "name": "Real test",
       "script": [

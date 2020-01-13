@@ -1,5 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Neo.VM;
 using Neo.VM.Types;
+using System;
 using System.Numerics;
 
 namespace Neo.Test
@@ -13,6 +15,55 @@ namespace Neo.Test
             StackItem itemA = "NEO";
             StackItem itemB = "NEO";
             StackItem itemC = "SmartEconomy";
+
+            Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
+            Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
+
+            itemA = new VM.Types.Buffer(1);
+            itemB = new VM.Types.Buffer(1);
+            itemC = new VM.Types.Buffer(123);
+
+            Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
+            Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
+
+            itemA = true;
+            itemB = true;
+            itemC = false;
+
+            Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
+            Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
+
+            itemA = 1;
+            itemB = 1;
+            itemC = 123;
+
+            Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
+            Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
+
+            itemA = new Null();
+
+            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+
+            itemA = new VM.Types.Array();
+
+            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+
+            itemA = new Struct();
+
+            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+
+            itemA = new Map();
+
+            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+
+            itemA = new InteropInterface(123);
+
+            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+
+            var script = new Script(new byte[0]);
+            itemA = new Pointer(script, 123);
+            itemB = new Pointer(script, 123);
+            itemC = new Pointer(script, 1234);
 
             Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
             Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
@@ -86,7 +137,7 @@ namespace Neo.Test
 
             item = true;
 
-            Assert.IsInstanceOfType(item, typeof(Boolean));
+            Assert.IsInstanceOfType(item, typeof(VM.Types.Boolean));
             Assert.IsTrue(item.ToBoolean());
 
             // ByteArray

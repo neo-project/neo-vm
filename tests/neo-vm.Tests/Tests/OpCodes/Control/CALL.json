@@ -1,7 +1,41 @@
-﻿{
+{
   "category": "Control",
   "name": "CALL",
   "tests": [
+    {
+      "name": "Error negative",
+      "script": [
+        "CALL",
+        "0xFF00"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Error out of bounds",
+      "script": [
+        "CALL",
+        "0x0A"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
     {
       "name": "Real test",
       "script": [

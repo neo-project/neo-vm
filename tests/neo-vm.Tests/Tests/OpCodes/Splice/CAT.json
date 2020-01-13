@@ -8,7 +8,7 @@
         "PUSH1",
         "PUSHDATA4",
         "0x00001000",
-        "PUSH0*4096",
+        "PUSH0*1048576",
         "CAT"
       ],
       "steps": [
@@ -292,8 +292,8 @@
         "0x30",
         "INITSLOT",
         "0002",
-        "LDARG0",
         "LDARG1",
+        "LDARG0",
         "CAT"
       ],
       "steps": [
@@ -333,15 +333,15 @@
             "invocationStack": [
               {
                 "instructionPointer": 13,
-                "nextInstruction": "LDARG0",
+                "nextInstruction": "LDARG1",
                 "arguments": [
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "BB"
                   },
                   {
                     "type": "Buffer",
-                    "value": "BB"
+                    "value": "AA"
                   }
                 ]
               }
@@ -372,11 +372,11 @@
                 "arguments": [
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "BB"
                   },
                   {
                     "type": "Buffer",
-                    "value": "BB"
+                    "value": "AA"
                   }
                 ]
               }
@@ -402,11 +402,11 @@
                 "arguments": [
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "BB"
                   },
                   {
                     "type": "Buffer",
-                    "value": "BB"
+                    "value": "AA"
                   }
                 ]
               }

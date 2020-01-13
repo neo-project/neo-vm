@@ -117,7 +117,7 @@ namespace Neo.VM
                     {
                         int position = instruction.TokenI32;
                         if (position < 0 || position > CurrentContext.Script.Length) return false;
-                        Push(new Pointer(position));
+                        Push(new Pointer(context.Script, position));
                         break;
                     }
                 case OpCode.PUSHNULL:
@@ -273,6 +273,7 @@ namespace Neo.VM
                 case OpCode.CALLA:
                     {
                         if (!TryPop(out Pointer x)) return false;
+                        if (!x.Script.Equals(context.Script)) return false;
                         if (!ExecuteCall(x.Position)) return false;
                         break;
                     }
@@ -441,7 +442,7 @@ namespace Neo.VM
                         if (instruction.TokenU8_1 > 0)
                         {
                             StackItem[] items = new StackItem[instruction.TokenU8_1];
-                            for (int i = instruction.TokenU8_1 - 1; i >= 0; i--)
+                            for (int i = 0; i < instruction.TokenU8_1; i++)
                                 if (!TryPop(out items[i]))
                                     return false;
                             context.Arguments = new Slot(items, ReferenceCounter);

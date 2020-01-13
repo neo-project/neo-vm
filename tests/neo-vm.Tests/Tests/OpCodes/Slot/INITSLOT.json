@@ -20,6 +20,23 @@
       ]
     },
     {
+      "name": "Without 0 items",
+      "script": [
+        "INITSLOT",
+        "0x0000"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "Real test [LocalVariables]",
       "script": [
         "INITSLOT",

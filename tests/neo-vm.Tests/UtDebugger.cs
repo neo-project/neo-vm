@@ -21,6 +21,9 @@ namespace Neo.Test
 
                 var debugger = new Debugger(engine);
 
+                Assert.IsFalse(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 3));
+                Assert.IsFalse(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 4));
+
                 Assert.AreEqual(OpCode.NOP, engine.CurrentContext.NextInstruction.OpCode);
 
                 debugger.AddBreakPoint(engine.CurrentContext.Script, 3);
@@ -31,9 +34,36 @@ namespace Neo.Test
                 Assert.AreEqual(3, engine.CurrentContext.InstructionPointer);
                 Assert.AreEqual(VMState.BREAK, engine.State);
 
-                debugger.RemoveBreakPoint(engine.CurrentContext.Script, 4);
+                Assert.IsTrue(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 3));
+                Assert.IsFalse(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 3));
+                Assert.IsTrue(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 4));
+                Assert.IsFalse(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 4));
                 debugger.Execute();
 
+                Assert.AreEqual(VMState.HALT, engine.State);
+            }
+        }
+
+        [TestMethod]
+        public void TestWithoutBreakPoints()
+        {
+            using (var engine = new ExecutionEngine())
+            using (var script = new ScriptBuilder())
+            {
+                script.Emit(OpCode.NOP);
+                script.Emit(OpCode.NOP);
+                script.Emit(OpCode.NOP);
+                script.Emit(OpCode.NOP);
+
+                engine.LoadScript(script.ToArray());
+
+                var debugger = new Debugger(engine);
+
+                Assert.AreEqual(OpCode.NOP, engine.CurrentContext.NextInstruction.OpCode);
+
+                debugger.Execute();
+
+                Assert.IsNull(engine.CurrentContext);
                 Assert.AreEqual(VMState.HALT, engine.State);
             }
         }

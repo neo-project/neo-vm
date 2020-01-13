@@ -91,6 +91,121 @@
           }
         }
       ]
+    },
+    {
+      "name": "Real test [Map]",
+      "script": [
+        "INITSSLOT",
+        "01",
+        "NEWMAP",
+        "DUP",
+        "STSFLD0",
+        "PUSH1",
+        "PUSH2",
+        "SETITEM",
+        "LDSFLD0",
+        "PUSH3",
+        "HASKEY",
+        "DROP",
+        "LDSFLD0",
+        "PUSH1",
+        "HASKEY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "HASKEY",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 3
+                  },
+                  {
+                    "type": "map",
+                    "value": {
+                      "0x01": {
+                        "type": "Integer",
+                        "value": 2
+                      }
+                    }
+                  }
+                ],
+                "staticFields": [
+                  {
+                    "type": "map",
+                    "value": {
+                      "0x01": {
+                        "type": "Integer",
+                        "value": 2
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 11,
+                "nextInstruction": "DROP",
+                "evaluationStack": [
+                  {
+                    "type": "Boolean",
+                    "value": false
+                  }
+                ],
+                "staticFields": [
+                  {
+                    "type": "map",
+                    "value": {
+                      "0x01": {
+                        "type": "Integer",
+                        "value": 2
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": true
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

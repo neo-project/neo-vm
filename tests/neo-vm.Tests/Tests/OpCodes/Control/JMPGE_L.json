@@ -1,7 +1,43 @@
-﻿{
+{
   "category": "Control",
   "name": "JMPGE_L",
   "tests": [
+    {
+      "name": "Without all items",
+      "script": [
+        "JMPGE_L",
+        "0x00000000"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Without one",
+      "script": [
+        "PUSH1",
+        "JMPGE_L",
+        "0x00000000"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
     {
       "name": "Real test [>]",
       "script": [
