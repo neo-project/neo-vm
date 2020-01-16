@@ -22,7 +22,7 @@ namespace Neo.VM
         /// <summary>
         /// Set the max Stack Size
         /// </summary>
-        public virtual uint MaxStackSize => 2 * 1024;
+        public virtual uint MaxStackSize => 20 * 1024;
 
         /// <summary>
         /// Set Max Item Size
