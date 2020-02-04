@@ -95,6 +95,8 @@ namespace Neo.VM
             return TryRemove(0, out item);
         }
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning disable CS8601 // Possible null reference assignment.
         internal bool TryRemove<T>(int index, out T item) where T : StackItem
         {
             if (index >= innerList.Count)
@@ -118,5 +120,7 @@ namespace Neo.VM
             referenceCounter.RemoveStackReference(item);
             return true;
         }
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
     }
 }

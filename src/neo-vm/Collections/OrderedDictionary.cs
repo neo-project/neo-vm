@@ -6,11 +6,18 @@ using System.Linq;
 namespace Neo.VM.Collections
 {
     internal class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+        where TValue : class
     {
         private class TItem
         {
             public TKey Key;
             public TValue Value;
+
+            public TItem(TKey key, TValue value)
+            {
+                Key = key;
+                Value = value;
+            }
         }
 
         private class InternalCollection : KeyedCollection<TKey, TItem>
@@ -45,11 +52,7 @@ namespace Neo.VM.Collections
 
         public void Add(TKey key, TValue value)
         {
-            collection.Add(new TItem
-            {
-                Key = key,
-                Value = value
-            });
+            collection.Add(new TItem(key, value));
         }
 
         public bool ContainsKey(TKey key)
@@ -62,6 +65,7 @@ namespace Neo.VM.Collections
             return collection.Remove(key);
         }
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         public bool TryGetValue(TKey key, out TValue value)
         {
             if (collection.Contains(key))
@@ -72,6 +76,7 @@ namespace Neo.VM.Collections
             value = default;
             return false;
         }
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
         void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
         {

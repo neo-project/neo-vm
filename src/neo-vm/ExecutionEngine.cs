@@ -38,8 +38,8 @@ namespace Neo.VM
 
         public ReferenceCounter ReferenceCounter { get; } = new ReferenceCounter();
         public Stack<ExecutionContext> InvocationStack { get; } = new Stack<ExecutionContext>();
-        public ExecutionContext CurrentContext { get; private set; }
-        public ExecutionContext EntryContext { get; private set; }
+        public ExecutionContext? CurrentContext { get; private set; }
+        public ExecutionContext? EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }
         public VMState State { get; internal protected set; } = VMState.BREAK;
 
@@ -87,10 +87,10 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool ExecuteCall(int position)
+        private bool ExecuteCall(ExecutionContext context, int position)
         {
-            if (position < 0 || position > CurrentContext.Script.Length) return false;
-            ExecutionContext context_call = CurrentContext.Clone();
+            if (position < 0 || position > context.Script.Length) return false;
+            ExecutionContext context_call = context.Clone();
             context_call.InstructionPointer = position;
             LoadContext(context_call);
             return true;
@@ -98,6 +98,7 @@ namespace Neo.VM
 
         private bool ExecuteInstruction()
         {
+            if (CurrentContext == null) return false;
             ExecutionContext context = CurrentContext;
             Instruction instruction = context.CurrentInstruction;
             switch (instruction.OpCode)
@@ -116,7 +117,7 @@ namespace Neo.VM
                 case OpCode.PUSHA:
                     {
                         int position = instruction.TokenI32;
-                        if (position < 0 || position > CurrentContext.Script.Length) return false;
+                        if (position < 0 || position > context.Script.Length) return false;
                         Push(new Pointer(context.Script, position));
                         break;
                     }
@@ -160,113 +161,113 @@ namespace Neo.VM
                 case OpCode.NOP: break;
                 case OpCode.JMP:
                     {
-                        return ExecuteJump(true, instruction.TokenI8);
+                        return ExecuteJump(context, true, instruction.TokenI8);
                     }
                 case OpCode.JMP_L:
                     {
-                        return ExecuteJump(true, instruction.TokenI32);
+                        return ExecuteJump(context, true, instruction.TokenI32);
                     }
                 case OpCode.JMPIF:
                     {
                         if (!TryPop(out bool x)) return false;
-                        return ExecuteJump(x, instruction.TokenI8);
+                        return ExecuteJump(context, x, instruction.TokenI8);
                     }
                 case OpCode.JMPIF_L:
                     {
                         if (!TryPop(out bool x)) return false;
-                        return ExecuteJump(x, instruction.TokenI32);
+                        return ExecuteJump(context, x, instruction.TokenI32);
                     }
                 case OpCode.JMPIFNOT:
                     {
                         if (!TryPop(out bool x)) return false;
-                        return ExecuteJump(!x, instruction.TokenI8);
+                        return ExecuteJump(context, !x, instruction.TokenI8);
                     }
                 case OpCode.JMPIFNOT_L:
                     {
                         if (!TryPop(out bool x)) return false;
-                        return ExecuteJump(!x, instruction.TokenI32);
+                        return ExecuteJump(context, !x, instruction.TokenI32);
                     }
                 case OpCode.JMPEQ:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 == x2, instruction.TokenI8);
+                        return ExecuteJump(context, x1 == x2, instruction.TokenI8);
                     }
                 case OpCode.JMPEQ_L:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 == x2, instruction.TokenI32);
+                        return ExecuteJump(context, x1 == x2, instruction.TokenI32);
                     }
                 case OpCode.JMPNE:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 != x2, instruction.TokenI8);
+                        return ExecuteJump(context, x1 != x2, instruction.TokenI8);
                     }
                 case OpCode.JMPNE_L:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 != x2, instruction.TokenI32);
+                        return ExecuteJump(context, x1 != x2, instruction.TokenI32);
                     }
                 case OpCode.JMPGT:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 > x2, instruction.TokenI8);
+                        return ExecuteJump(context, x1 > x2, instruction.TokenI8);
                     }
                 case OpCode.JMPGT_L:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 > x2, instruction.TokenI32);
+                        return ExecuteJump(context, x1 > x2, instruction.TokenI32);
                     }
                 case OpCode.JMPGE:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 >= x2, instruction.TokenI8);
+                        return ExecuteJump(context, x1 >= x2, instruction.TokenI8);
                     }
                 case OpCode.JMPGE_L:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 >= x2, instruction.TokenI32);
+                        return ExecuteJump(context, x1 >= x2, instruction.TokenI32);
                     }
                 case OpCode.JMPLT:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 < x2, instruction.TokenI8);
+                        return ExecuteJump(context, x1 < x2, instruction.TokenI8);
                     }
                 case OpCode.JMPLT_L:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 < x2, instruction.TokenI32);
+                        return ExecuteJump(context, x1 < x2, instruction.TokenI32);
                     }
                 case OpCode.JMPLE:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 <= x2, instruction.TokenI8);
+                        return ExecuteJump(context, x1 <= x2, instruction.TokenI8);
                     }
                 case OpCode.JMPLE_L:
                     {
                         if (!TryPop(out BigInteger x2)) return false;
                         if (!TryPop(out BigInteger x1)) return false;
-                        return ExecuteJump(x1 <= x2, instruction.TokenI32);
+                        return ExecuteJump(context, x1 <= x2, instruction.TokenI32);
                     }
                 case OpCode.CALL:
                     {
-                        if (!ExecuteCall(checked(context.InstructionPointer + instruction.TokenI8)))
+                        if (!ExecuteCall(context, checked(context.InstructionPointer + instruction.TokenI8)))
                             return false;
                         break;
                     }
                 case OpCode.CALL_L:
                     {
-                        if (!ExecuteCall(checked(context.InstructionPointer + instruction.TokenI32)))
+                        if (!ExecuteCall(context, checked(context.InstructionPointer + instruction.TokenI32)))
                             return false;
                         break;
                     }
@@ -274,7 +275,7 @@ namespace Neo.VM
                     {
                         if (!TryPop(out Pointer x)) return false;
                         if (!x.Script.Equals(context.Script)) return false;
-                        if (!ExecuteCall(x.Position)) return false;
+                        if (!ExecuteCall(context, x.Position)) return false;
                         break;
                     }
                 case OpCode.THROW:
@@ -315,7 +316,7 @@ namespace Neo.VM
                             if (rvcount > 0)
                                 context_pop.EvaluationStack.CopyTo(stack_eval);
                         }
-                        if (InvocationStack.Count == 0 || context_pop.StaticFields != CurrentContext.StaticFields)
+                        if (InvocationStack.Count == 0 || (CurrentContext != null && context_pop.StaticFields != CurrentContext.StaticFields))
                         {
                             context_pop.StaticFields?.ClearReferences();
                         }
@@ -1155,18 +1156,18 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool ExecuteJump(bool condition, int offset)
+        private bool ExecuteJump(ExecutionContext context, bool condition, int offset)
         {
-            offset = checked(CurrentContext.InstructionPointer + offset);
-            if (offset < 0 || offset > CurrentContext.Script.Length) return false;
+            offset = checked(context.InstructionPointer + offset);
+            if (offset < 0 || offset > context.Script.Length) return false;
             if (condition)
-                CurrentContext.InstructionPointer = offset;
+                context.InstructionPointer = offset;
             else
-                CurrentContext.MoveNext();
+                context.MoveNext();
             return true;
         }
 
-        private bool ExecuteLoadFromSlot(Slot slot, int index)
+        private bool ExecuteLoadFromSlot(Slot? slot, int index)
         {
             if (slot is null) return false;
             if (index < 0 || index >= slot.Count) return false;
@@ -1176,6 +1177,8 @@ namespace Neo.VM
 
         internal protected void ExecuteNext()
         {
+            if (CurrentContext == null) throw new ArgumentNullException(nameof(CurrentContext));
+
             if (InvocationStack.Count == 0)
             {
                 State = VMState.HALT;
@@ -1195,7 +1198,7 @@ namespace Neo.VM
             }
         }
 
-        private bool ExecuteStoreToSlot(Slot slot, int index)
+        private bool ExecuteStoreToSlot(Slot? slot, int index)
         {
             if (slot is null) return false;
             if (index < 0 || index >= slot.Count) return false;
@@ -1225,12 +1228,14 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Peek(int index = 0)
         {
+            if (CurrentContext == null) throw new ArgumentNullException(nameof(CurrentContext));
             return CurrentContext.EvaluationStack.Peek(index);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Pop()
         {
+            if (CurrentContext == null) throw new ArgumentNullException(nameof(CurrentContext));
             return CurrentContext.EvaluationStack.Pop();
         }
 
@@ -1244,12 +1249,14 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
         {
+            if (CurrentContext == null) throw new ArgumentNullException(nameof(CurrentContext));
             CurrentContext.EvaluationStack.Push(item);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryPop<T>(out T item) where T : StackItem
         {
+            if (CurrentContext == null) throw new ArgumentNullException(nameof(CurrentContext));
             return CurrentContext.EvaluationStack.TryPop(out item);
         }
 

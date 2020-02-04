@@ -41,7 +41,7 @@ namespace Neo.VM.Types
         public override StackItemType Type => StackItemType.Map;
         public IEnumerable<StackItem> Values => dictionary.Values;
 
-        public Map(ReferenceCounter referenceCounter = null)
+        public Map(ReferenceCounter? referenceCounter = null)
             : base(referenceCounter)
         {
         }

@@ -7,12 +7,12 @@ namespace Neo.VM.Types
     {
         public override StackItemType Type => StackItemType.Struct;
 
-        public Struct(IEnumerable<StackItem> value = null)
+        public Struct(IEnumerable<StackItem>? value = null)
             : this(null, value)
         {
         }
 
-        public Struct(ReferenceCounter referenceCounter, IEnumerable<StackItem> value = null)
+        public Struct(ReferenceCounter? referenceCounter, IEnumerable<StackItem>? value = null)
             : base(referenceCounter, value)
         {
         }

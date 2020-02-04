@@ -26,12 +26,12 @@ namespace Neo.VM.Types
         internal override int SubItemsCount => _array.Count;
         public override StackItemType Type => StackItemType.Array;
 
-        public Array(IEnumerable<StackItem> value = null)
+        public Array(IEnumerable<StackItem>? value = null)
             : this(null, value)
         {
         }
 
-        public Array(ReferenceCounter referenceCounter, IEnumerable<StackItem> value = null)
+        public Array(ReferenceCounter? referenceCounter, IEnumerable<StackItem>? value = null)
             : base(referenceCounter)
         {
             _array = value switch

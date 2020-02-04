@@ -23,7 +23,7 @@ namespace Neo.VM
             ms.Dispose();
         }
 
-        public ScriptBuilder Emit(OpCode op, byte[] arg = null)
+        public ScriptBuilder Emit(OpCode op, byte[]? arg = null)
         {
             writer.Write((byte)op);
             if (arg != null)
@@ -99,7 +99,7 @@ namespace Neo.VM
             return EmitPush(Encoding.UTF8.GetBytes(data));
         }
 
-        public ScriptBuilder EmitRaw(byte[] arg = null)
+        public ScriptBuilder EmitRaw(byte[]? arg = null)
         {
             if (arg != null)
                 writer.Write(arg);

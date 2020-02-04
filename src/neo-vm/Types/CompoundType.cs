@@ -7,9 +7,9 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
     public abstract class CompoundType : StackItem
     {
-        protected readonly ReferenceCounter ReferenceCounter;
+        protected readonly ReferenceCounter? ReferenceCounter;
 
-        protected CompoundType(ReferenceCounter referenceCounter)
+        protected CompoundType(ReferenceCounter? referenceCounter)
         {
             this.ReferenceCounter = referenceCounter;
         }

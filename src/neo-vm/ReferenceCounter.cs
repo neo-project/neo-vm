@@ -1,5 +1,6 @@
 using Neo.VM.Collections;
 using Neo.VM.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +11,7 @@ namespace Neo.VM
         private class Entry
         {
             public int StackReferences;
-            public Dictionary<CompoundType, int> ObjectReferences;
+            public Dictionary<CompoundType, int>? ObjectReferences;
         }
 
         private readonly Dictionary<CompoundType, Entry> counter = new Dictionary<CompoundType, Entry>(ReferenceEqualityComparer.Default);
@@ -90,7 +91,10 @@ namespace Neo.VM
                     foreach (CompoundType subitem in compound.SubItems.OfType<CompoundType>())
                     {
                         if (toBeDestroyed.Contains(subitem)) continue;
+
                         Entry entry = counter[subitem];
+                        if (entry.ObjectReferences == null) throw new ArgumentException(nameof(entry.ObjectReferences));
+
                         entry.ObjectReferences.Remove(compound);
                         if (entry.StackReferences == 0)
                             zero_referred.Add(subitem);
@@ -104,7 +108,10 @@ namespace Neo.VM
         {
             references_count--;
             if (!(referred is CompoundType compound)) return;
+
             Entry entry = counter[compound];
+            if (entry.ObjectReferences == null) throw new ArgumentException(nameof(entry.ObjectReferences));
+
             entry.ObjectReferences[parent] -= 1;
             if (entry.StackReferences == 0)
                 zero_referred.Add(compound);

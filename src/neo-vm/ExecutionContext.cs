@@ -25,11 +25,11 @@ namespace Neo.VM
         /// </summary>
         public EvaluationStack EvaluationStack { get; }
 
-        public Slot StaticFields { get; internal set; }
+        public Slot? StaticFields { get; internal set; }
 
-        public Slot LocalVariables { get; internal set; }
+        public Slot? LocalVariables { get; internal set; }
 
-        public Slot Arguments { get; internal set; }
+        public Slot? Arguments { get; internal set; }
 
         /// <summary>
         /// Instruction pointer
