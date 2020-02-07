@@ -231,11 +231,11 @@ namespace Neo.VM
         [OperandSize(SizePrefix = 4)]
         THROW = 0x37,
         /// <summary>
-        /// Throw an error without message if the value is <see langword="true"/>, not <see langword="null"/>, or non-zero.
+        /// Throw an error if the value is <see langword="true"/>, not <see langword="null"/>, or non-zero.
         /// </summary>
         THROWIF = 0x38,
         /// <summary>
-        /// Throw an error without message if the value is <see langword="false"/>, a <see langword="null"/> reference, or zero.
+        /// Throw an error if the value is <see langword="false"/>, a <see langword="null"/> reference, or zero.
         /// </summary>
         THROWIFNOT = 0x39,
         /// <summary>

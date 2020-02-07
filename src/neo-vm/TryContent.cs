@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace Neo.VM
 {
     [DebuggerDisplay("TryPointer={TryPointer}, CatchPointer={CatchPointer}, FinallyPointer={FinallyPointer}")]
-    public class TryContent : IDisposable
+    public sealed class TryContent
     {
         public int TryPointer { get; }
         public int CatchPointer { get; }
@@ -21,11 +21,6 @@ namespace Neo.VM
             this.FinallyPointer = checked(tryPointer + finallyOffset);
             this.EvaluationStack = evaluationStack;
             this.PostExecuteRet = false;
-        }
-
-        public void Dispose()
-        {
-            EvaluationStack.Clear();
         }
     }
 }

@@ -1187,13 +1187,13 @@ namespace Neo.VM
                     {
                         return false;
                     }
-                    else if (CurrentContext.InstructionPointer < tryContent.CatchPointer)
+                    if (CurrentContext.InstructionPointer < tryContent.CatchPointer)
                     {// try body
                         CurrentContext.InstructionPointer = tryContent.CatchPointer == tryContent.TryPointer ? tryContent.FinallyPointer : tryContent.CatchPointer;
                         CurrentContext.EvaluationStack = tryContent.EvaluationStack;
                         return true;
                     }
-                    else if (CurrentContext.InstructionPointer < tryContent.FinallyPointer)
+                    if (CurrentContext.InstructionPointer < tryContent.FinallyPointer)
                     {// catch body
                         tryContent.Redirection = e;
                         CurrentContext.InstructionPointer = tryContent.FinallyPointer;
