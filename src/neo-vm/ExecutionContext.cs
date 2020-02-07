@@ -12,6 +12,8 @@ namespace Neo.VM
 
         public Stack<TryContent> TryStack { get; } = new Stack<TryContent>();
 
+        public TryContent CurrentTry => TryStack.Peek();
+
         /// <summary>
         /// Number of items to be returned
         /// </summary>

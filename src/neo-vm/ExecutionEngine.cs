@@ -295,55 +295,44 @@ namespace Neo.VM
                         throw new VMException();
                     }
                 case OpCode.TRY:
-                    int catchOffset = instruction.TokenI8;
-                    int finallyOffset = instruction.TokenI8_1;
-                    if (catchOffset > finallyOffset || catchOffset < 0) return false;
-                    var evaluationStack = new EvaluationStack(ReferenceCounter);
-                    CurrentContext.EvaluationStack.CopyTo(evaluationStack);
-                    var tryContent = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset, evaluationStack);
-                    CurrentContext.TryStack.Push(tryContent);
+                    int catchOffsetI8 = instruction.TokenI8;
+                    int finallyOffseI8 = instruction.TokenI8_1;
+                    if (!ExecuteTry(catchOffsetI8, finallyOffseI8)) return false;
                     break;
                 case OpCode.TRY_L:
-                    catchOffset = instruction.TokenI32;
-                    finallyOffset = instruction.TokenI32_1;
-                    if (catchOffset > finallyOffset || catchOffset < 0) return false;
-                    evaluationStack = new EvaluationStack(ReferenceCounter);
-                    CurrentContext.EvaluationStack.CopyTo(evaluationStack);
-                    tryContent = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset, evaluationStack);
-                    CurrentContext.TryStack.Push(tryContent);
+                    int catchOffsetI32 = instruction.TokenI32;
+                    int finallyOffsetI32 = instruction.TokenI32_1;
+                    if (!ExecuteTry(catchOffsetI32, finallyOffsetI32)) return false;
                     break;
                 case OpCode.ENDTRY:
                     if (CurrentContext.TryStack.Count == 0) return false;
-                    tryContent = CurrentContext.TryStack.Peek();
-                    CurrentContext.InstructionPointer = tryContent.FinallyPointer;
+                    CurrentContext.InstructionPointer = CurrentContext.CurrentTry.FinallyPointer;
                     return true;
                 case OpCode.ENDCATCH:
                     if (CurrentContext.TryStack.Count == 0) return false;
-                    tryContent = CurrentContext.TryStack.Peek();
-                    CurrentContext.InstructionPointer = tryContent.FinallyPointer;
+                    CurrentContext.InstructionPointer = CurrentContext.CurrentTry.FinallyPointer;
                     return true;
                 case OpCode.ENDFINALLY:
-                    if (CurrentContext.TryStack.Count == 0) return false;
-                    tryContent = CurrentContext.TryStack.Pop();
-                    if (tryContent.RedirectionError != null)
+                    if (CurrentContext.TryStack.Count == 0) return false;                    
+                    if (CurrentContext.CurrentTry.RedirectionError != null)
                     {
-                        throw tryContent.RedirectionError;
+                        throw CurrentContext.CurrentTry.RedirectionError;
                     }
-                    if (tryContent.NeedToRet)
+                    if (CurrentContext.CurrentTry.NeedToRet)
                     {
                         return ExecuteRet();
                     }
+                    CurrentContext.TryStack.Pop();
                     break;
                 case OpCode.RET:
                     {
                         // handle try{ret}catch{ret}finally{} 
                         if (CurrentContext.TryStack.Count > 0)
                         {
-                            tryContent = CurrentContext.TryStack.Peek();
-                            if (CurrentContext.InstructionPointer > tryContent.FinallyPointer) return false; // ret can't ocurr in finally body
+                            if (CurrentContext.InstructionPointer > CurrentContext.CurrentTry.FinallyPointer) return false; // ret can't ocurr in finally body
 
-                            tryContent.NeedToRet = true;
-                            CurrentContext.InstructionPointer = tryContent.FinallyPointer;
+                            CurrentContext.CurrentTry.NeedToRet = true;
+                            CurrentContext.InstructionPointer = CurrentContext.CurrentTry.FinallyPointer;
                             break;
                         }
                         return ExecuteRet();
@@ -1175,6 +1164,18 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool ExecuteTry(int catchOffset, int finallyOffset)
+        {
+            if (catchOffset > finallyOffset || catchOffset < 0) return false;
+
+            var evaluationStack = new EvaluationStack(ReferenceCounter);
+            CurrentContext.EvaluationStack.CopyTo(evaluationStack);
+            var tryContent = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset, evaluationStack);
+            CurrentContext.TryStack.Push(tryContent);
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteRet()
         {
             ExecutionContext context_pop = InvocationStack.Pop();
@@ -1327,12 +1328,6 @@ namespace Neo.VM
         }
 
         protected virtual bool PreExecuteInstruction() => true;
-
-        protected virtual void CatchVMException(VMException e)
-        {
-
-        }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
