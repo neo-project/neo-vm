@@ -225,14 +225,17 @@ namespace Neo.VM
         /// Pop the address of a function from the stack, and call the function.
         /// </summary>
         CALLA = 0x36,
+        [OperandSize(SizePrefix = 4)]
         THROW = 0x37,
         THROWIF = 0x38,
         THROWIFNOT = 0x39,
-        //TRY = 0x3B,
-        //TRY_L = 0x3C,
-        //ENDT = 0x3D,
-        //ENDC = 0x3E,
-        //ENDF = 0x3F,
+        [OperandSize(Size = 2)]
+        TRY = 0x3B,
+        [OperandSize(Size = 8)]
+        TRY_L = 0x3C,
+        ENDTRY = 0x3D,
+        ENDCATCH = 0x3E,
+        ENDFINALLY = 0x3F,
         /// <summary>
         /// Returns from the current method.
         /// </summary>

@@ -10,6 +10,8 @@ namespace Neo.VM
     {
         private readonly Dictionary<Type, object> states;
 
+        public Stack<TryContent> TryStack { get; } = new Stack<TryContent>();
+
         /// <summary>
         /// Number of items to be returned
         /// </summary>
@@ -23,7 +25,7 @@ namespace Neo.VM
         /// <summary>
         /// Evaluation stack
         /// </summary>
-        public EvaluationStack EvaluationStack { get; }
+        public EvaluationStack EvaluationStack { get; internal set; }
 
         public Slot StaticFields { get; internal set; }
 

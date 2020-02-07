@@ -70,6 +70,12 @@ namespace Neo.VM
 
         protected virtual void ContextUnloaded(ExecutionContext context)
         {
+            if (InvocationStack.Count == 0 || context.StaticFields != CurrentContext.StaticFields)
+            {
+                context.StaticFields?.ClearReferences();
+            }
+            context.LocalVariables?.ClearReferences();
+            context.Arguments?.ClearReferences();
         }
 
         public virtual void Dispose()
@@ -279,54 +285,68 @@ namespace Neo.VM
                     }
                 case OpCode.THROW:
                     {
-                        return false;
+                        throw new VMException(instruction.TokenString);
                     }
                 case OpCode.THROWIF:
                 case OpCode.THROWIFNOT:
                     {
                         if (!TryPop(out bool x)) return false;
                         if (x ^ (instruction.OpCode == OpCode.THROWIFNOT)) return false;
-                        break;
+                        throw new VMException();
                     }
+                case OpCode.TRY:
+                    int catchOffset = instruction.TokenI8;
+                    int finallyOffset = instruction.TokenI8_1;
+                    if (catchOffset > finallyOffset || catchOffset < 0) return false;
+                    var evaluationStack = new EvaluationStack(ReferenceCounter);
+                    CurrentContext.EvaluationStack.CopyTo(evaluationStack);
+                    var tryContent = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset, evaluationStack);
+                    CurrentContext.TryStack.Push(tryContent);
+                    break;
+                case OpCode.TRY_L:
+                    catchOffset = instruction.TokenI32;
+                    finallyOffset = instruction.TokenI32_1;
+                    if (catchOffset > finallyOffset || catchOffset < 0) return false;
+                    evaluationStack = new EvaluationStack(ReferenceCounter);
+                    CurrentContext.EvaluationStack.CopyTo(evaluationStack);
+                    tryContent = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset, evaluationStack);
+                    CurrentContext.TryStack.Push(tryContent);
+                    break;
+                case OpCode.ENDTRY:
+                    if (CurrentContext.TryStack.Count == 0) return false;
+                    tryContent = CurrentContext.TryStack.Peek();
+                    CurrentContext.InstructionPointer = tryContent.FinallyPointer;
+                    return true;
+                case OpCode.ENDCATCH:
+                    if (CurrentContext.TryStack.Count == 0) return false;
+                    tryContent = CurrentContext.TryStack.Peek();
+                    CurrentContext.InstructionPointer = tryContent.FinallyPointer;
+                    return true;
+                case OpCode.ENDFINALLY:
+                    if (CurrentContext.TryStack.Count == 0) return false;
+                    tryContent = CurrentContext.TryStack.Pop();
+                    if (tryContent.RedirectionError != null)
+                    {
+                        throw tryContent.RedirectionError;
+                    }
+                    if (tryContent.NeedToRet)
+                    {
+                        return ExecuteRet();
+                    }
+                    break;
                 case OpCode.RET:
                     {
-                        ExecutionContext context_pop = InvocationStack.Pop();
-                        int rvcount = context_pop.RVCount;
-                        if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
-                        EvaluationStack stack_eval;
-                        if (InvocationStack.Count == 0)
+                        // handle try{ret}catch{ret}finally{} 
+                        if (CurrentContext.TryStack.Count > 0)
                         {
-                            EntryContext = null;
-                            CurrentContext = null;
-                            stack_eval = ResultStack;
+                            tryContent = CurrentContext.TryStack.Peek();
+                            if (CurrentContext.InstructionPointer > tryContent.FinallyPointer) return false; // ret can't ocurr in finally body
+
+                            tryContent.NeedToRet = true;
+                            CurrentContext.InstructionPointer = tryContent.FinallyPointer;
+                            break;
                         }
-                        else
-                        {
-                            CurrentContext = InvocationStack.Peek();
-                            stack_eval = CurrentContext.EvaluationStack;
-                        }
-                        if (context_pop.EvaluationStack == stack_eval)
-                        {
-                            if (context_pop.RVCount != 0) return false;
-                        }
-                        else
-                        {
-                            if (context_pop.EvaluationStack.Count != rvcount) return false;
-                            if (rvcount > 0)
-                                context_pop.EvaluationStack.CopyTo(stack_eval);
-                        }
-                        if (InvocationStack.Count == 0 || context_pop.StaticFields != CurrentContext.StaticFields)
-                        {
-                            context_pop.StaticFields?.ClearReferences();
-                        }
-                        context_pop.LocalVariables?.ClearReferences();
-                        context_pop.Arguments?.ClearReferences();
-                        if (InvocationStack.Count == 0)
-                        {
-                            State = VMState.HALT;
-                        }
-                        ContextUnloaded(context_pop);
-                        return true;
+                        return ExecuteRet();
                     }
                 case OpCode.SYSCALL:
                     {
@@ -1155,6 +1175,42 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool ExecuteRet()
+        {
+            ExecutionContext context_pop = InvocationStack.Pop();
+            int rvcount = context_pop.RVCount;
+            if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
+            EvaluationStack stack_eval;
+            if (InvocationStack.Count == 0)
+            {
+                EntryContext = null;
+                CurrentContext = null;
+                stack_eval = ResultStack;
+            }
+            else
+            {
+                CurrentContext = InvocationStack.Peek();
+                stack_eval = CurrentContext.EvaluationStack;
+            }
+            if (context_pop.EvaluationStack == stack_eval)
+            {
+                if (context_pop.RVCount != 0) return false;
+            }
+            else
+            {
+                if (context_pop.EvaluationStack.Count != rvcount) return false;
+                if (rvcount > 0)
+                    context_pop.EvaluationStack.CopyTo(stack_eval);
+            }
+            if (InvocationStack.Count == 0)
+            {
+                State = VMState.HALT;
+            }
+            ContextUnloaded(context_pop);
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteJump(bool condition, int offset)
         {
             offset = checked(CurrentContext.InstructionPointer + offset);
@@ -1179,19 +1235,50 @@ namespace Neo.VM
             if (InvocationStack.Count == 0)
             {
                 State = VMState.HALT;
+                return;
             }
-            else
+
+            try
             {
-                try
-                {
-                    Instruction instruction = CurrentContext.CurrentInstruction;
-                    if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
-                        State = VMState.FAULT;
-                }
-                catch
-                {
+                Instruction instruction = CurrentContext.CurrentInstruction;
+                if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                     State = VMState.FAULT;
+            }
+            catch (VMException e)
+            {
+                while (InvocationStack.Count > 0)
+                {
+                    CurrentContext = InvocationStack.Peek();
+                    while (CurrentContext.TryStack.Count > 0)
+                    {
+                        var tryContent = CurrentContext.TryStack.Peek();
+                        if (CurrentContext.InstructionPointer < tryContent.TryPointer)
+                        {
+                            State = VMState.FAULT;
+                            return;
+                        }
+                        else if (CurrentContext.InstructionPointer < tryContent.CatchPointer)
+                        {// try body
+                            CurrentContext.InstructionPointer = tryContent.CatchPointer == tryContent.TryPointer ? tryContent.FinallyPointer : tryContent.CatchPointer;
+                            CurrentContext.EvaluationStack = tryContent.EvaluationStack;
+                            return;
+                        }
+                        else if (CurrentContext.InstructionPointer < tryContent.FinallyPointer)
+                        {// catch body
+                            tryContent.RedirectionError = e;
+                            CurrentContext.InstructionPointer = tryContent.FinallyPointer;
+                            CurrentContext.EvaluationStack = tryContent.EvaluationStack;
+                            return;
+                        }
+                        CurrentContext.TryStack.Pop();
+                    }
+                    ContextUnloaded(InvocationStack.Pop());
                 }
+                State = VMState.FAULT;
+            }
+            catch
+            {
+                State = VMState.FAULT;
             }
         }
 
@@ -1240,6 +1327,12 @@ namespace Neo.VM
         }
 
         protected virtual bool PreExecuteInstruction() => true;
+
+        protected virtual void CatchVMException(VMException e)
+        {
+
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)

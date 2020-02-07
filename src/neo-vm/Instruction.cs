@@ -44,7 +44,16 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return BinaryPrimitives.ReadInt32LittleEndian(Operand.Span);
+                return BinaryPrimitives.ReadInt32LittleEndian(Operand.Span.Slice(0,4));
+            }
+        }
+
+        public int TokenI32_1
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return BinaryPrimitives.ReadInt32LittleEndian(Operand.Span.Slice(4,4));
             }
         }
 
@@ -54,6 +63,15 @@ namespace Neo.VM
             get
             {
                 return (sbyte)Operand.Span[0];
+            }
+        }
+
+        public sbyte TokenI8_1
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return (sbyte)Operand.Span[1];
             }
         }
 
@@ -82,7 +100,7 @@ namespace Neo.VM
             {
                 return BinaryPrimitives.ReadUInt32LittleEndian(Operand.Span);
             }
-        }
+        }        
 
         public byte TokenU8
         {
