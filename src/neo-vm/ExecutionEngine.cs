@@ -291,7 +291,7 @@ namespace Neo.VM
                 case OpCode.THROWIFNOT:
                     {
                         if (!TryPop(out bool x)) return false;
-                        if (x ^ (instruction.OpCode == OpCode.THROWIFNOT)) return false;
+                        if (x ^ (instruction.OpCode == OpCode.THROWIF)) break;
                         throw new VMException();
                     }
                 case OpCode.TRY:
@@ -310,6 +310,11 @@ namespace Neo.VM
                     return true;
                 case OpCode.ENDCATCH:
                     if (CurrentContext.TryStack.Count == 0) return false;
+                    if (CurrentContext.CurrentTry.CatchPointer == CurrentContext.CurrentTry.FinallyPointer)
+                    {
+                        CurrentContext.TryStack.Pop();
+                        break;
+                    }
                     CurrentContext.InstructionPointer = CurrentContext.CurrentTry.FinallyPointer;
                     return true;
                 case OpCode.ENDFINALLY:
