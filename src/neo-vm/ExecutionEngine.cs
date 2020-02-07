@@ -318,7 +318,7 @@ namespace Neo.VM
                     CurrentContext.InstructionPointer = CurrentContext.CurrentTry.FinallyPointer;
                     return true;
                 case OpCode.ENDFINALLY:
-                    if (CurrentContext.TryStack.Count == 0) return false;                    
+                    if (CurrentContext.TryStack.Count == 0) return false;            
                     if (CurrentContext.CurrentTry.Redirection != null)
                     {
                         throw CurrentContext.CurrentTry.Redirection;
