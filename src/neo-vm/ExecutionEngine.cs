@@ -1167,7 +1167,6 @@ namespace Neo.VM
         private bool ExecuteTry(int catchOffset, int finallyOffset)
         {
             if (catchOffset > finallyOffset || catchOffset < 0) return false;
-
             var evaluationStack = new EvaluationStack(ReferenceCounter);
             CurrentContext.EvaluationStack.CopyTo(evaluationStack);
             var tryContent = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset, evaluationStack);
