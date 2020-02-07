@@ -225,19 +225,34 @@ namespace Neo.VM
         /// Pop the address of a function from the stack, and call the function.
         /// </summary>
         CALLA = 0x36,
+        /// <summary>
+        /// THROW Length(int) Message(string), throw an error with message.
+        /// </summary>
         [OperandSize(SizePrefix = 4)]
         THROW = 0x37,
+        /// <summary>
+        /// Throw an error without message if the value is <see langword="true"/>, not <see langword="null"/>, or non-zero.
+        /// </summary>
         THROWIF = 0x38,
+        /// <summary>
+        /// Throw an error without message if the value is <see langword="false"/>, a <see langword="null"/> reference, or zero.
+        /// </summary>
         THROWIFNOT = 0x39,
+        /// <summary>
+        /// TRY CatchOffset(sbyte) FinallyOffset(sbyte), create a new try content in try stack.
+        /// </summary>
         [OperandSize(Size = 2)]
         TRY = 0x3B,
+        /// <summary>
+        /// TRY_L CatchOffset(int) FinallyOffset(int), create a new try content in try stack.
+        /// </summary>
         [OperandSize(Size = 8)]
         TRY_L = 0x3C,
         ENDTRY = 0x3D,
         ENDCATCH = 0x3E,
         ENDFINALLY = 0x3F,
         /// <summary>
-        /// Returns from the current method.
+        /// Returns from the current method. But if RET is in <see langword="try-catch"/> body, it will execute <see langword="finally"/> of <see langword="try-catch-finally"/> first.
         /// </summary>
         RET = 0x40,
         /// <summary>

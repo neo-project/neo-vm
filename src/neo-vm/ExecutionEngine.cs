@@ -314,11 +314,11 @@ namespace Neo.VM
                     return true;
                 case OpCode.ENDFINALLY:
                     if (CurrentContext.TryStack.Count == 0) return false;                    
-                    if (CurrentContext.CurrentTry.RedirectionError != null)
+                    if (CurrentContext.CurrentTry.Redirection != null)
                     {
-                        throw CurrentContext.CurrentTry.RedirectionError;
+                        throw CurrentContext.CurrentTry.Redirection;
                     }
-                    if (CurrentContext.CurrentTry.NeedToRet)
+                    if (CurrentContext.CurrentTry.PostExecuteRet)
                     {
                         return ExecuteRet();
                     }
@@ -331,7 +331,7 @@ namespace Neo.VM
                         {
                             if (CurrentContext.InstructionPointer < CurrentContext.CurrentTry.TryPointer) return false;
                             if (CurrentContext.InstructionPointer > CurrentContext.CurrentTry.FinallyPointer) return false; // ret can't ocurr in finally body
-                            CurrentContext.CurrentTry.NeedToRet = true;
+                            CurrentContext.CurrentTry.PostExecuteRet = true;
                             CurrentContext.InstructionPointer = CurrentContext.CurrentTry.FinallyPointer;
                             break;
                         }
@@ -1175,6 +1175,39 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool ExecuteTryCatch(VMException e)
+        {
+            while (InvocationStack.Count > 0)
+            {
+                CurrentContext = InvocationStack.Peek();
+                while (CurrentContext.TryStack.Count > 0)
+                {
+                    var tryContent = CurrentContext.TryStack.Peek();
+                    if (CurrentContext.InstructionPointer < tryContent.TryPointer)
+                    {
+                        return false;
+                    }
+                    else if (CurrentContext.InstructionPointer < tryContent.CatchPointer)
+                    {// try body
+                        CurrentContext.InstructionPointer = tryContent.CatchPointer == tryContent.TryPointer ? tryContent.FinallyPointer : tryContent.CatchPointer;
+                        CurrentContext.EvaluationStack = tryContent.EvaluationStack;
+                        return true;
+                    }
+                    else if (CurrentContext.InstructionPointer < tryContent.FinallyPointer)
+                    {// catch body
+                        tryContent.Redirection = e;
+                        CurrentContext.InstructionPointer = tryContent.FinallyPointer;
+                        CurrentContext.EvaluationStack = tryContent.EvaluationStack;
+                        return true;
+                    }
+                    CurrentContext.TryStack.Pop();
+                }
+                ContextUnloaded(InvocationStack.Pop());
+            }
+            return false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteRet()
         {
             ExecutionContext context_pop = InvocationStack.Pop();
@@ -1246,35 +1279,8 @@ namespace Neo.VM
             }
             catch (VMException e)
             {
-                while (InvocationStack.Count > 0)
-                {
-                    CurrentContext = InvocationStack.Peek();
-                    while (CurrentContext.TryStack.Count > 0)
-                    {
-                        var tryContent = CurrentContext.TryStack.Peek();
-                        if (CurrentContext.InstructionPointer < tryContent.TryPointer)
-                        {
-                            State = VMState.FAULT;
-                            return;
-                        }
-                        else if (CurrentContext.InstructionPointer < tryContent.CatchPointer)
-                        {// try body
-                            CurrentContext.InstructionPointer = tryContent.CatchPointer == tryContent.TryPointer ? tryContent.FinallyPointer : tryContent.CatchPointer;
-                            CurrentContext.EvaluationStack = tryContent.EvaluationStack;
-                            return;
-                        }
-                        else if (CurrentContext.InstructionPointer < tryContent.FinallyPointer)
-                        {// catch body
-                            tryContent.RedirectionError = e;
-                            CurrentContext.InstructionPointer = tryContent.FinallyPointer;
-                            CurrentContext.EvaluationStack = tryContent.EvaluationStack;
-                            return;
-                        }
-                        CurrentContext.TryStack.Pop();
-                    }
-                    ContextUnloaded(InvocationStack.Pop());
-                }
-                State = VMState.FAULT;
+                if (!ExecuteTryCatch(e))
+                    State = VMState.FAULT;
             }
             catch
             {

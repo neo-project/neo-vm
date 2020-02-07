@@ -9,15 +9,10 @@ namespace Neo.VM
         public int TryPointer { get; }
         public int CatchPointer { get; }
         public int FinallyPointer { get; }
-
-        public VMException RedirectionError { get; internal set; }
-
-        /// <summary>
-        /// Evaluation stack
-        /// </summary>
         public EvaluationStack EvaluationStack { get; }
 
-        public bool NeedToRet { get; internal set; }
+        public VMException Redirection { get; internal set; }
+        public bool PostExecuteRet { get; internal set; }
 
         public TryContent(int tryPointer, int catchOffset, int finallyOffset, EvaluationStack evaluationStack)
         {
@@ -25,7 +20,7 @@ namespace Neo.VM
             this.CatchPointer = checked(tryPointer + catchOffset);
             this.FinallyPointer = checked(tryPointer + finallyOffset);
             this.EvaluationStack = evaluationStack;
-            this.NeedToRet = false;
+            this.PostExecuteRet = false;
         }
 
         public void Dispose()
