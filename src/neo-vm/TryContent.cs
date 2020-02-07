@@ -25,6 +25,7 @@ namespace Neo.VM
             this.CatchPointer = checked(tryPointer + catchOffset);
             this.FinallyPointer = checked(tryPointer + finallyOffset);
             this.EvaluationStack = evaluationStack;
+            this.NeedToRet = false;
         }
 
         public void Dispose()

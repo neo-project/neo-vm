@@ -329,8 +329,8 @@ namespace Neo.VM
                         // handle try{ret}catch{ret}finally{} 
                         if (CurrentContext.TryStack.Count > 0)
                         {
+                            if (CurrentContext.InstructionPointer < CurrentContext.CurrentTry.TryPointer) return false;
                             if (CurrentContext.InstructionPointer > CurrentContext.CurrentTry.FinallyPointer) return false; // ret can't ocurr in finally body
-
                             CurrentContext.CurrentTry.NeedToRet = true;
                             CurrentContext.InstructionPointer = CurrentContext.CurrentTry.FinallyPointer;
                             break;
