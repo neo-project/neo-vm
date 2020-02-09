@@ -285,14 +285,14 @@ namespace Neo.VM
                     }
                 case OpCode.THROW:
                     {
-                        throw new VMException(instruction.TokenString);
+                        return ExecuteTryCatch(instruction.TokenString);
                     }
                 case OpCode.THROWIF:
                 case OpCode.THROWIFNOT:
                     {
                         if (!TryPop(out bool x)) return false;
                         if (x ^ (instruction.OpCode == OpCode.THROWIF)) break;
-                        throw new VMException();
+                        return ExecuteTryCatch(instruction.TokenString);
                     }
                 case OpCode.TRY:
                     {
@@ -334,8 +334,8 @@ namespace Neo.VM
                             var postOpcode = currentTry.PostExecuteOpcode.Item1;
                             if (postOpcode >= OpCode.THROW && postOpcode <= OpCode.THROWIFNOT)
                             {
-                                VMException exception = currentTry.PostExecuteOpcode.Item2 as VMException;
-                                throw exception;
+                                StackItem exception = currentTry.PostExecuteOpcode.Item2 as StackItem;
+                                return ExecuteTryCatch(instruction.TokenString);
                             }
                             if (postOpcode == OpCode.RET)
                             {
@@ -1212,7 +1212,7 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool ExecuteTryCatch(VMException e)
+        private bool ExecuteTryCatch(StackItem error)
         {
             while (InvocationStack.Count > 0)
             {
@@ -1231,7 +1231,7 @@ namespace Neo.VM
                     }
                     if (currentTry.HasFinally && CurrentContext.InstructionPointer < currentTry.FinallyPointer)
                     {
-                        currentTry.PostExecuteOpcode = new Tuple<OpCode, object>(OpCode.THROW, e);
+                        currentTry.PostExecuteOpcode = new Tuple<OpCode, object>(OpCode.THROW, error);
                         CurrentContext.InstructionPointer = currentTry.FinallyPointer;
                         CurrentContext.EvaluationStack = currentTry.EvaluationStack;
                         return true;
@@ -1314,23 +1314,19 @@ namespace Neo.VM
             if (InvocationStack.Count == 0)
             {
                 State = VMState.HALT;
-                return;
             }
-
-            try
+            else
             {
-                Instruction instruction = CurrentContext.CurrentInstruction;
-                if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
+                try
+                {
+                    Instruction instruction = CurrentContext.CurrentInstruction;
+                    if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
+                        State = VMState.FAULT;
+                }
+                catch
+                {
                     State = VMState.FAULT;
-            }
-            catch (VMException e)
-            {
-                if (!ExecuteTryCatch(e))
-                    State = VMState.FAULT;
-            }
-            catch
-            {
-                State = VMState.FAULT;
+                }
             }
         }
 
