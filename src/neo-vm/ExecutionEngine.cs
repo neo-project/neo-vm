@@ -328,7 +328,7 @@ namespace Neo.VM
                     }
                 case OpCode.ENDFINALLY:
                     {
-                        if (!CurrentContext.TryStack.TryPeek(out TryContent currentTry)) return false;
+                        if (!CurrentContext.TryStack.TryPop(out TryContent currentTry)) return false;
                         if (currentTry.PostExecuteOpcode != null)
                         {
                             var postOpcode = currentTry.PostExecuteOpcode.Item1;
@@ -350,7 +350,6 @@ namespace Neo.VM
                                 return true;
                             }
                         }
-                        CurrentContext.TryStack.Pop();
                         break;
                     }
                 case OpCode.RET:
