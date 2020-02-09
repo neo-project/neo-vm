@@ -292,7 +292,7 @@ namespace Neo.VM
                     {
                         if (!TryPop(out bool x)) return false;
                         if (x ^ (instruction.OpCode == OpCode.THROWIF)) break;
-                        return ExecuteTryCatch(instruction.TokenString);
+                        return ExecuteTryCatch(StackItem.Null);
                     }
                 case OpCode.TRY:
                     {
@@ -334,8 +334,8 @@ namespace Neo.VM
                             var postOpcode = currentTry.PostExecuteOpcode.Item1;
                             if (postOpcode >= OpCode.THROW && postOpcode <= OpCode.THROWIFNOT)
                             {
-                                StackItem exception = currentTry.PostExecuteOpcode.Item2 as StackItem;
-                                return ExecuteTryCatch(instruction.TokenString);
+                                StackItem error = currentTry.PostExecuteOpcode.Item2 as StackItem;
+                                return ExecuteTryCatch(error);
                             }
                             if (postOpcode == OpCode.RET)
                             {
