@@ -1,0 +1,344 @@
+{
+  "category": "Control",
+  "name": "TRY_CATCH_FINALLY",
+  "tests": [    
+    {
+      "name": "PUSH0, try{ PUSH1, THROWIF }cath{ PUSH2 }finally{ PUSH3 }",
+      "script": [
+        "PUSH0",
+        "TRY",
+        "0x07090A",
+        "PUSH1",
+        "THROWIF",
+        "ENDTRY",
+        "PUSH2",
+        "ENDCATCH",
+        "PUSH3",
+        "ENDFINALLY",
+        "RET"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "PUSH2",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
+                "nextInstruction": "ENDCATCH",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "PUSH3",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 12,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 3
+                  },
+                  {
+                    "type": "integer",
+                    "value": 2
+                  },
+                  {
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+	{
+      "name": "PUSH0 try{ PUSH1, THROWIF }cath{ PUSH2, RET }finally{ PUSH3, RET }",
+      "script": [
+        "PUSH0",
+        "TRY",
+        "0x070A0C",
+        "PUSH1",
+        "THROWIF",
+        "ENDTRY",
+        "PUSH2",
+        "RET",
+        "ENDCATCH",
+        "PUSH3",
+        "RET",
+        "ENDFINALLY",
+        "RET"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "PUSH2",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 11,
+                "nextInstruction": "PUSH3"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+                {
+                  "type": "integer",
+                  "value": 3
+                }
+            ]
+          }
+        }        
+      ]
+    },
+	{
+      "name": "try{ push1 throwif }catch{ PUSH0, throwifnot }finally{ PUSH2}",
+      "script": [
+        "TRY",
+        "0x070A0B",
+        "PUSH1",
+        "THROWIF",
+        "ENDTRY",
+        "PUSH0",
+        "THROWIFNOT",
+        "ENDCATCH",
+        "PUSH2",
+        "ENDFINALLY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "PUSH0"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "PUSH2"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT",
+            "resultStack": [
+              {
+                "type": "integer",
+                "value": 2
+              }
+            ]
+          }
+        }
+      ]
+    },
+	{
+      "name": "try{ PUSH1 throwif }catch{ try{ PUSH0, throwifnot }finally{ PUSH2} }finally{ PUSH3}",
+      "script": [
+        "TRY",
+        "0x071112",
+        "PUSH1",
+        "THROWIF",
+        "ENDTRY",
+        "TRY",
+        "0x000708",
+        "PUSH0",
+        "THROWIFNOT",
+        "ENDTRY",
+        "PUSH2",
+        "ENDFINALLY",
+        "ENDCATCH",
+        "PUSH3",
+        "ENDFINALLY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "TRY"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 14,
+                "nextInstruction": "PUSH2"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 17,
+                "nextInstruction": "PUSH3"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT",
+            "resultStack": [
+              {
+                "type": "integer",
+                "value": 3
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

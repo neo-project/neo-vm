@@ -239,14 +239,14 @@ namespace Neo.VM
         /// </summary>
         THROWIFNOT = 0x39,
         /// <summary>
-        /// TRY CatchOffset(sbyte) FinallyOffset(sbyte), create a new try content in try stack.
+        /// TRY CatchOffset(sbyte) FinallyOffset(sbyte) EndOFfset(sbyte), create a new try content in try stack. If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0. EndOffset is the last offset of <see langword="ENDCATCH"/> or <see langword="ENDFINALLY"/>.
         /// </summary>
-        [OperandSize(Size = 2)]
+        [OperandSize(Size = 3)]
         TRY = 0x3B,
         /// <summary>
-        /// TRY_L CatchOffset(int) FinallyOffset(int), create a new try content in try stack.
+        /// TRY_L CatchOffset(int) FinallyOffset(int) EndOffset(int), create a new try content in try stack. If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0. EndOffset is the last offset of <see langword="ENDCATCH"/> or <see langword="ENDFINALLY"/>.
         /// </summary>
-        [OperandSize(Size = 8)]
+        [OperandSize(Size = 12)]
         TRY_L = 0x3C,
         ENDTRY = 0x3D,
         ENDCATCH = 0x3E,
