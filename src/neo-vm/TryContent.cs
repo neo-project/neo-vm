@@ -1,4 +1,4 @@
-using System;
+using Neo.VM.Types;
 using System.Diagnostics;
 
 namespace Neo.VM
@@ -19,8 +19,8 @@ namespace Neo.VM
 
         public bool HasCatch => CatchPointer > TryPointer;
         public bool HasFinally => FinallyPointer > TryPointer;
-
         public TryState State { get; internal set; } = TryState.Try;
+        public StackItem Error { get; internal set; }
 
         public TryContent(int tryPointer, int catchOffset, int finallyOffset)
         {
