@@ -8,9 +8,7 @@ namespace Neo.VM
     [DebuggerDisplay("RVCount={RVCount}, InstructionPointer={InstructionPointer}")]
     public sealed class ExecutionContext
     {
-        private readonly Dictionary<Type, object> states;
-
-        public Stack<TryContent> TryStack { get; } = new Stack<TryContent>();
+        private readonly Dictionary<Type, object> states;        
 
         /// <summary>
         /// Number of items to be returned
@@ -32,6 +30,8 @@ namespace Neo.VM
         public Slot LocalVariables { get; internal set; }
 
         public Slot Arguments { get; internal set; }
+
+        public TryContent CurrentTry { get; internal set; }
 
         /// <summary>
         /// Instruction pointer
