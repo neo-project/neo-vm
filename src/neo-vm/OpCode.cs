@@ -226,16 +226,15 @@ namespace Neo.VM
         /// </summary>
         CALLA = 0x36,
         /// <summary>
-        /// THROW Length(int) Message(string), throw an error with message.
+        /// Throw an error message from the stack.
         /// </summary>
-        [OperandSize(SizePrefix = 4)]
         THROW = 0x37,
         /// <summary>
-        /// Throw an error if the value is <see langword="true"/>, not <see langword="null"/>, or non-zero.
+        /// If the top of the stack is <see langword="true"/>, not <see langword="null"/>, or non-zero, then it will throw the second top of stack value.
         /// </summary>
         THROWIF = 0x38,
         /// <summary>
-        /// Throw an error if the value is <see langword="false"/>, a <see langword="null"/> reference, or zero.
+        /// If the top of the stack is <see langword="false"/>, a <see langword="null"/> reference, or zero, then it will throw the second top of stack value.
         /// </summary>
         THROWIFNOT = 0x39,
         /// <summary>

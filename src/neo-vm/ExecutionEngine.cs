@@ -285,14 +285,16 @@ namespace Neo.VM
                     }
                 case OpCode.THROW:
                     {
-                        return ExecuteThrow(instruction.TokenString);
+                        if (!TryPop(out StackItem error)) return false;
+                        return ExecuteThrow(error);
                     }
                 case OpCode.THROWIF:
                 case OpCode.THROWIFNOT:
                     {
                         if (!TryPop(out bool x)) return false;
+                        if (!TryPop(out StackItem error)) return false;
                         if (x ^ (instruction.OpCode == OpCode.THROWIF)) break;
-                        return ExecuteThrow(StackItem.Null);
+                        return ExecuteThrow(error);
                     }
                 case OpCode.TRY:
                     {
