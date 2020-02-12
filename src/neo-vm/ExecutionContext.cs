@@ -8,7 +8,7 @@ namespace Neo.VM
     [DebuggerDisplay("RVCount={RVCount}, InstructionPointer={InstructionPointer}")]
     public sealed class ExecutionContext
     {
-        private readonly Dictionary<Type, object> states;        
+        private readonly Dictionary<Type, object> states;
 
         /// <summary>
         /// Number of items to be returned

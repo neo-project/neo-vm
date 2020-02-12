@@ -1189,9 +1189,9 @@ namespace Neo.VM
             if (finallyOffset + catchOffset <= 0) return false;
             if (finallyOffset > 0 && catchOffset >= finallyOffset) return false;
 
-            ExecutionContext context_call = CurrentContext.Clone();
-            context_call.CurrentTry = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset);
-            LoadContext(context_call);
+            ExecutionContext context_try = CurrentContext.Clone();
+            context_try.CurrentTry = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset);
+            LoadContext(context_try);
             return true;
         }
 
