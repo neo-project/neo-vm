@@ -19,6 +19,7 @@ namespace Neo.VM
 
         public bool HasCatch => CatchPointer > TryPointer;
         public bool HasFinally => FinallyPointer > TryPointer;
+
         public TryState State { get; internal set; } = TryState.Try;
         public StackItem Error { get; internal set; }
 
