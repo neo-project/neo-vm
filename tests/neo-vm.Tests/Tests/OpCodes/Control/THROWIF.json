@@ -6,11 +6,13 @@
       "name": "Without throw exception",
       "script": [
         "PUSH0",
+        "PUSH0",
         "THROWIF"
       ],
       "steps": [
         {
           "actions": [
+            "stepInto",
             "stepInto"
           ],
           "result": {
@@ -20,6 +22,10 @@
                 "instructionPointer": 1,
                 "nextInstruction": "THROWIF",
                 "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  },
                   {
                     "type": "integer",
                     "value": 0
