@@ -19,7 +19,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 1,
+                "instructionPointer": 2,
                 "nextInstruction": "THROWIF",
                 "evaluationStack": [
                   {

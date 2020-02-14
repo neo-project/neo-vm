@@ -21,7 +21,8 @@ namespace Neo.VM
         public bool HasFinally => FinallyPointer > TryPointer;
 
         public TryState State { get; internal set; } = TryState.Try;
-        public StackItem Error { get; internal set; }
+        public StackItem CatchedError { get; internal set; }
+        public StackItem RethrowError { get; internal set; }
 
         public TryContent(int tryPointer, int catchOffset, int finallyOffset)
         {

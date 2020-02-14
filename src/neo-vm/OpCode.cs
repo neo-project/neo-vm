@@ -240,12 +240,12 @@ namespace Neo.VM
         /// <summary>
         /// TRY CatchOffset(sbyte) FinallyOffset(sbyte). If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0.
         /// </summary>
-        [OperandSize(Size = 3)]
+        [OperandSize(Size = 2)]
         TRY = 0x3B,
         /// <summary>
         /// TRY_L CatchOffset(int) FinallyOffset(int). If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0.
         /// </summary>
-        [OperandSize(Size = 12)]
+        [OperandSize(Size = 8)]
         TRY_L = 0x3C,
         ENDTRY = 0x3D,
         ENDCATCH = 0x3E,

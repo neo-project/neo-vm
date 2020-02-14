@@ -70,7 +70,7 @@ namespace Neo.VM
 
         protected virtual void ContextUnloaded(ExecutionContext context)
         {
-            if (InvocationStack.Count == 0 || context.StaticFields != CurrentContext.StaticFields)
+            if (InvocationStack.Count == 0 || context.StaticFields != InvocationStack.Peek().StaticFields)
             {
                 context.StaticFields?.ClearReferences();
             }
@@ -96,7 +96,7 @@ namespace Neo.VM
         private bool ExecuteCall(int position)
         {
             if (position < 0 || position > CurrentContext.Script.Length) return false;
-            ExecutionContext context_call = CurrentContext.Clone();
+            ExecutionContext context_call = CurrentContext.CallClone();
             context_call.InstructionPointer = position;
             LoadContext(context_call);
             return true;
@@ -318,11 +318,18 @@ namespace Neo.VM
                     }
                 case OpCode.ENDFINALLY:
                     {
-                        if (CurrentContext.CurrentTry is null) return false;
+                        var currentTry = CurrentContext.CurrentTry;
+                        if (currentTry is null) return false;
                         if (InvocationStack.Count <= 1) return false;
+                        int nextOpcodePos = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                         ContextUnloaded(InvocationStack.Pop());
                         CurrentContext = InvocationStack.Peek();
-                        break;
+                        if (currentTry.RethrowError != null)
+                        {
+                            return ExecuteThrow(currentTry.RethrowError);
+                        }
+                        CurrentContext.InstructionPointer = nextOpcodePos;
+                        return true;
                     }
                 case OpCode.RET:
                     {
@@ -1191,8 +1198,9 @@ namespace Neo.VM
             if (finallyOffset + catchOffset <= 0) return false;
             if (finallyOffset > 0 && catchOffset >= finallyOffset) return false;
 
-            ExecutionContext context_try = CurrentContext.Clone();
+            ExecutionContext context_try = CurrentContext.LocalScopeClone();
             context_try.CurrentTry = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset);
+            context_try.InstructionPointer = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
             LoadContext(context_try);
             return true;
         }
@@ -1205,15 +1213,20 @@ namespace Neo.VM
             if (currentTry is null) return false;
             if (currentTry.State != currentState) return false;
 
+            ContextUnloaded(InvocationStack.Pop());
             if (currentTry.HasFinally)
             {
                 currentTry.State = TryState.Finally;
-                CurrentContext.InstructionPointer = currentTry.FinallyPointer;
+                ExecutionContext context_finally = InvocationStack.Peek().LocalScopeClone();
+                context_finally.CurrentTry = currentTry;
+                context_finally.InstructionPointer = currentTry.FinallyPointer;
+                LoadContext(context_finally);
             }
             else
             {
-                ContextUnloaded(InvocationStack.Pop());
+                int nextOpcodePos = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                 CurrentContext = InvocationStack.Peek();
+                CurrentContext.InstructionPointer = nextOpcodePos;
             }
             return true;
         }
@@ -1221,26 +1234,31 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteThrow(StackItem error)
         {
-            while (InvocationStack.Count > 0)
+            while (InvocationStack.TryPop(out ExecutionContext executionContext))
             {
-                CurrentContext = InvocationStack.Peek();
-                var currentTry = CurrentContext.CurrentTry;
-                if (CurrentContext.CurrentTry != null && currentTry.State == TryState.Try)
+                var currentTry = executionContext.CurrentTry;
+                if (currentTry is null || currentTry.State == TryState.Finally || (currentTry.State == TryState.Catch && !currentTry.HasFinally))
                 {
-                    CurrentContext.CurrentTry.Error = error;
-                    if (currentTry.HasCatch)
-                    {
-                        currentTry.State = TryState.Catch;
-                        CurrentContext.InstructionPointer = currentTry.CatchPointer;
-                    }
-                    else
-                    {
-                        currentTry.State = TryState.Finally;
-                        CurrentContext.InstructionPointer = currentTry.FinallyPointer;
-                    }
-                    return true;
+                    ContextUnloaded(executionContext);
+                    continue;
                 }
-                ContextUnloaded(InvocationStack.Pop());
+                ExecutionContext context_catch_or_finally = InvocationStack.Peek().LocalScopeClone();
+                context_catch_or_finally.CurrentTry = currentTry;
+                if (currentTry.State == TryState.Try && currentTry.HasCatch)
+                {
+                    currentTry.State = TryState.Catch;
+                    currentTry.CatchedError = error;
+                    context_catch_or_finally.InstructionPointer = currentTry.CatchPointer;
+                }
+                else
+                {
+                    currentTry.State = TryState.Finally;
+                    currentTry.RethrowError = error;
+                    context_catch_or_finally.InstructionPointer = currentTry.FinallyPointer;
+                }
+                LoadContext(context_catch_or_finally);
+                ContextUnloaded(executionContext);
+                return true;
             }
             return false;
         }

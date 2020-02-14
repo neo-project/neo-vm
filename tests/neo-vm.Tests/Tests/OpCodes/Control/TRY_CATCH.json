@@ -3,11 +3,94 @@
   "name": "TRY_CATCH",
   "tests": [
     {
-      "name": "try catch case",
+      "name": "try catch without exception",
       "script": [
-        "PUSH0"
+        "TRY",
+        "0x0500",
+        "PUSH0",
+        "ENDTRY",
+        "PUSH3",
+        "ENDCATCH"
       ],
       "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "PUSH3",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "try catch with exception",
+      "script": [
+        "TRY",
+        "0x0600",
+        "PUSH0",
+        "THROW",
+        "ENDTRY",
+        "PUSH1",
+        "ENDCATCH",
+        "PUSH2"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "PUSH1"
+              },
+              {
+                "instructionPointer": 0,
+                "nextInstruction": "TRY"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "PUSH2",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
       ]
     }
   ]
