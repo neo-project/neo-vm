@@ -23,13 +23,15 @@ namespace Neo.VM
         /// <summary>
         /// Evaluation stack
         /// </summary>
-        public EvaluationStack EvaluationStack { get; }
+        public EvaluationStack EvaluationStack { get; internal set; }
 
         public Slot StaticFields { get; internal set; }
 
         public Slot LocalVariables { get; internal set; }
 
         public Slot Arguments { get; internal set; }
+
+        public ErrorHandle ErrorHandle { get; internal set; }
 
         /// <summary>
         /// Instruction pointer
@@ -75,9 +77,21 @@ namespace Neo.VM
             this.states = states;
         }
 
-        internal ExecutionContext Clone()
+        internal ExecutionContext CallClone()
         {
             return new ExecutionContext(Script, 0, EvaluationStack, states) { StaticFields = StaticFields };
+        }
+
+        internal ExecutionContext LocalScopeClone()
+        {
+            var context = new ExecutionContext(Script, 0, EvaluationStack, states)
+            {
+                StaticFields = StaticFields,
+                Arguments = Arguments,
+                LocalVariables = LocalVariables
+            };
+
+            return context;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

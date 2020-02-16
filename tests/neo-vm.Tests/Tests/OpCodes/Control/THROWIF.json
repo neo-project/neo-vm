@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Control",
   "name": "THROWIF",
   "tests": [
@@ -35,6 +35,7 @@
           ],
           "result": {
             "state": "HALT"
+
           }
         }
       ]
