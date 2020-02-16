@@ -308,28 +308,17 @@ namespace Neo.VM
                         int finallyOffset = instruction.TokenI32_1;
                         return ExecuteTry(catchOffset, finallyOffset);
                     }
-                case OpCode.ENDTRY:
+                case OpCode.ENDT:
                     {
                         return ExecuteEndTryCatch(TryState.Try);
                     }
-                case OpCode.ENDCATCH:
+                case OpCode.ENDC:
                     {
                         return ExecuteEndTryCatch(TryState.Catch);
                     }
-                case OpCode.ENDFINALLY:
+                case OpCode.ENDF:
                     {
-                        var currentTry = CurrentContext.CurrentTry;
-                        if (currentTry is null) return false;
-                        if (InvocationStack.Count <= 1) return false;
-                        int nextOpcodePos = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
-                        ContextUnloaded(InvocationStack.Pop());
-                        CurrentContext = InvocationStack.Peek();
-                        if (currentTry.RethrowError != null)
-                        {
-                            return ExecuteThrow(currentTry.RethrowError);
-                        }
-                        CurrentContext.InstructionPointer = nextOpcodePos;
-                        return true;
+                        return ExecuteEndFinally();
                     }
                 case OpCode.RET:
                     {
@@ -1194,33 +1183,44 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteTry(int catchOffset, int finallyOffset)
         {
+            //try context 大部分情況下就是當前ExecutionContext
+            //仅仅当 catch 触发时 EvaluationStack 的垃圾应该清理
+
+            //所以实现上，仅仅记录一个 EvaluationStack 当前数量即可，仅有catch触发时进行 EvaluationStack 数量恢复
+
             if (catchOffset < 0 || finallyOffset < 0) return false;
             if (finallyOffset + catchOffset <= 0) return false;
             if (finallyOffset > 0 && catchOffset >= finallyOffset) return false;
 
-            ExecutionContext context_try = CurrentContext.LocalScopeClone();
-            context_try.CurrentTry = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset);
-            context_try.InstructionPointer = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
-            LoadContext(context_try);
+            this.CurrentContext.CurrentTry =new TryContent(CurrentContext.InstructionPointer, CurrentContext.EvaluationStack.Count, catchOffset, finallyOffset);
+            this.CurrentContext.InstructionPointer += CurrentContext.CurrentInstruction.Size;
+
             return true;
+            //CurrentContext.EvaluationStack
+            //ExecutionContext context_try = CurrentContext.LocalScopeClone();
+            //context_try.CurrentTry = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset);
+            //context_try.InstructionPointer = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
+            //LoadContext(context_try);
+            //return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteEndTryCatch(TryState currentState)
         {
+            //endtry的行为 就是 转到final指令 （如果没有final，就下一条）
+            //endcatch的行为也是一样
             var currentTry = CurrentContext.CurrentTry;
-            if (InvocationStack.Count <= 1) return false;
+            //if (InvocationStack.Count <= 1) return false;
             if (currentTry is null) return false;
             if (currentTry.State != currentState) return false;
 
-            ContextUnloaded(InvocationStack.Pop());
+            //ContextUnloaded(InvocationStack.Pop());
             if (currentTry.HasFinally)
             {
+                //去FinallyPointer 即可
                 currentTry.State = TryState.Finally;
-                ExecutionContext context_finally = InvocationStack.Peek().LocalScopeClone();
-                context_finally.CurrentTry = currentTry;
-                context_finally.InstructionPointer = currentTry.FinallyPointer;
-                LoadContext(context_finally);
+                currentTry.EndTryCatch(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
+                CurrentContext.InstructionPointer = currentTry.FinallyPointer;
             }
             else
             {
@@ -1228,6 +1228,16 @@ namespace Neo.VM
                 CurrentContext = InvocationStack.Peek();
                 CurrentContext.InstructionPointer = nextOpcodePos;
             }
+            return true;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool ExecuteEndFinally()
+        {
+            //endfinally 仅仅跳回endc or endt的 位置即可
+            var currentTry = CurrentContext.CurrentTry;
+            if (currentTry is null) return false;
+
+            CurrentContext.InstructionPointer = currentTry.EndPointer;
             return true;
         }
 

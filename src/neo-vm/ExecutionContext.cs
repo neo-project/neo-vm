@@ -84,7 +84,14 @@ namespace Neo.VM
 
         internal ExecutionContext LocalScopeClone()
         {
-            return new ExecutionContext(Script, 0, EvaluationStack, states) { StaticFields = StaticFields, Arguments = Arguments };
+            var context = new ExecutionContext(Script, 0, EvaluationStack, states)
+            {
+                StaticFields = StaticFields,
+                Arguments = Arguments,
+                LocalVariables = LocalVariables
+            };
+
+            return context;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

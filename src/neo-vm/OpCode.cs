@@ -247,9 +247,9 @@ namespace Neo.VM
         /// </summary>
         [OperandSize(Size = 8)]
         TRY_L = 0x3C,
-        ENDTRY = 0x3D,
-        ENDCATCH = 0x3E,
-        ENDFINALLY = 0x3F,
+        ENDT = 0x3D,
+        ENDC = 0x3E,
+        ENDF = 0x3F,
         /// <summary>
         /// Returns from the current method. But if RET is in <see langword="try-catch"/> body, it will execute <see langword="finally"/> of <see langword="try-catch-finally"/> first.
         /// </summary>
