@@ -11,7 +11,6 @@ namespace Neo.VM
         Finally
     }
 
-
     [DebuggerDisplay("TryPointer={TryPointer}, CatchPointer={CatchPointer}, FinallyPointer={FinallyPointer}")]
     public sealed class TryContext
     {
@@ -38,7 +37,7 @@ namespace Neo.VM
         public TryContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
         {
             this.ExecutionContext = ExecutionContext;
-            this.TryPointer = ExecutionContext.InstructionPointer ;
+            this.TryPointer = ExecutionContext.InstructionPointer;
             this.EvaluationStackCount = ExecutionContext.EvaluationStack.Count;
             HasCatch = catchOffset > 0;
             HasFinally = finallyOffset > 0;

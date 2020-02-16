@@ -1267,9 +1267,9 @@ namespace Neo.VM
                 var content = this.InvocationStack.ElementAt(i);
                 if (content.ErrorHandle != null)
                 {
-                    if (content.ErrorHandle.HandleError(this,error))
+                    if (content.ErrorHandle.HandleError(this, error))
                     {
-                        this.State  =VMState.NONE;
+                        this.State = VMState.NONE;
                         this.FaultState = null;
                         return true;
                     }
