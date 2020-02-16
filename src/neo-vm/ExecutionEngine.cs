@@ -42,7 +42,7 @@ namespace Neo.VM
         public ExecutionContext EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }
         public VMState State { get; internal protected set; } = VMState.BREAK;
-        public string FaultState { get; internal protected set; } = null;
+        public FaultState FaultState { get; internal protected set; } = new FaultState { HoldError = false, ErrorInfo = "" };
         public ExecutionEngine()
         {
             ResultStack = new EvaluationStack(ReferenceCounter);
@@ -1242,6 +1242,11 @@ namespace Neo.VM
             var currentTry = CurrentContext.ErrorHandle?.Pop();
             if (currentTry is null) return false;
 
+            if (this.FaultState.HoldError)
+            {
+                this.State = VMState.FAULT;
+                this.FaultState.HoldError = false;
+            }
             CurrentContext.InstructionPointer = currentTry.EndPointer;
             return true;
         }
@@ -1251,8 +1256,33 @@ namespace Neo.VM
         {
             //throw 和fault 就是同一个机制，只是有机会被catch捕获
             //通过Context逐层传递
-            this.FaultState = errorinfo;
-            this.State = VMState.FAULT;
+            this.FaultState.ErrorInfo = errorinfo;
+
+            this.FaultState.HoldError = false;
+
+            var currentTry = CurrentContext.ErrorHandle?.CurContext;
+            if (currentTry != null && currentTry.HasFinally)
+            {
+                if (currentTry.State == TryState.Catch)
+                {
+                    this.FaultState.HoldError = true;
+                }
+                if (currentTry.State == TryState.Try && currentTry.HasCatch==false)
+                {
+                    this.FaultState.HoldError = true;
+                }
+            }
+
+
+            if (!this.FaultState.HoldError)
+            {
+                this.State = VMState.FAULT;
+            }
+            else
+            {
+                this.ExecuteEndTryCatch(currentTry.State);
+            }
+
             return true;
 
         }
@@ -1260,17 +1290,16 @@ namespace Neo.VM
         private bool HandleError()
         {
             //记录错误现场
-            var error = this.FaultState;
 
             for (var i = 0; i < this.InvocationStack.Count; i++)
             {
                 var content = this.InvocationStack.ElementAt(i);
                 if (content.ErrorHandle != null)
                 {
-                    if (content.ErrorHandle.HandleError(this, error))
+                    if (content.ErrorHandle.HandleError(this))
                     {
                         this.State = VMState.NONE;
-                        this.FaultState = null;
+                        this.FaultState.HoldError = false;
                         return true;
                     }
                 }
@@ -1315,14 +1344,25 @@ namespace Neo.VM
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                     {
                         State = VMState.FAULT;
-                        FaultState = "OPCode Fault:" + instruction.OpCode.ToString();
+                        FaultState.HoldError = false;
+                        FaultState.ErrorInfo = "OPCode Fault:" + instruction.OpCode.ToString();
                     }
                 }
                 catch
                 {
-                    Instruction instruction = CurrentContext.CurrentInstruction;
                     State = VMState.FAULT;
-                    FaultState = "OPCode internal error:" + instruction.OpCode.ToString();
+                    FaultState.HoldError = false;
+
+                    try
+                    {
+
+                        Instruction instruction = CurrentContext.CurrentInstruction;
+                        FaultState.ErrorInfo = "OPCode internal error:" + instruction.OpCode.ToString();
+                    }
+                    catch
+                    {
+                        FaultState.ErrorInfo = "Can't catch internal error:";
+                    }
                 }
             }
             if (State == VMState.FAULT)

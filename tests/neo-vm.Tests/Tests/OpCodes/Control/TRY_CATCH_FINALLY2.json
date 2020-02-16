@@ -3,18 +3,20 @@
   "name": "TRY_CATCH_FINALLY",
   "tests": [
     {
-      "name": "try catch finally without exception",
+      "name": "try catch finally with exception",
       "script": [
         "TRY",
-        "0x0608",
+        "0x070A",
         "PUSH0",
+        "THROW",
         "ENDT",
         "RET",
-        "PUSH2",
+        "PUSH1",
         "ENDC",
-        "PUSH3",
+        "RET",
+        "PUSH2",
         "ENDF",
-        "PUSH4"
+        "PUSH3"
       ],
       "steps": [
         {
@@ -27,8 +29,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
-                "nextInstruction": "PUSH3",
+                "instructionPointer": 7,
+                "nextInstruction": "PUSH1",
                 "evaluationStack": [
                   {
                     "type": "integer",
@@ -48,12 +50,41 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 10,
+                "nextInstruction": "PUSH2",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 1
+                  },
+                  {
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
                     "type": "integer",
-                    "value": 3
+                    "value": 2
+                  },
+                  {
+                    "type": "integer",
+                    "value": 1
                   },
                   {
                     "type": "integer",

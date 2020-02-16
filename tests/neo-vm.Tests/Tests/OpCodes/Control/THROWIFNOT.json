@@ -6,7 +6,6 @@
       "name": "Without throw exception",
       "script": [
         "PUSH0",
-        "PUSH0",
         "NOT",
         "THROWIFNOT"
       ],
@@ -15,14 +14,13 @@
           "actions": [
             "stepInto",
             "stepInto",
-            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 4,
+                "instructionPointer": 3,
                 "nextInstruction": "RET"
               }
             ]

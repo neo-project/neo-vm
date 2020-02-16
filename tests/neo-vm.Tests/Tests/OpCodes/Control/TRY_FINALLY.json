@@ -3,49 +3,19 @@
   "name": "TRY_FINALLY",
   "tests": [
     {
-      "name": "try finally without exception",
+      "name": "try finally with exception",
       "script": [
         "TRY",
-        "0x0005",
-        "PUSH0",
-        "ENDTRY",
-        "PUSH3",
-        "ENDFINALLY",
-        "PUSH4"
+        "0x0007",
+        "THROW",
+        "ENDT",
+        "JMP",
+        "0x03",
+        "PUSH1",
+        "ENDF",
+        "PUSH2"
       ],
       "steps": [
-        {
-          "actions": [
-            "stepInto",
-            "stepInto",
-            "stepInto"
-          ],
-          "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 5,
-                "nextInstruction": "PUSH3",
-                "evaluationStack": [
-                  {
-                    "type": "integer",
-                    "value": 0
-                  }
-                ]
-              },
-              {
-                "instructionPointer": 0,
-                "nextInstruction": "TRY",
-                "evaluationStack": [
-                  {
-                    "type": "integer",
-                    "value": 0
-                  }
-                ]
-              }
-            ]
-          }
-        },
         {
           "actions": [
             "stepInto",
@@ -56,52 +26,7 @@
             "invocationStack": [
               {
                 "instructionPointer": 7,
-                "nextInstruction": "PUSH4",
-                "evaluationStack": [
-                  {
-                    "type": "integer",
-                    "value": 3
-                  },
-                  {
-                    "type": "integer",
-                    "value": 0
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "try finally with exception",
-      "script": [
-        "TRY",
-        "0x0006",
-        "PUSH0",
-        "THROW",
-        "ENDTRY",
-        "PUSH1",
-        "ENDFINALLY",
-        "PUSH2"
-      ],
-      "steps": [
-        {
-          "actions": [
-            "stepInto",
-            "stepInto",
-            "stepInto"
-          ],
-          "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 6,
                 "nextInstruction": "PUSH1"
-              },
-              {
-                "instructionPointer": 0,
-                "nextInstruction": "TRY"
               }
             ]
           }
@@ -115,7 +40,7 @@
             "state": "FAULT",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 6,
                 "nextInstruction": "PUSH2",
                 "evaluationStack": [
                   {

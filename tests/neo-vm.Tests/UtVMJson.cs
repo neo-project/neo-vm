@@ -45,26 +45,28 @@ namespace Neo.Test
             foreach (var file in Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
             {
                 var realFile = Path.GetFullPath(file);
-                var json = File.ReadAllText(realFile, Encoding.UTF8);
-                var ut = json.DeserializeJson<VMUT>();
-
-                if (string.IsNullOrEmpty(ut.Name))
-                {
-                    // Add filename
-
-                    ut.Name += $" [{Path.GetFileNameWithoutExtension(realFile)}]";
-                }
-
-                if (json != ut.ToJson().Replace("\r\n", "\n"))
-                {
-                    // Format json
-
-                    Console.WriteLine($"The file '{realFile}' was optimized");
-                    //File.WriteAllText(realFile, ut.ToJson().Replace("\r\n", "\n"), Encoding.UTF8);
-                }
-
                 try
                 {
+                 
+                    var json = File.ReadAllText(realFile, Encoding.UTF8);
+                    var ut = json.DeserializeJson<VMUT>();
+
+                    if (string.IsNullOrEmpty(ut.Name))
+                    {
+                        // Add filename
+
+                        ut.Name += $" [{Path.GetFileNameWithoutExtension(realFile)}]";
+                    }
+
+                    if (json != ut.ToJson().Replace("\r\n", "\n"))
+                    {
+                        // Format json
+
+                        Console.WriteLine($"The file '{realFile}' was optimized");
+                        //File.WriteAllText(realFile, ut.ToJson().Replace("\r\n", "\n"), Encoding.UTF8);
+                    }
+
+
                     ExecuteTest(ut);
                 }
                 catch (Exception ex)

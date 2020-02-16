@@ -1,0 +1,110 @@
+{
+  "category": "Control",
+  "name": "TRY_CATCH_FINALLY",
+  "tests": [
+    {
+      "name": "try{ try-catch } catch finally without exception",
+      "script": [
+        "TRY",
+        "0x0b0e",
+        "TRY",
+        "0x0600",
+        "PUSH0",
+        "THROW",
+        "ENDT",
+        "PUSH1",
+        "ENDC",
+        "ENDT",
+        "PUSH2",
+        "ENDC",
+        "PUSH3",
+        "ENDF",
+        "PUSH4"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
+                "nextInstruction": "PUSH1"
+              },
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "TRY"
+              },
+              {
+                "instructionPointer": 0,
+                "nextInstruction": "TRY"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 11,
+                "nextInstruction": "ENDT",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 1
+                  }
+                ]
+              },
+              {
+                "instructionPointer": 0,
+                "nextInstruction": "TRY",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 16,
+                "nextInstruction": "PUSH4",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 3
+                  },
+                  {
+                    "type": "integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
