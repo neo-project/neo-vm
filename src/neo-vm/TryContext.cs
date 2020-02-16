@@ -1,4 +1,5 @@
 using Neo.VM.Types;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Neo.VM
@@ -10,9 +11,11 @@ namespace Neo.VM
         Finally
     }
 
+
     [DebuggerDisplay("TryPointer={TryPointer}, CatchPointer={CatchPointer}, FinallyPointer={FinallyPointer}")]
-    public sealed class TryContent
+    public sealed class TryContext
     {
+        public ExecutionContext ExecutionContext { get; private set; }
         public int TryPointer { get; private set; }
         public int CatchPointer { get; private set; }
         public int FinallyPointer { get; private set; }
@@ -32,14 +35,17 @@ namespace Neo.VM
         public StackItem CatchedError { get; internal set; }
         public StackItem RethrowError { get; internal set; }
 
-        public TryContent(int tryPointer, int EvaluationStackCount, int catchOffset, int finallyOffset)
+        public TryContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
         {
-            this.TryPointer = tryPointer;
-            this.EvaluationStackCount = EvaluationStackCount;
+            this.ExecutionContext = ExecutionContext;
+            this.TryPointer = ExecutionContext.InstructionPointer ;
+            this.EvaluationStackCount = ExecutionContext.EvaluationStack.Count;
             HasCatch = catchOffset > 0;
             HasFinally = finallyOffset > 0;
-            this.CatchPointer = checked(tryPointer + catchOffset);
-            this.FinallyPointer = checked(tryPointer + finallyOffset);
+            this.CatchPointer = checked(TryPointer + catchOffset);
+            this.FinallyPointer = checked(TryPointer + finallyOffset);
         }
+
+
     }
 }
