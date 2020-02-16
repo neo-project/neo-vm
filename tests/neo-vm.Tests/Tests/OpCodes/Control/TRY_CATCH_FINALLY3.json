@@ -7,24 +7,23 @@
       "script": [
         "TRY",
         "0x0b0e",
-        "TRY",
-        "0x0600",
-        "PUSH0",
-        "THROW",
+          "TRY",
+          "0x0500",
+            "THROW",
+          "ENDT",
+            "PUSH1",
+          "ENDC",
         "ENDT",
-        "PUSH1",
+        "RET",
+          "PUSH2",
         "ENDC",
-        "ENDT",
-        "PUSH2",
-        "ENDC",
-        "PUSH3",
+          "PUSH3",
         "ENDF",
-        "PUSH4"
+          "PUSH4"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
             "stepInto",
             "stepInto",
             "stepInto"
@@ -33,22 +32,36 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 9,
+                "instructionPointer": 8,
                 "nextInstruction": "PUSH1"
-              },
-              {
-                "instructionPointer": 3,
-                "nextInstruction": "TRY"
-              },
-              {
-                "instructionPointer": 0,
-                "nextInstruction": "TRY"
               }
             ]
           }
         },
         {
           "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "ENDT",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
             "stepInto",
             "stepInto"
           ],
@@ -57,39 +70,7 @@
             "invocationStack": [
               {
                 "instructionPointer": 11,
-                "nextInstruction": "ENDT",
-                "evaluationStack": [
-                  {
-                    "type": "integer",
-                    "value": 1
-                  }
-                ]
-              },
-              {
-                "instructionPointer": 0,
-                "nextInstruction": "TRY",
-                "evaluationStack": [
-                  {
-                    "type": "integer",
-                    "value": 1
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "stepInto",
-            "stepInto",
-            "stepInto"
-          ],
-          "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 16,
-                "nextInstruction": "PUSH4",
+                "nextInstruction": "RET",
                 "evaluationStack": [
                   {
                     "type": "integer",

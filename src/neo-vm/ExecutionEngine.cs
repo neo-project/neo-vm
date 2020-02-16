@@ -1229,6 +1229,7 @@ namespace Neo.VM
             }
             else
             {
+                CurrentContext.ErrorHandle.Pop();
                 int nextOpcodePos = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                 CurrentContext = InvocationStack.Peek();
                 CurrentContext.InstructionPointer = nextOpcodePos;
@@ -1261,17 +1262,39 @@ namespace Neo.VM
             this.FaultState.HoldError = false;
 
             var currentTry = CurrentContext.ErrorHandle?.CurContext;
-            if (currentTry != null && currentTry.HasFinally)
+            if (currentTry != null)
             {
+                if (currentTry.HasFinally)
+                {
+                    if (currentTry.State == TryState.Catch)
+                    {
+                        this.FaultState.HoldError = true;
+                    }
+                    if (currentTry.State == TryState.Try && currentTry.HasCatch == false)
+                    {
+                        this.FaultState.HoldError = true;
+                    }
+                }
+                if (currentTry.State == TryState.Try)
+                {
+                    if (currentTry.HasCatch == false && currentTry.HasFinally == false)//沒final 沒try，throw 就pop
+                    {
+                        CurrentContext.ErrorHandle.Pop();
+                    }
+                }
                 if (currentTry.State == TryState.Catch)
                 {
-                    this.FaultState.HoldError = true;
+                    if (currentTry.HasFinally == false)//沒final 沒try，throw 就pop
+                    {
+                        CurrentContext.ErrorHandle.Pop();
+                    }
                 }
-                if (currentTry.State == TryState.Try && currentTry.HasCatch==false)
+                if (currentTry.State == TryState.Finally)
                 {
-                    this.FaultState.HoldError = true;
+                    CurrentContext.ErrorHandle.Pop();
                 }
             }
+
 
 
             if (!this.FaultState.HoldError)
