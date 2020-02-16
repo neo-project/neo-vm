@@ -60,7 +60,7 @@ namespace Neo.Test
                         }
                     }
                 }
-                catch(Exception err)
+                catch (Exception err)
                 {
                     throw new Exception(test.Name + " error", err);
                 }

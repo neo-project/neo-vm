@@ -47,7 +47,7 @@ namespace Neo.Test
                 var realFile = Path.GetFullPath(file);
                 try
                 {
-                 
+
                     var json = File.ReadAllText(realFile, Encoding.UTF8);
                     var ut = json.DeserializeJson<VMUT>();
 
