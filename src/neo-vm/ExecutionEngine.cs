@@ -97,7 +97,7 @@ namespace Neo.VM
         private bool ExecuteCall(int position)
         {
             if (position < 0 || position > CurrentContext.Script.Length) return false;
-            ExecutionContext context_call = CurrentContext.CallClone();
+            ExecutionContext context_call = CurrentContext.Clone();
             context_call.InstructionPointer = position;
             LoadContext(context_call);
             return true;
