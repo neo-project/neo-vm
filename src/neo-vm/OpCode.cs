@@ -226,15 +226,15 @@ namespace Neo.VM
         /// </summary>
         CALLA = 0x36,
         /// <summary>
-        /// Remove the top of stack item, and throw it.
+        /// Throw an vm error.
         /// </summary>
         THROW = 0x37,
         /// <summary>
-        /// Remove the second-to-top of stack item. If the top of the item is <see langword="true"/>, not <see langword="null"/>, or non-zero, then it will throw the second item.
+        /// Remove the top of stack item. And if the top of the item is <see langword="true"/>, not <see langword="null"/>, or non-zero, then it will throw an vm error.
         /// </summary>
         THROWIF = 0x38,
         /// <summary>
-        /// Remove the second-to-top of stack item. If the top of the item is <see langword="false"/>, a <see langword="null"/> reference, or zero, then it will throw the second item.
+        /// Remove the top of stack item. And if the top of the item is <see langword="false"/>, a <see langword="null"/> reference, or zero, then it will throw an vm error.
         /// </summary>
         THROWIFNOT = 0x39,
         /// <summary>

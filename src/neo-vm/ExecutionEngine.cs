@@ -43,6 +43,7 @@ namespace Neo.VM
         public EvaluationStack ResultStack { get; }
         public VMState State { get; internal protected set; } = VMState.BREAK;
         public FaultState FaultState { get; internal protected set; } = new FaultState { HoldError = false, ErrorInfo = "" };
+
         public ExecutionEngine()
         {
             ResultStack = new EvaluationStack(ReferenceCounter);
@@ -285,18 +286,14 @@ namespace Neo.VM
                     }
                 case OpCode.THROW:
                     {
-                        //之前已经有一些合约使用的无参THROW，所以我们应继续使用无参THROW
-                        //除非我们在ISSUE中继续了其它讨论
-                        return ExecuteThrow("usererror");
+                        return ExecuteThrow("error");
                     }
                 case OpCode.THROWIF:
                 case OpCode.THROWIFNOT:
                     {
-                        //同上
                         if (!TryPop(out bool x)) return false;
-                        //if (!TryPop(out StackItem error)) return false;
                         if (x ^ (instruction.OpCode == OpCode.THROWIF)) break;
-                        return ExecuteThrow("usererror");
+                        return ExecuteThrow("error");
                     }
                 case OpCode.TRY:
                     {
@@ -1185,11 +1182,6 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteTry(int catchOffset, int finallyOffset)
         {
-            //try context 大部分情況下就是當前ExecutionContext
-            //仅仅当 catch 触发时 EvaluationStack 的垃圾应该清理
-
-            //所以实现上，仅仅记录一个 EvaluationStack 当前数量即可，仅有catch触发时进行 EvaluationStack 数量恢复
-
             if (catchOffset < 0 || finallyOffset < 0) return false;
             if (finallyOffset + catchOffset <= 0) return false;
             if (finallyOffset > 0 && catchOffset >= finallyOffset) return false;
@@ -1197,32 +1189,19 @@ namespace Neo.VM
             if (CurrentContext.ErrorHandle == null)
                 CurrentContext.ErrorHandle = new ErrorHandle();
             CurrentContext.ErrorHandle.Push(new TryContext(CurrentContext, catchOffset, finallyOffset));
-
-            this.CurrentContext.InstructionPointer += CurrentContext.CurrentInstruction.Size;
-
+            CurrentContext.InstructionPointer += CurrentContext.CurrentInstruction.Size;
             return true;
-            //CurrentContext.EvaluationStack
-            //ExecutionContext context_try = CurrentContext.LocalScopeClone();
-            //context_try.CurrentTry = new TryContent(CurrentContext.InstructionPointer, catchOffset, finallyOffset);
-            //context_try.InstructionPointer = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
-            //LoadContext(context_try);
-            //return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool ExecuteEndTryCatch(TryState currentState)
         {
-            //endtry的行为 就是 转到final指令 （如果没有final，就下一条）
-            //endcatch的行为也是一样
             var currentTry = CurrentContext.ErrorHandle?.CurContext;
-            //if (InvocationStack.Count <= 1) return false;
             if (currentTry is null) return false;
             if (currentTry.State != currentState) return false;
 
-            //ContextUnloaded(InvocationStack.Pop());
             if (currentTry.HasFinally)
             {
-                //去FinallyPointer 即可
                 currentTry.State = TryState.Finally;
                 currentTry.EndTryCatch(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                 CurrentContext.InstructionPointer = currentTry.FinallyPointer;
@@ -1236,10 +1215,10 @@ namespace Neo.VM
             }
             return true;
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteEndFinally()
         {
-            //endfinally 仅仅跳回endc or endt的 位置即可
             var currentTry = CurrentContext.ErrorHandle?.Pop();
             if (currentTry is null) return false;
 
@@ -1255,11 +1234,8 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteThrow(string errorinfo)
         {
-            //throw 和fault 就是同一个机制，只是有机会被catch捕获
-            //通过Context逐层传递
-            this.FaultState.ErrorInfo = errorinfo;
-
-            this.FaultState.HoldError = false;
+            FaultState.ErrorInfo = errorinfo;
+            FaultState.HoldError = false;
 
             var currentTry = CurrentContext.ErrorHandle?.CurContext;
             if (currentTry != null)
@@ -1275,59 +1251,54 @@ namespace Neo.VM
                         this.FaultState.HoldError = true;
                     }
                 }
+
                 if (currentTry.State == TryState.Try)
                 {
-                    if (currentTry.HasCatch == false && currentTry.HasFinally == false)//沒final 沒try，throw 就pop
+                    if (currentTry.HasCatch == false && currentTry.HasFinally == false)
                     {
-                        CurrentContext.ErrorHandle.Pop();
+                        CurrentContext.ErrorHandle.Pop(); // if no final, no try, just pop try content.
                     }
                 }
-                if (currentTry.State == TryState.Catch)
+                else if (currentTry.State == TryState.Catch)
                 {
-                    if (currentTry.HasFinally == false)//沒final 沒try，throw 就pop
+                    if (currentTry.HasFinally == false) // if has catch, but no final, just pop try content.
                     {
                         CurrentContext.ErrorHandle.Pop();
                     }
                 }
-                if (currentTry.State == TryState.Finally)
+                else if (currentTry.State == TryState.Finally)
                 {
                     CurrentContext.ErrorHandle.Pop();
                 }
             }
 
-
-
-            if (!this.FaultState.HoldError)
+            if (!FaultState.HoldError)
             {
-                this.State = VMState.FAULT;
+                State = VMState.FAULT;
             }
             else
             {
-                this.ExecuteEndTryCatch(currentTry.State);
+                ExecuteEndTryCatch(currentTry.State);
             }
-
             return true;
 
         }
 
         private bool HandleError()
         {
-            //记录错误现场
-
-            for (var i = 0; i < this.InvocationStack.Count; i++)
+            for (var i = 0; i < InvocationStack.Count; i++)
             {
-                var content = this.InvocationStack.ElementAt(i);
+                var content = InvocationStack.ElementAt(i);
                 if (content.ErrorHandle != null)
                 {
                     if (content.ErrorHandle.HandleError(this))
                     {
-                        this.State = VMState.NONE;
-                        this.FaultState.HoldError = false;
+                        State = VMState.NONE;
+                        FaultState.HoldError = false;
                         return true;
                     }
                 }
             }
-
 
             return false;
         }

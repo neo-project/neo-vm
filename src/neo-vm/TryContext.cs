@@ -27,6 +27,7 @@ namespace Neo.VM
             this.EndPointer = EndPointer;
             this.State = TryState.Finally;
         }
+
         public bool HasCatch { get; private set; }
         public bool HasFinally { get; private set; }
 
@@ -39,12 +40,10 @@ namespace Neo.VM
             this.ExecutionContext = ExecutionContext;
             this.TryPointer = ExecutionContext.InstructionPointer;
             this.EvaluationStackCount = ExecutionContext.EvaluationStack.Count;
-            HasCatch = catchOffset > 0;
-            HasFinally = finallyOffset > 0;
+            this.HasCatch = catchOffset > 0;
+            this.HasFinally = finallyOffset > 0;
             this.CatchPointer = checked(TryPointer + catchOffset);
             this.FinallyPointer = checked(TryPointer + finallyOffset);
         }
-
-
     }
 }
