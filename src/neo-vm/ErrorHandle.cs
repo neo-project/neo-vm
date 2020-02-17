@@ -40,7 +40,7 @@ namespace Neo.VM
             for (var i = 0; i < tryStack.Count; i++)
             {
                 var context = tryStack.ElementAt(i);
-                switch(context.State)
+                switch (context.State)
                 {
                     case TryState.Try:
                         {
