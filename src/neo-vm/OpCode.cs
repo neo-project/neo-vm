@@ -225,33 +225,16 @@ namespace Neo.VM
         /// Pop the address of a function from the stack, and call the function.
         /// </summary>
         CALLA = 0x36,
-        /// <summary>
-        /// Remove the top of stack item, and throw it.
-        /// </summary>
         THROW = 0x37,
-        /// <summary>
-        /// Remove the second-to-top of stack item. If the top of the item is <see langword="true"/>, not <see langword="null"/>, or non-zero, then it will throw the second item.
-        /// </summary>
         THROWIF = 0x38,
-        /// <summary>
-        /// Remove the second-to-top of stack item. If the top of the item is <see langword="false"/>, a <see langword="null"/> reference, or zero, then it will throw the second item.
-        /// </summary>
         THROWIFNOT = 0x39,
+        //TRY = 0x3B,
+        //TRY_L = 0x3C,
+        //ENDT = 0x3D,
+        //ENDC = 0x3E,
+        //ENDF = 0x3F,
         /// <summary>
-        /// TRY CatchOffset(sbyte) FinallyOffset(sbyte). If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0.
-        /// </summary>
-        [OperandSize(Size = 2)]
-        TRY = 0x3B,
-        /// <summary>
-        /// TRY_L CatchOffset(int) FinallyOffset(int). If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0.
-        /// </summary>
-        [OperandSize(Size = 8)]
-        TRY_L = 0x3C,
-        ENDT = 0x3D,
-        ENDC = 0x3E,
-        ENDF = 0x3F,
-        /// <summary>
-        /// Returns from the current method. But if RET is in <see langword="try-catch"/> body, it will execute <see langword="finally"/> of <see langword="try-catch-finally"/> first.
+        /// Returns from the current method.
         /// </summary>
         RET = 0x40,
         /// <summary>
