@@ -1,16 +1,14 @@
-{
+﻿{
   "category": "Control",
   "name": "THROW",
   "tests": [
     {
       "script": [
-        "PUSH0",
         "THROW"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
             "stepInto"
           ],
           "result": {

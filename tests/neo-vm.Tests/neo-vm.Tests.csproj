@@ -23,6 +23,4 @@
     </None>
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties tests_4opcodes_4control_4try_3catch_3finally_1json__JsonSchema="http://json.schemastore.org/chrome-manifest" tests_4opcodes_4control_4try_3finally_1json__JsonSchema="  " tests_4opcodes_4control_4try_3catch_1json__JsonSchema=" " /></VisualStudio></ProjectExtensions>
-
 </Project>
