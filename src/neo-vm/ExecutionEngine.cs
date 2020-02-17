@@ -106,7 +106,16 @@ namespace Neo.VM
         private bool ExecuteInstruction()
         {
             ExecutionContext context = CurrentContext;
-            Instruction instruction = context.CurrentInstruction;
+            Instruction instruction;
+            try
+            {
+                instruction = context.CurrentInstruction;
+            }
+            catch
+            {
+                throw new InvalidProgramException();
+            }
+
             switch (instruction.OpCode)
             {
                 //Push
@@ -1342,21 +1351,17 @@ namespace Neo.VM
                         FaultState.ErrorInfo = "OPCode Fault:" + instruction.OpCode.ToString();
                     }
                 }
+                catch (InvalidProgramException)
+                {
+                    FaultState.ErrorInfo = "Can't catch internal error:";
+                    FaultState.HoldError = false;
+                    State = VMState.FAULT;
+                    return;
+                }
                 catch
                 {
                     State = VMState.FAULT;
                     FaultState.HoldError = false;
-
-                    try
-                    {
-
-                        Instruction instruction = CurrentContext.CurrentInstruction;
-                        FaultState.ErrorInfo = "OPCode internal error:" + instruction.OpCode.ToString();
-                    }
-                    catch
-                    {
-                        FaultState.ErrorInfo = "Can't catch internal error:";
-                    }
                 }
             }
             if (State == VMState.FAULT)
