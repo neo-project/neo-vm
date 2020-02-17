@@ -1356,6 +1356,7 @@ namespace Neo.VM
                     FaultState.ErrorInfo = "Can't catch internal error:";
                     FaultState.HoldError = false;
                     State = VMState.FAULT;
+                    return;
                 }
                 catch
                 {
