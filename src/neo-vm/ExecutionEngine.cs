@@ -1231,10 +1231,10 @@ namespace Neo.VM
             var currentTry = CurrentContext.ErrorHandle?.Pop();
             if (currentTry is null) return false;
 
-            if (this.FaultState.HoldError)
+            if (FaultState.HoldError)
             {
-                this.State = VMState.FAULT;
-                this.FaultState.HoldError = false;
+                State = VMState.FAULT;
+                FaultState.HoldError = false;
             }
             CurrentContext.InstructionPointer = currentTry.EndPointer;
             return true;
@@ -1253,11 +1253,11 @@ namespace Neo.VM
                 {
                     if (currentTry.State == TryState.Catch)
                     {
-                        this.FaultState.HoldError = true;
+                        FaultState.HoldError = true;
                     }
                     if (currentTry.State == TryState.Try && currentTry.HasCatch == false)
                     {
-                        this.FaultState.HoldError = true;
+                        FaultState.HoldError = true;
                     }
                 }
 
@@ -1289,8 +1289,8 @@ namespace Neo.VM
             {
                 ExecuteEndTryCatch(currentTry.State);
             }
-            return true;
 
+            return true;
         }
 
         private bool HandleError()
