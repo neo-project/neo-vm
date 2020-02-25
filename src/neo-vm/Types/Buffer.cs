@@ -47,13 +47,7 @@ namespace Neo.VM.Types
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = 17;
-                foreach (byte element in InnerBuffer)
-                    hash = hash * 31 + element;
-                return hash;
-            }
+            return Size;
         }
 
         public override bool ToBoolean()
