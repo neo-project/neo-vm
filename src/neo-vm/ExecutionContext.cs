@@ -23,7 +23,7 @@ namespace Neo.VM
         /// <summary>
         /// Evaluation stack
         /// </summary>
-        public EvaluationStack EvaluationStack { get; internal set; }
+        public EvaluationStack EvaluationStack { get; }
 
         public Slot StaticFields { get; internal set; }
 

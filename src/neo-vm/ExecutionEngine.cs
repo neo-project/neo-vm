@@ -42,7 +42,7 @@ namespace Neo.VM
         public ExecutionContext EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }
         public VMState State { get; internal protected set; } = VMState.BREAK;
-        public FaultState FaultState { get; internal protected set; } = new FaultState { HoldError = false, ErrorInfo = "" };
+        public FaultState FaultState { get; internal protected set; } = new FaultState { Rethrow = false };
 
         public ExecutionEngine()
         {
@@ -1231,10 +1231,10 @@ namespace Neo.VM
             var currentTry = CurrentContext.ErrorHandle?.Pop();
             if (currentTry is null) return false;
 
-            if (FaultState.HoldError)
+            if (FaultState.Rethrow)
             {
-                State = VMState.FAULT;
-                FaultState.HoldError = false;
+                FaultState.Rethrow = false;
+                throw FaultState.Error;
             }
             CurrentContext.InstructionPointer = currentTry.EndPointer;
             return true;
@@ -1243,9 +1243,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteThrow(string errorinfo)
         {
-            FaultState.ErrorInfo = errorinfo;
-            FaultState.HoldError = false;
-
+            var error = new CatcheableError(errorinfo);
             var currentTry = CurrentContext.ErrorHandle?.CurContext;
             if (currentTry != null)
             {
@@ -1253,11 +1251,11 @@ namespace Neo.VM
                 {
                     if (currentTry.State == TryState.Catch)
                     {
-                        FaultState.HoldError = true;
+                        FaultState.Rethrow = true;
                     }
                     if (currentTry.State == TryState.Try && currentTry.HasCatch == false)
                     {
-                        FaultState.HoldError = true;
+                        FaultState.Rethrow = true;
                     }
                 }
 
@@ -1280,16 +1278,15 @@ namespace Neo.VM
                     CurrentContext.ErrorHandle.Pop();
                 }
             }
-
-            if (!FaultState.HoldError)
+            if (!FaultState.Rethrow)
             {
-                State = VMState.FAULT;
+                throw error;
             }
             else
             {
+                FaultState.Error = error;
                 ExecuteEndTryCatch(currentTry.State);
             }
-
             return true;
         }
 
@@ -1302,8 +1299,7 @@ namespace Neo.VM
                 {
                     if (content.ErrorHandle.HandleError(this))
                     {
-                        State = VMState.NONE;
-                        FaultState.HoldError = false;
+                        FaultState.Rethrow = false;
                         return true;
                     }
                 }
@@ -1347,26 +1343,20 @@ namespace Neo.VM
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                     {
                         State = VMState.FAULT;
-                        FaultState.HoldError = false;
-                        FaultState.ErrorInfo = "OPCode Fault:" + instruction.OpCode.ToString();
+                        FaultState.Error = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
                     }
                 }
-                catch (InvalidProgramException)
+                catch (CatcheableError e)
                 {
-                    FaultState.ErrorInfo = "Can't catch internal error:";
-                    FaultState.HoldError = false;
-                    State = VMState.FAULT;
-                    return;
+                    FaultState.Error = e;
+                    if (!HandleError())
+                        State = VMState.FAULT;
                 }
                 catch
                 {
                     State = VMState.FAULT;
-                    FaultState.HoldError = false;
+                    FaultState.Error = new InvalidProgramException("Can't catch internal error:");
                 }
-            }
-            if (State == VMState.FAULT)
-            {
-                HandleError();
             }
         }
 

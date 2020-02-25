@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 namespace Neo.VM
 {
     public class FaultState
     {
-        public bool HoldError;
-        public string ErrorInfo;
+        public bool Rethrow;
+        public Exception Error;
     }
 
     public sealed class ErrorHandle
@@ -53,8 +54,7 @@ namespace Neo.VM
                             {
                                 context.State = TryState.Catch;
                                 engine.ExecuteEndTryCatch(TryState.Catch);
-                                engine.FaultState.HoldError = true;
-                                engine.State = VMState.NONE;
+                                engine.FaultState.Rethrow = true;
                                 break;
                             }
                         }
@@ -62,8 +62,7 @@ namespace Neo.VM
                         {
                             ResumeContext(engine, context);
                             engine.ExecuteEndTryCatch(TryState.Catch);
-                            engine.FaultState.HoldError = true;
-                            engine.State = VMState.NONE;
+                            engine.FaultState.Rethrow = true;
                             break;
                         }
                     case TryState.Finally:
