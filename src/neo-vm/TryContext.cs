@@ -30,8 +30,6 @@ namespace Neo.VM
         public bool HasFinally { get; private set; }
 
         public TryState State { get; internal set; } = TryState.Try;
-        public StackItem CatchedError { get; internal set; }
-        public StackItem RethrowError { get; internal set; }
 
         public TryContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
         {

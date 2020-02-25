@@ -1278,16 +1278,13 @@ namespace Neo.VM
                     CurrentContext.ErrorHandle.Pop();
                 }
             }
-            if (!FaultState.Rethrow)
-            {
-                throw error;
-            }
-            else
+            if (FaultState.Rethrow)
             {
                 FaultState.Error = error;
                 ExecuteEndTryCatch(currentTry.State);
+                return true;
             }
-            return true;
+            throw error;
         }
 
         private bool HandleError()
@@ -1307,7 +1304,6 @@ namespace Neo.VM
 
             return false;
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteJump(bool condition, int offset)
