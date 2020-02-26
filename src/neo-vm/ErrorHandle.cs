@@ -77,8 +77,10 @@ namespace Neo.VM
         {
             while (engine.CurrentContext != context.ExecutionContext)
             {
-                var executionContext = engine.InvocationStack.Pop();
+                var executionContext = engine.PopExecutionContext();
+                //engine.InvocationStack.Pop();
                 engine.ContextUnloaded(executionContext);
+
             }
         }
     }
