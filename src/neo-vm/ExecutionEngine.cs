@@ -1247,48 +1247,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteThrow(string errorinfo)
         {
-            var error = new CatcheableError(errorinfo);
-            var currentTry = CurrentContext.ErrorHandle?.CurContext;
-            if (currentTry != null)
-            {
-                if (currentTry.HasFinally)
-                {
-                    if (currentTry.State == TryState.Catch)
-                    {
-                        FaultState.Rethrow = true;
-                    }
-                    if (currentTry.State == TryState.Try && currentTry.HasCatch == false)
-                    {
-                        FaultState.Rethrow = true;
-                    }
-                }
-
-                if (currentTry.State == TryState.Try)
-                {
-                    if (currentTry.HasCatch == false && currentTry.HasFinally == false)
-                    {
-                        CurrentContext.ErrorHandle.Pop(); // if no final, no try, just pop try content.
-                    }
-                }
-                else if (currentTry.State == TryState.Catch)
-                {
-                    if (currentTry.HasFinally == false) // if has catch, but no final, just pop try content.
-                    {
-                        CurrentContext.ErrorHandle.Pop();
-                    }
-                }
-                else if (currentTry.State == TryState.Finally)
-                {
-                    CurrentContext.ErrorHandle.Pop();
-                }
-            }
-            if (FaultState.Rethrow)
-            {
-                FaultState.Error = error;
-                ExecuteEndTryCatch(currentTry.State);
-                return true;
-            }
-            throw error;
+            throw new CatcheableError(errorinfo);
         }
 
         private bool HandleError()
@@ -1300,7 +1259,6 @@ namespace Neo.VM
                 {
                     if (content.ErrorHandle.HandleError(this))
                     {
-                        FaultState.Rethrow = false;
                         return true;
                     }
                 }

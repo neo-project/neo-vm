@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 namespace Neo.VM
 {
     public class FaultState
@@ -36,9 +35,8 @@ namespace Neo.VM
 
         public bool HandleError(ExecutionEngine engine)
         {
-            for (var i = 0; i < tryStack.Count; i++)
+            while (tryStack.TryPeek(out TryContext context))
             {
-                var context = tryStack.ElementAt(i);
                 switch (context.State)
                 {
                     case TryState.Try:
@@ -52,23 +50,26 @@ namespace Neo.VM
                             }
                             else
                             {
-                                context.State = TryState.Catch;
-                                engine.ExecuteEndTryCatch(TryState.Catch);
+                                ResumeContext(engine, context);
+                                engine.ExecuteEndTryCatch(TryState.Try);
                                 engine.FaultState.Rethrow = true;
-                                break;
+                                return true;
                             }
                         }
                     case TryState.Catch:
                         {
+                            if (!context.HasFinally) break;
+
                             ResumeContext(engine, context);
                             engine.ExecuteEndTryCatch(TryState.Catch);
                             engine.FaultState.Rethrow = true;
-                            break;
+                            return true;
                         }
                     case TryState.Finally:
                     default:
                         break;
                 }
+                tryStack.Pop();
             }
             return false;
         }
@@ -80,7 +81,6 @@ namespace Neo.VM
                 var executionContext = engine.PopExecutionContext();
                 //engine.InvocationStack.Pop();
                 engine.ContextUnloaded(executionContext);
-
             }
         }
     }
