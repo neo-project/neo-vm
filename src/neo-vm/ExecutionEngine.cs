@@ -78,11 +78,13 @@ namespace Neo.VM
             context.LocalVariables?.ClearReferences();
             context.Arguments?.ClearReferences();
         }
+
         internal ExecutionContext PopExecutionContext()
         {
             CurrentContext = InvocationStack.Pop();
             return CurrentContext;
         }
+
         public virtual void Dispose()
         {
             InvocationStack.Clear();
