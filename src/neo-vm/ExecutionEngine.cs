@@ -1240,7 +1240,8 @@ namespace Neo.VM
             if (FaultState.Rethrow)
             {
                 FaultState.Rethrow = false;
-                throw FaultState.Error;
+                State = VMState.FAULT;
+                return false;
             }
             CurrentContext.InstructionPointer = currentTry.EndPointer;
             return true;
@@ -1249,7 +1250,9 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteThrow(string errorinfo)
         {
-            throw new CatcheableError(errorinfo);
+            FaultState.Error = new CatcheableError(errorinfo);
+            State = VMState.FAULT;
+            return false;
         }
 
         private bool HandleError()
@@ -1261,11 +1264,11 @@ namespace Neo.VM
                 {
                     if (content.ErrorHandle.HandleError(this))
                     {
+                        State = VMState.NONE;
                         return true;
                     }
                 }
             }
-
             return false;
         }
 
@@ -1302,15 +1305,16 @@ namespace Neo.VM
                     Instruction instruction = CurrentContext.CurrentInstruction;
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                     {
-                        State = VMState.FAULT;
-                        FaultState.Error = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
+                        if (State != VMState.FAULT)
+                        {
+                            State = VMState.FAULT;
+                            FaultState.Error = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
+                        }
+                        else if (State == VMState.FAULT && FaultState.IsCatcheableError)
+                        {
+                            HandleError();
+                        }
                     }
-                }
-                catch (CatcheableError e)
-                {
-                    FaultState.Error = e;
-                    if (!HandleError())
-                        State = VMState.FAULT;
                 }
                 catch
                 {

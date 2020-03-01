@@ -6,6 +6,7 @@ namespace Neo.VM
     {
         public bool Rethrow;
         public Exception Error;
+        public bool IsCatcheableError => Error != null && Error is CatcheableError;
     }
 
     public sealed class ErrorHandle
