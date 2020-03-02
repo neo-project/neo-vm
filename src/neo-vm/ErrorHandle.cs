@@ -1,14 +1,7 @@
-using System;
 using System.Collections.Generic;
+
 namespace Neo.VM
 {
-    public class FaultState
-    {
-        public bool Rethrow;
-        public Exception Error;
-        public bool IsCatcheableError => Error != null && Error is CatcheableError;
-    }
-
     public sealed class ErrorHandle
     {
         Stack<TryContext> tryStack = new Stack<TryContext>();
