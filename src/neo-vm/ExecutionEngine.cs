@@ -1316,10 +1316,10 @@ namespace Neo.VM
                         }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
                     State = VMState.FAULT;
-                    FaultState.Error = new InvalidProgramException("Can't catch internal error:");
+                    FaultState.Error = new InvalidProgramException("Can't catch internal error", ex);
                 }
             }
         }
