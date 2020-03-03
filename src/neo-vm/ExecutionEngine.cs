@@ -1204,7 +1204,7 @@ namespace Neo.VM
             if (CurrentContext.ErrorHandle == null)
                 CurrentContext.ErrorHandle = new ErrorHandle();
             CurrentContext.ErrorHandle.Push(new TryContext(CurrentContext, catchOffset, finallyOffset));
-            CurrentContext.InstructionPointer += CurrentContext.CurrentInstruction.Size;
+            CurrentContext.MoveNext();
             return true;
         }
 
@@ -1227,6 +1227,10 @@ namespace Neo.VM
                 int nextOpcodePos = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                 CurrentContext = InvocationStack.Peek();
                 CurrentContext.InstructionPointer = nextOpcodePos;
+            }
+            if (currentTry.State == TryState.Catch)
+            {
+                FaultState.Error = null;
             }
             return true;
         }
