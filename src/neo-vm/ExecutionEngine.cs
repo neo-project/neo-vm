@@ -1197,9 +1197,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteTry(int catchOffset, int finallyOffset)
         {
-            if (catchOffset < 0 || finallyOffset < 0) return false;
-            if (finallyOffset + catchOffset <= 0) return false;
-            if (finallyOffset > 0 && catchOffset >= finallyOffset) return false;
+            if (catchOffset == 0 && finallyOffset == 0) return false;
 
             if (CurrentContext.ErrorHandle == null)
                 CurrentContext.ErrorHandle = new ErrorHandle();

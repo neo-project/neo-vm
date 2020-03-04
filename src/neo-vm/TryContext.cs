@@ -18,8 +18,8 @@ namespace Neo.VM
         {
             this.ExecutionContext = ExecutionContext;
             this.TryPointer = ExecutionContext.InstructionPointer;
-            this.HasCatch = catchOffset > 0;
-            this.HasFinally = finallyOffset > 0;
+            this.HasCatch = catchOffset != 0;
+            this.HasFinally = finallyOffset != 0;
             this.CatchPointer = checked(TryPointer + catchOffset);
             this.FinallyPointer = checked(TryPointer + finallyOffset);
         }
