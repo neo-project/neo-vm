@@ -31,7 +31,7 @@ namespace Neo.VM
 
         public Slot Arguments { get; internal set; }
 
-        public ErrorHandle ErrorHandle { get; internal set; }
+        public ExceptionHandle ExceptionHandle { get; internal set; }
 
         /// <summary>
         /// Instruction pointer

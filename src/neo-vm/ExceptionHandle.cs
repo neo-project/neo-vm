@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Neo.VM
 {
-    public sealed class ErrorHandle
+    public sealed class ExceptionHandle
     {
         Stack<TryContext> tryStack = new Stack<TryContext>();
 

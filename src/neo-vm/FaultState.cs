@@ -5,7 +5,7 @@ namespace Neo.VM
     public class FaultState
     {
         public bool Rethrow;
-        public Exception Error;
-        public bool IsCatcheableError => Error != null && Error is CatcheableError;
+        public Exception Exception;
+        public bool IsCatcheableException => Exception != null && Exception is CatcheableException;
     }
 }

@@ -1199,9 +1199,9 @@ namespace Neo.VM
         {
             if (catchOffset == 0 && finallyOffset == 0) return false;
 
-            if (CurrentContext.ErrorHandle == null)
-                CurrentContext.ErrorHandle = new ErrorHandle();
-            CurrentContext.ErrorHandle.Push(new TryContext(CurrentContext, catchOffset, finallyOffset));
+            if (CurrentContext.ExceptionHandle == null)
+                CurrentContext.ExceptionHandle = new ExceptionHandle();
+            CurrentContext.ExceptionHandle.Push(new TryContext(CurrentContext, catchOffset, finallyOffset));
             CurrentContext.MoveNext();
             return true;
         }
@@ -1209,7 +1209,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool ExecuteEndTryCatch(TryState currentState)
         {
-            var currentTry = CurrentContext.ErrorHandle?.CurContext;
+            var currentTry = CurrentContext.ExceptionHandle?.CurContext;
             if (currentTry is null) return false;
             if (currentTry.State != currentState) return false;
 
@@ -1221,14 +1221,14 @@ namespace Neo.VM
             }
             else
             {
-                CurrentContext.ErrorHandle.Pop();
+                CurrentContext.ExceptionHandle.Pop();
                 int nextOpcodePos = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                 CurrentContext = InvocationStack.Peek();
                 CurrentContext.InstructionPointer = nextOpcodePos;
             }
             if (currentTry.State == TryState.Catch)
             {
-                FaultState.Error = null;
+                FaultState.Exception = null;
             }
             return true;
         }
@@ -1236,7 +1236,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteEndFinally()
         {
-            var currentTry = CurrentContext.ErrorHandle?.Pop();
+            var currentTry = CurrentContext.ExceptionHandle?.Pop();
             if (currentTry is null) return false;
 
             if (FaultState.Rethrow)
@@ -1252,7 +1252,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteThrow(string errorinfo)
         {
-            FaultState.Error = new CatcheableError(errorinfo);
+            FaultState.Exception = new CatcheableException(errorinfo);
             State = VMState.FAULT;
             return false;
         }
@@ -1262,9 +1262,9 @@ namespace Neo.VM
             for (var i = 0; i < InvocationStack.Count; i++)
             {
                 var content = InvocationStack.ElementAt(i);
-                if (content.ErrorHandle != null)
+                if (content.ExceptionHandle != null)
                 {
-                    if (content.ErrorHandle.HandleError(this))
+                    if (content.ExceptionHandle.HandleError(this))
                     {
                         State = VMState.NONE;
                         return true;
@@ -1310,9 +1310,9 @@ namespace Neo.VM
                         if (State != VMState.FAULT)
                         {
                             State = VMState.FAULT;
-                            FaultState.Error = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
+                            FaultState.Exception = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
                         }
-                        else if (State == VMState.FAULT && FaultState.IsCatcheableError)
+                        else if (State == VMState.FAULT && FaultState.IsCatcheableException)
                         {
                             HandleError();
                         }
@@ -1321,7 +1321,7 @@ namespace Neo.VM
                 catch (Exception ex)
                 {
                     State = VMState.FAULT;
-                    FaultState.Error = new InvalidProgramException("Can't catch internal error", ex);
+                    FaultState.Exception = new InvalidProgramException("Can't catch internal error", ex);
                 }
             }
         }
