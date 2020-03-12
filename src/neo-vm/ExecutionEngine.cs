@@ -1199,8 +1199,7 @@ namespace Neo.VM
         {
             if (catchOffset == 0 && finallyOffset == 0) return false;
 
-            if (CurrentContext.ExceptionHandle == null)
-                CurrentContext.ExceptionHandle = new ExceptionHandle();
+            CurrentContext.ExceptionHandle ??= new ExceptionHandle();
             CurrentContext.ExceptionHandle.Push(new TryContext(CurrentContext, catchOffset, finallyOffset));
             CurrentContext.MoveNext();
             return true;
