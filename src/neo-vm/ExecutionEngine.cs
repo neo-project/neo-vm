@@ -1199,8 +1199,8 @@ namespace Neo.VM
         {
             if (catchOffset == 0 && finallyOffset == 0) return false;
 
-            CurrentContext.ExceptionHandle ??= new ExceptionHandle();
-            CurrentContext.ExceptionHandle.Push(new TryContext(CurrentContext, catchOffset, finallyOffset));
+            CurrentContext.TryStack ??= new Stack<TryContext>();
+            CurrentContext.TryStack.Push(new TryContext(CurrentContext, catchOffset, finallyOffset));
             CurrentContext.MoveNext();
             return true;
         }
@@ -1208,8 +1208,9 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal bool ExecuteEndTryCatch(TryState currentState)
         {
-            var currentTry = CurrentContext.ExceptionHandle?.CurContext;
-            if (currentTry is null) return false;
+            if (CurrentContext.TryStack is null) return false;
+            if (!CurrentContext.TryStack.TryPeek(out TryContext currentTry))
+                return false;
             if (currentTry.State != currentState) return false;
 
             if (currentTry.HasFinally)
@@ -1220,7 +1221,7 @@ namespace Neo.VM
             }
             else
             {
-                CurrentContext.ExceptionHandle.Pop();
+                CurrentContext.TryStack.TryPop(out _);
                 int nextOpcodePos = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                 CurrentContext = InvocationStack.Peek();
                 CurrentContext.InstructionPointer = nextOpcodePos;
@@ -1235,8 +1236,9 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteEndFinally()
         {
-            var currentTry = CurrentContext.ExceptionHandle?.Pop();
-            if (currentTry is null) return false;
+            if (CurrentContext.TryStack is null) return false;
+            if (!CurrentContext.TryStack.TryPop(out TryContext currentTry))
+                return false;
 
             if (FaultState.Rethrow)
             {
@@ -1261,9 +1263,9 @@ namespace Neo.VM
             for (var i = 0; i < InvocationStack.Count; i++)
             {
                 var content = InvocationStack.ElementAt(i);
-                if (content.ExceptionHandle != null)
+                if (content.TryStack != null)
                 {
-                    if (content.ExceptionHandle.HandleError(this))
+                    if (HandleError(content.TryStack))
                     {
                         State = VMState.NONE;
                         return true;
@@ -1271,6 +1273,57 @@ namespace Neo.VM
                 }
             }
             return false;
+        }
+
+        private bool HandleError(Stack<TryContext> tryStack)
+        {
+            while (tryStack.TryPeek(out TryContext context))
+            {
+                switch (context.State)
+                {
+                    case TryState.Try:
+                        {
+                            if (context.HasCatch)
+                            {
+                                context.State = TryState.Catch;
+                                ResumeContext(context);
+                                CurrentContext.InstructionPointer = context.CatchPointer;
+                                return true;
+                            }
+                            else
+                            {
+                                ResumeContext(context);
+                                ExecuteEndTryCatch(TryState.Try);
+                                FaultState.Rethrow = true;
+                                return true;
+                            }
+                        }
+                    case TryState.Catch:
+                        {
+                            if (!context.HasFinally) break;
+
+                            ResumeContext(context);
+                            ExecuteEndTryCatch(TryState.Catch);
+                            FaultState.Rethrow = true;
+                            return true;
+                        }
+                    case TryState.Finally:
+                    default:
+                        break;
+                }
+                tryStack.Pop();
+            }
+            return false;
+        }
+
+        private void ResumeContext(TryContext context)
+        {
+            while (CurrentContext != context.ExecutionContext)
+            {
+                var executionContext = PopExecutionContext();
+                //engine.InvocationStack.Pop();
+                ContextUnloaded(executionContext);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
