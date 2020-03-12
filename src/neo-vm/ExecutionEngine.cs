@@ -69,7 +69,7 @@ namespace Neo.VM
 
         #endregion
 
-        internal virtual void ContextUnloaded(ExecutionContext context)
+        protected virtual void ContextUnloaded(ExecutionContext context)
         {
             if (InvocationStack.Count == 0 || context.StaticFields != InvocationStack.Peek().StaticFields)
             {
