@@ -79,12 +79,6 @@ namespace Neo.VM
             context.Arguments?.ClearReferences();
         }
 
-        internal ExecutionContext PopExecutionContext()
-        {
-            CurrentContext = InvocationStack.Pop();
-            return CurrentContext;
-        }
-
         public virtual void Dispose()
         {
             InvocationStack.Clear();
@@ -1318,11 +1312,15 @@ namespace Neo.VM
 
         private void ResumeContext(TryContext context)
         {
-            while (CurrentContext != context.ExecutionContext)
+            while (InvocationStack.TryPeek(out ExecutionContext execution))
             {
-                var executionContext = PopExecutionContext();
-                //engine.InvocationStack.Pop();
-                ContextUnloaded(executionContext);
+                if (execution == context.ExecutionContext)
+                {
+                    CurrentContext = execution;
+                    break;
+                }
+                InvocationStack.Pop();
+                ContextUnloaded(execution);
             }
         }
 
