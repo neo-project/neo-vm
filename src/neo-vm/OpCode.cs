@@ -226,8 +226,10 @@ namespace Neo.VM
         /// </summary>
         CALLA = 0x36,
         THROW = 0x37,
-        THROWIF = 0x38,
-        THROWIFNOT = 0x39,
+        /// <summary>
+        /// Pop the top value of the stack, if it false, then exit vm execution.
+        /// </summary>
+        ASSERT = 0x38,
         //TRY = 0x3B,
         //TRY_L = 0x3C,
         //ENDT = 0x3D,

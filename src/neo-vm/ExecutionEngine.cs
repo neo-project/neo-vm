@@ -281,11 +281,14 @@ namespace Neo.VM
                     {
                         return false;
                     }
-                case OpCode.THROWIF:
-                case OpCode.THROWIFNOT:
+                case OpCode.ASSERT:
                     {
                         if (!TryPop(out bool x)) return false;
-                        if (x ^ (instruction.OpCode == OpCode.THROWIFNOT)) return false;
+                        if (!x)
+                        {
+                            State = VMState.FAULT;
+                            return false;
+                        }
                         break;
                     }
                 case OpCode.RET:
