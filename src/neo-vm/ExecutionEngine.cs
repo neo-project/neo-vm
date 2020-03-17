@@ -281,11 +281,10 @@ namespace Neo.VM
                     {
                         return false;
                     }
-                case OpCode.ASSERTIF:
-                case OpCode.ASSERTIFNOT:
+                case OpCode.ASSERT:
                     {
                         if (!TryPop(out bool x)) return false;
-                        if (x ^ (instruction.OpCode == OpCode.ASSERTIF))
+                        if (!x)
                         {
                             State = VMState.FAULT;
                             return false;

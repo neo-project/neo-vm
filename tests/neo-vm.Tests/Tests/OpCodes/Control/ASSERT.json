@@ -1,11 +1,11 @@
 {
   "category": "Control",
-  "name": "ASSERTIF",
+  "name": "ASSERT",
   "tests": [
     {
       "script": [
         "PUSH0",
-        "ASSERTIF"
+        "ASSERT"
       ],
       "steps": [
         {
@@ -22,7 +22,7 @@
     {
       "script": [
         "PUSH1",
-        "ASSERTIF"
+        "ASSERT"
       ],
       "steps": [
         {

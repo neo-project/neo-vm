@@ -229,11 +229,7 @@ namespace Neo.VM
         /// <summary>
         /// Pop the top value of the stack, if it false, then exit vm execution.
         /// </summary>
-        ASSERTIF = 0x38,
-        /// <summary>
-        /// Pop the top value of the stack, if it true, then exit vm execution.
-        /// </summary>
-        ASSERTIFNOT = 0x39,
+        ASSERT = 0x38,
         //TRY = 0x3B,
         //TRY_L = 0x3C,
         //ENDT = 0x3D,
