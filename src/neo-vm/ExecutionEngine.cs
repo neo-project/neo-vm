@@ -277,10 +277,6 @@ namespace Neo.VM
                         if (!ExecuteCall(x.Position)) return false;
                         break;
                     }
-                case OpCode.THROW:
-                    {
-                        return false;
-                    }
                 case OpCode.ASSERT:
                     {
                         if (!TryPop(out bool x)) return false;
@@ -290,6 +286,10 @@ namespace Neo.VM
                             return false;
                         }
                         break;
+                    }
+                case OpCode.THROW:
+                    {
+                        return false;
                     }
                 case OpCode.RET:
                     {
