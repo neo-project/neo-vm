@@ -1,0 +1,40 @@
+{
+  "category": "Control",
+  "name": "ASSERTIFNOT",
+  "tests": [
+    {
+      "script": [
+        "PUSH1",
+        "ASSERTIFNOT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "script": [
+        "PUSH0",
+        "ASSERTIFNOT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "execute"
+          ],
+          "result": {
+            "state": "HALT"
+          }
+        }
+      ]
+    }
+  ]
+}
