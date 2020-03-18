@@ -226,7 +226,11 @@ namespace Neo.VM
         /// </summary>
         CALLA = 0x36,
         /// <summary>
-        /// Pop the top value of the stack, if it false, then exit vm execution.
+        /// It tures the vm state to FAULT immediately, and cannot be caught.
+        /// </summary>
+        ABORT = 0x37,
+        /// <summary>
+        /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT.
         /// </summary>
         ASSERT = 0x38,
         THROW = 0x3A,

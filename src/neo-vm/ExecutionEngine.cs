@@ -277,12 +277,15 @@ namespace Neo.VM
                         if (!ExecuteCall(x.Position)) return false;
                         break;
                     }
+                case OpCode.ABORT:
+                    {
+                        return false;
+                    }
                 case OpCode.ASSERT:
                     {
                         if (!TryPop(out bool x)) return false;
                         if (!x)
                         {
-                            State = VMState.FAULT;
                             return false;
                         }
                         break;
