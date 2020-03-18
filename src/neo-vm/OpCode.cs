@@ -226,7 +226,7 @@ namespace Neo.VM
         /// </summary>
         CALLA = 0x36,
         /// <summary>
-        /// It tures the vm state to FAULT immediately, and cannot be caught.
+        /// It turns the vm state to FAULT immediately, and cannot be caught.
         /// </summary>
         ABORT = 0x37,
         /// <summary>
