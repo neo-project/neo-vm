@@ -284,10 +284,7 @@ namespace Neo.VM
                 case OpCode.ASSERT:
                     {
                         if (!TryPop(out bool x)) return false;
-                        if (!x)
-                        {
-                            return false;
-                        }
+                        if (!x) return false;
                         break;
                     }
                 case OpCode.THROW:
