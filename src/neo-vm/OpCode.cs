@@ -233,9 +233,6 @@ namespace Neo.VM
         /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT.
         /// </summary>
         ASSERT = 0x38,
-        /// <summary>
-        /// Currently, it turns the vm state to FAULT immediately. In future, we'll support to throw a catchable exception.
-        /// </summary>
         THROW = 0x3A,
         //TRY = 0x3B,
         //TRY_L = 0x3C,

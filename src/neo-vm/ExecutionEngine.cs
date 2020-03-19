@@ -278,7 +278,6 @@ namespace Neo.VM
                         break;
                     }
                 case OpCode.ABORT:
-                case OpCode.THROW:
                     {
                         return false;
                     }
@@ -287,6 +286,10 @@ namespace Neo.VM
                         if (!TryPop(out bool x)) return false;
                         if (!x) return false;
                         break;
+                    }
+                case OpCode.THROW:
+                    {
+                        return false;
                     }
                 case OpCode.RET:
                     {
