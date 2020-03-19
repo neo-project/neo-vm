@@ -234,7 +234,7 @@ namespace Neo.VM
         /// </summary>
         ASSERT = 0x38,
         /// <summary>
-        /// It turns the vm state to FAULT immediately, but it can be caught.
+        /// Currently, it turns the vm state to FAULT immediately. In future, we'll support to throw a catchable exception.
         /// </summary>
         THROW = 0x3A,
         //TRY = 0x3B,
