@@ -295,7 +295,6 @@ namespace Neo.VM
                     }
                 case OpCode.ABORT:
                     {
-                        
                         return false;
                     }
                 case OpCode.ASSERT:
@@ -1240,6 +1239,7 @@ namespace Neo.VM
 
             if (FaultState.Rethrow)
             {
+                FaultState.Rethrow = false;
                 FaultState.IsCatchableInterrupt = true;
                 return false;
             }
