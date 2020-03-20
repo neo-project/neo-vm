@@ -3,50 +3,54 @@
   "name": "TRY_CATCH_FINALLY",
   "tests": [
     {
-      "name": "try{ try-catch } catch finally with exception",
+      "name": "try{ try{ throw }catch{ throw } }catch{ }finally{ }",
       "script": [
         "TRY",
-        "0x0b0e",
-          "TRY",
-          "0x0500",
-            "THROW",
-          "ENDT",
-            "THROW",
-          "ENDC",
+        "0x0d10",
+        "TRY",
+        "0x0600",
+        "PUSH0",
+        "THROW",
         "ENDT",
-          "PUSH2",
+        "PUSH0",
+        "THROW",
+        "ENDC",
+        "ENDT",
+        "PUSH2",
         "ENDC",
         "RET",
-          "PUSH3",
+        "PUSH3",
         "ENDF",
-          "PUSH4"
+        "PUSH4"
       ],
       "steps": [
         {
           "actions": [
             "stepInto",
             "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
-                "nextInstruction": "THROW"
+                "instructionPointer": 9,
+                "nextInstruction": "PUSH0"
               }
             ]
           }
         },
         {
           "actions": [
+            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 11,
+                "instructionPointer": 13,
                 "nextInstruction": "PUSH2"
               }
             ]
@@ -63,7 +67,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 13,
+                "instructionPointer": 15,
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {

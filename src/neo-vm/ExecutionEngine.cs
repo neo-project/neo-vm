@@ -305,7 +305,8 @@ namespace Neo.VM
                     }
                 case OpCode.THROW:
                     {
-                        return ExecuteThrow("error");
+                        if (!TryPop(out StackItem error)) return false;
+                        return ExecuteThrow(error);
                     }
                 case OpCode.TRY:
                     {
@@ -1248,9 +1249,9 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool ExecuteThrow(string errorinfo)
+        private bool ExecuteThrow(StackItem error)
         {
-            FaultState.Exception = new CatcheableException(errorinfo);
+            FaultState.Exception = new CatcheableException(error);
             return false;
         }
 

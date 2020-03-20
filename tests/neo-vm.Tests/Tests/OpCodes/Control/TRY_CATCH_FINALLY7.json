@@ -6,7 +6,8 @@
       "name": "try{ throw }catch{ abort }finally{ push3 }",
       "script": [
         "TRY",
-        "0x0507",
+        "0x0608",
+        "PUSH0",
         "THROW",
         "ENDT",
         "ABORT",
@@ -19,13 +20,14 @@
         {
           "actions": [
             "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "nextInstruction": "ABORT"
               }
             ]

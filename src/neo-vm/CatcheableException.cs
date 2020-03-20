@@ -1,11 +1,15 @@
+using Neo.VM.Types;
 using System;
 
 namespace Neo.VM
 {
     public class CatcheableException : Exception
     {
-        public CatcheableException(string message) : base(message)
+        public StackItem Error;
+
+        public CatcheableException(StackItem error)
         {
+            Error = error;
         }
     }
 }

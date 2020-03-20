@@ -234,7 +234,7 @@ namespace Neo.VM
         /// </summary>
         ASSERT = 0x38,
         /// <summary>
-        /// Throw a vm exception.
+        /// Pop the top value of the stack, and throw it.
         /// </summary>
         THROW = 0x3A,
         /// <summary>

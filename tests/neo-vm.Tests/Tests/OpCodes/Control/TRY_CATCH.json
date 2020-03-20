@@ -41,7 +41,8 @@
       "name": "try catch with exception",
       "script": [
         "TRY",
-        "0x0500",
+        "0x0600",
+        "PUSH0",
         "THROW",
         "ENDT",
         "PUSH1",
@@ -52,13 +53,14 @@
         {
           "actions": [
             "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
+                "instructionPointer": 6,
                 "nextInstruction": "PUSH1"
               }
             ]
@@ -73,7 +75,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 7,
+                "instructionPointer": 8,
                 "nextInstruction": "PUSH2",
                 "evaluationStack": [
                   {
