@@ -277,16 +277,19 @@ namespace Neo.VM
                         if (!ExecuteCall(x.Position)) return false;
                         break;
                     }
-                case OpCode.THROW:
+                case OpCode.ABORT:
                     {
                         return false;
                     }
-                case OpCode.THROWIF:
-                case OpCode.THROWIFNOT:
+                case OpCode.ASSERT:
                     {
                         if (!TryPop(out bool x)) return false;
-                        if (x ^ (instruction.OpCode == OpCode.THROWIFNOT)) return false;
+                        if (!x) return false;
                         break;
+                    }
+                case OpCode.THROW:
+                    {
+                        return false;
                     }
                 case OpCode.RET:
                     {
