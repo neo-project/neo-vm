@@ -2,10 +2,23 @@ using System;
 
 namespace Neo.VM
 {
-    public class FaultState
+    public sealed class FaultState
     {
+        private Exception exception;
+
         public bool Rethrow;
-        public Exception Exception;
-        public bool IsCatcheableException => Exception != null && Exception is CatcheableException;
+        public bool IsCatchableInterrupt;
+        public Exception Exception
+        {
+            get
+            {
+                return exception;
+            }
+            set
+            {
+                exception = value;
+                IsCatchableInterrupt = exception != null && exception is CatcheableException;
+            }
+        }
     }
 }

@@ -226,17 +226,17 @@ namespace Neo.VM
         /// </summary>
         CALLA = 0x36,
         /// <summary>
-        /// Throw an vm error.
+        /// It turns the vm state to FAULT immediately, and cannot be caught.
         /// </summary>
-        THROW = 0x37,
+        ABORT = 0x37,
         /// <summary>
-        /// Remove the top of stack item. And if the top of the item is <see langword="true"/>, not <see langword="null"/>, or non-zero, then it will throw an vm error.
+        /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT.
         /// </summary>
-        THROWIF = 0x38,
+        ASSERT = 0x38,
         /// <summary>
-        /// Remove the top of stack item. And if the top of the item is <see langword="false"/>, a <see langword="null"/> reference, or zero, then it will throw an vm error.
+        /// Throw a vm exception.
         /// </summary>
-        THROWIFNOT = 0x39,
+        THROW = 0x3A,
         /// <summary>
         /// TRY CatchOffset(sbyte) FinallyOffset(sbyte). If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0.
         /// </summary>
@@ -247,8 +247,17 @@ namespace Neo.VM
         /// </summary>
         [OperandSize(Size = 8)]
         TRY_L = 0x3C,
+        /// <summary>
+        /// End try, if has finally body, the next instruction will jump to there, else will jump to the next instruction.
+        /// </summary>
         ENDT = 0x3D,
+        /// <summary>
+        /// End catch, if has finally body, the next instruction will jump to there, else will jump to the next instruction. 
+        /// </summary>
         ENDC = 0x3E,
+        /// <summary>
+        /// End finally, vm will jump to the next instruction of ENDT or ENDC.
+        /// </summary>
         ENDF = 0x3F,
         /// <summary>
         /// Returns from the current method. But if RET is in <see langword="try-catch"/> body, it will execute <see langword="finally"/> of <see langword="try-catch-finally"/> first.

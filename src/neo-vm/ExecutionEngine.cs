@@ -293,15 +293,19 @@ namespace Neo.VM
                         if (!ExecuteCall(x.Position)) return false;
                         break;
                     }
-                case OpCode.THROW:
+                case OpCode.ABORT:
                     {
-                        return ExecuteThrow("error");
+                        
+                        return false;
                     }
-                case OpCode.THROWIF:
-                case OpCode.THROWIFNOT:
+                case OpCode.ASSERT:
                     {
                         if (!TryPop(out bool x)) return false;
-                        if (x ^ (instruction.OpCode == OpCode.THROWIF)) break;
+                        if (!x) return false;
+                        break;
+                    }
+                case OpCode.THROW:
+                    {
                         return ExecuteThrow("error");
                     }
                 case OpCode.TRY:
@@ -1236,8 +1240,7 @@ namespace Neo.VM
 
             if (FaultState.Rethrow)
             {
-                FaultState.Rethrow = false;
-                State = VMState.FAULT;
+                FaultState.IsCatchableInterrupt = true;
                 return false;
             }
             CurrentContext.InstructionPointer = currentTry.EndPointer;
@@ -1248,7 +1251,6 @@ namespace Neo.VM
         private bool ExecuteThrow(string errorinfo)
         {
             FaultState.Exception = new CatcheableException(errorinfo);
-            State = VMState.FAULT;
             return false;
         }
 
@@ -1262,6 +1264,7 @@ namespace Neo.VM
                     if (HandleError(content.TryStack))
                     {
                         State = VMState.NONE;
+                        FaultState.IsCatchableInterrupt = false;
                         return true;
                     }
                 }
@@ -1357,14 +1360,17 @@ namespace Neo.VM
                     Instruction instruction = CurrentContext.CurrentInstruction;
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                     {
-                        if (State != VMState.FAULT)
+                        if (FaultState.IsCatchableInterrupt)
+                        {
+                            if (!HandleError())
+                            {
+                                State = VMState.FAULT;
+                            }
+                        }
+                        else
                         {
                             State = VMState.FAULT;
                             FaultState.Exception = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
-                        }
-                        else if (State == VMState.FAULT && FaultState.IsCatcheableException)
-                        {
-                            HandleError();
                         }
                     }
                 }
