@@ -225,9 +225,15 @@ namespace Neo.VM
         /// Pop the address of a function from the stack, and call the function.
         /// </summary>
         CALLA = 0x36,
-        THROW = 0x37,
-        THROWIF = 0x38,
-        THROWIFNOT = 0x39,
+        /// <summary>
+        /// It turns the vm state to FAULT immediately, and cannot be caught.
+        /// </summary>
+        ABORT = 0x37,
+        /// <summary>
+        /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT.
+        /// </summary>
+        ASSERT = 0x38,
+        THROW = 0x3A,
         //TRY = 0x3B,
         //TRY_L = 0x3C,
         //ENDT = 0x3D,

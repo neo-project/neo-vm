@@ -1,0 +1,21 @@
+{
+  "category": "Control",
+  "name": "ABORT",
+  "tests": [
+    {
+      "script": [
+        "ABORT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    }
+  ]
+}
