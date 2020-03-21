@@ -338,7 +338,7 @@ namespace Neo.VM
                         if (FaultState.Rethrow)
                         {
                             FaultState.Rethrow = false;
-                            FaultState.IsCatchableInterrupt = true;
+                            FaultState.HasCatchableInterrupt = true;
                             return true;
                         }
                         CurrentContext.InstructionPointer = currentTry.EndPointer;
@@ -1243,61 +1243,44 @@ namespace Neo.VM
             return true;
         }
 
-        private bool HandleError()
+        private bool HandleException()
         {
-            for (var i = 0; i < InvocationStack.Count; i++)
+            foreach (var executionContext in InvocationStack)
             {
-                var content = InvocationStack.ElementAt(i);
-                if (content.TryStack != null)
+                if (executionContext.TryStack is null) continue;
+
+                while (executionContext.TryStack.TryPeek(out TryContext tryContext))
                 {
-                    if (HandleError(content.TryStack))
+                    if (tryContext.State == TryState.Finally || (tryContext.State == TryState.Catch && !tryContext.HasFinally))
                     {
-                        State = VMState.NONE;
-                        FaultState.IsCatchableInterrupt = false;
-                        return true;
+                        executionContext.TryStack.Pop();
+                        continue;
                     }
-                }
-            }
-            return false;
-        }
 
-        private bool HandleError(Stack<TryContext> tryStack)
-        {
-            while (tryStack.TryPeek(out TryContext context))
-            {
-                switch (context.State)
-                {
-                    case TryState.Try:
+                    if (tryContext.State == TryState.Try)
+                    {
+                        if (tryContext.HasCatch)
                         {
-                            if (context.HasCatch)
-                            {
-                                context.State = TryState.Catch;
-                                ResumeContext(context);
-                                CurrentContext.InstructionPointer = context.CatchPointer;
-                                return true;
-                            }
-                            else
-                            {
-                                ResumeContext(context);
-                                ExecuteEndTryCatch(TryState.Try);
-                                FaultState.Rethrow = true;
-                                return true;
-                            }
+                            tryContext.State = TryState.Catch;
+                            CurrentContext.InstructionPointer = tryContext.CatchPointer;
                         }
-                    case TryState.Catch:
+                        else
                         {
-                            if (!context.HasFinally) break;
-
-                            ResumeContext(context);
-                            ExecuteEndTryCatch(TryState.Catch);
+                            ExecuteEndTryCatch(TryState.Try);
                             FaultState.Rethrow = true;
-                            return true;
                         }
-                    case TryState.Finally:
-                    default:
-                        break;
+                    }
+                    else
+                    {
+                        ExecuteEndTryCatch(TryState.Catch);
+                        FaultState.Rethrow = true;
+                    }
+
+                    ResumeContext(tryContext);
+                    State = VMState.NONE;
+                    FaultState.HasCatchableInterrupt = false;
+                    return true;
                 }
-                tryStack.Pop();
             }
             return false;
         }
@@ -1352,9 +1335,9 @@ namespace Neo.VM
                         State = VMState.FAULT;
                         FaultState.Exception = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
                     }
-                    if (FaultState.IsCatchableInterrupt)
+                    if (FaultState.HasCatchableInterrupt)
                     {
-                        if (!HandleError())
+                        if (!HandleException())
                         {
                             State = VMState.FAULT;
                         }

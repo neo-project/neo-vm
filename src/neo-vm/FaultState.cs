@@ -7,7 +7,7 @@ namespace Neo.VM
         private Exception exception;
 
         public bool Rethrow;
-        public bool IsCatchableInterrupt;
+        public bool HasCatchableInterrupt;
         public Exception Exception
         {
             get
@@ -17,7 +17,7 @@ namespace Neo.VM
             set
             {
                 exception = value;
-                IsCatchableInterrupt = exception != null && exception is CatcheableException;
+                HasCatchableInterrupt = exception != null && exception is CatcheableException;
             }
         }
     }
