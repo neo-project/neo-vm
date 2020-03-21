@@ -5,11 +5,11 @@ namespace Neo.VM
 {
     public class CatcheableException : Exception
     {
-        public StackItem Error;
+        public StackItem ExceptionItem;
 
-        public CatcheableException(StackItem error)
+        public CatcheableException(StackItem item)
         {
-            Error = error;
+            ExceptionItem = item;
         }
     }
 }
