@@ -306,7 +306,8 @@ namespace Neo.VM
                 case OpCode.THROW:
                     {
                         if (!TryPop(out StackItem error)) return false;
-                        return ExecuteThrow(error);
+                        FaultState.Exception = new CatcheableException(error);
+                        return true;
                     }
                 case OpCode.TRY:
                     {
@@ -330,7 +331,18 @@ namespace Neo.VM
                     }
                 case OpCode.ENDF:
                     {
-                        return ExecuteEndFinally();
+                        if (CurrentContext.TryStack is null) return false;
+                        if (!CurrentContext.TryStack.TryPop(out TryContext currentTry))
+                            return false;
+
+                        if (FaultState.Rethrow)
+                        {
+                            FaultState.Rethrow = false;
+                            FaultState.IsCatchableInterrupt = true;
+                            return false;
+                        }
+                        CurrentContext.InstructionPointer = currentTry.EndPointer;
+                        return true;
                     }
                 case OpCode.RET:
                     {
@@ -1231,30 +1243,6 @@ namespace Neo.VM
             return true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool ExecuteEndFinally()
-        {
-            if (CurrentContext.TryStack is null) return false;
-            if (!CurrentContext.TryStack.TryPop(out TryContext currentTry))
-                return false;
-
-            if (FaultState.Rethrow)
-            {
-                FaultState.Rethrow = false;
-                FaultState.IsCatchableInterrupt = true;
-                return false;
-            }
-            CurrentContext.InstructionPointer = currentTry.EndPointer;
-            return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool ExecuteThrow(StackItem error)
-        {
-            FaultState.Exception = new CatcheableException(error);
-            return false;
-        }
-
         private bool HandleError()
         {
             for (var i = 0; i < InvocationStack.Count; i++)
@@ -1361,17 +1349,14 @@ namespace Neo.VM
                     Instruction instruction = CurrentContext.CurrentInstruction;
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                     {
-                        if (FaultState.IsCatchableInterrupt)
-                        {
-                            if (!HandleError())
-                            {
-                                State = VMState.FAULT;
-                            }
-                        }
-                        else
+                        State = VMState.FAULT;
+                        FaultState.Exception = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
+                    }
+                    if (FaultState.IsCatchableInterrupt)
+                    {
+                        if (!HandleError())
                         {
                             State = VMState.FAULT;
-                            FaultState.Exception = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
                         }
                     }
                 }
