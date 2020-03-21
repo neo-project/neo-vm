@@ -339,7 +339,7 @@ namespace Neo.VM
                         {
                             FaultState.Rethrow = false;
                             FaultState.IsCatchableInterrupt = true;
-                            return false;
+                            return true;
                         }
                         CurrentContext.InstructionPointer = currentTry.EndPointer;
                         return true;
