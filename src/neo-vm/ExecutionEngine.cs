@@ -1257,26 +1257,20 @@ namespace Neo.VM
                         continue;
                     }
 
-                    if (tryContext.State == TryState.Try)
+                    ResumeContext(tryContext);
+                    if (tryContext.State == TryState.Try && tryContext.HasCatch)
                     {
-                        if (tryContext.HasCatch)
-                        {
-                            tryContext.State = TryState.Catch;
-                            CurrentContext.InstructionPointer = tryContext.CatchPointer;
-                        }
-                        else
-                        {
-                            ExecuteEndTryCatch(TryState.Try);
-                            FaultState.Rethrow = true;
-                        }
+                        tryContext.State = TryState.Catch;
+                        CurrentContext.InstructionPointer = tryContext.CatchPointer;
                     }
                     else
                     {
-                        ExecuteEndTryCatch(TryState.Catch);
+                        tryContext.State = TryState.Finally;
+                        tryContext.EndTryCatch(executionContext.InstructionPointer + executionContext.CurrentInstruction.Size);
+                        CurrentContext.InstructionPointer = tryContext.FinallyPointer;
                         FaultState.Rethrow = true;
                     }
 
-                    ResumeContext(tryContext);
                     State = VMState.NONE;
                     FaultState.HasCatchableInterrupt = false;
                     return true;

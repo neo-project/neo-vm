@@ -1,0 +1,60 @@
+{
+  "category": "Control",
+  "name": "TRY_FINALLY",
+  "tests": [
+    {
+      "name": "try finally with exception",
+      "script": [
+        "TRY",
+        "0x0008",
+        "PUSH0",
+        "THROW",
+        "ENDT",
+        "JMP",
+        "0x03",
+        "PUSH1",
+        "ENDF",
+        "PUSH2"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "PUSH1"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "PUSH2",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
