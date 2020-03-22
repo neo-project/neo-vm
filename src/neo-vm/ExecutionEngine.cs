@@ -341,8 +341,7 @@ namespace Neo.VM
                             FaultState.HasCatchableInterrupt = true;
                             return true;
                         }
-                        CurrentContext.InstructionPointer = currentTry.EndPointer;
-                        return true;
+                        break;
                     }
                 case OpCode.RET:
                     {
@@ -1226,15 +1225,12 @@ namespace Neo.VM
             if (currentTry.HasFinally)
             {
                 currentTry.State = TryState.Finally;
-                currentTry.EndTryCatch(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                 CurrentContext.InstructionPointer = currentTry.FinallyPointer;
             }
             else
             {
                 CurrentContext.TryStack.TryPop(out _);
-                int nextOpcodePos = checked(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
-                CurrentContext = InvocationStack.Peek();
-                CurrentContext.InstructionPointer = nextOpcodePos;
+                CurrentContext.MoveNext();
             }
             if (currentTry.State == TryState.Catch)
             {
@@ -1266,7 +1262,6 @@ namespace Neo.VM
                     else
                     {
                         tryContext.State = TryState.Finally;
-                        tryContext.EndTryCatch(executionContext.InstructionPointer + executionContext.CurrentInstruction.Size);
                         CurrentContext.InstructionPointer = tryContext.FinallyPointer;
                         FaultState.Rethrow = true;
                     }

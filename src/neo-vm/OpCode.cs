@@ -248,15 +248,15 @@ namespace Neo.VM
         [OperandSize(Size = 8)]
         TRY_L = 0x3C,
         /// <summary>
-        /// End try, if has finally body, the next instruction will jump to there, else will jump to the next instruction.
+        /// End try, if has finally body, vm will jump there. Otherwise will jump to the next instruction.
         /// </summary>
         ENDT = 0x3D,
         /// <summary>
-        /// End catch, if has finally body, the next instruction will jump to there, else will jump to the next instruction. 
+        /// End catch, if has finally body, vm will jump there. Otherwise will jump to the next instruction. 
         /// </summary>
         ENDC = 0x3E,
         /// <summary>
-        /// End finally, vm will jump to the next instruction of ENDT or ENDC.
+        /// End finally, vm will pop current try context and jump to the next instruction.
         /// </summary>
         ENDF = 0x3F,
         /// <summary>
