@@ -256,7 +256,7 @@ namespace Neo.VM
         /// </summary>
         ENDC = 0x3E,
         /// <summary>
-        /// End finally, vm will jump to the next instruction of ENDT or ENDC.
+        /// End finally, If no exception happen or be catched, vm will jump to the next instruction of ENDT or ENDC. Otherwise vm will rethrow the exception to upper layer.
         /// </summary>
         ENDF = 0x3F,
         /// <summary>
