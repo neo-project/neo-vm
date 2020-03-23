@@ -9,6 +9,7 @@ namespace Neo.VM
         public int TryPointer { get; private set; }
         public int CatchPointer { get; private set; }
         public int FinallyPointer { get; private set; }
+        public int EndPointer { get; private set; }
         public bool HasCatch { get; private set; }
         public bool HasFinally { get; private set; }
         public TryState State { get; internal set; } = TryState.Try;
@@ -21,6 +22,12 @@ namespace Neo.VM
             this.HasFinally = finallyOffset != 0;
             this.CatchPointer = checked(TryPointer + catchOffset);
             this.FinallyPointer = checked(TryPointer + finallyOffset);
+        }
+
+        public void EndTryCatch(int EndPointer)
+        {
+            this.EndPointer = EndPointer;
+            this.State = TryState.Finally;
         }
     }
 }

@@ -256,7 +256,7 @@ namespace Neo.VM
         /// </summary>
         ENDC = 0x3E,
         /// <summary>
-        /// End finally, vm will pop current try context and jump to the next instruction.
+        /// End finally, vm will jump to the next instruction of ENDT or ENDC.
         /// </summary>
         ENDF = 0x3F,
         /// <summary>

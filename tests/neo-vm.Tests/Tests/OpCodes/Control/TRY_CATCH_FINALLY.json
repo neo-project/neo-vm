@@ -48,8 +48,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 10,
-                "nextInstruction": "PUSH4",
+                "instructionPointer": 5,
+                "nextInstruction": "RET",
                 "evaluationStack": [
                   {
                     "type": "integer",

@@ -341,7 +341,8 @@ namespace Neo.VM
                             FaultState.HasCatchableInterrupt = true;
                             return true;
                         }
-                        break;
+                        CurrentContext.InstructionPointer = currentTry.EndPointer;
+                        return true;
                     }
                 case OpCode.RET:
                     {
@@ -1225,6 +1226,7 @@ namespace Neo.VM
             if (currentTry.HasFinally)
             {
                 currentTry.State = TryState.Finally;
+                currentTry.EndTryCatch(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                 CurrentContext.InstructionPointer = currentTry.FinallyPointer;
             }
             else
