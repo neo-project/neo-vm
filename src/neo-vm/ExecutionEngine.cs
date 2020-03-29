@@ -1274,7 +1274,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryPop(out ReadOnlySpan<byte> b)
         {
-            if (!TryPop(out StackItem item))
+            if (!CurrentContext.EvaluationStack.TryPeek(out StackItem item))
             {
                 b = default;
                 return false;
@@ -1282,9 +1282,11 @@ namespace Neo.VM
             switch (item)
             {
                 case PrimitiveType primitive:
+                    CurrentContext.EvaluationStack.Pop();
                     b = primitive.Span;
                     return true;
                 case Buffer buffer:
+                    CurrentContext.EvaluationStack.Pop();
                     b = buffer.InnerBuffer;
                     return true;
                 default:
@@ -1311,16 +1313,52 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryPop(out int i)
         {
-            if (!TryPop(out BigInteger item) || item < int.MinValue || item > int.MaxValue)
+            if (!CurrentContext.EvaluationStack.TryPeek(out PrimitiveType item))
             {
                 i = default;
                 return false;
             }
-            else
+            BigInteger bi = item.ToBigInteger();
+            if (bi < int.MinValue || bi > int.MaxValue)
             {
-                i = (int)item;
-                return true;
+                i = default;
+                return false;
             }
+            CurrentContext.EvaluationStack.Pop();
+            i = (int)bi;
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryPop(out uint i)
+        {
+            if (!CurrentContext.EvaluationStack.TryPeek(out PrimitiveType item))
+            {
+                i = default;
+                return false;
+            }
+            BigInteger bi = item.ToBigInteger();
+            if (bi < uint.MinValue || bi > uint.MaxValue)
+            {
+                i = default;
+                return false;
+            }
+            CurrentContext.EvaluationStack.Pop();
+            i = (uint)bi;
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryPopInterface<T>(out T result) where T : class
+        {
+            if (!CurrentContext.EvaluationStack.TryPeek(out InteropInterface item))
+            {
+                result = default;
+                return false;
+            }
+            if (!item.TryGetInterface(out result)) return false;
+            CurrentContext.EvaluationStack.Pop();
+            return true;
         }
     }
 }

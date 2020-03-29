@@ -89,6 +89,17 @@ namespace Neo.VM
             return true;
         }
 
+        public bool TryPeek<T>(out T item) where T : StackItem
+        {
+            if (innerList.Count == 0)
+            {
+                item = default;
+                return false;
+            }
+            item = innerList[^1] as T;
+            return item != null;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryPop<T>(out T item) where T : StackItem
         {
