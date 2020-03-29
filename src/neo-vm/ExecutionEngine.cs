@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Array = System.Array;
 using Buffer = Neo.VM.Types.Buffer;
+using String = Neo.VM.Types.String;
 using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
@@ -886,7 +887,7 @@ namespace Neo.VM
                             {
                                 (byte)StackItemType.Boolean => StackItem.False,
                                 (byte)StackItemType.Integer => Integer.Zero,
-                                (byte)StackItemType.ByteArray => ByteArray.Empty,
+                                (byte)StackItemType.String => String.Empty,
                                 _ => StackItem.Null
                             };
                         }
@@ -961,7 +962,7 @@ namespace Neo.VM
                                     Push(index < buffer.Size);
                                     break;
                                 }
-                            case ByteArray array:
+                            case String array:
                                 {
                                     int index = key.ToInt32();
                                     if (index < 0) return false;

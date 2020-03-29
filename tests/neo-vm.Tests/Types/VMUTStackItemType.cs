@@ -18,12 +18,7 @@ namespace Neo.Test.Types
         Boolean,
 
         /// <summary>
-        /// ByteArray
-        /// </summary>
-        ByteArray,
-
-        /// <summary>
-        /// ByteArray as UTF8 string
+        /// String
         /// </summary>
         String,
 

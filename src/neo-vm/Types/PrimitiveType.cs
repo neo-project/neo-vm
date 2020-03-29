@@ -16,7 +16,7 @@ namespace Neo.VM.Types
             return type switch
             {
                 StackItemType.Integer => ToBigInteger(),
-                StackItemType.ByteArray => Memory,
+                StackItemType.String => Memory,
                 StackItemType.Buffer => new Buffer(Span),
                 _ => base.ConvertTo(type)
             };
@@ -104,19 +104,19 @@ namespace Neo.VM.Types
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator PrimitiveType(byte[] value)
         {
-            return (ByteArray)value;
+            return (String)value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator PrimitiveType(ReadOnlyMemory<byte> value)
         {
-            return (ByteArray)value;
+            return (String)value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator PrimitiveType(string value)
         {
-            return (ByteArray)value;
+            return (String)value;
         }
     }
 }

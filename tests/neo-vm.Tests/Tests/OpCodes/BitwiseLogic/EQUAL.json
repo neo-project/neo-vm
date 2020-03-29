@@ -845,7 +845,7 @@
       ]
     },
     {
-      "name": "Real test [ByteArray,ByteArray]=true",
+      "name": "Real test [String,String]=true",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -869,11 +869,11 @@
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "String",
                     "value": "0x0000000000000000000000000000000123"
                   },
                   {
-                    "type": "byteArray",
+                    "type": "String",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]
@@ -918,7 +918,7 @@
       ]
     },
     {
-      "name": "Real test [ByteArray,ByteArray]=false same length",
+      "name": "Real test [String,String]=false same length",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -942,11 +942,11 @@
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "String",
                     "value": "0x0000000000000000000000000000000124"
                   },
                   {
-                    "type": "byteArray",
+                    "type": "String",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]
@@ -991,7 +991,7 @@
       ]
     },
     {
-      "name": "Real test [ByteArray,ByteArray]=false different length",
+      "name": "Real test [String,String]=false different length",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -1015,11 +1015,11 @@
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "String",
                     "value": "0x00000000000000000000000000000124"
                   },
                   {
-                    "type": "byteArray",
+                    "type": "String",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]
@@ -1064,7 +1064,7 @@
       ]
     },
     {
-      "name": "Real test [ByteArray,ByteArray]=false different length",
+      "name": "Real test [String,String]=false different length",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -1088,11 +1088,11 @@
                 "nextInstruction": "EQUAL",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "String",
                     "value": "0x00000000000000000000000000000124"
                   },
                   {
-                    "type": "byteArray",
+                    "type": "String",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]
