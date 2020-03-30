@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Neo.Test
 {
@@ -156,6 +157,14 @@ namespace Neo.Test
                     {
                         ret["type"] = VMUTStackItemType.Pointer.ToString();
                         ret["value"] = item.Value.Value<int>();
+                        break;
+                    }
+                case VMUTStackItemType.String:
+                    {
+                        // Easy access	
+
+                        ret["type"] = VMUTStackItemType.ByteString.ToString();
+                        ret["value"] = Encoding.UTF8.GetBytes(item.Value.Value<string>());
                         break;
                     }
                 case VMUTStackItemType.ByteString:
