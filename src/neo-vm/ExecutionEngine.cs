@@ -1489,5 +1489,18 @@ namespace Neo.VM
             i = (uint)bi;
             return true;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryPopInterface<T>(out T result) where T : class
+        {
+            if (!CurrentContext.EvaluationStack.TryPeek(out InteropInterface item))
+            {
+                result = default;
+                return false;
+            }
+            if (!item.TryGetInterface(out result)) return false;
+            CurrentContext.EvaluationStack.Pop();
+            return true;
+        }
     }
 }
