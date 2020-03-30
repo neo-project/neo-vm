@@ -161,7 +161,7 @@ namespace Neo.Test
                     }
                 case VMUTStackItemType.String:
                     {
-                        // Easy access	
+                        // Easy access
 
                         ret["type"] = VMUTStackItemType.ByteString.ToString();
                         ret["value"] = Encoding.UTF8.GetBytes(item.Value.Value<string>());
