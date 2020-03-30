@@ -6,46 +6,46 @@ using System.Text;
 namespace Neo.VM.Types
 {
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(Memory.ToArray()).Replace(\"-\", string.Empty)}")]
-    public class String : PrimitiveType
+    public class ByteString : PrimitiveType
     {
-        public static readonly String Empty = ReadOnlyMemory<byte>.Empty;
+        public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
 
         internal override ReadOnlyMemory<byte> Memory { get; }
-        public override StackItemType Type => StackItemType.String;
+        public override StackItemType Type => StackItemType.ByteString;
 
-        public String(ReadOnlyMemory<byte> value)
+        public ByteString(ReadOnlyMemory<byte> value)
         {
             this.Memory = value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator ReadOnlyMemory<byte>(String value)
+        public static implicit operator ReadOnlyMemory<byte>(ByteString value)
         {
             return value.Memory;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator ReadOnlySpan<byte>(String value)
+        public static implicit operator ReadOnlySpan<byte>(ByteString value)
         {
             return value.Memory.Span;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator String(byte[] value)
+        public static implicit operator ByteString(byte[] value)
         {
-            return new String(value);
+            return new ByteString(value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator String(ReadOnlyMemory<byte> value)
+        public static implicit operator ByteString(ReadOnlyMemory<byte> value)
         {
-            return new String(value);
+            return new ByteString(value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator String(string value)
+        public static implicit operator ByteString(string value)
         {
-            return new String(Encoding.UTF8.GetBytes(value));
+            return new ByteString(Encoding.UTF8.GetBytes(value));
         }
     }
 }

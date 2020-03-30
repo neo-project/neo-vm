@@ -42,7 +42,7 @@
                     "value": 0
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x1111"
                   },
                   {
@@ -107,7 +107,7 @@
                     "value": 0
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x1111"
                   },
                   {
@@ -173,7 +173,7 @@
                     "value": -1
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x1111"
                   },
                   {
@@ -239,7 +239,7 @@
                     "value": 0
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x1111"
                   },
                   {
@@ -305,7 +305,7 @@
                     "value": 0
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x1111"
                   },
                   {

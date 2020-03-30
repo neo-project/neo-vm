@@ -52,7 +52,7 @@
       ]
     },
     {
-      "name": "String",
+      "name": "ByteString",
       "script": [
         "PUSHDATA1",
         "0x00",

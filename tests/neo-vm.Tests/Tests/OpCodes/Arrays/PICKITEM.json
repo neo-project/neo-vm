@@ -496,7 +496,7 @@
       ]
     },
     {
-      "name": "OutOfBounds with -1 [String]",
+      "name": "OutOfBounds with -1 [ByteString]",
       "script": [
         "PUSHDATA1",
         "0x02",
@@ -522,7 +522,7 @@
                     "value": -1
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x0102"
                   }
                 ]
@@ -541,7 +541,7 @@
       ]
     },
     {
-      "name": "OutOfBounds with more than length [String]",
+      "name": "OutOfBounds with more than length [ByteString]",
       "script": [
         "PUSHDATA1",
         "0x02",
@@ -567,7 +567,7 @@
                     "value": 4
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x0102"
                   }
                 ]
@@ -586,7 +586,7 @@
       ]
     },
     {
-      "name": "Real test [String]",
+      "name": "Real test [ByteString]",
       "script": [
         "PUSHDATA1",
         "0x02",
@@ -612,7 +612,7 @@
                     "value": 0
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x0102"
                   }
                 ]

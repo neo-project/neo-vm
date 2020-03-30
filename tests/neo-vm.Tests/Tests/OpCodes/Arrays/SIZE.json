@@ -57,7 +57,7 @@
       ]
     },
     {
-      "name": "Real test with String",
+      "name": "Real test with ByteString",
       "script": [
         "PUSHDATA1",
         "0x01",

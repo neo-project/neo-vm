@@ -697,7 +697,7 @@
       ]
     },
     {
-      "name": "Real test [String,String]=false",
+      "name": "Real test [ByteString,ByteString]=false",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -721,11 +721,11 @@
                 "nextInstruction": "NOTEQUAL",
                 "evaluationStack": [
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000123"
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]
@@ -770,7 +770,7 @@
       ]
     },
     {
-      "name": "Real test [String,String]=true same length",
+      "name": "Real test [ByteString,ByteString]=true same length",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -794,11 +794,11 @@
                 "nextInstruction": "NOTEQUAL",
                 "evaluationStack": [
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000124"
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]
@@ -843,7 +843,7 @@
       ]
     },
     {
-      "name": "Real test [String,String]=true different length",
+      "name": "Real test [ByteString,ByteString]=true different length",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -867,11 +867,11 @@
                 "nextInstruction": "NOTEQUAL",
                 "evaluationStack": [
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x00000000000000000000000000000124"
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]
@@ -916,7 +916,7 @@
       ]
     },
     {
-      "name": "Real test [String,String]=true different length",
+      "name": "Real test [ByteString,ByteString]=true different length",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -940,11 +940,11 @@
                 "nextInstruction": "NOTEQUAL",
                 "evaluationStack": [
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x00000000000000000000000000000124"
                   },
                   {
-                    "type": "String",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]

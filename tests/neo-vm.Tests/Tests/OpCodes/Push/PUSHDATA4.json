@@ -35,7 +35,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "String",
+                "type": "ByteString",
                 "value": "0x01020304"
               }
             ]
