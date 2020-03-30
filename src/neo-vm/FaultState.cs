@@ -4,11 +4,11 @@ namespace Neo.VM
 {
     public sealed class FaultState
     {
-        private Exception exception;
+        private CatcheableException exception;
 
         public bool Rethrow;
         public bool HasCatchableInterrupt;
-        public Exception Exception
+        public CatcheableException Exception
         {
             get
             {

@@ -1324,7 +1324,6 @@ namespace Neo.VM
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                     {
                         State = VMState.FAULT;
-                        FaultState.Exception = new InvalidOperationException("OPCode Fault:" + instruction.OpCode.ToString());
                     }
                     if (FaultState.HasCatchableInterrupt)
                     {
@@ -1334,10 +1333,9 @@ namespace Neo.VM
                         }
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     State = VMState.FAULT;
-                    FaultState.Exception = new InvalidProgramException("Can't catch internal error", ex);
                 }
             }
         }
