@@ -1268,7 +1268,6 @@ namespace Neo.VM
                         FaultState.Rethrow = true;
                     }
 
-                    State = VMState.NONE;
                     FaultState.HasCatchableInterrupt = false;
                     return true;
                 }
