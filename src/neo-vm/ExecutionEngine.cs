@@ -886,7 +886,7 @@ namespace Neo.VM
                             {
                                 (byte)StackItemType.Boolean => StackItem.False,
                                 (byte)StackItemType.Integer => Integer.Zero,
-                                (byte)StackItemType.ByteArray => ByteArray.Empty,
+                                (byte)StackItemType.ByteString => ByteString.Empty,
                                 _ => StackItem.Null
                             };
                         }
@@ -961,7 +961,7 @@ namespace Neo.VM
                                     Push(index < buffer.Size);
                                     break;
                                 }
-                            case ByteArray array:
+                            case ByteString array:
                                 {
                                     int index = key.ToInt32();
                                     if (index < 0) return false;

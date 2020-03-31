@@ -323,7 +323,7 @@
                     "value": 9
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0001"
                   }
                 ]
@@ -374,7 +374,7 @@
                     "value": 2
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x00010203040506070809"
                   }
                 ]
@@ -425,7 +425,7 @@
                     "value": 2
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x00010203040506070809"
                   }
                 ]

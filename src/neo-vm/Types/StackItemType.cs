@@ -6,7 +6,7 @@ namespace Neo.VM.Types
         Pointer = 0x10,
         Boolean = 0x20,
         Integer = 0x21,
-        ByteArray = 0x28,
+        ByteString = 0x28,
         Buffer = 0x30,
         Array = 0x40,
         Struct = 0x41,

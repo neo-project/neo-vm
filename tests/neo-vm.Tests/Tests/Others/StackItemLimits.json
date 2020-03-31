@@ -3,7 +3,7 @@
   "name": "Stack item limits [StackItemLimits] [StackItemLimits] [StackItemLimits]",
   "tests": [
     {
-      "name": "Max boolean bytearray",
+      "name": "Max boolean ByteString",
       "script": [
         "PUSHDATA1",
         "0x21",
@@ -23,7 +23,7 @@
                 "nextInstruction": "NOT",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x000000000000000000000000000000000000000000000000000000000000000000"
                   }
                 ]

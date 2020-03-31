@@ -18,12 +18,12 @@ namespace Neo.Test.Types
         Boolean,
 
         /// <summary>
-        /// ByteArray
+        /// ByteString
         /// </summary>
-        ByteArray,
+        ByteString,
 
-        /// <summary>
-        /// ByteArray as UTF8 string
+        /// <summary>	
+        /// ByteString as UTF8 string	
         /// </summary>
         String,
 
@@ -33,7 +33,7 @@ namespace Neo.Test.Types
         Buffer,
 
         /// <summary>
-        /// String
+        /// InteropInterface
         /// </summary>
         Interop,
 
