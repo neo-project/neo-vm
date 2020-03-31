@@ -1,5 +1,3 @@
-using System;
-
 namespace Neo.VM
 {
     public sealed class FaultState
@@ -8,6 +6,7 @@ namespace Neo.VM
 
         public bool Rethrow;
         public bool HasCatchableInterrupt;
+
         public CatcheableException Exception
         {
             get
@@ -17,7 +16,7 @@ namespace Neo.VM
             set
             {
                 exception = value;
-                HasCatchableInterrupt = exception != null && exception is CatcheableException;
+                HasCatchableInterrupt = exception != null;
             }
         }
     }
