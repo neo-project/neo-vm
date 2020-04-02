@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Neo.VM
 {
     public sealed class FaultState
@@ -6,6 +8,7 @@ namespace Neo.VM
 
         public bool Rethrow;
         public bool HasCatchableInterrupt;
+        public Stack<CatcheableException> CatchedExceptionStack { get; } = new Stack<CatcheableException>();
 
         public CatcheableException Exception
         {
