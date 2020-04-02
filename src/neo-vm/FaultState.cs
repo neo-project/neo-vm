@@ -8,7 +8,6 @@ namespace Neo.VM
 
         public bool Rethrow;
         public bool HasCatchableInterrupt;
-        public Stack<CatcheableException> CatchedExceptionStack { get; } = new Stack<CatcheableException>();
 
         public CatcheableException Exception
         {

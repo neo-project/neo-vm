@@ -1234,10 +1234,6 @@ namespace Neo.VM
                 CurrentContext.TryStack.TryPop(out _);
                 CurrentContext.MoveNext();
             }
-            if (currentTry.State == TryState.Catch)
-            {
-                FaultState.CatchedExceptionStack.Pop();
-            }
             return true;
         }
 
@@ -1249,10 +1245,6 @@ namespace Neo.VM
 
                 while (executionContext.TryStack.TryPeek(out TryContext tryContext))
                 {
-                    if (tryContext.State == TryState.Catch)
-                    {
-                        FaultState.CatchedExceptionStack.Pop();
-                    }
                     if (tryContext.State == TryState.Finally || (tryContext.State == TryState.Catch && !tryContext.HasFinally))
                     {
                         executionContext.TryStack.Pop();
@@ -1264,7 +1256,7 @@ namespace Neo.VM
                     {
                         tryContext.State = TryState.Catch;
                         CurrentContext.InstructionPointer = tryContext.CatchPointer;
-                        FaultState.CatchedExceptionStack.Push(FaultState.Exception);
+                        tryContext.CatchedException = FaultState.Exception;
                         FaultState.Exception = null;
                     }
                     else
