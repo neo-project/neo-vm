@@ -70,19 +70,19 @@ namespace Neo.VM.Types
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(byte[] value)
         {
-            return (ByteArray)value;
+            return (ByteString)value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(ReadOnlyMemory<byte> value)
         {
-            return (ByteArray)value;
+            return (ByteString)value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(string value)
         {
-            return (ByteArray)value;
+            return (ByteString)value;
         }
     }
 }

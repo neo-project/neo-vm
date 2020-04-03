@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Numeric",
   "name": "SHR",
   "tests": [
@@ -25,7 +25,7 @@
                 "nextInstruction": "SHR",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0101"
                   },
                   {
@@ -70,7 +70,7 @@
                 "nextInstruction": "SHR",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0xFFFE"
                   },
                   {
@@ -115,7 +115,7 @@
                 "nextInstruction": "SHR",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0001"
                   },
                   {
@@ -170,7 +170,7 @@
                     "value": 0
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0001"
                   }
                 ]
@@ -186,7 +186,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "ByteString",
                 "value": "0x0001"
               }
             ]

@@ -81,7 +81,7 @@
       ]
     },
     {
-      "name": "With empty bytearray",
+      "name": "With empty ByteString",
       "script": [
         "PUSH0",
         "ISNULL"

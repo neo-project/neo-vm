@@ -163,11 +163,11 @@ namespace Neo.Test
                     {
                         // Easy access
 
-                        ret["type"] = VMUTStackItemType.ByteArray.ToString();
+                        ret["type"] = VMUTStackItemType.ByteString.ToString();
                         ret["value"] = Encoding.UTF8.GetBytes(item.Value.Value<string>());
                         break;
                     }
-                case VMUTStackItemType.ByteArray:
+                case VMUTStackItemType.ByteString:
                 case VMUTStackItemType.Buffer:
                     {
                         var value = ret["value"].Value<string>();
@@ -237,7 +237,7 @@ namespace Neo.Test
                     }
                 case VM.Types.Boolean v: value = new JValue(v.ToBoolean()); break;
                 case VM.Types.Integer v: value = new JValue(v.ToBigInteger().ToString()); break;
-                case VM.Types.ByteArray v: value = new JValue(v.Span.ToArray()); break;
+                case VM.Types.ByteString v: value = new JValue(v.Span.ToArray()); break;
                 case VM.Types.Buffer v: value = new JValue(v.InnerBuffer); break;
                 //case VM.Types.Struct v:
                 case VM.Types.Array v:

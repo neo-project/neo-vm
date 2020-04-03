@@ -360,7 +360,7 @@
                 "nextInstruction": "NOT",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0000"
                   }
                 ]
@@ -425,7 +425,7 @@
                 "nextInstruction": "NOT",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0001"
                   }
                 ]
