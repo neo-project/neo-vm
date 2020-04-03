@@ -90,7 +90,7 @@
                     "value": -1
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x010203"
                   }
                 ]
@@ -135,7 +135,7 @@
                     "value": 4
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x010203"
                   }
                 ]
@@ -180,7 +180,7 @@
                     "value": 2
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x010203"
                   }
                 ]
@@ -251,7 +251,7 @@
                     "value": 3
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x010203"
                   }
                 ]
