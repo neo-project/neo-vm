@@ -321,7 +321,7 @@ namespace Neo.VM
                 case OpCode.ENDF:
                     {
                         if (CurrentContext.TryStack is null) return false;
-                        if (!CurrentContext.TryStack.TryPop(out TryContext currentTry))
+                        if (!CurrentContext.TryStack.TryPop(out ExceptionHandingContext currentTry))
                             return false;
 
                         if (currentTry.Rethrow)
@@ -1197,8 +1197,8 @@ namespace Neo.VM
         {
             if (catchOffset == 0 && finallyOffset == 0) return false;
 
-            CurrentContext.TryStack ??= new Stack<TryContext>();
-            CurrentContext.TryStack.Push(new TryContext(CurrentContext, catchOffset, finallyOffset));
+            CurrentContext.TryStack ??= new Stack<ExceptionHandingContext>();
+            CurrentContext.TryStack.Push(new ExceptionHandingContext(CurrentContext, catchOffset, finallyOffset));
             CurrentContext.MoveNext();
             return true;
         }
@@ -1207,7 +1207,7 @@ namespace Neo.VM
         internal bool ExecuteEndTryCatch(TryState currentState)
         {
             if (CurrentContext.TryStack is null) return false;
-            if (!CurrentContext.TryStack.TryPeek(out TryContext currentTry))
+            if (!CurrentContext.TryStack.TryPeek(out ExceptionHandingContext currentTry))
                 return false;
             if (currentTry.State != currentState) return false;
 
@@ -1231,7 +1231,7 @@ namespace Neo.VM
             {
                 if (executionContext.TryStack is null) continue;
 
-                while (executionContext.TryStack.TryPeek(out TryContext tryContext))
+                while (executionContext.TryStack.TryPeek(out ExceptionHandingContext tryContext))
                 {
                     if (tryContext.State == TryState.Finally || (tryContext.State == TryState.Catch && !tryContext.HasFinally))
                     {
@@ -1262,7 +1262,7 @@ namespace Neo.VM
             return false;
         }
 
-        private void ResumeContext(TryContext context)
+        private void ResumeContext(ExceptionHandingContext context)
         {
             while (InvocationStack.TryPeek(out ExecutionContext execution))
             {

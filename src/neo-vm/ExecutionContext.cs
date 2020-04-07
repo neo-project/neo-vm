@@ -31,7 +31,7 @@ namespace Neo.VM
 
         public Slot Arguments { get; internal set; }
 
-        public Stack<TryContext> TryStack { get; internal set; }
+        public Stack<ExceptionHandingContext> TryStack { get; internal set; }
 
         /// <summary>
         /// Instruction pointer

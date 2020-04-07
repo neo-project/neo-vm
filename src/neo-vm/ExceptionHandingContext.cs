@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace Neo.VM
 {
     [DebuggerDisplay("State={State}, TryPointer={TryPointer}, CatchPointer={CatchPointer}, FinallyPointer={FinallyPointer}, EndPointer={EndPointer}")]
-    public sealed class TryContext
+    public sealed class ExceptionHandingContext
     {
         public ExecutionContext ExecutionContext { get; private set; }
         public int TryPointer { get; private set; }
@@ -17,7 +17,7 @@ namespace Neo.VM
         public bool Rethrow { get; internal set; } = false;
         public StackItem ExceptionItem { get; internal set; }
 
-        public TryContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
+        public ExceptionHandingContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
         {
             this.ExecutionContext = ExecutionContext;
             this.TryPointer = ExecutionContext.InstructionPointer;
