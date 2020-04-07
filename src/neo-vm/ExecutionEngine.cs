@@ -296,7 +296,7 @@ namespace Neo.VM
                 case OpCode.THROW:
                     {
                         if (!TryPop(out StackItem error)) return false;
-                        return HandleException(new CatcheableException(error));
+                        return HandleException(error);
                     }
                 case OpCode.TRY:
                     {
@@ -327,7 +327,7 @@ namespace Neo.VM
                         if (currentTry.Rethrow)
                         {
                             currentTry.Rethrow = false;
-                            return HandleException(currentTry.Exception);
+                            return HandleException(currentTry.ExceptionItem);
                         }
                         CurrentContext.InstructionPointer = currentTry.EndPointer;
                         return true;
@@ -1225,7 +1225,7 @@ namespace Neo.VM
             return true;
         }
 
-        private bool HandleException(CatcheableException exception)
+        private bool HandleException(StackItem exceptionItem)
         {
             foreach (var executionContext in InvocationStack)
             {
@@ -1243,15 +1243,15 @@ namespace Neo.VM
                     if (tryContext.State == TryState.Try && tryContext.HasCatch)
                     {
                         tryContext.State = TryState.Catch;
-                        tryContext.Exception = exception;
+                        tryContext.ExceptionItem = exceptionItem;
                         CurrentContext.InstructionPointer = tryContext.CatchPointer;
 
-                        Push(tryContext.Exception.ExceptionItem);
+                        Push(tryContext.ExceptionItem);
                     }
                     else
                     {
                         tryContext.State = TryState.Finally;
-                        tryContext.Exception = exception;
+                        tryContext.ExceptionItem = exceptionItem;
                         tryContext.Rethrow = true;
                         CurrentContext.InstructionPointer = tryContext.FinallyPointer;
                     }

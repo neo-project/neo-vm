@@ -1,3 +1,4 @@
+using Neo.VM.Types;
 using System.Diagnostics;
 
 namespace Neo.VM
@@ -14,7 +15,7 @@ namespace Neo.VM
         public bool HasFinally { get; private set; }
         public TryState State { get; internal set; } = TryState.Try;
         public bool Rethrow { get; internal set; } = false;
-        public CatcheableException Exception { get; internal set; }
+        public StackItem ExceptionItem { get; internal set; }
 
         public TryContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
         {
