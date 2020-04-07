@@ -42,7 +42,6 @@ namespace Neo.VM
         public ExecutionContext EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }
         public VMState State { get; internal protected set; } = VMState.BREAK;
-        public FaultState FaultState { get; internal protected set; } = new FaultState { Rethrow = false };
 
         public ExecutionEngine()
         {
@@ -306,8 +305,7 @@ namespace Neo.VM
                 case OpCode.THROW:
                     {
                         if (!TryPop(out StackItem error)) return false;
-                        FaultState.Exception = new CatcheableException(error);
-                        return true;
+                        throw new CatcheableException(error);
                     }
                 case OpCode.TRY:
                     {
@@ -335,11 +333,10 @@ namespace Neo.VM
                         if (!CurrentContext.TryStack.TryPop(out TryContext currentTry))
                             return false;
 
-                        if (FaultState.Rethrow)
+                        if (currentTry.Rethrow)
                         {
-                            FaultState.Rethrow = false;
-                            FaultState.HasCatchableInterrupt = true;
-                            return true;
+                            currentTry.Rethrow = false;
+                            throw currentTry.Exception;
                         }
                         CurrentContext.InstructionPointer = currentTry.EndPointer;
                         return true;
@@ -1237,7 +1234,7 @@ namespace Neo.VM
             return true;
         }
 
-        private bool HandleException()
+        private bool HandleException(CatcheableException exception)
         {
             foreach (var executionContext in InvocationStack)
             {
@@ -1256,17 +1253,17 @@ namespace Neo.VM
                     {
                         tryContext.State = TryState.Catch;
                         CurrentContext.InstructionPointer = tryContext.CatchPointer;
-                        tryContext.CatchedException = FaultState.Exception;
-                        FaultState.Exception = null;
+                        tryContext.Exception = exception;
+                        Push(tryContext.Exception.ExceptionItem);
                     }
                     else
                     {
                         tryContext.State = TryState.Finally;
+                        tryContext.Exception = exception;
+                        tryContext.Rethrow = true;
                         CurrentContext.InstructionPointer = tryContext.FinallyPointer;
-                        FaultState.Rethrow = true;
                     }
 
-                    FaultState.HasCatchableInterrupt = false;
                     return true;
                 }
             }
@@ -1319,15 +1316,13 @@ namespace Neo.VM
                 {
                     Instruction instruction = CurrentContext.CurrentInstruction;
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
+                        State = VMState.FAULT;
+                }
+                catch(CatcheableException ex)
+                {
+                    if (!HandleException(ex))
                     {
                         State = VMState.FAULT;
-                    }
-                    if (FaultState.HasCatchableInterrupt)
-                    {
-                        if (!HandleException())
-                        {
-                            State = VMState.FAULT;
-                        }
                     }
                 }
                 catch

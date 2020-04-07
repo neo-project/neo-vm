@@ -28,7 +28,13 @@
             "invocationStack": [
               {
                 "instructionPointer": 6,
-                "nextInstruction": "ABORT"
+                "nextInstruction": "ABORT",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
               }
             ]
           }

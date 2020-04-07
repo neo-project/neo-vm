@@ -35,7 +35,13 @@
             "invocationStack": [
               {
                 "instructionPointer": 9,
-                "nextInstruction": "PUSH1"
+                "nextInstruction": "PUSH1",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  }
+                ]
               }
             ]
           }
@@ -55,6 +61,10 @@
                   {
                     "type": "integer",
                     "value": 1
+                  },
+                  {
+                    "type": "integer",
+                    "value": 0
                   }
                 ]
               }
@@ -81,6 +91,10 @@
                   {
                     "type": "integer",
                     "value": 1
+                  },
+                  {
+                    "type": "integer",
+                    "value": 0
                   }
                 ]
               }

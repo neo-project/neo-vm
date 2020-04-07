@@ -13,7 +13,8 @@ namespace Neo.VM
         public bool HasCatch { get; private set; }
         public bool HasFinally { get; private set; }
         public TryState State { get; internal set; } = TryState.Try;
-        public CatcheableException CatchedException { get; internal set; }
+        public bool Rethrow { get; internal set; } = false;
+        public CatcheableException Exception { get; internal set; }
 
         public TryContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
         {
