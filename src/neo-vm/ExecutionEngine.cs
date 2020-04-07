@@ -1318,7 +1318,7 @@ namespace Neo.VM
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                         State = VMState.FAULT;
                 }
-                catch(CatcheableException ex)
+                catch (CatcheableException ex)
                 {
                     if (!HandleException(ex))
                     {
