@@ -296,7 +296,7 @@ namespace Neo.VM
                 case OpCode.THROW:
                     {
                         if (!TryPop(out StackItem error)) return false;
-                        throw new CatcheableException(error);
+                        return HandleException(new CatcheableException(error));
                     }
                 case OpCode.TRY:
                     {
@@ -327,7 +327,7 @@ namespace Neo.VM
                         if (currentTry.Rethrow)
                         {
                             currentTry.Rethrow = false;
-                            throw currentTry.Exception;
+                            return HandleException(currentTry.Exception);
                         }
                         CurrentContext.InstructionPointer = currentTry.EndPointer;
                         return true;
@@ -1309,13 +1309,6 @@ namespace Neo.VM
                     Instruction instruction = CurrentContext.CurrentInstruction;
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                         State = VMState.FAULT;
-                }
-                catch (CatcheableException ex)
-                {
-                    if (!HandleException(ex))
-                    {
-                        State = VMState.FAULT;
-                    }
                 }
                 catch
                 {
