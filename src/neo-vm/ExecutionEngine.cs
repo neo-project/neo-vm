@@ -105,16 +105,7 @@ namespace Neo.VM
         private bool ExecuteInstruction()
         {
             ExecutionContext context = CurrentContext;
-            Instruction instruction;
-            try
-            {
-                instruction = context.CurrentInstruction;
-            }
-            catch
-            {
-                throw new InvalidProgramException();
-            }
-
+            Instruction instruction = context.CurrentInstruction;
             switch (instruction.OpCode)
             {
                 //Push
