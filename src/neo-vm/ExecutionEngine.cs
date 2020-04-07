@@ -324,11 +324,9 @@ namespace Neo.VM
                         if (!CurrentContext.TryStack.TryPop(out ExceptionHandingContext currentTry))
                             return false;
 
-                        if (currentTry.Rethrow)
-                        {
-                            currentTry.Rethrow = false;
+                        if (!currentTry.HasCatch && currentTry.ExceptionItem != null)
                             return HandleException(currentTry.ExceptionItem);
-                        }
+
                         CurrentContext.InstructionPointer = currentTry.EndPointer;
                         return true;
                     }
@@ -1252,7 +1250,6 @@ namespace Neo.VM
                     {
                         tryContext.State = TryState.Finally;
                         tryContext.ExceptionItem = exceptionItem;
-                        tryContext.Rethrow = true;
                         CurrentContext.InstructionPointer = tryContext.FinallyPointer;
                     }
 

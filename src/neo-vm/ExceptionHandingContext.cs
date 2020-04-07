@@ -14,7 +14,6 @@ namespace Neo.VM
         public bool HasCatch { get; private set; }
         public bool HasFinally { get; private set; }
         public TryState State { get; internal set; } = TryState.Try;
-        public bool Rethrow { get; internal set; } = false;
         public StackItem ExceptionItem { get; internal set; }
 
         public ExceptionHandingContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
