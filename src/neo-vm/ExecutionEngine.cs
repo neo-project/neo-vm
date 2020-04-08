@@ -312,15 +312,27 @@ namespace Neo.VM
                         int finallyOffset = instruction.TokenI32_1;
                         return ExecuteTry(catchOffset, finallyOffset);
                     }
-                case OpCode.ENDT:
+                case OpCode.ENDTRY:
                     {
-                        return ExecuteEndTryCatch(ExceptionHandingState.Try);
+                        if (CurrentContext.TryStack is null) return false;
+                        if (!CurrentContext.TryStack.TryPeek(out ExceptionHandingContext currentTry))
+                            return false;
+                        if (currentTry.State == ExceptionHandingState.Finally) return false;
+
+                        if (currentTry.HasFinally)
+                        {
+                            currentTry.State = ExceptionHandingState.Finally;
+                            currentTry.EndTryCatch(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
+                            CurrentContext.InstructionPointer = currentTry.FinallyPointer;
+                        }
+                        else
+                        {
+                            CurrentContext.TryStack.TryPop(out _);
+                            CurrentContext.MoveNext();
+                        }
+                        return true;
                     }
-                case OpCode.ENDC:
-                    {
-                        return ExecuteEndTryCatch(ExceptionHandingState.Catch);
-                    }
-                case OpCode.ENDF:
+                case OpCode.ENDFINALLY:
                     {
                         if (CurrentContext.TryStack is null) return false;
                         if (!CurrentContext.TryStack.TryPop(out ExceptionHandingContext currentTry))
@@ -1199,28 +1211,6 @@ namespace Neo.VM
             CurrentContext.TryStack ??= new Stack<ExceptionHandingContext>();
             CurrentContext.TryStack.Push(new ExceptionHandingContext(CurrentContext, catchOffset, finallyOffset));
             CurrentContext.MoveNext();
-            return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool ExecuteEndTryCatch(ExceptionHandingState state)
-        {
-            if (CurrentContext.TryStack is null) return false;
-            if (!CurrentContext.TryStack.TryPeek(out ExceptionHandingContext currentTry))
-                return false;
-            if (currentTry.State != state) return false;
-
-            if (currentTry.HasFinally)
-            {
-                currentTry.State = ExceptionHandingState.Finally;
-                currentTry.EndTryCatch(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
-                CurrentContext.InstructionPointer = currentTry.FinallyPointer;
-            }
-            else
-            {
-                CurrentContext.TryStack.TryPop(out _);
-                CurrentContext.MoveNext();
-            }
             return true;
         }
 

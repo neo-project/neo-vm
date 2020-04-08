@@ -11,15 +11,15 @@
         "0x0600",
         "PUSH0",
         "THROW",
-        "ENDT",
+        "ENDTRY",
         "PUSH1",
-        "ENDC",
-        "ENDT",
+        "ENDTRY",
+        "ENDTRY",
         "RET",
         "PUSH2",
-        "ENDC",
+        "ENDTRY",
         "PUSH3",
-        "ENDF",
+        "ENDFINALLY",
         "PUSH4"
       ],
       "steps": [
@@ -56,7 +56,7 @@
             "invocationStack": [
               {
                 "instructionPointer": 11,
-                "nextInstruction": "ENDT",
+                "nextInstruction": "ENDTRY",
                 "evaluationStack": [
                   {
                     "type": "integer",

@@ -250,15 +250,11 @@ namespace Neo.VM
         /// <summary>
         /// End try, if has finally body, vm will jump there. Otherwise will jump to the next instruction.
         /// </summary>
-        ENDT = 0x3D,
+        ENDTRY = 0x3D,
         /// <summary>
-        /// End catch, if has finally body, vm will jump there. Otherwise will jump to the next instruction. 
+        /// End finally, If no exception happen or be catched, vm will jump to the next instruction of ENDTRY. Otherwise vm will rethrow the exception to upper layer.
         /// </summary>
-        ENDC = 0x3E,
-        /// <summary>
-        /// End finally, If no exception happen or be catched, vm will jump to the next instruction of ENDT or ENDC. Otherwise vm will rethrow the exception to upper layer.
-        /// </summary>
-        ENDF = 0x3F,
+        ENDFINALLY = 0x3E,
         /// <summary>
         /// Returns from the current method.
         /// </summary>

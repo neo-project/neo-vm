@@ -9,11 +9,11 @@
         "0x0008",
         "PUSH0",
         "THROW",
-        "ENDT",
+        "ENDTRY",
         "JMP",
         "0x03",
         "PUSH1",
-        "ENDF",
+        "ENDFINALLY",
         "PUSH2"
       ],
       "steps": [

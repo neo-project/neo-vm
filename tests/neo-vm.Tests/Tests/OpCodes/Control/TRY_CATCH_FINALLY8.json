@@ -9,12 +9,12 @@
         "0x0609",
         "PUSH0",
         "THROW",
-        "ENDT",
+        "ENDTRY",
         "PUSH2",
         "THROW",
-        "ENDC",
+        "ENDTRY",
         "PUSH3",
-        "ENDF",
+        "ENDFINALLY",
         "RET"
       ],
       "steps": [
@@ -70,7 +70,7 @@
             "invocationStack": [
               {
                 "instructionPointer": 10,
-                "nextInstruction": "ENDF",
+                "nextInstruction": "ENDFINALLY",
                 "evaluationStack": [
                   {
                     "type": "integer",

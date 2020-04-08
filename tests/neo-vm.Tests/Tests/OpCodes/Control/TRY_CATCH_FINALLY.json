@@ -8,12 +8,12 @@
         "TRY",
         "0x0608",
         "PUSH0",
-        "ENDT",
+        "ENDTRY",
         "RET",
         "PUSH2",
-        "ENDC",
+        "ENDTRY",
         "PUSH3",
-        "ENDF",
+        "ENDFINALLY",
         "PUSH4"
       ],
       "steps": [

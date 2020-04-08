@@ -9,13 +9,13 @@
         "0x070A",
         "PUSH0",
         "THROW",
-        "ENDT",
+        "ENDTRY",
         "RET",
         "PUSH1",
-        "ENDC",
+        "ENDTRY",
         "RET",
         "PUSH2",
-        "ENDF",
+        "ENDFINALLY",
         "PUSH3"
       ],
       "steps": [

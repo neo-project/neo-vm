@@ -8,11 +8,11 @@
         "TRY",
         "0x0507",
         "ABORT",
-        "ENDT",
+        "ENDTRY",
         "PUSH2",
-        "ENDC",
+        "ENDTRY",
         "PUSH3",
-        "ENDF",
+        "ENDFINALLY",
         "RET"
       ],
       "steps": [

@@ -8,9 +8,9 @@
         "TRY",
         "0x0500",
         "PUSH0",
-        "ENDT",
+        "ENDTRY",
         "PUSH3",
-        "ENDC"
+        "ENDTRY"
       ],
       "steps": [
         {
@@ -44,9 +44,9 @@
         "0x0600",
         "PUSH0",
         "THROW",
-        "ENDT",
+        "ENDTRY",
         "PUSH1",
-        "ENDC",
+        "ENDTRY",
         "PUSH2"
       ],
       "steps": [

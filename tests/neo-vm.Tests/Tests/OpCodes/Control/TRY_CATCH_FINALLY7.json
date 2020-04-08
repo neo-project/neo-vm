@@ -9,11 +9,11 @@
         "0x0608",
         "PUSH0",
         "THROW",
-        "ENDT",
+        "ENDTRY",
         "ABORT",
-        "ENDC",
+        "ENDTRY",
         "PUSH3",
-        "ENDF",
+        "ENDFINALLY",
         "RET"
       ],
       "steps": [
