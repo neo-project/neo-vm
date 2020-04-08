@@ -260,7 +260,7 @@ namespace Neo.VM
         /// </summary>
         ENDF = 0x3F,
         /// <summary>
-        /// Returns from the current method. But if RET is in <see langword="try-catch"/> body, it will execute <see langword="finally"/> of <see langword="try-catch-finally"/> first.
+        /// Returns from the current method.
         /// </summary>
         RET = 0x40,
         /// <summary>
