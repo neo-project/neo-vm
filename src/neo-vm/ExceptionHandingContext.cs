@@ -6,7 +6,6 @@ namespace Neo.VM
     public sealed class ExceptionHandingContext
     {
         public ExecutionContext ExecutionContext { get; private set; }
-        public int TryPointer { get; private set; }
         public int CatchPointer { get; private set; }
         public int FinallyPointer { get; private set; }
         public int EndPointer { get; private set; }
@@ -17,11 +16,10 @@ namespace Neo.VM
         public ExceptionHandingContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
         {
             this.ExecutionContext = ExecutionContext;
-            this.TryPointer = ExecutionContext.InstructionPointer;
             this.HasCatch = catchOffset != 0;
             this.HasFinally = finallyOffset != 0;
-            this.CatchPointer = checked(TryPointer + catchOffset);
-            this.FinallyPointer = checked(TryPointer + finallyOffset);
+            this.CatchPointer = checked(ExecutionContext.InstructionPointer + catchOffset);
+            this.FinallyPointer = checked(ExecutionContext.InstructionPointer + finallyOffset);
         }
 
         public void EndTryCatch(int EndPointer)
