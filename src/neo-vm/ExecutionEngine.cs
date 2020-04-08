@@ -42,6 +42,8 @@ namespace Neo.VM
         public ExecutionContext EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }
         public VMState State { get; internal protected set; } = VMState.BREAK;
+        public StackItem UncaughtException { get; private set; }
+
 
         public ExecutionEngine()
         {
@@ -324,8 +326,8 @@ namespace Neo.VM
                         if (!CurrentContext.TryStack.TryPop(out ExceptionHandingContext currentTry))
                             return false;
 
-                        if (!currentTry.HasCatch && currentTry.ExceptionItem != null)
-                            return HandleException(currentTry.ExceptionItem);
+                        if (UncaughtException != null)
+                            return HandleException(UncaughtException);
 
                         CurrentContext.InstructionPointer = currentTry.EndPointer;
                         return true;
@@ -1245,11 +1247,12 @@ namespace Neo.VM
                         CurrentContext.InstructionPointer = tryContext.CatchPointer;
 
                         Push(tryContext.ExceptionItem);
+                        UncaughtException = null;
                     }
                     else
                     {
                         tryContext.State = TryState.Finally;
-                        tryContext.ExceptionItem = exceptionItem;
+                        UncaughtException = exceptionItem;
                         CurrentContext.InstructionPointer = tryContext.FinallyPointer;
                     }
 
