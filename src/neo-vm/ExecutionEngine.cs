@@ -44,7 +44,6 @@ namespace Neo.VM
         public VMState State { get; internal protected set; } = VMState.BREAK;
         public StackItem UncaughtException { get; private set; }
 
-
         public ExecutionEngine()
         {
             ResultStack = new EvaluationStack(ReferenceCounter);
