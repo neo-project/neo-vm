@@ -12,7 +12,7 @@ namespace Neo.VM
         public int EndPointer { get; private set; }
         public bool HasCatch { get; private set; }
         public bool HasFinally { get; private set; }
-        public TryState State { get; internal set; } = TryState.Try;
+        public ExceptionHandingState State { get; internal set; } = ExceptionHandingState.Try;
 
         public ExceptionHandingContext(ExecutionContext ExecutionContext, int catchOffset, int finallyOffset)
         {
@@ -27,7 +27,7 @@ namespace Neo.VM
         public void EndTryCatch(int EndPointer)
         {
             this.EndPointer = EndPointer;
-            this.State = TryState.Finally;
+            this.State = ExceptionHandingState.Finally;
         }
     }
 }

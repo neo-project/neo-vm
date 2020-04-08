@@ -314,11 +314,11 @@ namespace Neo.VM
                     }
                 case OpCode.ENDT:
                     {
-                        return ExecuteEndTryCatch(TryState.Try);
+                        return ExecuteEndTryCatch(ExceptionHandingState.Try);
                     }
                 case OpCode.ENDC:
                     {
-                        return ExecuteEndTryCatch(TryState.Catch);
+                        return ExecuteEndTryCatch(ExceptionHandingState.Catch);
                     }
                 case OpCode.ENDF:
                     {
@@ -1203,16 +1203,16 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool ExecuteEndTryCatch(TryState currentState)
+        internal bool ExecuteEndTryCatch(ExceptionHandingState state)
         {
             if (CurrentContext.TryStack is null) return false;
             if (!CurrentContext.TryStack.TryPeek(out ExceptionHandingContext currentTry))
                 return false;
-            if (currentTry.State != currentState) return false;
+            if (currentTry.State != state) return false;
 
             if (currentTry.HasFinally)
             {
-                currentTry.State = TryState.Finally;
+                currentTry.State = ExceptionHandingState.Finally;
                 currentTry.EndTryCatch(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
                 CurrentContext.InstructionPointer = currentTry.FinallyPointer;
             }
@@ -1232,23 +1232,23 @@ namespace Neo.VM
 
                 while (executionContext.TryStack.TryPeek(out ExceptionHandingContext tryContext))
                 {
-                    if (tryContext.State == TryState.Finally || (tryContext.State == TryState.Catch && !tryContext.HasFinally))
+                    if (tryContext.State == ExceptionHandingState.Finally || (tryContext.State == ExceptionHandingState.Catch && !tryContext.HasFinally))
                     {
                         executionContext.TryStack.Pop();
                         continue;
                     }
 
                     ResumeContext(tryContext);
-                    if (tryContext.State == TryState.Try && tryContext.HasCatch)
+                    if (tryContext.State == ExceptionHandingState.Try && tryContext.HasCatch)
                     {
-                        tryContext.State = TryState.Catch;
+                        tryContext.State = ExceptionHandingState.Catch;
                         Push(UncaughtException);
                         CurrentContext.InstructionPointer = tryContext.CatchPointer;
                         UncaughtException = null;
                     }
                     else
                     {
-                        tryContext.State = TryState.Finally;
+                        tryContext.State = ExceptionHandingState.Finally;
                         CurrentContext.InstructionPointer = tryContext.FinallyPointer;
                     }
 
