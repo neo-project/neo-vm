@@ -44,7 +44,7 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return BinaryPrimitives.ReadInt32LittleEndian(Operand.Span.Slice(0, 4));
+                return BinaryPrimitives.ReadInt32LittleEndian(Operand.Span);
             }
         }
 
@@ -53,7 +53,7 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return BinaryPrimitives.ReadInt32LittleEndian(Operand.Span.Slice(4, 4));
+                return BinaryPrimitives.ReadInt32LittleEndian(Operand.Span[4..]);
             }
         }
 
