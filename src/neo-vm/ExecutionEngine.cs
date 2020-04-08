@@ -1242,7 +1242,6 @@ namespace Neo.VM
                     if (tryContext.State == TryState.Try && tryContext.HasCatch)
                     {
                         tryContext.State = TryState.Catch;
-                        tryContext.ExceptionItem = UncaughtException;
                         Push(UncaughtException);
                         CurrentContext.InstructionPointer = tryContext.CatchPointer;
                         UncaughtException = null;
