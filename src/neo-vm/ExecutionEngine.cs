@@ -297,7 +297,8 @@ namespace Neo.VM
                 case OpCode.THROW:
                     {
                         if (!TryPop(out StackItem error)) return false;
-                        return HandleException(error);
+                        UncaughtException = error;
+                        return HandleException();
                     }
                 case OpCode.TRY:
                     {
@@ -325,8 +326,7 @@ namespace Neo.VM
                         if (!CurrentContext.TryStack.TryPop(out ExceptionHandingContext currentTry))
                             return false;
 
-                        if (UncaughtException != null)
-                            return HandleException(UncaughtException);
+                        if (UncaughtException != null) return HandleException();
 
                         CurrentContext.InstructionPointer = currentTry.EndPointer;
                         return true;
@@ -1224,7 +1224,7 @@ namespace Neo.VM
             return true;
         }
 
-        private bool HandleException(StackItem exceptionItem)
+        private bool HandleException()
         {
             foreach (var executionContext in InvocationStack)
             {
@@ -1242,16 +1242,14 @@ namespace Neo.VM
                     if (tryContext.State == TryState.Try && tryContext.HasCatch)
                     {
                         tryContext.State = TryState.Catch;
-                        tryContext.ExceptionItem = exceptionItem;
+                        tryContext.ExceptionItem = UncaughtException;
+                        Push(UncaughtException);
                         CurrentContext.InstructionPointer = tryContext.CatchPointer;
-
-                        Push(tryContext.ExceptionItem);
                         UncaughtException = null;
                     }
                     else
                     {
                         tryContext.State = TryState.Finally;
-                        UncaughtException = exceptionItem;
                         CurrentContext.InstructionPointer = tryContext.FinallyPointer;
                     }
 
