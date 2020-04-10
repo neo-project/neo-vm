@@ -1192,18 +1192,6 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool ExecuteTry(int catchOffset, int finallyOffset)
-        {
-            if (catchOffset == 0 && finallyOffset == 0) return false;
-            int catchPointer = catchOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + catchOffset);
-            int finallyPointer = finallyOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + finallyOffset);
-            CurrentContext.TryStack ??= new Stack<ExceptionHandingContext>();
-            CurrentContext.TryStack.Push(new ExceptionHandingContext(catchPointer, finallyPointer));
-            CurrentContext.MoveNext();
-            return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ExecuteEndTry(int endOffset)
         {
             if (CurrentContext.TryStack is null) return false;
@@ -1220,43 +1208,10 @@ namespace Neo.VM
             }
             else
             {
-                CurrentContext.TryStack.TryPop(out _);
+                CurrentContext.TryStack.Pop();
                 CurrentContext.InstructionPointer = endPointer;
             }
             return true;
-        }
-
-        private bool HandleException()
-        {
-            while (InvocationStack.TryPeek(out var executionContext))
-            {
-                if (executionContext.TryStack != null)
-                {
-                    while (executionContext.TryStack.TryPeek(out var tryContext))
-                    {
-                        if (tryContext.State == ExceptionHandingState.Finally || (tryContext.State == ExceptionHandingState.Catch && !tryContext.HasFinally))
-                        {
-                            executionContext.TryStack.Pop();
-                            continue;
-                        }
-                        if (tryContext.State == ExceptionHandingState.Try && tryContext.HasCatch)
-                        {
-                            tryContext.State = ExceptionHandingState.Catch;
-                            Push(UncaughtException);
-                            CurrentContext.InstructionPointer = tryContext.CatchPointer;
-                            UncaughtException = null;
-                        }
-                        else
-                        {
-                            tryContext.State = ExceptionHandingState.Finally;
-                            CurrentContext.InstructionPointer = tryContext.FinallyPointer;
-                        }
-                        return true;
-                    }
-                }
-                ContextUnloaded(InvocationStack.Pop());
-            }
-            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1307,6 +1262,51 @@ namespace Neo.VM
             if (!TryPop(out StackItem item)) return false;
             slot[index] = item;
             return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool ExecuteTry(int catchOffset, int finallyOffset)
+        {
+            if (catchOffset == 0 && finallyOffset == 0) return false;
+            int catchPointer = catchOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + catchOffset);
+            int finallyPointer = finallyOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + finallyOffset);
+            CurrentContext.TryStack ??= new Stack<ExceptionHandingContext>();
+            CurrentContext.TryStack.Push(new ExceptionHandingContext(catchPointer, finallyPointer));
+            CurrentContext.MoveNext();
+            return true;
+        }
+
+        private bool HandleException()
+        {
+            while (InvocationStack.TryPeek(out var executionContext))
+            {
+                if (executionContext.TryStack != null)
+                {
+                    while (executionContext.TryStack.TryPeek(out var tryContext))
+                    {
+                        if (tryContext.State == ExceptionHandingState.Finally || (tryContext.State == ExceptionHandingState.Catch && !tryContext.HasFinally))
+                        {
+                            executionContext.TryStack.Pop();
+                            continue;
+                        }
+                        if (tryContext.State == ExceptionHandingState.Try && tryContext.HasCatch)
+                        {
+                            tryContext.State = ExceptionHandingState.Catch;
+                            Push(UncaughtException);
+                            CurrentContext.InstructionPointer = tryContext.CatchPointer;
+                            UncaughtException = null;
+                        }
+                        else
+                        {
+                            tryContext.State = ExceptionHandingState.Finally;
+                            CurrentContext.InstructionPointer = tryContext.FinallyPointer;
+                        }
+                        return true;
+                    }
+                }
+                ContextUnloaded(InvocationStack.Pop());
+            }
+            return false;
         }
 
         protected virtual void LoadContext(ExecutionContext context)
