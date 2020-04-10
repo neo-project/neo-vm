@@ -1195,9 +1195,10 @@ namespace Neo.VM
         private bool ExecuteTry(int catchOffset, int finallyOffset)
         {
             if (catchOffset == 0 && finallyOffset == 0) return false;
-
+            int catchPointer = catchOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + catchOffset);
+            int finallyPointer = finallyOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + finallyOffset);
             CurrentContext.TryStack ??= new Stack<ExceptionHandingContext>();
-            CurrentContext.TryStack.Push(new ExceptionHandingContext(CurrentContext, catchOffset, finallyOffset));
+            CurrentContext.TryStack.Push(new ExceptionHandingContext(catchPointer, finallyPointer));
             CurrentContext.MoveNext();
             return true;
         }
