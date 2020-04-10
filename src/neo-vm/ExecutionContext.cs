@@ -95,9 +95,10 @@ namespace Neo.VM
             return (T)value;
         }
 
-        internal void MoveNext()
+        internal bool MoveNext()
         {
             InstructionPointer += CurrentInstruction.Size;
+            return InstructionPointer < Script.Length;
         }
     }
 }
