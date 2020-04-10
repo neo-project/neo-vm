@@ -313,13 +313,15 @@ namespace Neo.VM
                     {
                         int catchOffset = instruction.TokenI8;
                         int finallyOffset = instruction.TokenI8_1;
-                        return ExecuteTry(catchOffset, finallyOffset);
+                        if (!ExecuteTry(catchOffset, finallyOffset)) return false;
+                        break;
                     }
                 case OpCode.TRY_L:
                     {
                         int catchOffset = instruction.TokenI32;
                         int finallyOffset = instruction.TokenI32_1;
-                        return ExecuteTry(catchOffset, finallyOffset);
+                        if (!ExecuteTry(catchOffset, finallyOffset)) return false;
+                        break;
                     }
                 case OpCode.ENDTRY:
                     {
@@ -1272,7 +1274,6 @@ namespace Neo.VM
             int finallyPointer = finallyOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + finallyOffset);
             CurrentContext.TryStack ??= new Stack<ExceptionHandingContext>();
             CurrentContext.TryStack.Push(new ExceptionHandingContext(catchPointer, finallyPointer));
-            CurrentContext.MoveNext();
             return true;
         }
 
