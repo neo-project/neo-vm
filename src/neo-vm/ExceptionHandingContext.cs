@@ -12,7 +12,7 @@ namespace Neo.VM
         public bool HasFinally => FinallyPointer >= 0;
         public ExceptionHandingState State { get; internal set; } = ExceptionHandingState.Try;
 
-        public ExceptionHandingContext(int catchPointer, int finallyPointer)
+        internal ExceptionHandingContext(int catchPointer, int finallyPointer)
         {
             this.CatchPointer = catchPointer;
             this.FinallyPointer = finallyPointer;
