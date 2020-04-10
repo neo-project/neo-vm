@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace Neo.VM
 {
-    [DebuggerDisplay("State={State}, TryPointer={TryPointer}, CatchPointer={CatchPointer}, FinallyPointer={FinallyPointer}, EndPointer={EndPointer}")]
+    [DebuggerDisplay("State={State}, CatchPointer={CatchPointer}, FinallyPointer={FinallyPointer}, EndPointer={EndPointer}")]
     public sealed class ExceptionHandingContext
     {
         public ExecutionContext ExecutionContext { get; private set; }
