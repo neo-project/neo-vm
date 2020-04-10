@@ -1278,7 +1278,8 @@ namespace Neo.VM
 
         private bool HandleException()
         {
-            while (InvocationStack.TryPeek(out var executionContext))
+            int pop = 0;
+            foreach (var executionContext in InvocationStack)
             {
                 if (executionContext.TryStack != null)
                 {
@@ -1289,22 +1290,26 @@ namespace Neo.VM
                             executionContext.TryStack.Pop();
                             continue;
                         }
+                        for (int i = 0; i < pop; i++)
+                        {
+                            ContextUnloaded(InvocationStack.Pop());
+                        }
                         if (tryContext.State == ExceptionHandingState.Try && tryContext.HasCatch)
                         {
                             tryContext.State = ExceptionHandingState.Catch;
                             Push(UncaughtException);
-                            CurrentContext.InstructionPointer = tryContext.CatchPointer;
+                            executionContext.InstructionPointer = tryContext.CatchPointer;
                             UncaughtException = null;
                         }
                         else
                         {
                             tryContext.State = ExceptionHandingState.Finally;
-                            CurrentContext.InstructionPointer = tryContext.FinallyPointer;
+                            executionContext.InstructionPointer = tryContext.FinallyPointer;
                         }
                         return true;
                     }
                 }
-                ContextUnloaded(InvocationStack.Pop());
+                ++pop;
             }
             return false;
         }
