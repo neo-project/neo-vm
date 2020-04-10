@@ -11,16 +11,16 @@
         "0x0700",
         "PUSH0",
         "THROW",
-        "ENDTRY", // end try #2
+        "ENDTRY",
         "0x01",
         "PUSH1",
         "THROW",
-        "ENDTRY", // end catch #2
+        "ENDTRY",
         "0x04",
-        "ENDTRY", // end try #1
+        "ENDTRY",
         "0x01",
-        "PUSH2", // <-- catch body #1
-        "ENDTRY", // end catch #1
+        "PUSH2",
+        "ENDTRY",
         "0x02",
         "RET",
         "PUSH3",
