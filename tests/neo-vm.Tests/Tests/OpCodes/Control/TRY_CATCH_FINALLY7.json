@@ -6,12 +6,14 @@
       "name": "try{ throw }catch{ abort }finally{ push3 }",
       "script": [
         "TRY",
-        "0x0608",
+        "0x070a",
         "PUSH0",
         "THROW",
         "ENDTRY",
+        "0x01",
         "ABORT",
         "ENDTRY",
+        "0x01",
         "PUSH3",
         "ENDFINALLY",
         "RET"
@@ -27,7 +29,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer":7,
                 "nextInstruction": "ABORT",
                 "evaluationStack": [
                   {

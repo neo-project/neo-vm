@@ -248,13 +248,19 @@ namespace Neo.VM
         [OperandSize(Size = 8)]
         TRY_L = 0x3C,
         /// <summary>
-        /// End try, if has finally body, vm will jump there. Otherwise will jump to the next instruction.
+        /// End try, if has finally body, vm will jump there. Otherwise will jump to the target instruction. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
         /// </summary>
+        [OperandSize(Size = 2)]
         ENDTRY = 0x3D,
         /// <summary>
-        /// End finally, If no exception happen or be catched, vm will jump to the next instruction of ENDTRY. Otherwise vm will rethrow the exception to upper layer.
+        /// End try, if has finally body, vm will jump there. Otherwise will jump to the target instruction. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
         /// </summary>
-        ENDFINALLY = 0x3E,
+        [OperandSize(Size = 4)]
+        ENDTRY_L = 0x3E,
+        /// <summary>
+        /// End finally, If no exception happen or be catched, vm will jump to the target instruction of ENDTRY/ENDTRY_L. Otherwise vm will rethrow the exception to upper layer.
+        /// </summary>
+        ENDFINALLY = 0x3F,
         /// <summary>
         /// Returns from the current method.
         /// </summary>

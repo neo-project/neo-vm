@@ -6,12 +6,14 @@
       "name": "try catch finally without exception",
       "script": [
         "TRY",
-        "0x0608",
+        "0x080a",
         "PUSH0",
         "ENDTRY",
+        "0x08",
         "RET",
         "PUSH2",
         "ENDTRY",
+        "0x04",
         "PUSH3",
         "ENDFINALLY",
         "PUSH4"
@@ -27,7 +29,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 10,
                 "nextInstruction": "PUSH3",
                 "evaluationStack": [
                   {
@@ -48,8 +50,8 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 5,
-                "nextInstruction": "RET",
+                "instructionPointer": 12,
+                "nextInstruction": "PUSH4",
                 "evaluationStack": [
                   {
                     "type": "integer",

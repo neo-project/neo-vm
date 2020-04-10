@@ -10,8 +10,10 @@
         "PUSH0",
         "ASSERT",
         "ENDTRY",
+        "0x01",
         "PUSH2",
         "ENDTRY",
+        "0x01",
         "PUSH3",
         "ENDFINALLY",
         "RET"

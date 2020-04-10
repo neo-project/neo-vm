@@ -6,10 +6,11 @@
       "name": "try finally with exception",
       "script": [
         "TRY",
-        "0x0008",
+        "0x0009",
         "PUSH0",
         "THROW",
         "ENDTRY",
+        "0x01",
         "JMP",
         "0x03",
         "PUSH1",
@@ -27,7 +28,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 8,
+                "instructionPointer": 9,
                 "nextInstruction": "PUSH1"
               }
             ]
@@ -39,19 +40,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "invocationStack": [
-              {
-                "instructionPointer": 10,
-                "nextInstruction": "PUSH2",
-                "evaluationStack": [
-                  {
-                    "type": "integer",
-                    "value": 1
-                  }
-                ]
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]

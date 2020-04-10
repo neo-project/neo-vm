@@ -314,23 +314,13 @@ namespace Neo.VM
                     }
                 case OpCode.ENDTRY:
                     {
-                        if (CurrentContext.TryStack is null) return false;
-                        if (!CurrentContext.TryStack.TryPeek(out ExceptionHandingContext currentTry))
-                            return false;
-                        if (currentTry.State == ExceptionHandingState.Finally) return false;
-
-                        if (currentTry.HasFinally)
-                        {
-                            currentTry.State = ExceptionHandingState.Finally;
-                            currentTry.EndTryCatch(CurrentContext.InstructionPointer + CurrentContext.CurrentInstruction.Size);
-                            CurrentContext.InstructionPointer = currentTry.FinallyPointer;
-                        }
-                        else
-                        {
-                            CurrentContext.TryStack.TryPop(out _);
-                            CurrentContext.MoveNext();
-                        }
-                        return true;
+                        int endOffset = instruction.TokenI8;
+                        return ExecuteEndTry(endOffset);
+                    }
+                case OpCode.ENDTRY_L:
+                    {
+                        int endOffset = instruction.TokenI32;
+                        return ExecuteEndTry(endOffset);
                     }
                 case OpCode.ENDFINALLY:
                     {
@@ -1211,6 +1201,29 @@ namespace Neo.VM
             CurrentContext.TryStack ??= new Stack<ExceptionHandingContext>();
             CurrentContext.TryStack.Push(new ExceptionHandingContext(CurrentContext, catchOffset, finallyOffset));
             CurrentContext.MoveNext();
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool ExecuteEndTry(int endOffset)
+        {
+            if (CurrentContext.TryStack is null) return false;
+            if (!CurrentContext.TryStack.TryPeek(out ExceptionHandingContext currentTry))
+                return false;
+            if (currentTry.State == ExceptionHandingState.Finally) return false;
+
+            int endPointer = checked(CurrentContext.InstructionPointer + endOffset);
+            if (currentTry.HasFinally)
+            {
+                currentTry.State = ExceptionHandingState.Finally;
+                currentTry.EndTryCatch(endPointer);
+                CurrentContext.InstructionPointer = currentTry.FinallyPointer;
+            }
+            else
+            {
+                CurrentContext.TryStack.TryPop(out _);
+                CurrentContext.InstructionPointer = endPointer;
+            }
             return true;
         }
 

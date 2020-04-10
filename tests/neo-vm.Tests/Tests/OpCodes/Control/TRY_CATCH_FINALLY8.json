@@ -6,13 +6,15 @@
       "name": "try{ throw }catch{ throw }finally{ push3 }",
       "script": [
         "TRY",
-        "0x0609",
+        "0x070b",
         "PUSH0",
         "THROW",
         "ENDTRY",
+        "0x01",
         "PUSH2",
         "THROW",
         "ENDTRY",
+        "0x01",
         "PUSH3",
         "ENDFINALLY",
         "RET"
@@ -28,7 +30,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 6,
+                "instructionPointer": 7,
                 "nextInstruction": "PUSH2",
                 "evaluationStack": [
                   {
@@ -49,7 +51,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 9,
+                "instructionPointer": 11,
                 "nextInstruction": "PUSH3",
                 "evaluationStack": [
                   {
@@ -69,7 +71,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 10,
+                "instructionPointer": 12,
                 "nextInstruction": "ENDFINALLY",
                 "evaluationStack": [
                   {
