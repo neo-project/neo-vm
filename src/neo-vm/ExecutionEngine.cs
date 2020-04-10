@@ -1216,7 +1216,7 @@ namespace Neo.VM
             if (currentTry.HasFinally)
             {
                 currentTry.State = ExceptionHandingState.Finally;
-                currentTry.EndTryCatch(endPointer);
+                currentTry.EndPointer = endPointer;
                 CurrentContext.InstructionPointer = currentTry.FinallyPointer;
             }
             else
