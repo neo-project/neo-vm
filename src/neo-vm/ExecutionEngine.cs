@@ -71,9 +71,18 @@ namespace Neo.VM
 
         protected virtual void ContextUnloaded(ExecutionContext context)
         {
-            if (InvocationStack.Count == 0 || context.StaticFields != InvocationStack.Peek().StaticFields)
+            if (InvocationStack.Count == 0)
             {
-                context.StaticFields?.ClearReferences();
+                CurrentContext = null;
+                EntryContext = null;
+            }
+            else
+            {
+                CurrentContext = InvocationStack.Peek();
+            }
+            if (context.StaticFields != null && context.StaticFields != CurrentContext?.StaticFields)
+            {
+                context.StaticFields.ClearReferences();
             }
             context.LocalVariables?.ClearReferences();
             context.Arguments?.ClearReferences();
@@ -123,7 +132,7 @@ namespace Neo.VM
                 case OpCode.PUSHA:
                     {
                         int position = instruction.TokenI32;
-                        if (position < 0 || position > CurrentContext.Script.Length) return false;
+                        if (position < 0 || position > context.Script.Length) return false;
                         Push(new Pointer(context.Script, position));
                         break;
                     }
@@ -324,13 +333,13 @@ namespace Neo.VM
                     }
                 case OpCode.ENDFINALLY:
                     {
-                        if (CurrentContext.TryStack is null) return false;
-                        if (!CurrentContext.TryStack.TryPop(out ExceptionHandingContext currentTry))
+                        if (context.TryStack is null) return false;
+                        if (!context.TryStack.TryPop(out ExceptionHandingContext currentTry))
                             return false;
 
                         if (UncaughtException != null) return HandleException();
 
-                        CurrentContext.InstructionPointer = currentTry.EndPointer;
+                        context.InstructionPointer = currentTry.EndPointer;
                         return true;
                     }
                 case OpCode.RET:
@@ -338,18 +347,7 @@ namespace Neo.VM
                         ExecutionContext context_pop = InvocationStack.Pop();
                         int rvcount = context_pop.RVCount;
                         if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
-                        EvaluationStack stack_eval;
-                        if (InvocationStack.Count == 0)
-                        {
-                            EntryContext = null;
-                            CurrentContext = null;
-                            stack_eval = ResultStack;
-                        }
-                        else
-                        {
-                            CurrentContext = InvocationStack.Peek();
-                            stack_eval = CurrentContext.EvaluationStack;
-                        }
+                        EvaluationStack stack_eval = InvocationStack.Count == 0 ? ResultStack : InvocationStack.Peek().EvaluationStack;
                         if (context_pop.EvaluationStack == stack_eval)
                         {
                             if (context_pop.RVCount != 0) return false;
