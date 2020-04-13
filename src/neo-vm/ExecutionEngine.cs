@@ -86,16 +86,6 @@ namespace Neo.VM
             return State;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool ExecuteCall(int position)
-        {
-            if (position < 0 || position > CurrentContext.Script.Length) return false;
-            ExecutionContext context_call = CurrentContext.Clone();
-            context_call.InstructionPointer = position;
-            LoadContext(context_call);
-            return true;
-        }
-
         private bool ExecuteInstruction()
         {
             ExecutionContext context = CurrentContext;
@@ -260,21 +250,19 @@ namespace Neo.VM
                     }
                 case OpCode.CALL:
                     {
-                        if (!ExecuteCall(checked(context.InstructionPointer + instruction.TokenI8)))
-                            return false;
+                        LoadClonedContext(checked(context.InstructionPointer + instruction.TokenI8));
                         break;
                     }
                 case OpCode.CALL_L:
                     {
-                        if (!ExecuteCall(checked(context.InstructionPointer + instruction.TokenI32)))
-                            return false;
+                        LoadClonedContext(checked(context.InstructionPointer + instruction.TokenI32));
                         break;
                     }
                 case OpCode.CALLA:
                     {
                         if (!TryPop(out Pointer x)) return false;
                         if (!x.Script.Equals(context.Script)) return false;
-                        if (!ExecuteCall(x.Position)) return false;
+                        LoadClonedContext(x.Position);
                         break;
                     }
                 case OpCode.ABORT:
@@ -1207,6 +1195,16 @@ namespace Neo.VM
             return true;
         }
 
+        public ExecutionContext LoadClonedContext(int initialPosition)
+        {
+            if (initialPosition < 0 || initialPosition > CurrentContext.Script.Length)
+                throw new ArgumentOutOfRangeException(nameof(initialPosition));
+            ExecutionContext context = CurrentContext.Clone();
+            context.InstructionPointer = initialPosition;
+            LoadContext(context);
+            return context;
+        }
+
         protected virtual void LoadContext(ExecutionContext context)
         {
             if (InvocationStack.Count >= MaxInvocationStackSize)
@@ -1216,9 +1214,12 @@ namespace Neo.VM
             CurrentContext = context;
         }
 
-        public ExecutionContext LoadScript(Script script, int rvcount = -1)
+        public ExecutionContext LoadScript(Script script, int rvcount = -1, int initialPosition = 0)
         {
-            ExecutionContext context = new ExecutionContext(script, rvcount, ReferenceCounter);
+            ExecutionContext context = new ExecutionContext(script, rvcount, ReferenceCounter)
+            {
+                InstructionPointer = initialPosition
+            };
             LoadContext(context);
             return context;
         }
