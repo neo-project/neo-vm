@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -32,6 +33,8 @@ namespace Neo.VM
         public Slot LocalVariables { get; internal set; }
 
         public Slot Arguments { get; internal set; }
+
+        public Stack<ExceptionHandingContext> TryStack { get; internal set; }
 
         /// <summary>
         /// Instruction pointer
