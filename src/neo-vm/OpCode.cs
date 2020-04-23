@@ -225,14 +225,42 @@ namespace Neo.VM
         /// Pop the address of a function from the stack, and call the function.
         /// </summary>
         CALLA = 0x36,
-        THROW = 0x37,
-        THROWIF = 0x38,
-        THROWIFNOT = 0x39,
-        //TRY = 0x3B,
-        //TRY_L = 0x3C,
-        //ENDT = 0x3D,
-        //ENDC = 0x3E,
-        //ENDF = 0x3F,
+        /// <summary>
+        /// It turns the vm state to FAULT immediately, and cannot be caught.
+        /// </summary>
+        ABORT = 0x37,
+        /// <summary>
+        /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT.
+        /// </summary>
+        ASSERT = 0x38,
+        /// <summary>
+        /// Pop the top value of the stack, and throw it.
+        /// </summary>
+        THROW = 0x3A,
+        /// <summary>
+        /// TRY CatchOffset(sbyte) FinallyOffset(sbyte). If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0.
+        /// </summary>
+        [OperandSize(Size = 2)]
+        TRY = 0x3B,
+        /// <summary>
+        /// TRY_L CatchOffset(int) FinallyOffset(int). If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0.
+        /// </summary>
+        [OperandSize(Size = 8)]
+        TRY_L = 0x3C,
+        /// <summary>
+        /// Ensures that the appropriate surrounding finally blocks are executed. And then unconditionally transfers control to the specific target instruction, represented as a 1-byte signed offset from the beginning of the current instruction.
+        /// </summary>
+        [OperandSize(Size = 1)]
+        ENDTRY = 0x3D,
+        /// <summary>
+        /// Ensures that the appropriate surrounding finally blocks are executed. And then unconditionally transfers control to the specific target instruction, represented as a 4-byte signed offset from the beginning of the current instruction.
+        /// </summary>
+        [OperandSize(Size = 4)]
+        ENDTRY_L = 0x3E,
+        /// <summary>
+        /// End finally, If no exception happen or be catched, vm will jump to the target instruction of ENDTRY/ENDTRY_L. Otherwise vm will rethrow the exception to upper layer.
+        /// </summary>
+        ENDFINALLY = 0x3F,
         /// <summary>
         /// Returns from the current method.
         /// </summary>

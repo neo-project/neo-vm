@@ -475,7 +475,7 @@
       ]
     },
     {
-      "name": "Real test [ByteArray,ByteArray]=11911212070228631137091015067172167745536",
+      "name": "Real test [ByteString,ByteString]=11911212070228631137091015067172167745536",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -499,11 +499,11 @@
                 "nextInstruction": "AND",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000123"
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]
@@ -548,7 +548,7 @@
       ]
     },
     {
-      "name": "Real test [ByteArray,ByteArray]=10890364969465815746700891244876863111168",
+      "name": "Real test [ByteString,ByteString]=10890364969465815746700891244876863111168",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -572,11 +572,11 @@
                 "nextInstruction": "AND",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000124"
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]
@@ -621,7 +621,7 @@
       ]
     },
     {
-      "name": "Real test [ByteArray,ByteArray]=0",
+      "name": "Real test [ByteString,ByteString]=0",
       "script": [
         "PUSHDATA1",
         "0x11",
@@ -645,11 +645,11 @@
                 "nextInstruction": "AND",
                 "evaluationStack": [
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x00000000000000000000000000000124"
                   },
                   {
-                    "type": "byteArray",
+                    "type": "ByteString",
                     "value": "0x0000000000000000000000000000000123"
                   }
                 ]

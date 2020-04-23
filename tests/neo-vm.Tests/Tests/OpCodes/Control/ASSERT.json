@@ -1,0 +1,40 @@
+{
+  "category": "Control",
+  "name": "ASSERT",
+  "tests": [
+    {
+      "script": [
+        "PUSH0",
+        "ASSERT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "script": [
+        "PUSH1",
+        "ASSERT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "execute"
+          ],
+          "result": {
+            "state": "HALT"
+          }
+        }
+      ]
+    }
+  ]
+}

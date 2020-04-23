@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Push",
   "name": "PUSHDATA2",
   "tests": [
@@ -18,7 +18,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "byteArray",
+                "type": "ByteString",
                 "value": "0x01020304"
               }
             ]

@@ -1,16 +1,14 @@
 {
   "category": "Control",
-  "name": "THROW",
+  "name": "ABORT",
   "tests": [
     {
       "script": [
-        "PUSH0",
-        "THROW"
+        "ABORT"
       ],
       "steps": [
         {
           "actions": [
-            "stepInto",
             "stepInto"
           ],
           "result": {

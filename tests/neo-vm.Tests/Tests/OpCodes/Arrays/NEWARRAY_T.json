@@ -98,7 +98,7 @@
       ]
     },
     {
-      "name": "Real test [ByteArray]",
+      "name": "Real test [ByteString]",
       "script": [
         "PUSH2",
         "NEWARRAY_T",
@@ -116,11 +116,11 @@
                 "type": "Array",
                 "value": [
                   {
-                    "type": "ByteArray",
+                    "type": "ByteString",
                     "value": "0x"
                   },
                   {
-                    "type": "ByteArray",
+                    "type": "ByteString",
                     "value": "0x"
                   }
                 ]

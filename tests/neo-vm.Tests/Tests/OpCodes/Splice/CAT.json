@@ -25,7 +25,7 @@
       ]
     },
     {
-      "name": "Wrong type [Map,ByteArray]",
+      "name": "Wrong type [Map,ByteString]",
       "script": [
         "PUSH0",
         "NEWMAP",
@@ -45,7 +45,7 @@
       ]
     },
     {
-      "name": "Wrong type [ByteArray,Map]",
+      "name": "Wrong type [ByteString,Map]",
       "script": [
         "NEWMAP",
         "PUSH0",
@@ -131,7 +131,7 @@
       ]
     },
     {
-      "name": "CAT int(0) with empty ByteArray",
+      "name": "CAT int(0) with empty ByteString",
       "script": [
         "PUSH1",
         "DEC",
@@ -182,7 +182,7 @@
       ]
     },
     {
-      "name": "CAT 0x01 with empty ByteArray",
+      "name": "CAT 0x01 with empty ByteString",
       "script": [
         "PUSH1",
         "PUSH0",
@@ -231,7 +231,7 @@
       ]
     },
     {
-      "name": "CAT empty ByteArray with 0x01",
+      "name": "CAT empty ByteString with 0x01",
       "script": [
         "PUSH0",
         "PUSH1",

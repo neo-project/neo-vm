@@ -140,12 +140,12 @@ namespace Neo.Test
             Assert.IsInstanceOfType(item, typeof(VM.Types.Boolean));
             Assert.IsTrue(item.ToBoolean());
 
-            // ByteArray
+            // ByteString
 
             item = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
 
-            Assert.IsInstanceOfType(item, typeof(ByteArray));
-            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, ((ByteArray)item).Span.ToArray());
+            Assert.IsInstanceOfType(item, typeof(ByteString));
+            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, ((ByteString)item).Span.ToArray());
         }
     }
 }
