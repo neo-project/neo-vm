@@ -83,7 +83,7 @@ namespace Neo.Test
             stack.Insert(1, 1);
             stack.Insert(1, 2);
 
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Insert(4, 2));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Insert(4, 2));
 
             Assert.AreEqual(3, stack.Count);
             CollectionAssert.AreEqual(new Integer[] { 3, 2, 1 }, stack.ToArray());
@@ -92,7 +92,7 @@ namespace Neo.Test
             Assert.AreEqual(2, stack.Peek(1));
             Assert.AreEqual(1, stack.Peek(2));
 
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Peek(4));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Peek(4));
         }
 
         [TestMethod]

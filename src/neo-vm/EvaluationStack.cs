@@ -48,7 +48,6 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Insert(int index, StackItem item)
         {
-            if (index > innerList.Count) throw new InvalidOperationException();
             innerList.Insert(index, item);
             referenceCounter.AddStackReference(item);
         }
@@ -56,7 +55,6 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Peek(int index = 0)
         {
-            if (index >= innerList.Count || index < 0) throw new InvalidOperationException();
             return innerList[index];
         }
 
@@ -97,7 +95,6 @@ namespace Neo.VM
                 item = default;
                 return false;
             }
-            Console.WriteLine(innerList.Count);
             item = innerList[index] as T;
             if (item is null) return false;
             innerList.RemoveAt(index);
