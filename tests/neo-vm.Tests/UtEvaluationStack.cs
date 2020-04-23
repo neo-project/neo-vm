@@ -18,7 +18,7 @@ namespace Neo.Test
             for (int x = 1; x <= count; x++)
             {
                 stack.Push(x);
-                check[x - 1] = x;
+                check[count - x] = x;
             }
 
             Assert.AreEqual(count, stack.Count);
@@ -50,28 +50,28 @@ namespace Neo.Test
 
             Assert.AreEqual(3, stack.Count);
             Assert.AreEqual(0, copy.Count);
-            CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, stack.ToArray());
+            CollectionAssert.AreEqual(new Integer[] { 3, 2, 1 }, stack.ToArray());
 
             stack.CopyTo(copy, -1);
 
             Assert.AreEqual(3, stack.Count);
             Assert.AreEqual(3, copy.Count);
-            CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, stack.ToArray());
+            CollectionAssert.AreEqual(new Integer[] { 3, 2, 1 }, stack.ToArray());
 
             // Test IEnumerable
 
             var enumerable = (IEnumerable)copy;
             var enumerator = enumerable.GetEnumerator();
 
-            CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, GetEnumerable(enumerator).Cast<Integer>().ToArray());
+            CollectionAssert.AreEqual(new Integer[] { 3, 2, 1 }, GetEnumerable(enumerator).Cast<Integer>().ToArray());
 
             copy.CopyTo(stack, 2);
 
             Assert.AreEqual(5, stack.Count);
             Assert.AreEqual(3, copy.Count);
 
-            CollectionAssert.AreEqual(new Integer[] { 1, 2, 3, 2, 3 }, stack.ToArray());
-            CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, copy.ToArray());
+            CollectionAssert.AreEqual(new Integer[] { 3, 2, 1, 3, 2 }, stack.ToArray());
+            CollectionAssert.AreEqual(new Integer[] { 3, 2, 1 }, copy.ToArray());
         }
 
         [TestMethod]
@@ -86,13 +86,13 @@ namespace Neo.Test
             Assert.ThrowsException<InvalidOperationException>(() => stack.Insert(4, 2));
 
             Assert.AreEqual(3, stack.Count);
-            CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, stack.ToArray());
+            CollectionAssert.AreEqual(new Integer[] { 3, 2, 1 }, stack.ToArray());
 
             Assert.AreEqual(3, stack.Peek(0));
             Assert.AreEqual(2, stack.Peek(1));
-            Assert.AreEqual(1, stack.Peek(-1));
+            Assert.AreEqual(1, stack.Peek(2));
 
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Peek(-4));
+            Assert.ThrowsException<InvalidOperationException>(() => stack.Peek(4));
         }
 
         [TestMethod]
@@ -125,9 +125,9 @@ namespace Neo.Test
 
             Assert.IsTrue(stack.TryRemove(0, out Integer item) && item.Equals(3));
             Assert.IsTrue(stack.TryRemove(0, out item) && item.Equals(2));
-            Assert.IsTrue(stack.TryRemove(-1, out item) && item.Equals(1));
+            Assert.IsTrue(stack.TryRemove(0, out item) && item.Equals(1));
             Assert.IsFalse(stack.TryRemove(0, out item) && item.Equals(0));
-            Assert.IsFalse(stack.TryRemove(-1, out item) && item.Equals(0));
+            Assert.IsFalse(stack.TryRemove(0, out item) && item.Equals(0));
         }
 
         [TestMethod]

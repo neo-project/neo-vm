@@ -355,7 +355,7 @@ namespace Neo.VM
                     {
                         if (!TryPop(out int n)) return false;
                         if (n < 0) return false;
-                        if (!context.EvaluationStack.TryRemove(n, out StackItem _)) return false;
+                        if (!context.EvaluationStack.TryRemove(context.EvaluationStack.Count - n - 1, out StackItem _)) return false;
                         break;
                     }
                 case OpCode.CLEAR:

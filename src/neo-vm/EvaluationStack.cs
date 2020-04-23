@@ -32,7 +32,7 @@ namespace Neo.VM
             if (count == -1)
                 stack.innerList.AddRange(innerList);
             else
-                stack.innerList.AddRange(innerList.Skip(innerList.Count - count));
+                stack.innerList.AddRange(innerList.Take(count));
         }
 
         public IEnumerator<StackItem> GetEnumerator()
@@ -49,20 +49,15 @@ namespace Neo.VM
         internal void Insert(int index, StackItem item)
         {
             if (index > innerList.Count) throw new InvalidOperationException();
-            innerList.Insert(innerList.Count - index, item);
+            innerList.Insert(index, item);
             referenceCounter.AddStackReference(item);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Peek(int index = 0)
         {
-            if (index >= innerList.Count) throw new InvalidOperationException();
-            if (index < 0)
-            {
-                index += innerList.Count;
-                if (index < 0) throw new InvalidOperationException();
-            }
-            return innerList[innerList.Count - index - 1];
+            if (index >= innerList.Count || index < 0) throw new InvalidOperationException();
+            return innerList[index];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -76,7 +71,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
         {
-            innerList.Add(item);
+            innerList.Insert(0, item);
             referenceCounter.AddStackReference(item);
         }
 
@@ -97,21 +92,12 @@ namespace Neo.VM
 
         internal bool TryRemove<T>(int index, out T item) where T : StackItem
         {
-            if (index >= innerList.Count)
+            if (index >= innerList.Count || index < 0)
             {
                 item = default;
                 return false;
             }
-            if (index < 0)
-            {
-                index += innerList.Count;
-                if (index < 0)
-                {
-                    item = default;
-                    return false;
-                }
-            }
-            index = innerList.Count - index - 1;
+            Console.WriteLine(innerList.Count);
             item = innerList[index] as T;
             if (item is null) return false;
             innerList.RemoveAt(index);
