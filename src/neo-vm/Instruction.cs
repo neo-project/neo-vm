@@ -15,18 +15,17 @@ namespace Neo.VM
         public readonly OpCode OpCode;
         public readonly ReadOnlyMemory<byte> Operand;
 
-        private static readonly int[] OperandSizePrefixTable = new int[256];
-        private static readonly int[] OperandSizeTable = new int[256];
+        private static readonly OperandSizeAttribute[] OperandSizeTable = new OperandSizeAttribute[256];
 
         public int Size
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                int prefixSize = OperandSizePrefixTable[(int)OpCode];
-                return prefixSize > 0
-                    ? 1 + prefixSize + Operand.Length
-                    : 1 + OperandSizeTable[(int)OpCode];
+                var entry = OperandSizeTable[(byte)OpCode];
+                return entry.SizePrefix > 0
+                    ? 1 + entry.SizePrefix + Operand.Length
+                    : 1 + entry.Size;
             }
         }
 
@@ -126,9 +125,19 @@ namespace Neo.VM
             {
                 OperandSizeAttribute attribute = field.GetCustomAttribute<OperandSizeAttribute>();
                 if (attribute == null) continue;
+
                 int index = (int)(OpCode)field.GetValue(null);
-                OperandSizePrefixTable[index] = attribute.SizePrefix;
-                OperandSizeTable[index] = attribute.Size;
+                OperandSizeTable[index] = attribute;
+            }
+
+            // Add default values in order to prevent the null checks
+
+            for (int x = 0; x < OperandSizeTable.Length; x++)
+            {
+                if (OperandSizeTable[x] == null)
+                {
+                    OperandSizeTable[x] = new OperandSizeAttribute();
+                }
             }
         }
 
@@ -140,26 +149,11 @@ namespace Neo.VM
         internal Instruction(byte[] script, int ip)
         {
             OpCode = (OpCode)script[ip++];
-            int operandSizePrefix = OperandSizePrefixTable[(int)OpCode];
-            int operandSize = 0;
-            switch (operandSizePrefix)
-            {
-                case 0:
-                    operandSize = OperandSizeTable[(int)OpCode];
-                    break;
-                case 1:
-                    operandSize = script[ip];
-                    break;
-                case 2:
-                    operandSize = BitConverter.ToUInt16(script, ip);
-                    break;
-                case 4:
-                    operandSize = BitConverter.ToInt32(script, ip);
-                    break;
-            }
+            var entry = OperandSizeTable[(byte)OpCode];
+            int operandSize = entry.GetOperandSize(script, ip);
             if (operandSize > 0)
             {
-                ip += operandSizePrefix;
+                ip += entry.SizePrefix;
                 if (ip + operandSize > script.Length)
                     throw new InvalidOperationException();
                 Operand = new ReadOnlyMemory<byte>(script, ip, operandSize);
