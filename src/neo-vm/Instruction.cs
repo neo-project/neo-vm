@@ -150,7 +150,15 @@ namespace Neo.VM
         {
             OpCode = (OpCode)script[ip++];
             var entry = OperandSizeTable[(byte)OpCode];
-            int operandSize = entry.GetOperandSize(script, ip);
+            int operandSize = entry.SizePrefix switch
+            {
+                0 => entry.Size,
+                1 => script[ip],
+                2 => BitConverter.ToUInt16(script, ip),
+                4 => BitConverter.ToInt32(script, ip),
+                _ => throw new FormatException(),
+            };
+
             if (operandSize > 0)
             {
                 ip += entry.SizePrefix;
