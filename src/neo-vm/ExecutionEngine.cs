@@ -121,7 +121,7 @@ namespace Neo.VM
                     }
                 case OpCode.PUSHA:
                     {
-                        int position = instruction.TokenI32;
+                        int position = checked(context.InstructionPointer + instruction.TokenI32);
                         if (position < 0 || position > context.Script.Length) return false;
                         Push(new Pointer(context.Script, position));
                         break;
