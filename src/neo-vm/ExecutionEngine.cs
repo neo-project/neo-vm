@@ -1305,9 +1305,14 @@ namespace Neo.VM
 
         public ExecutionContext LoadClonedContext(int initialPosition)
         {
-            if (initialPosition < 0 || initialPosition > CurrentContext.Script.Length)
+            return LoadClonedContext(CurrentContext, initialPosition);
+        }
+
+        public ExecutionContext LoadClonedContext(ExecutionContext context, int initialPosition)
+        {
+            if (initialPosition < 0 || initialPosition > context.Script.Length)
                 throw new ArgumentOutOfRangeException(nameof(initialPosition));
-            ExecutionContext context = CurrentContext.Clone();
+            context = context.Clone();
             context.InstructionPointer = initialPosition;
             LoadContext(context);
             return context;
