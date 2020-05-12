@@ -93,8 +93,13 @@ namespace Neo.VM
             InvocationStack.Clear();
         }
 
+        protected virtual void Trace()
+        {
+        }
+
         public VMState Execute()
         {
+            Trace();
             if (State == VMState.BREAK)
                 State = VMState.NONE;
             while (State != VMState.HALT && State != VMState.FAULT)
@@ -1241,6 +1246,10 @@ namespace Neo.VM
                 catch
                 {
                     State = VMState.FAULT;
+                }
+                finally
+                {
+                    Trace();
                 }
             }
         }
