@@ -1303,16 +1303,16 @@ namespace Neo.VM
             return false;
         }
 
-        public ExecutionContext LoadClonedContext(int initialPosition)
+        public ExecutionContext LoadClonedContext(int initialPosition, int rvcount = 0)
         {
-            return LoadClonedContext(CurrentContext, initialPosition);
+            return LoadClonedContext(CurrentContext, initialPosition, rvcount);
         }
 
-        public ExecutionContext LoadClonedContext(ExecutionContext context, int initialPosition)
+        public ExecutionContext LoadClonedContext(ExecutionContext context, int initialPosition, int rvcount = 0)
         {
             if (initialPosition < 0 || initialPosition > context.Script.Length)
                 throw new ArgumentOutOfRangeException(nameof(initialPosition));
-            context = context.Clone();
+            context = context.Clone(rvcount);
             context.InstructionPointer = initialPosition;
             LoadContext(context);
             return context;
