@@ -1303,6 +1303,7 @@ namespace Neo.VM
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ExecutionContext LoadClonedContext(int initialPosition, int rvcount = 0)
         {
             return LoadClonedContext(CurrentContext, initialPosition, rvcount);
