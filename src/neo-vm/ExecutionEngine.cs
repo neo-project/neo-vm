@@ -1303,11 +1303,12 @@ namespace Neo.VM
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ExecutionContext LoadClonedContext(int initialPosition)
         {
             if (initialPosition < 0 || initialPosition > CurrentContext.Script.Length)
                 throw new ArgumentOutOfRangeException(nameof(initialPosition));
-            ExecutionContext context = CurrentContext.Clone();
+            ExecutionContext context = CurrentContext.Clone(0);
             context.InstructionPointer = initialPosition;
             LoadContext(context);
             return context;

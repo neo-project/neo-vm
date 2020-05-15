@@ -78,9 +78,9 @@ namespace Neo.VM
             this.RVCount = rvcount;
         }
 
-        internal ExecutionContext Clone()
+        public ExecutionContext Clone(int rvcount)
         {
-            return new ExecutionContext(shared_states, 0);
+            return new ExecutionContext(shared_states, rvcount);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -21,7 +21,7 @@ namespace Neo.Test
 
             // Test clone
 
-            var copy = context.Clone();
+            var copy = context.Clone(0);
             var copyStack = copy.GetState<Stack<int>>();
             Assert.AreEqual(1, copyStack.Count);
             copyStack.Push(200);
