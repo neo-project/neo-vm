@@ -78,7 +78,7 @@ namespace Neo.VM
             this.RVCount = rvcount;
         }
 
-        internal ExecutionContext Clone(int rvcount = 0)
+        public ExecutionContext Clone(int rvcount)
         {
             return new ExecutionContext(shared_states, rvcount);
         }
