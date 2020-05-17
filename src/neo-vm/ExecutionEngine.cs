@@ -12,6 +12,8 @@ namespace Neo.VM
 {
     public class ExecutionEngine : IDisposable
     {
+        private VMState state = VMState.BREAK;
+
         #region Limits Variables
 
         /// <summary>
@@ -41,8 +43,23 @@ namespace Neo.VM
         public ExecutionContext CurrentContext { get; private set; }
         public ExecutionContext EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }
-        public VMState State { get; internal protected set; } = VMState.BREAK;
         public StackItem UncaughtException { get; private set; }
+
+        public VMState State
+        {
+            get
+            {
+                return state;
+            }
+            internal protected set
+            {
+                if (state != value)
+                {
+                    state = value;
+                    OnStateChanged();
+                }
+            }
+        }
 
         public ExecutionEngine()
         {
@@ -1331,6 +1348,10 @@ namespace Neo.VM
             };
             LoadContext(context);
             return context;
+        }
+
+        protected virtual void OnStateChanged()
+        {
         }
 
         protected virtual bool OnSysCall(uint method) => false;
