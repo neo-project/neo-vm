@@ -21,7 +21,7 @@ namespace Neo.Test
         {
             foreach (var test in ut.Tests)
             {
-                Assert.IsFalse(string.IsNullOrEmpty(test.Name), "Name it's required");
+                Assert.IsFalse(string.IsNullOrEmpty(test.Name), "Name is required");
 
                 using (var engine = new TestEngine())
                 {
