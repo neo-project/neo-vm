@@ -1,6 +1,6 @@
 namespace Neo.VM
 {
-    public enum ExceptionHandingState : byte
+    public enum ExceptionHandlingState : byte
     {
         Try,
         Catch,
