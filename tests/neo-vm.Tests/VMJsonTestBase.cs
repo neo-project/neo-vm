@@ -1,3 +1,4 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.Test.Extensions;
 using Neo.Test.Types;
 using Neo.VM;
@@ -20,6 +21,8 @@ namespace Neo.Test
         {
             foreach (var test in ut.Tests)
             {
+                Assert.IsFalse(string.IsNullOrEmpty(test.Name), "Name it's required");
+
                 using (var engine = new TestEngine())
                 {
                     Debugger debugger = new Debugger(engine);

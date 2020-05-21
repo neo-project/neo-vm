@@ -48,12 +48,7 @@ namespace Neo.Test
                 var json = File.ReadAllText(realFile, Encoding.UTF8);
                 var ut = json.DeserializeJson<VMUT>();
 
-                if (string.IsNullOrEmpty(ut.Name))
-                {
-                    // Add filename
-
-                    ut.Name += $" [{Path.GetFileNameWithoutExtension(realFile)}]";
-                }
+                Assert.IsFalse(string.IsNullOrEmpty(ut.Name), "Name it's required");
 
                 if (json != ut.ToJson().Replace("\r\n", "\n"))
                 {

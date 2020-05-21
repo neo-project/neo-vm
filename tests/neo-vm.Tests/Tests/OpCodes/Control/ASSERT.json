@@ -3,6 +3,7 @@
   "name": "ASSERT",
   "tests": [
     {
+      "name": "Fault Test",
       "script": [
         "PUSH0",
         "ASSERT"
@@ -20,6 +21,7 @@
       ]
     },
     {
+      "name": "Halt Test",
       "script": [
         "PUSH1",
         "ASSERT"

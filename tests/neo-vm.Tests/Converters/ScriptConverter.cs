@@ -1,3 +1,4 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.Test.Extensions;
 using Neo.VM;
 using Newtonsoft.Json;
@@ -34,7 +35,11 @@ namespace Neo.Test.Converters
             {
                 case JsonToken.String:
                     {
-                        if (reader.Value is string str) return str.FromHexString();
+                        if (reader.Value is string str)
+                        {
+                            Assert.IsTrue(str.StartsWith("0x"), "'0x' prefix required");
+                            return str.FromHexString();
+                        }
                         break;
                     }
                 case JsonToken.Bytes:

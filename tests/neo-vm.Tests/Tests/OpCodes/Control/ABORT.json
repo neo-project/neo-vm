@@ -3,6 +3,7 @@
   "name": "ABORT",
   "tests": [
     {
+      "name": "Basic Test",
       "script": [
         "ABORT"
       ],

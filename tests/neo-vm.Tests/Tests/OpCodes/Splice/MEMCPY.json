@@ -6,14 +6,14 @@
       "name": "Max Item Length",
       "script": [
         "PUSH4",
-        "NEWBUFFER", //dst
-        "PUSHINT32", //di
+        "NEWBUFFER",
+        "PUSHINT32",
         "0x00001000",
-        "PUSHDATA1", //src
+        "PUSHDATA1",
         "0x02",
         "0x1111",
-        "PUSH0", //si
-        "PUSH2", //n
+        "PUSH0",
+        "PUSH2",
         "MEMCPY"
       ],
       "steps": [
@@ -72,13 +72,13 @@
       "name": "Negative di",
       "script": [
         "PUSH4",
-        "NEWBUFFER", //dst
-        "PUSHM1", //di
-        "PUSHDATA1", //src
+        "NEWBUFFER",
+        "PUSHM1",
+        "PUSHDATA1",
         "0x02",
         "0x1111",
-        "PUSH0", //si
-        "PUSH2", //n
+        "PUSH0",
+        "PUSH2",
         "MEMCPY"
       ],
       "steps": [
@@ -137,14 +137,14 @@
       "name": "Negative si",
       "script": [
         "PUSH4",
-        "NEWBUFFER", //dst
-        "PUSHINT32", //di
+        "NEWBUFFER",
+        "PUSHINT32",
         "0x00001000",
-        "PUSHDATA1", //src
+        "PUSHDATA1",
         "0x02",
         "0x1111",
-        "PUSHM1", //si
-        "PUSH2", //n
+        "PUSHM1",
+        "PUSH2",
         "MEMCPY"
       ],
       "steps": [
@@ -203,14 +203,14 @@
       "name": "Negative n",
       "script": [
         "PUSH4",
-        "NEWBUFFER", //dst
-        "PUSHINT32", //di
+        "NEWBUFFER",
+        "PUSHINT32",
         "0x00001000",
-        "PUSHDATA1", //src
+        "PUSHDATA1",
         "0x02",
         "0x1111",
-        "PUSH0", //si
-        "PUSHM1", //n
+        "PUSH0",
+        "PUSHM1",
         "MEMCPY"
       ],
       "steps": [
@@ -268,15 +268,15 @@
     {
       "name": "Wrong type [Array]",
       "script": [
-        "PUSH0", //dst (wrong type: Array)
+        "PUSH0",
         "NEWARRAY",
-        "PUSHINT32", //di
+        "PUSHINT32",
         "0x00001000",
-        "PUSHDATA1", //src
+        "PUSHDATA1",
         "0x02",
         "0x1111",
-        "PUSH0", //si
-        "PUSH2", //n
+        "PUSH0",
+        "PUSH2",
         "MEMCPY"
       ],
       "steps": [
@@ -352,13 +352,13 @@
       "script": [
         "PUSH4",
         "NEWBUFFER",
-        "DUP", //dst
-        "PUSH1", //di
-        "PUSHDATA1", //src
+        "DUP",
+        "PUSH1",
+        "PUSHDATA1",
         "0x02",
         "0x1111",
-        "PUSH0", //si
-        "PUSH2", //n
+        "PUSH0",
+        "PUSH2",
         "MEMCPY"
       ],
       "steps": [
