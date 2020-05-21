@@ -48,7 +48,7 @@ namespace Neo.Test
                 var json = File.ReadAllText(realFile, Encoding.UTF8);
                 var ut = json.DeserializeJson<VMUT>();
 
-                Assert.IsFalse(string.IsNullOrEmpty(ut.Name), "Name it's required");
+                Assert.IsFalse(string.IsNullOrEmpty(ut.Name), "Name is required");
 
                 if (json != ut.ToJson().Replace("\r\n", "\n"))
                 {
