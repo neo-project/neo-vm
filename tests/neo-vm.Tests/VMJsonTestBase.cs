@@ -174,6 +174,7 @@ namespace Neo.Test
                 case VMUTStackItemType.Buffer:
                     {
                         var value = ret["value"].Value<string>();
+                        Assert.IsTrue(string.IsNullOrEmpty(value) || value.StartsWith("0x"), $"'0x' prefix required for value: '{value}'");
                         ret["value"] = value.FromHexString();
                         break;
                     }

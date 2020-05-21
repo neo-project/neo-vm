@@ -283,15 +283,15 @@
       "name": "CAT Buffers",
       "script": [
         "PUSHDATA1",
-        "01AA",
+        "0x01AA",
         "CONVERT",
         "0x30",
         "PUSHDATA1",
-        "01BB",
+        "0x01BB",
         "CONVERT",
         "0x30",
         "INITSLOT",
-        "0002",
+        "0x0002",
         "LDARG1",
         "LDARG0",
         "CAT"
@@ -313,11 +313,11 @@
                 "evaluationStack": [
                   {
                     "type": "Buffer",
-                    "value": "BB"
+                    "value": "0xBB"
                   },
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   }
                 ]
               }
@@ -337,11 +337,11 @@
                 "arguments": [
                   {
                     "type": "Buffer",
-                    "value": "BB"
+                    "value": "0xBB"
                   },
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   }
                 ]
               }
@@ -362,21 +362,21 @@
                 "evaluationStack": [
                   {
                     "type": "Buffer",
-                    "value": "BB"
+                    "value": "0xBB"
                   },
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   }
                 ],
                 "arguments": [
                   {
                     "type": "Buffer",
-                    "value": "BB"
+                    "value": "0xBB"
                   },
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   }
                 ]
               }
@@ -396,24 +396,23 @@
                 "evaluationStack": [
                   {
                     "type": "Buffer",
-                    "value": "AABB"
+                    "value": "0xAABB"
                   }
                 ],
                 "arguments": [
                   {
                     "type": "Buffer",
-                    "value": "BB"
+                    "value": "0xBB"
                   },
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   }
                 ]
               }
             ]
           }
         }
-
       ]
     }
   ]

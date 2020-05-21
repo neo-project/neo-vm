@@ -1132,11 +1132,11 @@
       "name": "Real test [Buffer,Buffer]=true",
       "script": [
         "PUSHDATA1",
-        "01AA",
+        "0x01AA",
         "CONVERT",
         "0x30",
         "PUSHDATA1",
-        "01BB",
+        "0x01BB",
         "CONVERT",
         "0x30",
         "NOTEQUAL"
@@ -1158,11 +1158,11 @@
                 "evaluationStack": [
                   {
                     "type": "Buffer",
-                    "value": "BB"
+                    "value": "0xBB"
                   },
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   }
                 ]
               }
@@ -1189,11 +1189,11 @@
       "name": "Real test [Buffer,Buffer]=true",
       "script": [
         "PUSHDATA1",
-        "01AA",
+        "0x01AA",
         "CONVERT",
         "0x30",
         "PUSHDATA1",
-        "01AA",
+        "0x01AA",
         "CONVERT",
         "0x30",
         "NOTEQUAL"
@@ -1215,11 +1215,11 @@
                 "evaluationStack": [
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   },
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   }
                 ]
               }
@@ -1246,7 +1246,7 @@
       "name": "Real test [Buffer,Buffer]=false",
       "script": [
         "PUSHDATA1",
-        "01AA",
+        "0x01AA",
         "CONVERT",
         "0x30",
         "DUP",
@@ -1268,11 +1268,11 @@
                 "evaluationStack": [
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   },
                   {
                     "type": "Buffer",
-                    "value": "AA"
+                    "value": "0xAA"
                   }
                 ]
               }

@@ -44,6 +44,8 @@ namespace Neo.Test
         {
             foreach (var file in Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
             {
+                Console.WriteLine($"Processing file '{file}'");
+
                 var realFile = Path.GetFullPath(file);
                 var json = File.ReadAllText(realFile, Encoding.UTF8);
                 var ut = json.DeserializeJson<VMUT>();

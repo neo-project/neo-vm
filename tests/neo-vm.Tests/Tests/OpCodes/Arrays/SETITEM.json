@@ -230,7 +230,7 @@
       "name": "Real test [Map]",
       "script": [
         "INITSSLOT",
-        "01",
+        "0x01",
         "NEWMAP",
         "DUP",
         "STSFLD0",
@@ -656,7 +656,7 @@
       "name": "Clone test [Array]",
       "script": [
         "INITSSLOT",
-        "01",
+        "0x01",
         "PUSH1",
         "NEWARRAY",
         "DUP",
@@ -908,7 +908,7 @@
       "name": "Clone test [Struct]",
       "script": [
         "INITSSLOT",
-        "01",
+        "0x01",
         "PUSH1",
         "NEWSTRUCT",
         "DUP",

@@ -193,7 +193,7 @@
       "name": "Real test [Array]",
       "script": [
         "INITSSLOT",
-        "01",
+        "0x01",
         "PUSH3",
         "NEWARRAY",
         "STSFLD0",
@@ -346,7 +346,7 @@
       "name": "Real test [Struct]",
       "script": [
         "INITSSLOT",
-        "01",
+        "0x01",
         "PUSH3",
         "NEWSTRUCT",
         "STSFLD0",
