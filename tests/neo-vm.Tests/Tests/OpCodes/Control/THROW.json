@@ -3,6 +3,7 @@
   "name": "THROW",
   "tests": [
     {
+      "name": "Fault Test",
       "script": [
         "PUSH0",
         "THROW"

@@ -1,8 +1,9 @@
-﻿{
+{
   "category": "Push",
   "name": "From PUSHM1 to PUSH16 [-1 to 16]",
   "tests": [
     {
+      "name": "Basic Test",
       "script": [
         "PUSHM1",
         "PUSH0",

@@ -44,16 +44,13 @@ namespace Neo.Test
         {
             foreach (var file in Directory.GetFiles(path, "*.json", SearchOption.AllDirectories))
             {
+                Console.WriteLine($"Processing file '{file}'");
+
                 var realFile = Path.GetFullPath(file);
                 var json = File.ReadAllText(realFile, Encoding.UTF8);
                 var ut = json.DeserializeJson<VMUT>();
 
-                if (string.IsNullOrEmpty(ut.Name))
-                {
-                    // Add filename
-
-                    ut.Name += $" [{Path.GetFileNameWithoutExtension(realFile)}]";
-                }
+                Assert.IsFalse(string.IsNullOrEmpty(ut.Name), "Name is required");
 
                 if (json != ut.ToJson().Replace("\r\n", "\n"))
                 {

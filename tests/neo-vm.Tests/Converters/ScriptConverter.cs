@@ -1,3 +1,4 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.Test.Extensions;
 using Neo.VM;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ namespace Neo.Test.Converters
 
         private static readonly Regex _multiplyRegex = new Regex
             (
-            @"\(?(0x)?(?<data>[a-zA-Z0-9]+)\)?\*\(?(?<count>[0-9]+)\)?",
+            @"\(?(?<data>[a-zA-Z0-9]+)\)?\*\(?(?<count>[0-9]+)\)?",
             RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Singleline
             );
 
@@ -34,7 +35,11 @@ namespace Neo.Test.Converters
             {
                 case JsonToken.String:
                     {
-                        if (reader.Value is string str) return str.FromHexString();
+                        if (reader.Value is string str)
+                        {
+                            Assert.IsTrue(str.StartsWith("0x"), $"'0x' prefix required for value: '{str}'");
+                            return str.FromHexString();
+                        }
                         break;
                     }
                 case JsonToken.Bytes:
@@ -70,6 +75,7 @@ namespace Neo.Test.Converters
                                 {
                                     for (int x = 0; x < mul; x++)
                                     {
+                                        Assert.IsTrue(value.StartsWith("0x"), $"'0x' prefix required for value: '{value}'");
                                         script.EmitRaw(value.FromHexString());
                                     }
                                 }

@@ -6,7 +6,7 @@
       "name": "More than 1024 ExecutionContext",
       "script": [
         "INITSSLOT",
-        "01",
+        "0x01",
         "PUSHDATA1",
         "0x02",
         "0x0004",

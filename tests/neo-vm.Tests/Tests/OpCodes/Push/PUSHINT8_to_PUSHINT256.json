@@ -1,8 +1,9 @@
-﻿{
+{
   "category": "Push",
   "name": "PUSHINT8 to PUSHINT256",
   "tests": [
     {
+      "name": "Basic Test",
       "script": [
         "PUSHINT8",
         "0xff",

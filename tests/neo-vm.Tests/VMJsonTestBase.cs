@@ -1,3 +1,4 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.Test.Extensions;
 using Neo.Test.Types;
 using Neo.VM;
@@ -20,6 +21,8 @@ namespace Neo.Test
         {
             foreach (var test in ut.Tests)
             {
+                Assert.IsFalse(string.IsNullOrEmpty(test.Name), "Name is required");
+
                 using (var engine = new TestEngine())
                 {
                     Debugger debugger = new Debugger(engine);
@@ -171,6 +174,7 @@ namespace Neo.Test
                 case VMUTStackItemType.Buffer:
                     {
                         var value = ret["value"].Value<string>();
+                        Assert.IsTrue(string.IsNullOrEmpty(value) || value.StartsWith("0x"), $"'0x' prefix required for value: '{value}'");
                         ret["value"] = value.FromHexString();
                         break;
                     }
