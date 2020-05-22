@@ -341,7 +341,7 @@ namespace Neo.VM
                 case OpCode.ENDFINALLY:
                     {
                         if (context.TryStack is null) return false;
-                        if (!context.TryStack.TryPop(out ExceptionHandingContext currentTry))
+                        if (!context.TryStack.TryPop(out ExceptionHandlingContext currentTry))
                             return false;
 
                         if (UncaughtException != null) return HandleException();
@@ -1202,14 +1202,14 @@ namespace Neo.VM
         private bool ExecuteEndTry(int endOffset)
         {
             if (CurrentContext.TryStack is null) return false;
-            if (!CurrentContext.TryStack.TryPeek(out ExceptionHandingContext currentTry))
+            if (!CurrentContext.TryStack.TryPeek(out ExceptionHandlingContext currentTry))
                 return false;
-            if (currentTry.State == ExceptionHandingState.Finally) return false;
+            if (currentTry.State == ExceptionHandlingState.Finally) return false;
 
             int endPointer = checked(CurrentContext.InstructionPointer + endOffset);
             if (currentTry.HasFinally)
             {
-                currentTry.State = ExceptionHandingState.Finally;
+                currentTry.State = ExceptionHandlingState.Finally;
                 currentTry.EndPointer = endPointer;
                 CurrentContext.InstructionPointer = currentTry.FinallyPointer;
             }
@@ -1277,8 +1277,8 @@ namespace Neo.VM
             if (catchOffset == 0 && finallyOffset == 0) return false;
             int catchPointer = catchOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + catchOffset);
             int finallyPointer = finallyOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + finallyOffset);
-            CurrentContext.TryStack ??= new Stack<ExceptionHandingContext>();
-            CurrentContext.TryStack.Push(new ExceptionHandingContext(catchPointer, finallyPointer));
+            CurrentContext.TryStack ??= new Stack<ExceptionHandlingContext>();
+            CurrentContext.TryStack.Push(new ExceptionHandlingContext(catchPointer, finallyPointer));
             return true;
         }
 
@@ -1291,7 +1291,7 @@ namespace Neo.VM
                 {
                     while (executionContext.TryStack.TryPeek(out var tryContext))
                     {
-                        if (tryContext.State == ExceptionHandingState.Finally || (tryContext.State == ExceptionHandingState.Catch && !tryContext.HasFinally))
+                        if (tryContext.State == ExceptionHandlingState.Finally || (tryContext.State == ExceptionHandlingState.Catch && !tryContext.HasFinally))
                         {
                             executionContext.TryStack.Pop();
                             continue;
@@ -1300,16 +1300,16 @@ namespace Neo.VM
                         {
                             ContextUnloaded(InvocationStack.Pop());
                         }
-                        if (tryContext.State == ExceptionHandingState.Try && tryContext.HasCatch)
+                        if (tryContext.State == ExceptionHandlingState.Try && tryContext.HasCatch)
                         {
-                            tryContext.State = ExceptionHandingState.Catch;
+                            tryContext.State = ExceptionHandlingState.Catch;
                             Push(UncaughtException);
                             executionContext.InstructionPointer = tryContext.CatchPointer;
                             UncaughtException = null;
                         }
                         else
                         {
-                            tryContext.State = ExceptionHandingState.Finally;
+                            tryContext.State = ExceptionHandlingState.Finally;
                             executionContext.InstructionPointer = tryContext.FinallyPointer;
                         }
                         return true;
