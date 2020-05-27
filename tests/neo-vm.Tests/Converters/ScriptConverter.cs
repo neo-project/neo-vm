@@ -36,32 +36,31 @@ namespace Neo.Test.Converters
                     }
                 case JsonToken.StartArray:
                     {
-                        using (var script = new ScriptBuilder())
-                        {
-                            foreach (var entry in JArray.Load(reader))
-                            {
-                                var mul = 1;
-                                var value = entry.Value<string>();
+                        using var script = new ScriptBuilder();
 
-                                if (Enum.IsDefined(typeof(OpCode), value) && Enum.TryParse<OpCode>(value, out var opCode))
+                        foreach (var entry in JArray.Load(reader))
+                        {
+                            var mul = 1;
+                            var value = entry.Value<string>();
+
+                            if (Enum.IsDefined(typeof(OpCode), value) && Enum.TryParse<OpCode>(value, out var opCode))
+                            {
+                                for (int x = 0; x < mul; x++)
                                 {
-                                    for (int x = 0; x < mul; x++)
-                                    {
-                                        script.Emit(opCode);
-                                    }
-                                }
-                                else
-                                {
-                                    for (int x = 0; x < mul; x++)
-                                    {
-                                        Assert.IsTrue(value.StartsWith("0x"), $"'0x' prefix required for value: '{value}'");
-                                        script.EmitRaw(value.FromHexString());
-                                    }
+                                    script.Emit(opCode);
                                 }
                             }
-
-                            return script.ToArray();
+                            else
+                            {
+                                for (int x = 0; x < mul; x++)
+                                {
+                                    Assert.IsTrue(value.StartsWith("0x"), $"'0x' prefix required for value: '{value}'");
+                                    script.EmitRaw(value.FromHexString());
+                                }
+                            }
                         }
+
+                        return script.ToArray();
                     }
             }
 
@@ -125,24 +124,23 @@ namespace Neo.Test.Converters
 
                 // Double check - Ensure that the format is exactly the same
 
-                using (var script = new ScriptBuilder())
-                {
-                    foreach (var entry in array)
-                    {
-                        if (Enum.TryParse<OpCode>(entry.Value<string>(), out var opCode))
-                        {
-                            script.Emit(opCode);
-                        }
-                        else
-                        {
-                            script.EmitRaw(entry.Value<string>().FromHexString());
-                        }
-                    }
+                using var script = new ScriptBuilder();
 
-                    if (script.ToArray().ToHexString() != data.ToHexString())
+                foreach (var entry in array)
+                {
+                    if (Enum.TryParse<OpCode>(entry.Value<string>(), out var opCode))
                     {
-                        throw new FormatException();
+                        script.Emit(opCode);
                     }
+                    else
+                    {
+                        script.EmitRaw(entry.Value<string>().FromHexString());
+                    }
+                }
+
+                if (script.ToArray().ToHexString() != data.ToHexString())
+                {
+                    throw new FormatException();
                 }
             }
             else
