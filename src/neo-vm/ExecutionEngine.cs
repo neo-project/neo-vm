@@ -352,8 +352,6 @@ namespace Neo.VM
                 case OpCode.RET:
                     {
                         ExecutionContext context_pop = InvocationStack.Pop();
-                        int rvcount = context_pop.RVCount;
-                        if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
                         EvaluationStack stack_eval = InvocationStack.Count == 0 ? ResultStack : InvocationStack.Peek().EvaluationStack;
                         if (context_pop.EvaluationStack == stack_eval)
                         {
@@ -361,6 +359,8 @@ namespace Neo.VM
                         }
                         else
                         {
+                            int rvcount = context_pop.RVCount;
+                            if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
                             if (context_pop.EvaluationStack.Count != rvcount) return false;
                             if (rvcount > 0)
                                 context_pop.EvaluationStack.CopyTo(stack_eval);
