@@ -10,7 +10,7 @@ namespace Neo.Test
         [TestMethod]
         public void StateTest()
         {
-            var context = new ExecutionContext(null, 0, new ReferenceCounter());
+            var context = new ExecutionContext(null, new ReferenceCounter());
 
             var stack = context.GetState<Stack<int>>();
             Assert.AreEqual(0, stack.Count);
@@ -21,7 +21,7 @@ namespace Neo.Test
 
             // Test clone
 
-            var copy = context.Clone(0);
+            var copy = context.Clone();
             var copyStack = copy.GetState<Stack<int>>();
             Assert.AreEqual(1, copyStack.Count);
             copyStack.Push(200);

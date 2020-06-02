@@ -352,23 +352,11 @@ namespace Neo.VM
                 case OpCode.RET:
                     {
                         ExecutionContext context_pop = InvocationStack.Pop();
-                        int rvcount = context_pop.RVCount;
-                        if (rvcount == -1) rvcount = context_pop.EvaluationStack.Count;
                         EvaluationStack stack_eval = InvocationStack.Count == 0 ? ResultStack : InvocationStack.Peek().EvaluationStack;
-                        if (context_pop.EvaluationStack == stack_eval)
-                        {
-                            if (context_pop.RVCount != 0) return false;
-                        }
-                        else
-                        {
-                            if (context_pop.EvaluationStack.Count != rvcount) return false;
-                            if (rvcount > 0)
-                                context_pop.EvaluationStack.CopyTo(stack_eval);
-                        }
+                        if (context_pop.EvaluationStack != stack_eval)
+                            context_pop.EvaluationStack.CopyTo(stack_eval);
                         if (InvocationStack.Count == 0)
-                        {
                             State = VMState.HALT;
-                        }
                         ContextUnloaded(context_pop);
                         return true;
                     }
@@ -1325,7 +1313,7 @@ namespace Neo.VM
         {
             if (initialPosition < 0 || initialPosition > CurrentContext.Script.Length)
                 throw new ArgumentOutOfRangeException(nameof(initialPosition));
-            ExecutionContext context = CurrentContext.Clone(0);
+            ExecutionContext context = CurrentContext.Clone();
             context.InstructionPointer = initialPosition;
             LoadContext(context);
             return context;
@@ -1340,9 +1328,9 @@ namespace Neo.VM
             CurrentContext = context;
         }
 
-        public ExecutionContext LoadScript(Script script, int rvcount = -1, int initialPosition = 0)
+        public ExecutionContext LoadScript(Script script, int initialPosition = 0)
         {
-            ExecutionContext context = new ExecutionContext(script, rvcount, ReferenceCounter)
+            ExecutionContext context = new ExecutionContext(script, ReferenceCounter)
             {
                 InstructionPointer = initialPosition
             };
