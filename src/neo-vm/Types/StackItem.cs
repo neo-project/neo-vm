@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
-    public abstract class StackItem
+    public abstract class StackItem : IEquatable<StackItem>
     {
         public static StackItem False { get; } = new Boolean(false);
         public bool IsNull => this is Null;
