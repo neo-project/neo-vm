@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -20,6 +21,11 @@ namespace Neo.VM.Types
         internal abstract int SubItemsCount { get; }
 
         public abstract void Clear();
+
+        public override int GetHashCode()
+        {
+            throw new NotSupportedException();
+        }
 
         public override bool ToBoolean()
         {

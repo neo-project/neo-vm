@@ -1,3 +1,5 @@
+#pragma warning disable CS0659
+
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -35,11 +37,6 @@ namespace Neo.VM.Types
         {
             if (value is null) return Null;
             return new InteropInterface(value);
-        }
-
-        public override int GetHashCode()
-        {
-            throw new NotSupportedException();
         }
 
         public abstract bool ToBoolean();

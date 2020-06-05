@@ -20,8 +20,9 @@ namespace Neo.Test
             Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
 
             itemA = new VM.Types.Buffer(1);
+            itemB = new VM.Types.Buffer(1);
 
-            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+            Assert.IsTrue(itemA.GetHashCode() != itemB.GetHashCode());
 
             itemA = true;
             itemB = true;
