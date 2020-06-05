@@ -20,11 +20,8 @@ namespace Neo.Test
             Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
 
             itemA = new VM.Types.Buffer(1);
-            itemB = new VM.Types.Buffer(1);
-            itemC = new VM.Types.Buffer(123);
 
-            Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
-            Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
+            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
 
             itemA = true;
             itemB = true;
@@ -41,8 +38,9 @@ namespace Neo.Test
             Assert.IsTrue(itemA.GetHashCode() != itemC.GetHashCode());
 
             itemA = new Null();
+            itemB = new Null();
 
-            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+            Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
 
             itemA = new VM.Types.Array();
 
@@ -57,8 +55,9 @@ namespace Neo.Test
             Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
 
             itemA = new InteropInterface(123);
+            itemB = new InteropInterface(123);
 
-            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+            Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
 
             var script = new Script(new byte[0]);
             itemA = new Pointer(script, 123);

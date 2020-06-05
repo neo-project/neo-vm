@@ -19,7 +19,17 @@ namespace Neo.VM.Types
             throw new InvalidCastException();
         }
 
-        public abstract override bool Equals(object obj);
+        public sealed override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj is StackItem item) return Equals(item);
+            return false;
+        }
+
+        public virtual bool Equals(StackItem other)
+        {
+            return ReferenceEquals(this, other);
+        }
 
         public static StackItem FromInterface(object value)
         {
@@ -27,7 +37,10 @@ namespace Neo.VM.Types
             return new InteropInterface(value);
         }
 
-        public abstract override int GetHashCode();
+        public override int GetHashCode()
+        {
+            throw new NotSupportedException();
+        }
 
         public abstract bool ToBoolean();
 
