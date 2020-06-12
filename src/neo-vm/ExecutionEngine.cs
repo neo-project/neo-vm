@@ -1245,8 +1245,8 @@ namespace Neo.VM
                 }
                 catch (Exception e)
                 {
-                    UncaughtException = e.ToString();
                     State = VMState.FAULT;
+                    UncaughtException = new VMArray(ReferenceCounter, new StackItem[] { e.Message, e.Source, e.StackTrace });
                 }
             }
         }
