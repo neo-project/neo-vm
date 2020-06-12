@@ -119,10 +119,9 @@ namespace Neo.VM
             return State;
         }
 
-        private bool ExecuteInstruction()
+        private bool ExecuteInstruction(Instruction instruction)
         {
             ExecutionContext context = CurrentContext;
-            Instruction instruction = context.CurrentInstruction;
             switch (instruction.OpCode)
             {
                 //Push
@@ -1240,8 +1239,9 @@ namespace Neo.VM
                 try
                 {
                     if (!PreExecuteInstruction()) OnFault(new Exception(nameof(PreExecuteInstruction)));
-                    if (!ExecuteInstruction()) OnFault(new Exception(nameof(ExecuteInstruction)));
-                    if (!PostExecuteInstruction(CurrentContext.CurrentInstruction)) OnFault(new Exception(nameof(PostExecuteInstruction)));
+                    Instruction instruction = CurrentContext.CurrentInstruction;
+                    if (!ExecuteInstruction(instruction)) OnFault(new Exception(nameof(ExecuteInstruction)));
+                    if (!PostExecuteInstruction(instruction)) OnFault(new Exception(nameof(PostExecuteInstruction)));
                 }
                 catch (Exception e)
                 {
