@@ -1239,16 +1239,20 @@ namespace Neo.VM
             {
                 try
                 {
-                    Instruction instruction = CurrentContext.CurrentInstruction;
-                    if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
-                        State = VMState.FAULT;
+                    if (!PreExecuteInstruction()) OnFault(new Exception(nameof(PreExecuteInstruction)));
+                    if (!ExecuteInstruction()) OnFault(new Exception(nameof(ExecuteInstruction)));
+                    if (!PostExecuteInstruction(CurrentContext.CurrentInstruction)) OnFault(new Exception(nameof(PostExecuteInstruction)));
                 }
                 catch (Exception e)
                 {
-                    State = VMState.FAULT;
-                    UncaughtException = new VMArray(ReferenceCounter, new StackItem[] { e.Message, e.Source, e.StackTrace });
+                    OnFault(e);
                 }
             }
+        }
+
+        protected virtual void OnFault(Exception e)
+        {
+            State = VMState.FAULT;
         }
 
         private bool ExecuteStoreToSlot(Slot slot, int index)
