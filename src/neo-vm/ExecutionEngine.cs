@@ -1243,8 +1243,9 @@ namespace Neo.VM
                     if (!PreExecuteInstruction() || !ExecuteInstruction() || !PostExecuteInstruction(instruction))
                         State = VMState.FAULT;
                 }
-                catch
+                catch (Exception e)
                 {
+                    UncaughtException = e.ToString();
                     State = VMState.FAULT;
                 }
             }
