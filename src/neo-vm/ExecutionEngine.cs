@@ -194,120 +194,120 @@ namespace Neo.VM
                 case OpCode.JMP:
                     {
                         ExecuteJump(true, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMP_L:
                     {
                         ExecuteJump(true, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPIF:
                     {
                         var x = PopBoolean();
                         ExecuteJump(x, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPIF_L:
                     {
                         var x = PopBoolean();
                         ExecuteJump(x, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPIFNOT:
                     {
                         var x = PopBoolean();
                         ExecuteJump(!x, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPIFNOT_L:
                     {
                         var x = PopBoolean();
                         ExecuteJump(!x, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPEQ:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 == x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPEQ_L:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 == x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPNE:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 != x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPNE_L:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 != x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPGT:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 > x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPGT_L:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 > x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPGE:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 >= x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPGE_L:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 >= x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPLT:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 < x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPLT_L:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 < x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPLE:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 <= x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPLE_L:
                     {
                         var x2 = PopBigInteger();
                         var x1 = PopBigInteger();
                         ExecuteJump(x1 <= x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.CALL:
                     {
@@ -330,23 +330,19 @@ namespace Neo.VM
                 case OpCode.ABORT:
                     {
                         OnFault(null);
-                        return;
+                        break;
                     }
                 case OpCode.ASSERT:
                     {
                         var x = PopBoolean();
-                        if (!x)
-                        {
-                            OnFault(null);
-                            return;
-                        }
+                        if (!x) OnFault(null);
                         break;
                     }
                 case OpCode.THROW:
                     {
                         UncaughtException = Pop();
                         HandleException();
-                        return;
+                        break;
                     }
                 case OpCode.TRY:
                     {
@@ -366,13 +362,13 @@ namespace Neo.VM
                     {
                         int endOffset = instruction.TokenI8;
                         ExecuteEndTry(endOffset);
-                        return;
+                        break;
                     }
                 case OpCode.ENDTRY_L:
                     {
                         int endOffset = instruction.TokenI32;
                         ExecuteEndTry(endOffset);
-                        return;
+                        break;
                     }
                 case OpCode.ENDFINALLY:
                     {
@@ -388,7 +384,7 @@ namespace Neo.VM
                         }
 
                         context.InstructionPointer = currentTry.EndPointer;
-                        return;
+                        break;
                     }
                 case OpCode.RET:
                     {
@@ -399,7 +395,7 @@ namespace Neo.VM
                         if (InvocationStack.Count == 0)
                             State = VMState.HALT;
                         ContextUnloaded(context_pop);
-                        return;
+                        break;
                     }
                 case OpCode.SYSCALL:
                     {
