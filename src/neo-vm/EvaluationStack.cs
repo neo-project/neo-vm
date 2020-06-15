@@ -2,7 +2,6 @@ using Neo.VM.Types;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -76,7 +75,8 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Reverse(int n)
         {
-            if (n < 0 || n > innerList.Count) throw new ArgumentOutOfRangeException($"Reverse out of range exception. Value: {n}, Current: {innerList.Count}");
+            if (n < 0 || n > innerList.Count)
+                throw new ArgumentOutOfRangeException(nameof(n));
             if (n <= 1) return;
             innerList.Reverse(innerList.Count - n, n);
         }
