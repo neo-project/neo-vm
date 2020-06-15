@@ -66,14 +66,6 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public StackItem Pop()
-        {
-            if (!TryPop(out StackItem item))
-                throw new InvalidOperationException();
-            return item;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
         {
             innerList.Add(item);
@@ -101,33 +93,40 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryPop<T>(out T item) where T : StackItem
+        public StackItem Pop()
         {
-            return TryRemove(0, out item);
+            return Remove<StackItem>(0);
         }
 
-        internal bool TryRemove<T>(int index, out T item) where T : StackItem
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Pop<T>() where T : StackItem
+        {
+            return Remove<T>(0);
+        }
+
+        internal T Remove<T>(int index) where T : StackItem
         {
             if (index >= innerList.Count)
             {
-                item = default;
-                return false;
+                throw new InvalidOperationException("The stack doesn't have enough items");
             }
             if (index < 0)
             {
                 index += innerList.Count;
                 if (index < 0)
                 {
-                    item = default;
-                    return false;
+                    throw new InvalidOperationException("The stack doesn't have enough items");
                 }
             }
             index = innerList.Count - index - 1;
-            item = innerList[index] as T;
-            if (item is null) return false;
+            var item = innerList[index] as T;
+            if (item is null)
+            {
+                throw new ArgumentNullException("The stack item can't be null");
+            }
             innerList.RemoveAt(index);
             referenceCounter.RemoveStackReference(item);
-            return true;
+            return item;
         }
     }
 }
