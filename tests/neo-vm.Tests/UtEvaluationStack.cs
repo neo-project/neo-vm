@@ -120,7 +120,7 @@ namespace Neo.Test
         {
             var stack = CreateOrderedStack(3);
 
-            Assert.IsTrue(stack.Remove<Integer>().Equals(3));
+            Assert.IsTrue(stack.Remove<Integer>(0).Equals(3));
             Assert.IsTrue(stack.Remove<Integer>(0).Equals(2));
             Assert.IsTrue(stack.Remove<Integer>(-1).Equals(1));
 

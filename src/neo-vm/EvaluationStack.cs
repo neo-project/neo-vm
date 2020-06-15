@@ -104,7 +104,7 @@ namespace Neo.VM
             return Remove<T>(0);
         }
 
-        internal T Remove<T>(int index = 0) where T : StackItem
+        internal T Remove<T>(int index) where T : StackItem
         {
             if (index >= innerList.Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
