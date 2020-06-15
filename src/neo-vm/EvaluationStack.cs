@@ -107,23 +107,16 @@ namespace Neo.VM
         internal T Remove<T>(int index = 0) where T : StackItem
         {
             if (index >= innerList.Count)
-            {
-                throw new InvalidOperationException("The stack doesn't have enough items");
-            }
+                throw new ArgumentOutOfRangeException(nameof(index));
             if (index < 0)
             {
                 index += innerList.Count;
                 if (index < 0)
-                {
-                    throw new InvalidOperationException("The stack doesn't have enough items");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(index));
             }
             index = innerList.Count - index - 1;
-            var item = innerList[index] as T;
-            if (item is null)
-            {
-                throw new ArgumentNullException("The stack item can't be null");
-            }
+            if (!(innerList[index] is T item))
+                throw new InvalidCastException($"The item can't be cast to type {typeof(T)}");
             innerList.RemoveAt(index);
             referenceCounter.RemoveStackReference(item);
             return item;
