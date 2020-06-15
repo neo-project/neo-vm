@@ -377,13 +377,10 @@ namespace Neo.VM
                         if (!context.TryStack.TryPop(out ExceptionHandlingContext currentTry))
                             throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
 
-                        if (UncaughtException != null)
-                        {
+                        if (UncaughtException is null)
+                            context.InstructionPointer = currentTry.EndPointer;
+                        else
                             HandleException();
-                            return;
-                        }
-
-                        context.InstructionPointer = currentTry.EndPointer;
                         return;
                     }
                 case OpCode.RET:
