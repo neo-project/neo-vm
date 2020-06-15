@@ -2,6 +2,7 @@ using Neo.VM.Types;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -73,12 +74,11 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool Reverse(int n)
+        internal void Reverse(int n)
         {
-            if (n < 0 || n > innerList.Count) return false;
-            if (n <= 1) return true;
+            if (n < 0 || n > innerList.Count) throw new ArgumentOutOfRangeException($"Reverse out of range exception. Value: {n}, Current: {innerList.Count}");
+            if (n <= 1) return;
             innerList.Reverse(innerList.Count - n, n);
-            return true;
         }
 
         public bool TryPeek<T>(out T item) where T : StackItem
@@ -104,7 +104,7 @@ namespace Neo.VM
             return Remove<T>(0);
         }
 
-        internal T Remove<T>(int index) where T : StackItem
+        internal T Remove<T>(int index = 0) where T : StackItem
         {
             if (index >= innerList.Count)
             {

@@ -105,29 +105,27 @@ namespace Neo.Test
             Assert.AreEqual(1, stack.Pop());
 
             Assert.ThrowsException<InvalidOperationException>(() => stack.Pop());
+
+            stack = CreateOrderedStack(3);
+
+            Assert.IsTrue(stack.Pop<Integer>().Equals(3));
+            Assert.IsTrue(stack.Pop<Integer>().Equals(2));
+            Assert.IsTrue(stack.Pop<Integer>().Equals(1));
+
+            Assert.ThrowsException<InvalidOperationException>(() => stack.Pop<Integer>());
         }
 
         [TestMethod]
-        public void TestTryPopPush()
+        public void TestRemove()
         {
             var stack = CreateOrderedStack(3);
 
-            Assert.IsTrue(stack.Pop(out Integer item) && item.Equals(3));
-            Assert.IsTrue(stack.Pop(out item) && item.Equals(2));
-            Assert.IsTrue(stack.Pop(out item) && item.Equals(1));
-            Assert.IsFalse(stack.Pop(out item) && item.Equals(0));
-        }
+            Assert.IsTrue(stack.Remove<Integer>().Equals(3));
+            Assert.IsTrue(stack.Remove<Integer>(0).Equals(2));
+            Assert.IsTrue(stack.Remove<Integer>(-1).Equals(1));
 
-        [TestMethod]
-        public void TestTryRemove()
-        {
-            var stack = CreateOrderedStack(3);
-
-            Assert.IsTrue(stack.Remove(0, out Integer item) && item.Equals(3));
-            Assert.IsTrue(stack.Remove(0, out item) && item.Equals(2));
-            Assert.IsTrue(stack.Remove(-1, out item) && item.Equals(1));
-            Assert.IsFalse(stack.Remove(0, out item) && item.Equals(0));
-            Assert.IsFalse(stack.Remove(-1, out item) && item.Equals(0));
+            Assert.ThrowsException<InvalidOperationException>(() => stack.Remove<Integer>(0));
+            Assert.ThrowsException<InvalidOperationException>(() => stack.Remove<Integer>(-1));
         }
 
         [TestMethod]
@@ -135,22 +133,22 @@ namespace Neo.Test
         {
             var stack = CreateOrderedStack(3);
 
-            Assert.IsTrue(stack.Reverse(3));
-            Assert.IsTrue(stack.Pop(out Integer item) && item.Equals(1));
-            Assert.IsTrue(stack.Pop(out item) && item.Equals(2));
-            Assert.IsTrue(stack.Pop(out item) && item.Equals(3));
-            Assert.IsFalse(stack.Pop(out item) && item.Equals(0));
+            stack.Reverse(3);
+            Assert.IsTrue(stack.Pop<Integer>().Equals(1));
+            Assert.IsTrue(stack.Pop<Integer>().Equals(2));
+            Assert.IsTrue(stack.Pop<Integer>().Equals(3));
+            Assert.ThrowsException<InvalidOperationException>(() => stack.Pop<Integer>().Equals(0));
 
             stack = CreateOrderedStack(3);
 
-            Assert.IsFalse(stack.Reverse(-1));
-            Assert.IsFalse(stack.Reverse(4));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Reverse(-1));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Reverse(4));
 
-            Assert.IsTrue(stack.Reverse(1));
-            Assert.IsTrue(stack.Pop(out item) && item.Equals(3));
-            Assert.IsTrue(stack.Pop(out item) && item.Equals(2));
-            Assert.IsTrue(stack.Pop(out item) && item.Equals(1));
-            Assert.IsFalse(stack.Pop(out item) && item.Equals(0));
+            stack.Reverse(1);
+            Assert.IsTrue(stack.Pop<Integer>().Equals(3));
+            Assert.IsTrue(stack.Pop<Integer>().Equals(2));
+            Assert.IsTrue(stack.Pop<Integer>().Equals(1));
+            Assert.ThrowsException<InvalidOperationException>(() => stack.Pop<Integer>().Equals(0));
         }
     }
 }
