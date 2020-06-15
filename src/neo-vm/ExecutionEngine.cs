@@ -227,85 +227,85 @@ namespace Neo.VM
                     }
                 case OpCode.JMPEQ:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 == x2, instruction.TokenI8);
                         return;
                     }
                 case OpCode.JMPEQ_L:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 == x2, instruction.TokenI32);
                         return;
                     }
                 case OpCode.JMPNE:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 != x2, instruction.TokenI8);
                         return;
                     }
                 case OpCode.JMPNE_L:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 != x2, instruction.TokenI32);
                         return;
                     }
                 case OpCode.JMPGT:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 > x2, instruction.TokenI8);
                         return;
                     }
                 case OpCode.JMPGT_L:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 > x2, instruction.TokenI32);
                         return;
                     }
                 case OpCode.JMPGE:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 >= x2, instruction.TokenI8);
                         return;
                     }
                 case OpCode.JMPGE_L:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 >= x2, instruction.TokenI32);
                         return;
                     }
                 case OpCode.JMPLT:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 < x2, instruction.TokenI8);
                         return;
                     }
                 case OpCode.JMPLT_L:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 < x2, instruction.TokenI32);
                         return;
                     }
                 case OpCode.JMPLE:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 <= x2, instruction.TokenI8);
                         return;
                     }
                 case OpCode.JMPLE_L:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         ExecuteJump(x1 <= x2, instruction.TokenI32);
                         return;
                     }
@@ -705,28 +705,28 @@ namespace Neo.VM
                 // Bitwise logic
                 case OpCode.INVERT:
                     {
-                        var x = PopBigInteger();
+                        var x = PopInteger();
                         Push(~x);
                         break;
                     }
                 case OpCode.AND:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 & x2);
                         break;
                     }
                 case OpCode.OR:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 | x2);
                         break;
                     }
                 case OpCode.XOR:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 ^ x2);
                         break;
                     }
@@ -748,66 +748,66 @@ namespace Neo.VM
                 // Numeric
                 case OpCode.SIGN:
                     {
-                        var x = PopBigInteger();
+                        var x = PopInteger();
                         Push(x.Sign);
                         break;
                     }
                 case OpCode.ABS:
                     {
-                        var x = PopBigInteger();
+                        var x = PopInteger();
                         Push(BigInteger.Abs(x));
                         break;
                     }
                 case OpCode.NEGATE:
                     {
-                        var x = PopBigInteger();
+                        var x = PopInteger();
                         Push(-x);
                         break;
                     }
                 case OpCode.INC:
                     {
-                        var x = PopBigInteger();
+                        var x = PopInteger();
                         Push(x + 1);
                         break;
                     }
                 case OpCode.DEC:
                     {
-                        var x = PopBigInteger();
+                        var x = PopInteger();
                         Push(x - 1);
                         break;
                     }
                 case OpCode.ADD:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 + x2);
                         break;
                     }
                 case OpCode.SUB:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 - x2);
                         break;
                     }
                 case OpCode.MUL:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 * x2);
                         break;
                     }
                 case OpCode.DIV:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 / x2);
                         break;
                     }
                 case OpCode.MOD:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 % x2);
                         break;
                     }
@@ -816,7 +816,7 @@ namespace Neo.VM
                         int shift = PopInt32();
                         AssertShift(shift);
                         if (shift == 0) break;
-                        var x = PopBigInteger();
+                        var x = PopInteger();
                         Push(x << shift);
                         break;
                     }
@@ -825,7 +825,7 @@ namespace Neo.VM
                         int shift = PopInt32();
                         AssertShift(shift);
                         if (shift == 0) break;
-                        var x = PopBigInteger();
+                        var x = PopInteger();
                         Push(x >> shift);
                         break;
                     }
@@ -851,71 +851,71 @@ namespace Neo.VM
                     }
                 case OpCode.NZ:
                     {
-                        var x = PopBigInteger();
+                        var x = PopInteger();
                         Push(!x.IsZero);
                         break;
                     }
                 case OpCode.NUMEQUAL:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 == x2);
                         break;
                     }
                 case OpCode.NUMNOTEQUAL:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 != x2);
                         break;
                     }
                 case OpCode.LT:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 < x2);
                         break;
                     }
                 case OpCode.LE:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 <= x2);
                         break;
                     }
                 case OpCode.GT:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 > x2);
                         break;
                     }
                 case OpCode.GE:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(x1 >= x2);
                         break;
                     }
                 case OpCode.MIN:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(BigInteger.Min(x1, x2));
                         break;
                     }
                 case OpCode.MAX:
                     {
-                        var x2 = PopBigInteger();
-                        var x1 = PopBigInteger();
+                        var x2 = PopInteger();
+                        var x1 = PopInteger();
                         Push(BigInteger.Max(x1, x2));
                         break;
                     }
                 case OpCode.WITHIN:
                     {
-                        BigInteger b = PopBigInteger();
-                        BigInteger a = PopBigInteger();
-                        var x = PopBigInteger();
+                        BigInteger b = PopInteger();
+                        BigInteger a = PopInteger();
+                        var x = PopInteger();
                         Push(a <= x && x < b);
                         break;
                     }
@@ -1436,13 +1436,6 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BigInteger PopBigInteger()
-        {
-            var item = Pop<PrimitiveType>();
-            return item.ToBigInteger();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool PopBoolean()
         {
             return Pop().ToBoolean();
@@ -1455,6 +1448,12 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public BigInteger PopInteger()
+        {
+            return Pop<PrimitiveType>().ToBigInteger();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T PopInterface<T>() where T : class
         {
             return Pop<InteropInterface>().GetInterface<T>();
@@ -1463,13 +1462,11 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<byte> PopSpan()
         {
-            var item = Pop();
-
-            return item switch
+            return Pop() switch
             {
                 PrimitiveType primitive => primitive.Span,
                 Buffer buffer => buffer.InnerBuffer,
-                _ => throw new InvalidCastException($"The type {item.Type} can't be converted to {typeof(ReadOnlySpan<byte>)}."),
+                StackItem item => throw new InvalidCastException($"The type {item.Type} can't be converted to {typeof(ReadOnlySpan<byte>)}."),
             };
         }
 
