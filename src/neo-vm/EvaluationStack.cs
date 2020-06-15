@@ -116,7 +116,7 @@ namespace Neo.VM
             }
             index = innerList.Count - index - 1;
             if (!(innerList[index] is T item))
-                throw new InvalidCastException($"The item can't be cast to type {typeof(T)}");
+                throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
             innerList.RemoveAt(index);
             referenceCounter.RemoveStackReference(item);
             return item;
