@@ -77,7 +77,7 @@ namespace Neo.VM
         {
             if (length < 0 || length > MaxItemSize)
             {
-                throw new ArgumentException($"MaxItemSize exceed: {length}");
+                throw new InvalidOperationException($"MaxItemSize exceed: {length}");
             }
         }
 
@@ -90,7 +90,7 @@ namespace Neo.VM
         {
             if (shift > MaxShift || shift < 0)
             {
-                throw new ArgumentException($"Invalid shift value: {shift}");
+                throw new InvalidOperationException($"Invalid shift value: {shift}");
             }
         }
 
@@ -149,9 +149,7 @@ namespace Neo.VM
                     {
                         int position = checked(context.InstructionPointer + instruction.TokenI32);
                         if (position < 0 || position > context.Script.Length)
-                        {
-                            throw new IndexOutOfRangeException($"Bad pointer address: {position}");
-                        }
+                            throw new InvalidOperationException($"Bad pointer address: {position}");
                         Push(new Pointer(context.Script, position));
                         break;
                     }
@@ -324,7 +322,8 @@ namespace Neo.VM
                 case OpCode.CALLA:
                     {
                         var x = Pop<Pointer>();
-                        if (!x.Script.Equals(context.Script)) throw new ArgumentException("Pointers can't be shared between scripts");
+                        if (!x.Script.Equals(context.Script))
+                            throw new InvalidOperationException("Pointers can't be shared between scripts");
                         LoadClonedContext(x.Position);
                         break;
                     }
@@ -377,9 +376,10 @@ namespace Neo.VM
                     }
                 case OpCode.ENDFINALLY:
                     {
-                        if (context.TryStack is null) throw new ArgumentException($"TryStack can't be null in {instruction.OpCode}");
+                        if (context.TryStack is null)
+                            throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
                         if (!context.TryStack.TryPop(out ExceptionHandlingContext currentTry))
-                            throw new ArgumentException($"TryStack doens't have an ExceptionHandlingContext item in {instruction.OpCode}");
+                            throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
 
                         if (UncaughtException != null)
                         {
@@ -426,7 +426,8 @@ namespace Neo.VM
                 case OpCode.XDROP:
                     {
                         int n = PopInt32();
-                        if (n < 0) throw new ArgumentException($"{instruction.OpCode} can't be negative: {n}");
+                        if (n < 0)
+                            throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
                         context.EvaluationStack.Remove<StackItem>(n);
                         break;
                     }
@@ -448,7 +449,8 @@ namespace Neo.VM
                 case OpCode.PICK:
                     {
                         int n = PopInt32();
-                        if (n < 0) throw new ArgumentException($"{instruction.OpCode} can't be negative: {n}");
+                        if (n < 0)
+                            throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
                         Push(Peek(n));
                         break;
                     }
@@ -472,7 +474,8 @@ namespace Neo.VM
                 case OpCode.ROLL:
                     {
                         int n = PopInt32();
-                        if (n < 0) throw new ArgumentException($"{instruction.OpCode} can't be negative: {n}");
+                        if (n < 0)
+                            throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
                         if (n == 0) break;
                         var x = context.EvaluationStack.Remove<StackItem>(n);
                         Push(x);
@@ -498,16 +501,19 @@ namespace Neo.VM
                 //Slot
                 case OpCode.INITSSLOT:
                     {
-                        if (context.StaticFields != null) throw new ArgumentException($"Static fields can't be null for {instruction.OpCode}");
-                        if (instruction.TokenU8 == 0) throw new ArgumentException($"TokenU8 can't be 0 for {instruction.OpCode}");
+                        if (context.StaticFields != null)
+                            throw new InvalidOperationException($"{instruction.OpCode} cannot be executed twice.");
+                        if (instruction.TokenU8 == 0)
+                            throw new InvalidOperationException($"The operand {instruction.TokenU8} is invalid for OpCode.{instruction.OpCode}.");
                         context.StaticFields = new Slot(instruction.TokenU8, ReferenceCounter);
                         break;
                     }
                 case OpCode.INITSLOT:
                     {
                         if (context.LocalVariables != null || context.Arguments != null)
-                            throw new ArgumentException($"LocalVariables or Arguments can't be null for {instruction.OpCode}");
-                        if (instruction.TokenU16 == 0) throw new ArgumentException($"TokenU16 can't be 0 for {instruction.OpCode}");
+                            throw new InvalidOperationException($"{instruction.OpCode} cannot be executed twice.");
+                        if (instruction.TokenU16 == 0)
+                            throw new InvalidOperationException($"The operand {instruction.TokenU16} is invalid for OpCode.{instruction.OpCode}.");
                         if (instruction.TokenU8 > 0)
                         {
                             context.LocalVariables = new Slot(instruction.TokenU8, ReferenceCounter);
@@ -631,15 +637,20 @@ namespace Neo.VM
                 case OpCode.MEMCPY:
                     {
                         int count = PopInt32();
-                        if (count < 0) throw new ArgumentException($"{instruction.OpCode}.count can't be negative");
+                        if (count < 0)
+                            throw new InvalidOperationException($"The value {count} is out of range.");
                         int si = PopInt32();
-                        if (si < 0) throw new ArgumentException($"{instruction.OpCode}.si can't be negative");
+                        if (si < 0)
+                            throw new InvalidOperationException($"The value {si} is out of range.");
                         ReadOnlySpan<byte> src = PopSpan();
-                        if (checked(si + count) > src.Length) throw new ArgumentOutOfRangeException($"{instruction.OpCode} src out of bounds");
+                        if (checked(si + count) > src.Length)
+                            throw new InvalidOperationException($"The value {count} is out of range.");
                         int di = PopInt32();
-                        if (di < 0) throw new ArgumentException($"{instruction.OpCode}.di can't be negative");
+                        if (di < 0)
+                            throw new InvalidOperationException($"The value {di} is out of range.");
                         Buffer dst = Pop<Buffer>();
-                        if (checked(di + count) > dst.Size) throw new ArgumentOutOfRangeException($"{instruction.OpCode} dst out of bounds");
+                        if (checked(di + count) > dst.Size)
+                            throw new InvalidOperationException($"The value {count} is out of range.");
                         src.Slice(si, count).CopyTo(dst.InnerBuffer.AsSpan(di));
                         break;
                     }
@@ -658,11 +669,14 @@ namespace Neo.VM
                 case OpCode.SUBSTR:
                     {
                         int count = PopInt32();
-                        if (count < 0) throw new ArgumentException($"{instruction.OpCode}.count can't be negative");
+                        if (count < 0)
+                            throw new InvalidOperationException($"The value {count} is out of range.");
                         int index = PopInt32();
-                        if (index < 0) throw new ArgumentException($"{instruction.OpCode}.index can't be negative");
+                        if (index < 0)
+                            throw new InvalidOperationException($"The value {index} is out of range.");
                         var x = PopSpan();
-                        if (index + count > x.Length) throw new IndexOutOfRangeException($"{instruction.OpCode} out of bounds");
+                        if (index + count > x.Length)
+                            throw new InvalidOperationException($"The value {count} is out of range.");
                         Buffer result = new Buffer(count);
                         x.Slice(index, count).CopyTo(result.InnerBuffer);
                         Push(result);
@@ -671,9 +685,11 @@ namespace Neo.VM
                 case OpCode.LEFT:
                     {
                         int count = PopInt32();
-                        if (count < 0) throw new ArgumentException($"{instruction.OpCode}.count can't be negative");
+                        if (count < 0)
+                            throw new InvalidOperationException($"The value {count} is out of range.");
                         var x = PopSpan();
-                        if (count > x.Length) throw new IndexOutOfRangeException($"{instruction.OpCode} out of bounds");
+                        if (count > x.Length)
+                            throw new InvalidOperationException($"The value {count} is out of range.");
                         Buffer result = new Buffer(count);
                         x[..count].CopyTo(result.InnerBuffer);
                         Push(result);
@@ -682,9 +698,11 @@ namespace Neo.VM
                 case OpCode.RIGHT:
                     {
                         int count = PopInt32();
-                        if (count < 0) throw new ArgumentException($"{instruction.OpCode}.count can't be negative");
+                        if (count < 0)
+                            throw new InvalidOperationException($"The value {count} is out of range.");
                         var x = PopSpan();
-                        if (count > x.Length) throw new IndexOutOfRangeException($"{instruction.OpCode} out of bounds");
+                        if (count > x.Length)
+                            throw new InvalidOperationException($"The value {count} is out of range.");
                         Buffer result = new Buffer(count);
                         x[^count..^0].CopyTo(result.InnerBuffer);
                         Push(result);
@@ -914,7 +932,7 @@ namespace Neo.VM
                     {
                         int size = PopInt32();
                         if (size < 0 || size > context.EvaluationStack.Count)
-                            throw new IndexOutOfRangeException($"There are fewer items than expected for {instruction.OpCode}, expected {size}, current: {context.EvaluationStack.Count}");
+                            throw new InvalidOperationException($"The value {size} is out of range.");
                         VMArray array = new VMArray(ReferenceCounter);
                         for (int i = 0; i < size; i++)
                         {
@@ -942,15 +960,13 @@ namespace Neo.VM
                     {
                         int n = PopInt32();
                         if (n < 0 || n > MaxStackSize)
-                            throw new ArgumentException($"MaxStackSize exceed: {n}");
+                            throw new InvalidOperationException($"MaxStackSize exceed: {n}");
                         StackItem item;
                         if (instruction.OpCode == OpCode.NEWARRAY_T)
                         {
                             StackItemType type = (StackItemType)instruction.TokenU8;
                             if (!Enum.IsDefined(typeof(StackItemType), type))
-                            {
-                                throw new ArgumentException($"Invalid type for {instruction.OpCode}: {type}");
-                            }
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {instruction.TokenU8}");
                             item = instruction.TokenU8 switch
                             {
                                 (byte)StackItemType.Boolean => StackItem.False,
@@ -975,7 +991,7 @@ namespace Neo.VM
                     {
                         int n = PopInt32();
                         if (n < 0 || n > MaxStackSize)
-                            throw new ArgumentException($"MaxStackSize exceed: {n}");
+                            throw new InvalidOperationException($"MaxStackSize exceed: {n}");
                         Struct result = new Struct(ReferenceCounter);
                         for (var i = 0; i < n; i++)
                             result.Add(StackItem.Null);
@@ -1002,7 +1018,7 @@ namespace Neo.VM
                                 Push(buffer.Size);
                                 break;
                             default:
-                                throw new ArgumentException($"Invalid type for {instruction.OpCode}: {x.Type}");
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
                         }
                         break;
                     }
@@ -1015,7 +1031,8 @@ namespace Neo.VM
                             case VMArray array:
                                 {
                                     int index = key.ToInt32();
-                                    if (index < 0) throw new ArgumentException($"Index can't be negative at {instruction.OpCode}: {index}");
+                                    if (index < 0)
+                                        throw new InvalidOperationException($"The negative value {index} is invalid for OpCode.{instruction.OpCode}.");
                                     Push(index < array.Count);
                                     break;
                                 }
@@ -1027,19 +1044,21 @@ namespace Neo.VM
                             case Buffer buffer:
                                 {
                                     int index = key.ToInt32();
-                                    if (index < 0) throw new ArgumentException($"Index can't be negative at {instruction.OpCode}: {index}");
+                                    if (index < 0)
+                                        throw new InvalidOperationException($"The negative value {index} is invalid for OpCode.{instruction.OpCode}.");
                                     Push(index < buffer.Size);
                                     break;
                                 }
                             case ByteString array:
                                 {
                                     int index = key.ToInt32();
-                                    if (index < 0) throw new ArgumentException($"Index can't be negative at {instruction.OpCode}: {index}");
+                                    if (index < 0)
+                                        throw new InvalidOperationException($"The negative value {index} is invalid for OpCode.{instruction.OpCode}.");
                                     Push(index < array.Size);
                                     break;
                                 }
                             default:
-                                throw new ArgumentException($"Invalid type for {instruction.OpCode}: {x.Type}");
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
                         }
                         break;
                     }
@@ -1062,7 +1081,7 @@ namespace Neo.VM
                                 values = map.Values;
                                 break;
                             default:
-                                throw new ArgumentException($"Invalid type for {instruction.OpCode}: {x.Type}");
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
                         }
                         VMArray newArray = new VMArray(ReferenceCounter);
                         foreach (StackItem item in values)
@@ -1083,14 +1102,14 @@ namespace Neo.VM
                                 {
                                     int index = key.ToInt32();
                                     if (index < 0 || index >= array.Count)
-                                        throw new ArgumentOutOfRangeException($"Invalid index ({index}) for {instruction.OpCode}");
+                                        throw new InvalidOperationException($"The value {index} is out of range.");
                                     Push(array[index]);
                                     break;
                                 }
                             case Map map:
                                 {
                                     if (!map.TryGetValue(key, out StackItem value))
-                                        throw new ArgumentException($"Key not found in {instruction.OpCode}");
+                                        throw new InvalidOperationException($"Key not found in {nameof(Map)}");
                                     Push(value);
                                     break;
                                 }
@@ -1099,7 +1118,7 @@ namespace Neo.VM
                                     ReadOnlySpan<byte> byteArray = primitive.Span;
                                     int index = key.ToInt32();
                                     if (index < 0 || index >= byteArray.Length)
-                                        throw new ArgumentOutOfRangeException($"Invalid index ({index}) for {instruction.OpCode}");
+                                        throw new InvalidOperationException($"The value {index} is out of range.");
                                     Push((BigInteger)byteArray[index]);
                                     break;
                                 }
@@ -1107,12 +1126,12 @@ namespace Neo.VM
                                 {
                                     int index = key.ToInt32();
                                     if (index < 0 || index >= buffer.Size)
-                                        throw new ArgumentOutOfRangeException($"Invalid index ({index}) for {instruction.OpCode}");
+                                        throw new InvalidOperationException($"The value {index} is out of range.");
                                     Push((BigInteger)buffer.InnerBuffer[index]);
                                     break;
                                 }
                             default:
-                                throw new ArgumentException($"Invalid type for {instruction.OpCode}: {x.Type}");
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
                         }
                         break;
                     }
@@ -1136,7 +1155,7 @@ namespace Neo.VM
                                 {
                                     int index = key.ToInt32();
                                     if (index < 0 || index >= array.Count)
-                                        throw new ArgumentOutOfRangeException($"Invalid index ({index}) for {instruction.OpCode}");
+                                        throw new InvalidOperationException($"The value {index} is out of range.");
                                     array[index] = value;
                                     break;
                                 }
@@ -1149,17 +1168,17 @@ namespace Neo.VM
                                 {
                                     int index = key.ToInt32();
                                     if (index < 0 || index >= buffer.Size)
-                                        throw new ArgumentOutOfRangeException($"Invalid index ({index}) for {instruction.OpCode}");
+                                        throw new InvalidOperationException($"The value {index} is out of range.");
                                     if (!(value is PrimitiveType p))
-                                        throw new ArgumentException($"value must be a Primitive type in {instruction.OpCode}");
+                                        throw new InvalidOperationException($"Value must be a primitive type in {instruction.OpCode}");
                                     int b = p.ToInt32();
                                     if (b < sbyte.MinValue || b > byte.MaxValue)
-                                        throw new ArgumentException($"Overflow in {instruction.OpCode}, {b} is not a byte type");
+                                        throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
                                     buffer.InnerBuffer[index] = (byte)b;
                                     break;
                                 }
                             default:
-                                throw new ArgumentException($"Invalid type for {instruction.OpCode}: {x.Type}");
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
                         }
                         break;
                     }
@@ -1175,7 +1194,7 @@ namespace Neo.VM
                                 Array.Reverse(buffer.InnerBuffer);
                                 break;
                             default:
-                                throw new ArgumentException($"Invalid type for {instruction.OpCode}: {x.Type}");
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
                         }
                         break;
                     }
@@ -1188,16 +1207,14 @@ namespace Neo.VM
                             case VMArray array:
                                 int index = key.ToInt32();
                                 if (index < 0 || index >= array.Count)
-                                {
-                                    throw new ArgumentException($"Invalid REMOVE index: {index}");
-                                }
+                                    throw new InvalidOperationException($"The value {index} is out of range.");
                                 array.RemoveAt(index);
                                 break;
                             case Map map:
                                 map.Remove(key);
                                 break;
                             default:
-                                throw new ArgumentException($"Invalid type for {instruction.OpCode}: {x.Type}");
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
                         }
                         break;
                     }
@@ -1220,7 +1237,7 @@ namespace Neo.VM
                         var x = Pop();
                         StackItemType type = (StackItemType)instruction.TokenU8;
                         if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
-                            throw new ArgumentException($"Invalid type: {type}");
+                            throw new InvalidOperationException($"Invalid type: {type}");
                         Push(x.Type == type);
                         break;
                     }
@@ -1231,7 +1248,7 @@ namespace Neo.VM
                         break;
                     }
 
-                default: throw new FormatException($"Opcode {instruction.OpCode} not found");
+                default: throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
             }
             context.MoveNext();
         }
@@ -1240,17 +1257,11 @@ namespace Neo.VM
         private void ExecuteEndTry(int endOffset)
         {
             if (CurrentContext.TryStack is null)
-            {
-                throw new ArgumentNullException("CurrentContext.TryStack can't be null");
-            }
+                throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
             if (!CurrentContext.TryStack.TryPeek(out ExceptionHandlingContext currentTry))
-            {
-                throw new ArgumentNullException("Error while peek current try in try stack");
-            }
+                throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
             if (currentTry.State == ExceptionHandlingState.Finally)
-            {
-                throw new ArgumentNullException("Can't execute a try while the state it's Finally");
-            }
+                throw new InvalidOperationException($"The opcode {OpCode.ENDTRY} can't be executed in a FINALLY block.");
 
             int endPointer = checked(CurrentContext.InstructionPointer + endOffset);
             if (currentTry.HasFinally)
@@ -1272,9 +1283,7 @@ namespace Neo.VM
             offset = checked(CurrentContext.InstructionPointer + offset);
 
             if (offset < 0 || offset > CurrentContext.Script.Length)
-            {
-                throw new IndexOutOfRangeException($"Jump out of range for offset: {offset}");
-            }
+                throw new InvalidOperationException($"Jump out of range for offset: {offset}");
             if (condition)
                 CurrentContext.InstructionPointer = offset;
             else
@@ -1283,8 +1292,10 @@ namespace Neo.VM
 
         private void ExecuteLoadFromSlot(Slot slot, int index)
         {
-            if (slot is null) throw new ArgumentException($"slot can't be null in ExecuteLoadFromSlot");
-            if (index < 0 || index >= slot.Count) throw new ArgumentOutOfRangeException($"Index out of range in ExecuteLoadFromSlot: {index}");
+            if (slot is null)
+                throw new InvalidOperationException("Slot has not been initialized.");
+            if (index < 0 || index >= slot.Count)
+                throw new InvalidOperationException($"Index out of range when loading from slot: {index}");
             Push(slot[index]);
         }
 
@@ -1317,15 +1328,18 @@ namespace Neo.VM
 
         private void ExecuteStoreToSlot(Slot slot, int index)
         {
-            if (slot is null) throw new ArgumentException($"slot can't be null in ExecuteStoreToSlot");
-            if (index < 0 || index >= slot.Count) throw new ArgumentOutOfRangeException($"Index out of range in ExecuteStoreToSlot: {index}");
+            if (slot is null)
+                throw new InvalidOperationException("Slot has not been initialized.");
+            if (index < 0 || index >= slot.Count)
+                throw new InvalidOperationException($"Index out of range when storing to slot: {index}");
             slot[index] = Pop();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ExecuteTry(int catchOffset, int finallyOffset)
         {
-            if (catchOffset == 0 && finallyOffset == 0) throw new ArgumentException($"catchOffset and finallyOffset can't be 0 in ExecuteTry");
+            if (catchOffset == 0 && finallyOffset == 0)
+                throw new InvalidOperationException($"catchOffset and finallyOffset can't be 0 in a TRY block");
             int catchPointer = catchOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + catchOffset);
             int finallyPointer = finallyOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + finallyOffset);
             CurrentContext.TryStack ??= new Stack<ExceptionHandlingContext>();
@@ -1368,7 +1382,7 @@ namespace Neo.VM
                 ++pop;
             }
 
-            throw new Exception("Handle exception error");
+            throw new Exception("An unhandled exception was thrown.");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1425,9 +1439,7 @@ namespace Neo.VM
         protected virtual void PostExecuteInstruction(Instruction instruction)
         {
             if (ReferenceCounter.CheckZeroReferred() > MaxStackSize)
-            {
-                throw new Exception("MaxStackSize raised");
-            }
+                throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}");
         }
 
         protected virtual void PreExecuteInstruction() { }
@@ -1447,21 +1459,20 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool PopBoolean()
         {
-            var item = Pop<StackItem>();
-            return item.ToBoolean();
+            return Pop().ToBoolean();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<byte> PopSpan()
         {
-            var item = Pop<StackItem>();
+            var item = Pop();
 
-            switch (item)
+            return item switch
             {
-                case PrimitiveType primitive: return primitive.Span;
-                case Buffer buffer: return buffer.InnerBuffer;
-                default: throw new ArgumentException($"The type {item.Type} can't be converter into a buffer");
-            }
+                PrimitiveType primitive => primitive.Span,
+                Buffer buffer => buffer.InnerBuffer,
+                _ => throw new InvalidCastException($"The type {item.Type} can't be converted to {typeof(ReadOnlySpan<byte>)}."),
+            };
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1474,38 +1485,19 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int PopInt32()
         {
-            var item = Pop<PrimitiveType>();
-
-            BigInteger bi = item.ToBigInteger();
-            if (bi < int.MinValue || bi > int.MaxValue)
-            {
-                throw new ArgumentException("The value doesn't fit int32 expected values");
-            }
-            return (int)bi;
+            return (int)Pop<PrimitiveType>().ToBigInteger();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint PopUInt32()
         {
-            var item = Pop<PrimitiveType>();
-
-            BigInteger bi = item.ToBigInteger();
-            if (bi < uint.MinValue || bi > uint.MaxValue)
-            {
-                throw new ArgumentException("The value doesn't fit int32 expected values");
-            }
-            return (uint)bi;
+            return (uint)Pop<PrimitiveType>().ToBigInteger();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T PopInterface<T>() where T : class
         {
-            var item = Pop<InteropInterface>();
-            if (!item.TryGetInterface(out T result))
-            {
-                throw new ArgumentException($"The interop interface is not the expected type");
-            }
-            return result;
+            return Pop<InteropInterface>().GetInterface<T>();
         }
     }
 }

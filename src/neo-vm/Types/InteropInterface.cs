@@ -37,19 +37,5 @@ namespace Neo.VM.Types
         {
             return true;
         }
-
-        public bool TryGetInterface<T>(out T result)
-        {
-            if (_object is T t)
-            {
-                result = t;
-                return true;
-            }
-            else
-            {
-                result = default;
-                return false;
-            }
-        }
     }
 }
