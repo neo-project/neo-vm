@@ -1314,11 +1314,6 @@ namespace Neo.VM
             }
         }
 
-        protected virtual void OnFault(Exception e)
-        {
-            State = VMState.FAULT;
-        }
-
         private void ExecuteStoreToSlot(Slot slot, int index)
         {
             if (slot is null)
@@ -1408,6 +1403,11 @@ namespace Neo.VM
             return context;
         }
 
+        protected virtual void OnFault(Exception e)
+        {
+            State = VMState.FAULT;
+        }
+
         protected virtual void OnStateChanged()
         {
         }
@@ -1429,20 +1429,6 @@ namespace Neo.VM
             return CurrentContext.EvaluationStack.Pop();
         }
 
-        protected virtual void PostExecuteInstruction(Instruction instruction)
-        {
-            if (ReferenceCounter.CheckZeroReferred() > MaxStackSize)
-                throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}");
-        }
-
-        protected virtual void PreExecuteInstruction() { }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Push(StackItem item)
-        {
-            CurrentContext.EvaluationStack.Push(item);
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Pop<T>() where T : StackItem
         {
@@ -1450,9 +1436,28 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public BigInteger PopBigInteger()
+        {
+            var item = Pop<PrimitiveType>();
+            return item.ToBigInteger();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool PopBoolean()
         {
             return Pop().ToBoolean();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int PopInt32()
+        {
+            return (int)Pop<PrimitiveType>().ToBigInteger();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T PopInterface<T>() where T : class
+        {
+            return Pop<InteropInterface>().GetInterface<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1469,28 +1474,23 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BigInteger PopBigInteger()
-        {
-            var item = Pop<PrimitiveType>();
-            return item.ToBigInteger();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int PopInt32()
-        {
-            return (int)Pop<PrimitiveType>().ToBigInteger();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint PopUInt32()
         {
             return (uint)Pop<PrimitiveType>().ToBigInteger();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T PopInterface<T>() where T : class
+        protected virtual void PostExecuteInstruction(Instruction instruction)
         {
-            return Pop<InteropInterface>().GetInterface<T>();
+            if (ReferenceCounter.CheckZeroReferred() > MaxStackSize)
+                throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}");
+        }
+
+        protected virtual void PreExecuteInstruction() { }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Push(StackItem item)
+        {
+            CurrentContext.EvaluationStack.Push(item);
         }
     }
 }
