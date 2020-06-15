@@ -1414,7 +1414,7 @@ namespace Neo.VM
 
         protected virtual void OnSysCall(uint method)
         {
-            throw new Exception($"Syscall not found: {method}");
+            throw new InvalidOperationException($"Syscall not found: {method}");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
