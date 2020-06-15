@@ -40,22 +40,6 @@ namespace Neo.VM.Types
             }
         }
 
-        public override bool Equals(object obj)
-        {
-            return this == obj;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = 17;
-                foreach (byte element in InnerBuffer)
-                    hash = hash * 31 + element;
-                return hash;
-            }
-        }
-
         public override bool ToBoolean()
         {
             return true;

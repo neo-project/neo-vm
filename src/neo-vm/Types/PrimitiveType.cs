@@ -22,29 +22,9 @@ namespace Neo.VM.Types
             };
         }
 
-        public sealed override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj is PrimitiveType p) return Equals(p);
-            return false;
-        }
+        public abstract override bool Equals(StackItem other);
 
-        public virtual bool Equals(PrimitiveType other)
-        {
-            if (ReferenceEquals(this, other)) return true;
-            return Span.SequenceEqual(other.Span);
-        }
-
-        public sealed override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = 17;
-                foreach (byte element in Span)
-                    hash = hash * 31 + element;
-                return hash;
-            }
-        }
+        public abstract override int GetHashCode();
 
         public virtual BigInteger ToBigInteger()
         {

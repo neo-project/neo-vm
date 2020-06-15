@@ -1,10 +1,12 @@
+#pragma warning disable CS0659
+
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
-    public abstract class StackItem
+    public abstract class StackItem : IEquatable<StackItem>
     {
         public static StackItem False { get; } = new Boolean(false);
         public bool IsNull => this is Null;
@@ -19,15 +21,23 @@ namespace Neo.VM.Types
             throw new InvalidCastException();
         }
 
-        public abstract override bool Equals(object obj);
+        public sealed override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj is StackItem item) return Equals(item);
+            return false;
+        }
+
+        public virtual bool Equals(StackItem other)
+        {
+            return ReferenceEquals(this, other);
+        }
 
         public static StackItem FromInterface(object value)
         {
             if (value is null) return Null;
             return new InteropInterface(value);
         }
-
-        public abstract override int GetHashCode();
 
         public abstract bool ToBoolean();
 

@@ -22,11 +22,16 @@ namespace Neo.VM.Types
             this.value = value;
         }
 
-        public override bool Equals(PrimitiveType other)
+        public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
             if (other is Boolean b) return value == b.value;
-            return base.Equals(other);
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(value);
         }
 
         public override BigInteger ToBigInteger()
