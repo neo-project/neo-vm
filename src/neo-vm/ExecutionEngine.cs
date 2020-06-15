@@ -1401,7 +1401,10 @@ namespace Neo.VM
         {
         }
 
-        protected virtual void OnSysCall(uint method) { }
+        protected virtual void OnSysCall(uint method)
+        {
+            throw new Exception($"Syscall not found: {method}");
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Peek(int index = 0)
