@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Array = System.Array;
 using Buffer = Neo.VM.Types.Buffer;
 using VMArray = Neo.VM.Types.Array;
@@ -1468,6 +1469,12 @@ namespace Neo.VM
                 Buffer buffer => buffer.InnerBuffer,
                 StackItem item => throw new InvalidCastException($"The type {item.Type} can't be converted to {typeof(ReadOnlySpan<byte>)}."),
             };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public string PopString()
+        {
+            return Encoding.UTF8.GetString(PopSpan());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
