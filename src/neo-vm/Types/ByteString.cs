@@ -18,6 +18,24 @@ namespace Neo.VM.Types
             this.Memory = value;
         }
 
+        public override bool Equals(StackItem other)
+        {
+            if (ReferenceEquals(this, other)) return true;
+            if (other is ByteString b) return Span.SequenceEqual(b.Span);
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                foreach (byte element in Span)
+                    hash = hash * 31 + element;
+                return hash;
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator ReadOnlyMemory<byte>(ByteString value)
         {

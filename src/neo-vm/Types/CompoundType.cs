@@ -22,11 +22,6 @@ namespace Neo.VM.Types
 
         public abstract void Clear();
 
-        public override bool Equals(object obj)
-        {
-            return ReferenceEquals(this, obj);
-        }
-
         public override int GetHashCode()
         {
             throw new NotSupportedException();

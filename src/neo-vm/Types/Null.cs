@@ -15,17 +15,15 @@ namespace Neo.VM.Types
             return this;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(StackItem other)
         {
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj is null) return true;
-            if (obj is Null) return true;
-            return false;
+            if (ReferenceEquals(this, other)) return true;
+            return other is Null;
         }
 
         public override int GetHashCode()
         {
-            throw new NotSupportedException();
+            return 0;
         }
 
         public override bool ToBoolean()
