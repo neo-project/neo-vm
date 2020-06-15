@@ -335,10 +335,7 @@ namespace Neo.VM
                     {
                         var x = PopBoolean();
                         if (!x)
-                        {
-                            OnFault(null);
-                            return;
-                        }
+                            throw new Exception($"{OpCode.ASSERT} is executed with false result.");
                         break;
                     }
                 case OpCode.THROW:
