@@ -329,8 +329,7 @@ namespace Neo.VM
                     }
                 case OpCode.ABORT:
                     {
-                        OnFault(null);
-                        return;
+                        throw new Exception($"{OpCode.ABORT} is executed.");
                     }
                 case OpCode.ASSERT:
                     {
