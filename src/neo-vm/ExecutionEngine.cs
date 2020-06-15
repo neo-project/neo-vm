@@ -1451,12 +1451,8 @@ namespace Neo.VM
 
             switch (item)
             {
-                case PrimitiveType primitive:
-                    CurrentContext.EvaluationStack.Pop();
-                    return primitive.Span;
-                case Buffer buffer:
-                    CurrentContext.EvaluationStack.Pop();
-                    return buffer.InnerBuffer;
+                case PrimitiveType primitive: return primitive.Span;
+                case Buffer buffer: return buffer.InnerBuffer;
                 default: throw new ArgumentException($"The type {item.Type} can't be converter into a buffer");
             }
         }

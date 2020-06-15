@@ -104,7 +104,7 @@ namespace Neo.Test
             Assert.AreEqual(2, stack.Pop());
             Assert.AreEqual(1, stack.Pop());
 
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Pop());
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop());
 
             stack = CreateOrderedStack(3);
 
@@ -112,7 +112,7 @@ namespace Neo.Test
             Assert.IsTrue(stack.Pop<Integer>().Equals(2));
             Assert.IsTrue(stack.Pop<Integer>().Equals(1));
 
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Pop<Integer>());
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop<Integer>());
         }
 
         [TestMethod]
@@ -124,8 +124,8 @@ namespace Neo.Test
             Assert.IsTrue(stack.Remove<Integer>(0).Equals(2));
             Assert.IsTrue(stack.Remove<Integer>(-1).Equals(1));
 
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Remove<Integer>(0));
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Remove<Integer>(-1));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Remove<Integer>(0));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Remove<Integer>(-1));
         }
 
         [TestMethod]
@@ -137,7 +137,7 @@ namespace Neo.Test
             Assert.IsTrue(stack.Pop<Integer>().Equals(1));
             Assert.IsTrue(stack.Pop<Integer>().Equals(2));
             Assert.IsTrue(stack.Pop<Integer>().Equals(3));
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Pop<Integer>().Equals(0));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop<Integer>().Equals(0));
 
             stack = CreateOrderedStack(3);
 
@@ -148,7 +148,7 @@ namespace Neo.Test
             Assert.IsTrue(stack.Pop<Integer>().Equals(3));
             Assert.IsTrue(stack.Pop<Integer>().Equals(2));
             Assert.IsTrue(stack.Pop<Integer>().Equals(1));
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Pop<Integer>().Equals(0));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop<Integer>().Equals(0));
         }
     }
 }
