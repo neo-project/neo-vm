@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 
@@ -38,6 +39,11 @@ namespace Neo.VM.Types
                 default:
                     return base.ConvertTo(type);
             }
+        }
+
+        internal override StackItem DeepCopy(Dictionary<CompoundType, CompoundType> refMap)
+        {
+            return new Buffer(InnerBuffer);
         }
 
         public override bool ToBoolean()

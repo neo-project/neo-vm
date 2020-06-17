@@ -22,6 +22,8 @@ namespace Neo.VM.Types
 
         public abstract void Clear();
 
+        internal abstract override StackItem DeepCopy(Dictionary<CompoundType, CompoundType> refMap);
+
         public override int GetHashCode()
         {
             throw new NotSupportedException();

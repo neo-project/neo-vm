@@ -62,6 +62,16 @@ namespace Neo.VM.Types
             return dictionary.ContainsKey(key);
         }
 
+        internal override StackItem DeepCopy(Dictionary<CompoundType, CompoundType> refMap)
+        {
+            if (refMap.TryGetValue(this, out CompoundType mappedItem)) return mappedItem;
+            Map result = new Map(ReferenceCounter);
+            refMap.Add(this, result);
+            foreach (var pair in dictionary)
+                result[pair.Key] = pair.Value.DeepCopy(refMap);
+            return result;
+        }
+
         IEnumerator<KeyValuePair<PrimitiveType, StackItem>> IEnumerable<KeyValuePair<PrimitiveType, StackItem>>.GetEnumerator()
         {
             return ((IDictionary<PrimitiveType, StackItem>)dictionary).GetEnumerator();
