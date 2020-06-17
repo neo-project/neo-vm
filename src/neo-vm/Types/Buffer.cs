@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Numerics;
 
 namespace Neo.VM.Types
@@ -21,6 +22,25 @@ namespace Neo.VM.Types
             : this(data.Length)
         {
             if (!data.IsEmpty) data.CopyTo(InnerBuffer);
+        }
+
+
+        public override bool Equals(StackItem other)
+        {
+            if (ReferenceEquals(this, other)) return true;
+            if (other is Buffer b) return InnerBuffer.SequenceEqual(b.InnerBuffer);
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                foreach (byte element in InnerBuffer)
+                    hash = hash * 31 + element;
+                return hash;
+            }
         }
 
         public override StackItem ConvertTo(StackItemType type)
