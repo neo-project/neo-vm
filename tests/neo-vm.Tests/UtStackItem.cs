@@ -1,7 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 using Neo.VM.Types;
-using System;
 using System.Numerics;
 
 namespace Neo.Test
@@ -45,15 +44,15 @@ namespace Neo.Test
 
             itemA = new VM.Types.Array();
 
-            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+            Assert.ThrowsException<System.NotSupportedException>(() => itemA.GetHashCode());
 
             itemA = new Struct();
 
-            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+            Assert.ThrowsException<System.NotSupportedException>(() => itemA.GetHashCode());
 
             itemA = new Map();
 
-            Assert.ThrowsException<NotSupportedException>(() => itemA.GetHashCode());
+            Assert.ThrowsException<System.NotSupportedException>(() => itemA.GetHashCode());
 
             itemA = new InteropInterface(123);
             itemB = new InteropInterface(123);
@@ -146,6 +145,27 @@ namespace Neo.Test
 
             Assert.IsInstanceOfType(item, typeof(ByteString));
             CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, ((ByteString)item).Span.ToArray());
+        }
+
+        [TestMethod]
+        public void DeepCopyTest()
+        {
+            Array a = new Array
+            {
+                true,
+                1,
+                new byte[] { 1 },
+                StackItem.Null,
+                new Buffer(new byte[] { 1 }),
+                new Map { [0] = 1, [2] = 3 },
+                new Struct { 1, 2, 3 }
+            };
+            a.Add(a);
+            Array aa = (Array)a.DeepCopy();
+            Assert.AreNotEqual(a, aa);
+            Assert.AreSame(aa, aa[^1]);
+            Assert.AreEqual(a[^2], aa[^2]);
+            Assert.AreNotSame(a[^2], aa[^2]);
         }
     }
 }
