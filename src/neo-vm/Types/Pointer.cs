@@ -23,14 +23,14 @@ namespace Neo.VM.Types
             return false;
         }
 
+        public override bool GetBoolean()
+        {
+            return true;
+        }
+
         public override int GetHashCode()
         {
             return HashCode.Combine(Script, Position);
-        }
-
-        public override bool ToBoolean()
-        {
-            return true;
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Numerics;
-using System.Text;
 
 namespace Neo.VM
 {
@@ -96,7 +95,7 @@ namespace Neo.VM
 
         public ScriptBuilder EmitPush(string data)
         {
-            return EmitPush(Encoding.UTF8.GetBytes(data));
+            return EmitPush(Utility.StrictUTF8.GetBytes(data));
         }
 
         public ScriptBuilder EmitRaw(byte[] arg = null)

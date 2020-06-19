@@ -21,14 +21,24 @@ namespace Neo.VM.Types
             return other is Null;
         }
 
+        public override bool GetBoolean()
+        {
+            return false;
+        }
+
         public override int GetHashCode()
         {
             return 0;
         }
 
-        public override bool ToBoolean()
+        public override T GetInterface<T>()
         {
-            return false;
+            return null;
+        }
+
+        public override string GetString()
+        {
+            return null;
         }
     }
 }
