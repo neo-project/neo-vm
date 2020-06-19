@@ -23,7 +23,7 @@ namespace Neo.VM.Types
             };
         }
 
-        internal sealed override StackItem DeepCopy(Dictionary<CompoundType, CompoundType> refMap)
+        internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
         {
             return this;
         }

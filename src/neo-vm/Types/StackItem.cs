@@ -25,10 +25,10 @@ namespace Neo.VM.Types
 
         public StackItem DeepCopy()
         {
-            return DeepCopy(new Dictionary<CompoundType, CompoundType>(ReferenceEqualityComparer.Default));
+            return DeepCopy(new Dictionary<StackItem, StackItem>(ReferenceEqualityComparer.Default));
         }
 
-        internal virtual StackItem DeepCopy(Dictionary<CompoundType, CompoundType> refMap)
+        internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
         {
             return this;
         }

@@ -41,9 +41,12 @@ namespace Neo.VM.Types
             }
         }
 
-        internal override StackItem DeepCopy(Dictionary<CompoundType, CompoundType> refMap)
+        internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
         {
-            return new Buffer(InnerBuffer);
+            if (refMap.TryGetValue(this, out StackItem mappedItem)) return mappedItem;
+            Buffer result = new Buffer(InnerBuffer);
+            refMap.Add(this, result);
+            return result;
         }
 
         public override bool ToBoolean()

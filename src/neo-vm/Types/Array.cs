@@ -66,9 +66,9 @@ namespace Neo.VM.Types
             return base.ConvertTo(type);
         }
 
-        internal sealed override StackItem DeepCopy(Dictionary<CompoundType, CompoundType> refMap)
+        internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
         {
-            if (refMap.TryGetValue(this, out CompoundType mappedItem)) return mappedItem;
+            if (refMap.TryGetValue(this, out StackItem mappedItem)) return mappedItem;
             Array result = this is Struct ? new Struct(ReferenceCounter) : new Array(ReferenceCounter);
             refMap.Add(this, result);
             foreach (StackItem item in _array)

@@ -22,7 +22,7 @@ namespace Neo.VM.Types
 
         public abstract void Clear();
 
-        internal abstract override StackItem DeepCopy(Dictionary<CompoundType, CompoundType> refMap);
+        internal abstract override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap);
 
         public override int GetHashCode()
         {
