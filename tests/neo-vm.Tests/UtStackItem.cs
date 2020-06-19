@@ -166,6 +166,27 @@ namespace Neo.Test
             Assert.AreSame(aa, aa[^1]);
             Assert.AreEqual(a[^2], aa[^2]);
             Assert.AreNotSame(a[^2], aa[^2]);
+
+            // Test circle test
+
+            a = new Array
+            {
+                true
+            };
+
+            Array b = new Array
+            {
+                a,
+                a
+            };
+
+            Array bb = (Array)b.DeepCopy();
+
+            Assert.IsTrue(bb[0].ToBoolean());
+            Assert.IsTrue(bb[1].ToBoolean());
+            Assert.IsTrue(ReferenceEquals(bb[0], bb[1]));
+            Assert.IsFalse(ReferenceEquals(bb[0], a));
+            Assert.IsFalse(ReferenceEquals(bb[1], a));
         }
     }
 }
