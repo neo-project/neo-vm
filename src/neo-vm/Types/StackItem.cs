@@ -1,6 +1,8 @@
 #pragma warning disable CS0659
 
+using Neo.VM.Collections;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -19,6 +21,16 @@ namespace Neo.VM.Types
             if (type == Type) return this;
             if (type == StackItemType.Boolean) return GetBoolean();
             throw new InvalidCastException();
+        }
+
+        public StackItem DeepCopy()
+        {
+            return DeepCopy(new Dictionary<StackItem, StackItem>(ReferenceEqualityComparer.Default));
+        }
+
+        internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
+        {
+            return this;
         }
 
         public sealed override bool Equals(object obj)

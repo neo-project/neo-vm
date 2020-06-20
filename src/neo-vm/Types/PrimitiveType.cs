@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -19,6 +20,11 @@ namespace Neo.VM.Types
                 StackItemType.Buffer => new Buffer(GetSpan()),
                 _ => base.ConvertTo(type)
             };
+        }
+
+        internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
+        {
+            return this;
         }
 
         public abstract override bool Equals(StackItem other);
