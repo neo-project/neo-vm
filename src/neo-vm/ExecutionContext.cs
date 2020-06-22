@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    [DebuggerDisplay("RVCount={RVCount}, InstructionPointer={InstructionPointer}")]
+    [DebuggerDisplay("InstructionPointer={InstructionPointer}")]
     public sealed partial class ExecutionContext
     {
         private readonly SharedStates shared_states;
