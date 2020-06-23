@@ -340,8 +340,7 @@ namespace Neo.VM
                     }
                 case OpCode.THROW:
                     {
-                        UncaughtException = Pop();
-                        HandleException();
+                        Throw(Pop());
                         return;
                     }
                 case OpCode.TRY:
@@ -1447,6 +1446,12 @@ namespace Neo.VM
         public void Push(StackItem item)
         {
             CurrentContext.EvaluationStack.Push(item);
+        }
+
+        public void Throw(StackItem ex)
+        {
+            UncaughtException = ex;
+            HandleException();
         }
     }
 }
