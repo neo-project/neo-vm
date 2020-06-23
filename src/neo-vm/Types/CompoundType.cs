@@ -24,14 +24,14 @@ namespace Neo.VM.Types
 
         internal abstract override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap);
 
+        public sealed override bool GetBoolean()
+        {
+            return true;
+        }
+
         public override int GetHashCode()
         {
             throw new NotSupportedException();
-        }
-
-        public override bool ToBoolean()
-        {
-            return true;
         }
     }
 }

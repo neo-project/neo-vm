@@ -102,49 +102,49 @@ namespace Neo.Test
             StackItem item = int.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(int.MaxValue), ((Integer)item).ToBigInteger());
+            Assert.AreEqual(new BigInteger(int.MaxValue), ((Integer)item).GetInteger());
 
             // Unsigned integer
 
             item = uint.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(uint.MaxValue), ((Integer)item).ToBigInteger());
+            Assert.AreEqual(new BigInteger(uint.MaxValue), ((Integer)item).GetInteger());
 
             // Signed long
 
             item = long.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(long.MaxValue), ((Integer)item).ToBigInteger());
+            Assert.AreEqual(new BigInteger(long.MaxValue), ((Integer)item).GetInteger());
 
             // Unsigned long
 
             item = ulong.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(ulong.MaxValue), ((Integer)item).ToBigInteger());
+            Assert.AreEqual(new BigInteger(ulong.MaxValue), ((Integer)item).GetInteger());
 
             // BigInteger
 
             item = BigInteger.MinusOne;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
-            Assert.AreEqual(new BigInteger(-1), ((Integer)item).ToBigInteger());
+            Assert.AreEqual(new BigInteger(-1), ((Integer)item).GetInteger());
 
             // Boolean
 
             item = true;
 
             Assert.IsInstanceOfType(item, typeof(VM.Types.Boolean));
-            Assert.IsTrue(item.ToBoolean());
+            Assert.IsTrue(item.GetBoolean());
 
             // ByteString
 
             item = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
 
             Assert.IsInstanceOfType(item, typeof(ByteString));
-            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, ((ByteString)item).Span.ToArray());
+            CollectionAssert.AreEqual(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 }, item.GetSpan().ToArray());
         }
 
         [TestMethod]

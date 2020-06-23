@@ -19,7 +19,7 @@ namespace Neo.VM.Types
         public virtual StackItem ConvertTo(StackItemType type)
         {
             if (type == Type) return this;
-            if (type == StackItemType.Boolean) return ToBoolean();
+            if (type == StackItemType.Boolean) return GetBoolean();
             throw new InvalidCastException();
         }
 
@@ -51,7 +51,27 @@ namespace Neo.VM.Types
             return new InteropInterface(value);
         }
 
-        public abstract bool ToBoolean();
+        public abstract bool GetBoolean();
+
+        public virtual BigInteger GetInteger()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual T GetInterface<T>() where T : class
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual ReadOnlySpan<byte> GetSpan()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual string GetString()
+        {
+            return Utility.StrictUTF8.GetString(GetSpan());
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(int value)

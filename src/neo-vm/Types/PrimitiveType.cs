@@ -9,16 +9,15 @@ namespace Neo.VM.Types
     {
         internal abstract ReadOnlyMemory<byte> Memory { get; }
         public virtual int Size => Memory.Length;
-        public ReadOnlySpan<byte> Span => Memory.Span;
 
         public override StackItem ConvertTo(StackItemType type)
         {
             if (type == Type) return this;
             return type switch
             {
-                StackItemType.Integer => ToBigInteger(),
+                StackItemType.Integer => GetInteger(),
                 StackItemType.ByteString => Memory,
-                StackItemType.Buffer => new Buffer(Span),
+                StackItemType.Buffer => new Buffer(GetSpan()),
                 _ => base.ConvertTo(type)
             };
         }
@@ -32,21 +31,14 @@ namespace Neo.VM.Types
 
         public abstract override int GetHashCode();
 
-        public virtual BigInteger ToBigInteger()
+        public sealed override ReadOnlySpan<byte> GetSpan()
         {
-            if (Size > Integer.MaxSize) throw new InvalidCastException();
-            return new BigInteger(Span);
-        }
-
-        public override bool ToBoolean()
-        {
-            if (Size > Integer.MaxSize) return true;
-            return Unsafe.NotZero(Span);
+            return Memory.Span;
         }
 
         public int ToInt32()
         {
-            BigInteger i = ToBigInteger();
+            BigInteger i = GetInteger();
             if (i < int.MinValue || i > int.MaxValue) throw new InvalidCastException();
             return (int)i;
         }
