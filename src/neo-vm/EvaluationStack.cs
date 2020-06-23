@@ -66,14 +66,6 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public StackItem Pop()
-        {
-            if (!TryPop(out StackItem item))
-                throw new InvalidOperationException();
-            return item;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
         {
             innerList.Add(item);
@@ -81,53 +73,42 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool Reverse(int n)
+        internal void Reverse(int n)
         {
-            if (n < 0 || n > innerList.Count) return false;
-            if (n <= 1) return true;
+            if (n < 0 || n > innerList.Count)
+                throw new ArgumentOutOfRangeException(nameof(n));
+            if (n <= 1) return;
             innerList.Reverse(innerList.Count - n, n);
-            return true;
-        }
-
-        public bool TryPeek<T>(out T item) where T : StackItem
-        {
-            if (innerList.Count == 0)
-            {
-                item = default;
-                return false;
-            }
-            item = innerList[^1] as T;
-            return item != null;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryPop<T>(out T item) where T : StackItem
+        public StackItem Pop()
         {
-            return TryRemove(0, out item);
+            return Remove<StackItem>(0);
         }
 
-        internal bool TryRemove<T>(int index, out T item) where T : StackItem
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Pop<T>() where T : StackItem
+        {
+            return Remove<T>(0);
+        }
+
+        internal T Remove<T>(int index) where T : StackItem
         {
             if (index >= innerList.Count)
-            {
-                item = default;
-                return false;
-            }
+                throw new ArgumentOutOfRangeException(nameof(index));
             if (index < 0)
             {
                 index += innerList.Count;
                 if (index < 0)
-                {
-                    item = default;
-                    return false;
-                }
+                    throw new ArgumentOutOfRangeException(nameof(index));
             }
             index = innerList.Count - index - 1;
-            item = innerList[index] as T;
-            if (item is null) return false;
+            if (!(innerList[index] is T item))
+                throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
             innerList.RemoveAt(index);
             referenceCounter.RemoveStackReference(item);
-            return true;
+            return item;
         }
     }
 }

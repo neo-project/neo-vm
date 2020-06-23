@@ -29,19 +29,19 @@ namespace Neo.VM.Types
             return false;
         }
 
+        public override bool GetBoolean()
+        {
+            return value;
+        }
+
         public override int GetHashCode()
         {
             return HashCode.Combine(value);
         }
 
-        public override BigInteger ToBigInteger()
+        public override BigInteger GetInteger()
         {
             return value ? BigInteger.One : BigInteger.Zero;
-        }
-
-        public override bool ToBoolean()
-        {
-            return value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

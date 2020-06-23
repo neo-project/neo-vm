@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
@@ -60,9 +61,22 @@ namespace Neo.VM.Types
             }
         }
 
-        public override bool ToBoolean()
+        internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
+        {
+            if (refMap.TryGetValue(this, out StackItem mappedItem)) return mappedItem;
+            Buffer result = new Buffer(InnerBuffer);
+            refMap.Add(this, result);
+            return result;
+        }
+
+        public override bool GetBoolean()
         {
             return true;
+        }
+
+        public override ReadOnlySpan<byte> GetSpan()
+        {
+            return InnerBuffer;
         }
     }
 }

@@ -22,34 +22,20 @@ namespace Neo.VM.Types
             return false;
         }
 
+        public override bool GetBoolean()
+        {
+            return true;
+        }
+
         public override int GetHashCode()
         {
             return HashCode.Combine(_object);
         }
 
-        public T GetInterface<T>()
+        public override T GetInterface<T>()
         {
             if (_object is T t) return t;
             throw new InvalidCastException();
-        }
-
-        public override bool ToBoolean()
-        {
-            return true;
-        }
-
-        public bool TryGetInterface<T>(out T result)
-        {
-            if (_object is T t)
-            {
-                result = t;
-                return true;
-            }
-            else
-            {
-                result = default;
-                return false;
-            }
         }
     }
 }
