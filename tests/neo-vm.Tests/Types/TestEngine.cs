@@ -13,6 +13,12 @@ namespace Neo.Test.Types
                 return;
             }
 
+            if (method == 0xaddeadde)
+            {
+                Throw("error");
+                return;
+            }
+
             throw new System.Exception();
         }
     }
