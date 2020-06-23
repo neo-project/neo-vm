@@ -8,7 +8,7 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(InnerBuffer).Replace(\"-\", string.Empty)}")]
     public class Buffer : StackItem
     {
-        internal readonly byte[] InnerBuffer;
+        public readonly byte[] InnerBuffer;
 
         public int Size => InnerBuffer.Length;
         public override StackItemType Type => StackItemType.Buffer;
