@@ -38,7 +38,7 @@ namespace Neo.VM
 
         #endregion
 
-        public ReferenceCounter ReferenceCounter { get; } = new ReferenceCounter();
+        public ReferenceCounter ReferenceCounter { get; }
         public Stack<ExecutionContext> InvocationStack { get; } = new Stack<ExecutionContext>();
         public ExecutionContext CurrentContext { get; private set; }
         public ExecutionContext EntryContext { get; private set; }
@@ -61,9 +61,14 @@ namespace Neo.VM
             }
         }
 
-        public ExecutionEngine()
+        public ExecutionEngine() : this(new ReferenceCounter())
         {
-            ResultStack = new EvaluationStack(ReferenceCounter);
+        }
+
+        protected ExecutionEngine(ReferenceCounter referenceCounter)
+        {
+            this.ReferenceCounter = referenceCounter;
+            this.ResultStack = new EvaluationStack(referenceCounter);
         }
 
         #region Limits
