@@ -22,19 +22,16 @@ namespace Neo.VM.Types
 
         public abstract void Clear();
 
-        public override bool Equals(object obj)
+        internal abstract override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap);
+
+        public sealed override bool GetBoolean()
         {
-            return ReferenceEquals(this, obj);
+            return true;
         }
 
         public override int GetHashCode()
         {
             throw new NotSupportedException();
-        }
-
-        public override bool ToBoolean()
-        {
-            return true;
         }
     }
 }

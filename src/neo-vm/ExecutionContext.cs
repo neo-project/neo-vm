@@ -4,15 +4,10 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    [DebuggerDisplay("RVCount={RVCount}, InstructionPointer={InstructionPointer}")]
+    [DebuggerDisplay("InstructionPointer={InstructionPointer}")]
     public sealed partial class ExecutionContext
     {
         private readonly SharedStates shared_states;
-
-        /// <summary>
-        /// Number of items to be returned
-        /// </summary>
-        internal int RVCount { get; }
 
         /// <summary>
         /// Script
@@ -67,20 +62,19 @@ namespace Neo.VM
         /// </summary>
         /// <param name="script">Script</param>
         /// <param name="rvcount">Number of items to be returned</param>
-        internal ExecutionContext(Script script, int rvcount, ReferenceCounter referenceCounter)
-            : this(new SharedStates(script, referenceCounter), rvcount)
+        internal ExecutionContext(Script script, ReferenceCounter referenceCounter)
+            : this(new SharedStates(script, referenceCounter))
         {
         }
 
-        private ExecutionContext(SharedStates shared_states, int rvcount)
+        private ExecutionContext(SharedStates shared_states)
         {
             this.shared_states = shared_states;
-            this.RVCount = rvcount;
         }
 
-        public ExecutionContext Clone(int rvcount)
+        public ExecutionContext Clone()
         {
-            return new ExecutionContext(shared_states, rvcount);
+            return new ExecutionContext(shared_states);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

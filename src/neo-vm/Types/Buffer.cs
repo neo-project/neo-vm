@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 
@@ -40,25 +41,22 @@ namespace Neo.VM.Types
             }
         }
 
-        public override bool Equals(object obj)
+        internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
         {
-            return this == obj;
+            if (refMap.TryGetValue(this, out StackItem mappedItem)) return mappedItem;
+            Buffer result = new Buffer(InnerBuffer);
+            refMap.Add(this, result);
+            return result;
         }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = 17;
-                foreach (byte element in InnerBuffer)
-                    hash = hash * 31 + element;
-                return hash;
-            }
-        }
-
-        public override bool ToBoolean()
+        public override bool GetBoolean()
         {
             return true;
+        }
+
+        public override ReadOnlySpan<byte> GetSpan()
+        {
+            return InnerBuffer;
         }
     }
 }

@@ -31,21 +31,26 @@ namespace Neo.VM.Types
             this.value = value;
         }
 
-        public override bool Equals(PrimitiveType other)
+        public override bool Equals(StackItem other)
         {
             if (ReferenceEquals(this, other)) return true;
             if (other is Integer i) return value == i.value;
-            return base.Equals(other);
+            return false;
         }
 
-        public override BigInteger ToBigInteger()
-        {
-            return value;
-        }
-
-        public override bool ToBoolean()
+        public override bool GetBoolean()
         {
             return !value.IsZero;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(value);
+        }
+
+        public override BigInteger GetInteger()
+        {
+            return value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

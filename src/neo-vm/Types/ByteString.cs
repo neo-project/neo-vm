@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Neo.VM.Types
 {
@@ -16,6 +16,36 @@ namespace Neo.VM.Types
         public ByteString(ReadOnlyMemory<byte> value)
         {
             this.Memory = value;
+        }
+
+        public override bool Equals(StackItem other)
+        {
+            if (ReferenceEquals(this, other)) return true;
+            if (other is ByteString b) return GetSpan().SequenceEqual(b.GetSpan());
+            return false;
+        }
+
+        public override bool GetBoolean()
+        {
+            if (Size > Integer.MaxSize) return true;
+            return Unsafe.NotZero(GetSpan());
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                foreach (byte element in GetSpan())
+                    hash = hash * 31 + element;
+                return hash;
+            }
+        }
+
+        public override BigInteger GetInteger()
+        {
+            if (Size > Integer.MaxSize) throw new InvalidCastException();
+            return new BigInteger(GetSpan());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -45,7 +75,7 @@ namespace Neo.VM.Types
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator ByteString(string value)
         {
-            return new ByteString(Encoding.UTF8.GetBytes(value));
+            return new ByteString(Utility.StrictUTF8.GetBytes(value));
         }
     }
 }

@@ -15,41 +15,27 @@ namespace Neo.VM.Types
             _object = value ?? throw new ArgumentException();
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(StackItem other)
         {
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj is InteropInterface i) return _object.Equals(i._object);
+            if (ReferenceEquals(this, other)) return true;
+            if (other is InteropInterface i) return _object.Equals(i._object);
             return false;
         }
 
-        public override int GetHashCode()
-        {
-            throw new NotSupportedException();
-        }
-
-        public T GetInterface<T>()
-        {
-            if (_object is T t) return t;
-            throw new InvalidCastException();
-        }
-
-        public override bool ToBoolean()
+        public override bool GetBoolean()
         {
             return true;
         }
 
-        public bool TryGetInterface<T>(out T result)
+        public override int GetHashCode()
         {
-            if (_object is T t)
-            {
-                result = t;
-                return true;
-            }
-            else
-            {
-                result = default;
-                return false;
-            }
+            return HashCode.Combine(_object);
+        }
+
+        public override T GetInterface<T>()
+        {
+            if (_object is T t) return t;
+            throw new InvalidCastException();
         }
     }
 }

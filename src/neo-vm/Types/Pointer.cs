@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Neo.VM.Types
@@ -15,21 +16,21 @@ namespace Neo.VM.Types
             this.Position = position;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(StackItem other)
         {
-            if (obj == this) return true;
-            if (obj is Pointer p) return Position == p.Position && Script.Equals(p.Script);
+            if (other == this) return true;
+            if (other is Pointer p) return Position == p.Position && Script.Equals(p.Script);
             return false;
+        }
+
+        public override bool GetBoolean()
+        {
+            return true;
         }
 
         public override int GetHashCode()
         {
-            return Position.GetHashCode() + (31 * Script.GetHashCode());
-        }
-
-        public override bool ToBoolean()
-        {
-            return true;
+            return HashCode.Combine(Script, Position);
         }
     }
 }

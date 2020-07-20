@@ -1,6 +1,6 @@
 {
   "category": "Limits",
-  "name": "Invocation limits [InvocationLimits] [InvocationLimits] [InvocationLimits]",
+  "name": "Invocation limits",
   "tests": [
     {
       "name": "More than 1024 ExecutionContext",

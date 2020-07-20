@@ -3,6 +3,64 @@
   "name": "TRY_CATCH",
   "tests": [
     {
+      "name": "try catch with syscall exception",
+      "script": [
+        "TRY",
+        "0x0a00",
+        "SYSCALL",
+        "0xdeaddead",
+        "ENDTRY",
+        "0x05",
+        "PUSH1",
+        "ENDTRY",
+        "0x02",
+        "PUSH2"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 13,
+                "nextInstruction": "PUSH2",
+                "evaluationStack": [
+                  {
+                    "type": "ByteString",
+                    "value": "0x6572726f72"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "integer",
+                "value": 2
+              },
+              {
+                "type": "ByteString",
+                "value": "0x6572726f72"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "try catch without exception",
       "script": [
         "TRY",
