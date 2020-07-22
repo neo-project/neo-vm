@@ -21,7 +21,6 @@
         {
           "actions": [
             "stepInto",
-            "stepInto",
             "stepInto"
           ],
           "result": {
