@@ -400,7 +400,10 @@ namespace Neo.VM
                     }
                 case OpCode.SYSCALL:
                     {
+                        var oldPointer = CurrentContext.InstructionPointer;
                         OnSysCall(instruction.TokenU32);
+                        if (oldPointer != CurrentContext.InstructionPointer) // syscall throw an exception or offset, like CallFromNativeContract
+                            return;
                         break;
                     }
 
