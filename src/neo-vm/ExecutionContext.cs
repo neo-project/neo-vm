@@ -34,7 +34,7 @@ namespace Neo.VM
         /// <summary>
         /// Instruction pointer
         /// </summary>
-        public int InstructionPointer { get; set; }
+        public int InstructionPointer { get; internal set; }
 
         public Instruction CurrentInstruction
         {

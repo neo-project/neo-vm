@@ -13,6 +13,7 @@ namespace Neo.VM
     public class ExecutionEngine : IDisposable
     {
         private VMState state = VMState.BREAK;
+        private bool ipFlag;
 
         #region Limits Variables
 
@@ -44,7 +45,6 @@ namespace Neo.VM
         public ExecutionContext EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }
         public StackItem UncaughtException { get; private set; }
-        protected bool IPFlag { get; set; }
 
         public VMState State
         {
@@ -144,7 +144,7 @@ namespace Neo.VM
             ExecutionContext context = CurrentContext.Clone();
             context.InstructionPointer = initialPosition;
             LoadContext(context);
-            IPFlag = true;
+            ipFlag = true;
         }
 
         private void ExecuteInstruction(Instruction instruction)
@@ -410,7 +410,7 @@ namespace Neo.VM
                         else
                             HandleException();
 
-                        IPFlag = true;
+                        ipFlag = true;
                         break;
                     }
                 case OpCode.RET:
@@ -422,7 +422,7 @@ namespace Neo.VM
                         if (InvocationStack.Count == 0)
                             State = VMState.HALT;
                         ContextUnloaded(context_pop);
-                        IPFlag = true;
+                        ipFlag = true;
                         break;
                     }
                 case OpCode.SYSCALL:
@@ -1298,7 +1298,7 @@ namespace Neo.VM
                 CurrentContext.TryStack.Pop();
                 CurrentContext.InstructionPointer = endPointer;
             }
-            IPFlag = true;
+            ipFlag = true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1308,7 +1308,7 @@ namespace Neo.VM
             if (offset < 0 || offset > CurrentContext.Script.Length)
                 throw new InvalidOperationException($"Jump out of range for offset: {offset}");
             CurrentContext.InstructionPointer = offset;
-            IPFlag = true;
+            ipFlag = true;
         }
 
         private void ExecuteLoadFromSlot(Slot slot, int index)
@@ -1398,7 +1398,7 @@ namespace Neo.VM
                             tryContext.State = ExceptionHandlingState.Finally;
                             executionContext.InstructionPointer = tryContext.FinallyPointer;
                         }
-                        IPFlag = true;
+                        ipFlag = true;
                         return;
                     }
                 }
@@ -1463,8 +1463,8 @@ namespace Neo.VM
         {
             if (ReferenceCounter.CheckZeroReferred() > MaxStackSize)
                 throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}");
-            if (!IPFlag) CurrentContext?.MoveNext();
-            IPFlag = false;
+            if (!ipFlag) CurrentContext?.MoveNext();
+            ipFlag = false;
         }
 
         protected virtual void PreExecuteInstruction() { }
