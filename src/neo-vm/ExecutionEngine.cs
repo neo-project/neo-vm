@@ -136,7 +136,7 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ExecuteCall(int initialPosition)
+        protected void ExecuteCall(int initialPosition)
         {
             if (initialPosition < 0 || initialPosition > CurrentContext.Script.Length)
                 throw new ArgumentOutOfRangeException(nameof(initialPosition));
@@ -210,120 +210,132 @@ namespace Neo.VM
                 case OpCode.NOP: break;
                 case OpCode.JMP:
                     {
-                        ExecuteJump(true, instruction.TokenI8);
+                        ExecuteJump(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMP_L:
                     {
-                        ExecuteJump(true, instruction.TokenI32);
+                        ExecuteJump(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPIF:
                     {
-                        var x = Pop().GetBoolean();
-                        ExecuteJump(x, instruction.TokenI8);
+                        if (Pop().GetBoolean())
+                            ExecuteJump(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPIF_L:
                     {
-                        var x = Pop().GetBoolean();
-                        ExecuteJump(x, instruction.TokenI32);
+                        if (Pop().GetBoolean())
+                            ExecuteJump(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPIFNOT:
                     {
-                        var x = Pop().GetBoolean();
-                        ExecuteJump(!x, instruction.TokenI8);
+                        if (!Pop().GetBoolean())
+                            ExecuteJump(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPIFNOT_L:
                     {
-                        var x = Pop().GetBoolean();
-                        ExecuteJump(!x, instruction.TokenI32);
+                        if (!Pop().GetBoolean())
+                            ExecuteJump(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPEQ:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 == x2, instruction.TokenI8);
+                        if (x1 == x2)
+                            ExecuteJump(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPEQ_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 == x2, instruction.TokenI32);
+                        if (x1 == x2)
+                            ExecuteJump(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPNE:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 != x2, instruction.TokenI8);
+                        if (x1 != x2)
+                            ExecuteJump(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPNE_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 != x2, instruction.TokenI32);
+                        if (x1 != x2)
+                            ExecuteJump(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPGT:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 > x2, instruction.TokenI8);
+                        if (x1 > x2)
+                            ExecuteJump(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPGT_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 > x2, instruction.TokenI32);
+                        if (x1 > x2)
+                            ExecuteJump(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPGE:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 >= x2, instruction.TokenI8);
+                        if (x1 >= x2)
+                            ExecuteJump(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPGE_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 >= x2, instruction.TokenI32);
+                        if (x1 >= x2)
+                            ExecuteJump(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPLT:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 < x2, instruction.TokenI8);
+                        if (x1 < x2)
+                            ExecuteJump(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPLT_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 < x2, instruction.TokenI32);
+                        if (x1 < x2)
+                            ExecuteJump(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPLE:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 <= x2, instruction.TokenI8);
+                        if (x1 <= x2)
+                            ExecuteJump(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPLE_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        ExecuteJump(x1 <= x2, instruction.TokenI32);
+                        if (x1 <= x2)
+                            ExecuteJump(instruction.TokenI32);
                         break;
                     }
                 case OpCode.CALL:
@@ -357,7 +369,7 @@ namespace Neo.VM
                     }
                 case OpCode.THROW:
                     {
-                        Throw(Pop());
+                        ExecuteThrow(Pop());
                         break;
                     }
                 case OpCode.TRY:
@@ -1290,17 +1302,13 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ExecuteJump(bool condition, int offset)
+        protected void ExecuteJump(int offset)
         {
             offset = checked(CurrentContext.InstructionPointer + offset);
-
             if (offset < 0 || offset > CurrentContext.Script.Length)
                 throw new InvalidOperationException($"Jump out of range for offset: {offset}");
-            if (condition)
-            {
-                CurrentContext.InstructionPointer = offset;
-                IPFlag = true;
-            }
+            CurrentContext.InstructionPointer = offset;
+            IPFlag = true;
         }
 
         private void ExecuteLoadFromSlot(Slot slot, int index)
@@ -1341,6 +1349,12 @@ namespace Neo.VM
             if (index < 0 || index >= slot.Count)
                 throw new InvalidOperationException($"Index out of range when storing to slot: {index}");
             slot[index] = Pop();
+        }
+
+        protected void ExecuteThrow(StackItem ex)
+        {
+            UncaughtException = ex;
+            HandleException();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1459,12 +1473,6 @@ namespace Neo.VM
         public void Push(StackItem item)
         {
             CurrentContext.EvaluationStack.Push(item);
-        }
-
-        public void Throw(StackItem ex)
-        {
-            UncaughtException = ex;
-            HandleException();
         }
     }
 }
