@@ -44,6 +44,7 @@ namespace Neo.VM
         public ExecutionContext EntryContext { get; private set; }
         public EvaluationStack ResultStack { get; }
         public StackItem UncaughtException { get; private set; }
+        protected bool IPFlag { get; set; }
 
         public VMState State
         {
@@ -134,9 +135,20 @@ namespace Neo.VM
             return State;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ExecuteCall(int initialPosition)
+        {
+            if (initialPosition < 0 || initialPosition > CurrentContext.Script.Length)
+                throw new ArgumentOutOfRangeException(nameof(initialPosition));
+            CurrentContext.MoveNext();
+            ExecutionContext context = CurrentContext.Clone();
+            context.InstructionPointer = initialPosition;
+            LoadContext(context);
+            IPFlag = true;
+        }
+
         private void ExecuteInstruction(Instruction instruction)
         {
-            ExecutionContext context = CurrentContext;
             switch (instruction.OpCode)
             {
                 //Push
@@ -152,10 +164,10 @@ namespace Neo.VM
                     }
                 case OpCode.PUSHA:
                     {
-                        int position = checked(context.InstructionPointer + instruction.TokenI32);
-                        if (position < 0 || position > context.Script.Length)
+                        int position = checked(CurrentContext.InstructionPointer + instruction.TokenI32);
+                        if (position < 0 || position > CurrentContext.Script.Length)
                             throw new InvalidOperationException($"Bad pointer address: {position}");
-                        Push(new Pointer(context.Script, position));
+                        Push(new Pointer(CurrentContext.Script, position));
                         break;
                     }
                 case OpCode.PUSHNULL:
@@ -199,137 +211,137 @@ namespace Neo.VM
                 case OpCode.JMP:
                     {
                         ExecuteJump(true, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMP_L:
                     {
                         ExecuteJump(true, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPIF:
                     {
                         var x = Pop().GetBoolean();
                         ExecuteJump(x, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPIF_L:
                     {
                         var x = Pop().GetBoolean();
                         ExecuteJump(x, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPIFNOT:
                     {
                         var x = Pop().GetBoolean();
                         ExecuteJump(!x, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPIFNOT_L:
                     {
                         var x = Pop().GetBoolean();
                         ExecuteJump(!x, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPEQ:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 == x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPEQ_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 == x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPNE:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 != x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPNE_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 != x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPGT:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 > x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPGT_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 > x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPGE:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 >= x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPGE_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 >= x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPLT:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 < x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPLT_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 < x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.JMPLE:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 <= x2, instruction.TokenI8);
-                        return;
+                        break;
                     }
                 case OpCode.JMPLE_L:
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         ExecuteJump(x1 <= x2, instruction.TokenI32);
-                        return;
+                        break;
                     }
                 case OpCode.CALL:
                     {
-                        LoadClonedContext(checked(context.InstructionPointer + instruction.TokenI8));
+                        ExecuteCall(checked(CurrentContext.InstructionPointer + instruction.TokenI8));
                         break;
                     }
                 case OpCode.CALL_L:
                     {
-                        LoadClonedContext(checked(context.InstructionPointer + instruction.TokenI32));
+                        ExecuteCall(checked(CurrentContext.InstructionPointer + instruction.TokenI32));
                         break;
                     }
                 case OpCode.CALLA:
                     {
                         var x = Pop<Pointer>();
-                        if (!x.Script.Equals(context.Script))
+                        if (!x.Script.Equals(CurrentContext.Script))
                             throw new InvalidOperationException("Pointers can't be shared between scripts");
-                        LoadClonedContext(x.Position);
+                        ExecuteCall(x.Position);
                         break;
                     }
                 case OpCode.ABORT:
@@ -346,7 +358,7 @@ namespace Neo.VM
                 case OpCode.THROW:
                     {
                         Throw(Pop());
-                        return;
+                        break;
                     }
                 case OpCode.TRY:
                     {
@@ -366,26 +378,28 @@ namespace Neo.VM
                     {
                         int endOffset = instruction.TokenI8;
                         ExecuteEndTry(endOffset);
-                        return;
+                        break;
                     }
                 case OpCode.ENDTRY_L:
                     {
                         int endOffset = instruction.TokenI32;
                         ExecuteEndTry(endOffset);
-                        return;
+                        break;
                     }
                 case OpCode.ENDFINALLY:
                     {
-                        if (context.TryStack is null)
+                        if (CurrentContext.TryStack is null)
                             throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
-                        if (!context.TryStack.TryPop(out ExceptionHandlingContext currentTry))
+                        if (!CurrentContext.TryStack.TryPop(out ExceptionHandlingContext currentTry))
                             throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
 
                         if (UncaughtException is null)
-                            context.InstructionPointer = currentTry.EndPointer;
+                            CurrentContext.InstructionPointer = currentTry.EndPointer;
                         else
                             HandleException();
-                        return;
+
+                        IPFlag = true;
+                        break;
                     }
                 case OpCode.RET:
                     {
@@ -396,21 +410,19 @@ namespace Neo.VM
                         if (InvocationStack.Count == 0)
                             State = VMState.HALT;
                         ContextUnloaded(context_pop);
-                        return;
+                        IPFlag = true;
+                        break;
                     }
                 case OpCode.SYSCALL:
                     {
-                        var oldPointer = CurrentContext.InstructionPointer;
                         OnSysCall(instruction.TokenU32);
-                        if (oldPointer != CurrentContext.InstructionPointer) // syscall throw an exception or offset, like CallFromNativeContract
-                            return;
                         break;
                     }
 
                 // Stack ops
                 case OpCode.DEPTH:
                     {
-                        Push(context.EvaluationStack.Count);
+                        Push(CurrentContext.EvaluationStack.Count);
                         break;
                     }
                 case OpCode.DROP:
@@ -420,7 +432,7 @@ namespace Neo.VM
                     }
                 case OpCode.NIP:
                     {
-                        context.EvaluationStack.Remove<StackItem>(1);
+                        CurrentContext.EvaluationStack.Remove<StackItem>(1);
                         break;
                     }
                 case OpCode.XDROP:
@@ -428,12 +440,12 @@ namespace Neo.VM
                         int n = (int)Pop().GetInteger();
                         if (n < 0)
                             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
-                        context.EvaluationStack.Remove<StackItem>(n);
+                        CurrentContext.EvaluationStack.Remove<StackItem>(n);
                         break;
                     }
                 case OpCode.CLEAR:
                     {
-                        context.EvaluationStack.Clear();
+                        CurrentContext.EvaluationStack.Clear();
                         break;
                     }
                 case OpCode.DUP:
@@ -456,18 +468,18 @@ namespace Neo.VM
                     }
                 case OpCode.TUCK:
                     {
-                        context.EvaluationStack.Insert(2, Peek());
+                        CurrentContext.EvaluationStack.Insert(2, Peek());
                         break;
                     }
                 case OpCode.SWAP:
                     {
-                        var x = context.EvaluationStack.Remove<StackItem>(1);
+                        var x = CurrentContext.EvaluationStack.Remove<StackItem>(1);
                         Push(x);
                         break;
                     }
                 case OpCode.ROT:
                     {
-                        var x = context.EvaluationStack.Remove<StackItem>(2);
+                        var x = CurrentContext.EvaluationStack.Remove<StackItem>(2);
                         Push(x);
                         break;
                     }
@@ -477,46 +489,46 @@ namespace Neo.VM
                         if (n < 0)
                             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
                         if (n == 0) break;
-                        var x = context.EvaluationStack.Remove<StackItem>(n);
+                        var x = CurrentContext.EvaluationStack.Remove<StackItem>(n);
                         Push(x);
                         break;
                     }
                 case OpCode.REVERSE3:
                     {
-                        context.EvaluationStack.Reverse(3);
+                        CurrentContext.EvaluationStack.Reverse(3);
                         break;
                     }
                 case OpCode.REVERSE4:
                     {
-                        context.EvaluationStack.Reverse(4);
+                        CurrentContext.EvaluationStack.Reverse(4);
                         break;
                     }
                 case OpCode.REVERSEN:
                     {
                         int n = (int)Pop().GetInteger();
-                        context.EvaluationStack.Reverse(n);
+                        CurrentContext.EvaluationStack.Reverse(n);
                         break;
                     }
 
                 //Slot
                 case OpCode.INITSSLOT:
                     {
-                        if (context.StaticFields != null)
+                        if (CurrentContext.StaticFields != null)
                             throw new InvalidOperationException($"{instruction.OpCode} cannot be executed twice.");
                         if (instruction.TokenU8 == 0)
                             throw new InvalidOperationException($"The operand {instruction.TokenU8} is invalid for OpCode.{instruction.OpCode}.");
-                        context.StaticFields = new Slot(instruction.TokenU8, ReferenceCounter);
+                        CurrentContext.StaticFields = new Slot(instruction.TokenU8, ReferenceCounter);
                         break;
                     }
                 case OpCode.INITSLOT:
                     {
-                        if (context.LocalVariables != null || context.Arguments != null)
+                        if (CurrentContext.LocalVariables != null || CurrentContext.Arguments != null)
                             throw new InvalidOperationException($"{instruction.OpCode} cannot be executed twice.");
                         if (instruction.TokenU16 == 0)
                             throw new InvalidOperationException($"The operand {instruction.TokenU16} is invalid for OpCode.{instruction.OpCode}.");
                         if (instruction.TokenU8 > 0)
                         {
-                            context.LocalVariables = new Slot(instruction.TokenU8, ReferenceCounter);
+                            CurrentContext.LocalVariables = new Slot(instruction.TokenU8, ReferenceCounter);
                         }
                         if (instruction.TokenU8_1 > 0)
                         {
@@ -525,7 +537,7 @@ namespace Neo.VM
                             {
                                 items[i] = Pop();
                             }
-                            context.Arguments = new Slot(items, ReferenceCounter);
+                            CurrentContext.Arguments = new Slot(items, ReferenceCounter);
                         }
                         break;
                     }
@@ -537,12 +549,12 @@ namespace Neo.VM
                 case OpCode.LDSFLD5:
                 case OpCode.LDSFLD6:
                     {
-                        ExecuteLoadFromSlot(context.StaticFields, instruction.OpCode - OpCode.LDSFLD0);
+                        ExecuteLoadFromSlot(CurrentContext.StaticFields, instruction.OpCode - OpCode.LDSFLD0);
                         break;
                     }
                 case OpCode.LDSFLD:
                     {
-                        ExecuteLoadFromSlot(context.StaticFields, instruction.TokenU8);
+                        ExecuteLoadFromSlot(CurrentContext.StaticFields, instruction.TokenU8);
                         break;
                     }
                 case OpCode.STSFLD0:
@@ -553,12 +565,12 @@ namespace Neo.VM
                 case OpCode.STSFLD5:
                 case OpCode.STSFLD6:
                     {
-                        ExecuteStoreToSlot(context.StaticFields, instruction.OpCode - OpCode.STSFLD0);
+                        ExecuteStoreToSlot(CurrentContext.StaticFields, instruction.OpCode - OpCode.STSFLD0);
                         break;
                     }
                 case OpCode.STSFLD:
                     {
-                        ExecuteStoreToSlot(context.StaticFields, instruction.TokenU8);
+                        ExecuteStoreToSlot(CurrentContext.StaticFields, instruction.TokenU8);
                         break;
                     }
                 case OpCode.LDLOC0:
@@ -569,12 +581,12 @@ namespace Neo.VM
                 case OpCode.LDLOC5:
                 case OpCode.LDLOC6:
                     {
-                        ExecuteLoadFromSlot(context.LocalVariables, instruction.OpCode - OpCode.LDLOC0);
+                        ExecuteLoadFromSlot(CurrentContext.LocalVariables, instruction.OpCode - OpCode.LDLOC0);
                         break;
                     }
                 case OpCode.LDLOC:
                     {
-                        ExecuteLoadFromSlot(context.LocalVariables, instruction.TokenU8);
+                        ExecuteLoadFromSlot(CurrentContext.LocalVariables, instruction.TokenU8);
                         break;
                     }
                 case OpCode.STLOC0:
@@ -585,12 +597,12 @@ namespace Neo.VM
                 case OpCode.STLOC5:
                 case OpCode.STLOC6:
                     {
-                        ExecuteStoreToSlot(context.LocalVariables, instruction.OpCode - OpCode.STLOC0);
+                        ExecuteStoreToSlot(CurrentContext.LocalVariables, instruction.OpCode - OpCode.STLOC0);
                         break;
                     }
                 case OpCode.STLOC:
                     {
-                        ExecuteStoreToSlot(context.LocalVariables, instruction.TokenU8);
+                        ExecuteStoreToSlot(CurrentContext.LocalVariables, instruction.TokenU8);
                         break;
                     }
                 case OpCode.LDARG0:
@@ -601,12 +613,12 @@ namespace Neo.VM
                 case OpCode.LDARG5:
                 case OpCode.LDARG6:
                     {
-                        ExecuteLoadFromSlot(context.Arguments, instruction.OpCode - OpCode.LDARG0);
+                        ExecuteLoadFromSlot(CurrentContext.Arguments, instruction.OpCode - OpCode.LDARG0);
                         break;
                     }
                 case OpCode.LDARG:
                     {
-                        ExecuteLoadFromSlot(context.Arguments, instruction.TokenU8);
+                        ExecuteLoadFromSlot(CurrentContext.Arguments, instruction.TokenU8);
                         break;
                     }
                 case OpCode.STARG0:
@@ -617,12 +629,12 @@ namespace Neo.VM
                 case OpCode.STARG5:
                 case OpCode.STARG6:
                     {
-                        ExecuteStoreToSlot(context.Arguments, instruction.OpCode - OpCode.STARG0);
+                        ExecuteStoreToSlot(CurrentContext.Arguments, instruction.OpCode - OpCode.STARG0);
                         break;
                     }
                 case OpCode.STARG:
                     {
-                        ExecuteStoreToSlot(context.Arguments, instruction.TokenU8);
+                        ExecuteStoreToSlot(CurrentContext.Arguments, instruction.TokenU8);
                         break;
                     }
 
@@ -931,7 +943,7 @@ namespace Neo.VM
                 case OpCode.PACK:
                     {
                         int size = (int)Pop().GetInteger();
-                        if (size < 0 || size > context.EvaluationStack.Count)
+                        if (size < 0 || size > CurrentContext.EvaluationStack.Count)
                             throw new InvalidOperationException($"The value {size} is out of range.");
                         VMArray array = new VMArray(ReferenceCounter);
                         for (int i = 0; i < size; i++)
@@ -1250,7 +1262,6 @@ namespace Neo.VM
 
                 default: throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
             }
-            context.MoveNext();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1275,6 +1286,7 @@ namespace Neo.VM
                 CurrentContext.TryStack.Pop();
                 CurrentContext.InstructionPointer = endPointer;
             }
+            IPFlag = true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1285,9 +1297,10 @@ namespace Neo.VM
             if (offset < 0 || offset > CurrentContext.Script.Length)
                 throw new InvalidOperationException($"Jump out of range for offset: {offset}");
             if (condition)
+            {
                 CurrentContext.InstructionPointer = offset;
-            else
-                CurrentContext.MoveNext();
+                IPFlag = true;
+            }
         }
 
         private void ExecuteLoadFromSlot(Slot slot, int index)
@@ -1371,6 +1384,7 @@ namespace Neo.VM
                             tryContext.State = ExceptionHandlingState.Finally;
                             executionContext.InstructionPointer = tryContext.FinallyPointer;
                         }
+                        IPFlag = true;
                         return;
                     }
                 }
@@ -1378,17 +1392,6 @@ namespace Neo.VM
             }
 
             throw new Exception("An unhandled exception was thrown.");
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ExecutionContext LoadClonedContext(int initialPosition)
-        {
-            if (initialPosition < 0 || initialPosition > CurrentContext.Script.Length)
-                throw new ArgumentOutOfRangeException(nameof(initialPosition));
-            ExecutionContext context = CurrentContext.Clone();
-            context.InstructionPointer = initialPosition;
-            LoadContext(context);
-            return context;
         }
 
         protected virtual void LoadContext(ExecutionContext context)
@@ -1446,6 +1449,8 @@ namespace Neo.VM
         {
             if (ReferenceCounter.CheckZeroReferred() > MaxStackSize)
                 throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}");
+            if (!IPFlag) CurrentContext?.MoveNext();
+            IPFlag = false;
         }
 
         protected virtual void PreExecuteInstruction() { }
