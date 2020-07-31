@@ -79,7 +79,6 @@ namespace Neo.Test
             CollectionAssert.AreEqual(new byte[] { 0x00, 0x01, 0x00, 0x00 }, ins.Operand.ToArray());
             Assert.AreEqual(5, ins.Size);
             Assert.AreEqual(256, ins.TokenI32);
-            Assert.AreEqual(Encoding.ASCII.GetString(new byte[] { 0x00, 0x01, 0x00, 0x00 }), ins.TokenString);
 
             ins = script.GetInstruction(6);
 
@@ -87,7 +86,6 @@ namespace Neo.Test
             CollectionAssert.AreEqual(new byte[] { 123, 0x00, 0x00, 0x00 }, ins.Operand.ToArray());
             Assert.AreEqual(5, ins.Size);
             Assert.AreEqual(123, ins.TokenI16);
-            Assert.AreEqual(Encoding.ASCII.GetString(new byte[] { 123, 0x00, 0x00, 0x00 }), ins.TokenString);
             Assert.AreEqual(123U, ins.TokenU32);
 
             ins = script.GetInstruction(100);

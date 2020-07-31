@@ -3,7 +3,6 @@ using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Neo.VM
 {
@@ -72,15 +71,6 @@ namespace Neo.VM
             get
             {
                 return (sbyte)Operand.Span[1];
-            }
-        }
-
-        public string TokenString
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                return Encoding.ASCII.GetString(Operand.Span);
             }
         }
 
