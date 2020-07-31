@@ -29,15 +29,6 @@ namespace Neo.VM
             }
         }
 
-        public short TokenI16
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                return BinaryPrimitives.ReadInt16LittleEndian(Operand.Span);
-            }
-        }
-
         public int TokenI32
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

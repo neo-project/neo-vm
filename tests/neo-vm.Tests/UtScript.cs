@@ -70,7 +70,6 @@ namespace Neo.Test
             Assert.AreEqual(OpCode.PUSH0, ins.OpCode);
             Assert.IsTrue(ins.Operand.IsEmpty);
             Assert.AreEqual(1, ins.Size);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var x = ins.TokenI16; });
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => { var x = ins.TokenU32; });
 
             ins = script.GetInstruction(1);
@@ -85,7 +84,6 @@ namespace Neo.Test
             Assert.AreEqual(OpCode.SYSCALL, ins.OpCode);
             CollectionAssert.AreEqual(new byte[] { 123, 0x00, 0x00, 0x00 }, ins.Operand.ToArray());
             Assert.AreEqual(5, ins.Size);
-            Assert.AreEqual(123, ins.TokenI16);
             Assert.AreEqual(123U, ins.TokenU32);
 
             ins = script.GetInstruction(100);
