@@ -53,10 +53,10 @@ namespace Neo.VM
                             xbp++;
                         }
                     }
+
+                    if (hashCode == -1) hashCode = 0;
                 }
             }
-
-            if (hashCode == -1) hashCode = 0;
 
             return hashCode;
         }
