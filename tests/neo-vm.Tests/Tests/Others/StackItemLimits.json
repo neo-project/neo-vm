@@ -36,33 +36,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "BREAK",
-            "invocationStack": [
-              {
-                "instructionPointer": 36,
-                "nextInstruction": "RET",
-                "evaluationStack": [
-                  {
-                    "type": "Boolean",
-                    "value": false
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "actions": [
-            "stepInto"
-          ],
-          "result": {
-            "state": "HALT",
-            "resultStack": [
-              {
-                "type": "Boolean",
-                "value": false
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]
