@@ -33,13 +33,7 @@ namespace Neo.VM.Types
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = 17;
-                foreach (byte element in GetSpan())
-                    hash = hash * 31 + element;
-                return hash;
-            }
+            return Unsafe.GetHashCode(GetSpan());
         }
 
         public override BigInteger GetInteger()

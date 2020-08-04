@@ -51,19 +51,15 @@ namespace Neo.VM
         {
             if (this == obj) return true;
             if (!(obj is Script script)) return false;
+            if (GetHashCode() != script.GetHashCode()) return false;
             return _value.AsSpan().SequenceEqual(script._value);
         }
 
-        public unsafe override int GetHashCode()
+        public override int GetHashCode()
         {
             if (_hashCode == -1)
             {
-                unchecked
-                {
-                    _hashCode = 17;
-                    foreach (byte element in _value)
-                        _hashCode = _hashCode * 31 + element;
-                }
+                _hashCode = Unsafe.GetHashCode(_value);
             }
             return _hashCode;
         }
