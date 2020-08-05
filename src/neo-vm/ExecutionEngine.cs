@@ -351,7 +351,7 @@ namespace Neo.VM
                 case OpCode.CALLA:
                     {
                         var x = Pop<Pointer>();
-                        if (!x.Script.Equals(CurrentContext.Script))
+                        if (x.Script != CurrentContext.Script)
                             throw new InvalidOperationException("Pointers can't be shared between scripts");
                         ExecuteCall(x.Position);
                         break;
