@@ -15,7 +15,7 @@ namespace Neo.Test.Types
 
             if (method == 0xaddeadde)
             {
-                Throw("error");
+                ExecuteThrow("error");
                 return;
             }
 
