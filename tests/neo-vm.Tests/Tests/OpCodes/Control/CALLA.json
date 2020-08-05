@@ -82,8 +82,8 @@
                 "nextInstruction": "PUSH0"
               },
               {
-                "instructionPointer": 6,
-                "nextInstruction": "RET"
+                "instructionPointer": 5,
+                "nextInstruction": "CALLA"
               }
             ]
           }
@@ -106,8 +106,8 @@
                 ]
               },
               {
-                "instructionPointer": 6,
-                "nextInstruction": "RET",
+                "instructionPointer": 5,
+                "nextInstruction": "CALLA",
                 "evaluationStack": [
                   {
                     "type": "integer",

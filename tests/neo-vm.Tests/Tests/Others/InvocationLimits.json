@@ -94,8 +94,8 @@
                 ]
               },
               {
-                "instructionPointer": 16,
-                "nextInstruction": "RET",
+                "instructionPointer": 14,
+                "nextInstruction": "CALL",
                 "staticFields": [
                   {
                     "type": "integer",

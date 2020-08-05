@@ -140,7 +140,6 @@ namespace Neo.VM
         {
             if (position < 0 || position > CurrentContext.Script.Length)
                 throw new ArgumentOutOfRangeException(nameof(position));
-            CurrentContext.MoveNext();
             ExecutionContext context = CurrentContext.Clone();
             context.InstructionPointer = position;
             LoadContext(context);
@@ -422,7 +421,6 @@ namespace Neo.VM
                         if (InvocationStack.Count == 0)
                             State = VMState.HALT;
                         ContextUnloaded(context_pop);
-                        ipFlag = true;
                         break;
                     }
                 case OpCode.SYSCALL:

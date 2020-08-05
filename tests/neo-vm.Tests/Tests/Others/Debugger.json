@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Others",
   "name": "Debugger",
   "tests": [
@@ -63,8 +63,8 @@
                 ]
               },
               {
-                "instructionPointer": 3,
-                "nextInstruction": "PUSH3",
+                "instructionPointer": 1,
+                "nextInstruction": "CALL",
                 "evaluationStack": [
                   {
                     "type": "integer",
@@ -97,8 +97,8 @@
                 ]
               },
               {
-                "instructionPointer": 3,
-                "nextInstruction": "PUSH3",
+                "instructionPointer": 1,
+                "nextInstruction": "CALL",
                 "evaluationStack": [
                   {
                     "type": "integer",
