@@ -13,7 +13,7 @@ namespace Neo.VM
     public class ExecutionEngine : IDisposable
     {
         private VMState state = VMState.BREAK;
-        private bool ipFlag;
+        private bool isJumping = false;
 
         #region Limits Variables
 
@@ -136,19 +136,14 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected void ExecuteCall(int position)
+        private void ExecuteCall(int position)
         {
-            if (position < 0 || position > CurrentContext.Script.Length)
-                throw new ArgumentOutOfRangeException(nameof(position));
-            CurrentContext.MoveNext();
-            ExecutionContext context = CurrentContext.Clone();
-            context.InstructionPointer = position;
-            LoadContext(context);
-            ipFlag = true;
+            LoadContext(CurrentContext.Clone(position));
         }
 
-        private void ExecuteInstruction(Instruction instruction)
+        private void ExecuteInstruction()
         {
+            Instruction instruction = CurrentContext.CurrentInstruction;
             switch (instruction.OpCode)
             {
                 //Push
@@ -410,7 +405,7 @@ namespace Neo.VM
                         else
                             HandleException();
 
-                        ipFlag = true;
+                        isJumping = true;
                         break;
                     }
                 case OpCode.RET:
@@ -422,7 +417,7 @@ namespace Neo.VM
                         if (InvocationStack.Count == 0)
                             State = VMState.HALT;
                         ContextUnloaded(context_pop);
-                        ipFlag = true;
+                        isJumping = true;
                         break;
                     }
                 case OpCode.SYSCALL:
@@ -1298,7 +1293,7 @@ namespace Neo.VM
                 CurrentContext.TryStack.Pop();
                 CurrentContext.InstructionPointer = endPointer;
             }
-            ipFlag = true;
+            isJumping = true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1307,7 +1302,7 @@ namespace Neo.VM
             if (position < 0 || position > CurrentContext.Script.Length)
                 throw new ArgumentOutOfRangeException($"Jump out of range for position: {position}");
             CurrentContext.InstructionPointer = position;
-            ipFlag = true;
+            isJumping = true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1335,10 +1330,12 @@ namespace Neo.VM
             {
                 try
                 {
+                    ExecutionContext context = CurrentContext;
                     PreExecuteInstruction();
-                    Instruction instruction = CurrentContext.CurrentInstruction;
-                    ExecuteInstruction(instruction);
-                    PostExecuteInstruction(instruction);
+                    ExecuteInstruction();
+                    PostExecuteInstruction();
+                    if (!isJumping) context.MoveNext();
+                    isJumping = false;
                 }
                 catch (Exception e)
                 {
@@ -1403,7 +1400,7 @@ namespace Neo.VM
                             tryContext.State = ExceptionHandlingState.Finally;
                             executionContext.InstructionPointer = tryContext.FinallyPointer;
                         }
-                        ipFlag = true;
+                        isJumping = true;
                         return;
                     }
                 }
@@ -1464,12 +1461,10 @@ namespace Neo.VM
             return CurrentContext.EvaluationStack.Pop<T>();
         }
 
-        protected virtual void PostExecuteInstruction(Instruction instruction)
+        protected virtual void PostExecuteInstruction()
         {
             if (ReferenceCounter.CheckZeroReferred() > MaxStackSize)
                 throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}");
-            if (!ipFlag) CurrentContext?.MoveNext();
-            ipFlag = false;
         }
 
         protected virtual void PreExecuteInstruction() { }
