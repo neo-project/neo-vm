@@ -136,13 +136,13 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected void ExecuteCall(int initialPosition)
+        protected void ExecuteCall(int position)
         {
-            if (initialPosition < 0 || initialPosition > CurrentContext.Script.Length)
-                throw new ArgumentOutOfRangeException(nameof(initialPosition));
+            if (position < 0 || position > CurrentContext.Script.Length)
+                throw new ArgumentOutOfRangeException(nameof(position));
             CurrentContext.MoveNext();
             ExecutionContext context = CurrentContext.Clone();
-            context.InstructionPointer = initialPosition;
+            context.InstructionPointer = position;
             LoadContext(context);
             ipFlag = true;
         }
@@ -210,36 +210,36 @@ namespace Neo.VM
                 case OpCode.NOP: break;
                 case OpCode.JMP:
                     {
-                        ExecuteJump(instruction.TokenI8);
+                        ExecuteJumpOffset(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMP_L:
                     {
-                        ExecuteJump(instruction.TokenI32);
+                        ExecuteJumpOffset(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPIF:
                     {
                         if (Pop().GetBoolean())
-                            ExecuteJump(instruction.TokenI8);
+                            ExecuteJumpOffset(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPIF_L:
                     {
                         if (Pop().GetBoolean())
-                            ExecuteJump(instruction.TokenI32);
+                            ExecuteJumpOffset(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPIFNOT:
                     {
                         if (!Pop().GetBoolean())
-                            ExecuteJump(instruction.TokenI8);
+                            ExecuteJumpOffset(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPIFNOT_L:
                     {
                         if (!Pop().GetBoolean())
-                            ExecuteJump(instruction.TokenI32);
+                            ExecuteJumpOffset(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPEQ:
@@ -247,7 +247,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 == x2)
-                            ExecuteJump(instruction.TokenI8);
+                            ExecuteJumpOffset(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPEQ_L:
@@ -255,7 +255,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 == x2)
-                            ExecuteJump(instruction.TokenI32);
+                            ExecuteJumpOffset(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPNE:
@@ -263,7 +263,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 != x2)
-                            ExecuteJump(instruction.TokenI8);
+                            ExecuteJumpOffset(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPNE_L:
@@ -271,7 +271,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 != x2)
-                            ExecuteJump(instruction.TokenI32);
+                            ExecuteJumpOffset(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPGT:
@@ -279,7 +279,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 > x2)
-                            ExecuteJump(instruction.TokenI8);
+                            ExecuteJumpOffset(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPGT_L:
@@ -287,7 +287,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 > x2)
-                            ExecuteJump(instruction.TokenI32);
+                            ExecuteJumpOffset(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPGE:
@@ -295,7 +295,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 >= x2)
-                            ExecuteJump(instruction.TokenI8);
+                            ExecuteJumpOffset(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPGE_L:
@@ -303,7 +303,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 >= x2)
-                            ExecuteJump(instruction.TokenI32);
+                            ExecuteJumpOffset(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPLT:
@@ -311,7 +311,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 < x2)
-                            ExecuteJump(instruction.TokenI8);
+                            ExecuteJumpOffset(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPLT_L:
@@ -319,7 +319,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 < x2)
-                            ExecuteJump(instruction.TokenI32);
+                            ExecuteJumpOffset(instruction.TokenI32);
                         break;
                     }
                 case OpCode.JMPLE:
@@ -327,7 +327,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 <= x2)
-                            ExecuteJump(instruction.TokenI8);
+                            ExecuteJumpOffset(instruction.TokenI8);
                         break;
                     }
                 case OpCode.JMPLE_L:
@@ -335,7 +335,7 @@ namespace Neo.VM
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
                         if (x1 <= x2)
-                            ExecuteJump(instruction.TokenI32);
+                            ExecuteJumpOffset(instruction.TokenI32);
                         break;
                     }
                 case OpCode.CALL:
@@ -1302,13 +1302,18 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected void ExecuteJump(int offset)
+        protected void ExecuteJump(int position)
         {
-            offset = checked(CurrentContext.InstructionPointer + offset);
-            if (offset < 0 || offset > CurrentContext.Script.Length)
-                throw new InvalidOperationException($"Jump out of range for offset: {offset}");
-            CurrentContext.InstructionPointer = offset;
+            if (position < 0 || position > CurrentContext.Script.Length)
+                throw new ArgumentOutOfRangeException($"Jump out of range for position: {position}");
+            CurrentContext.InstructionPointer = position;
             ipFlag = true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void ExecuteJumpOffset(int offset)
+        {
+            ExecuteJump(checked(CurrentContext.InstructionPointer + offset));
         }
 
         private void ExecuteLoadFromSlot(Slot slot, int index)
