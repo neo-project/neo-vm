@@ -36,8 +36,8 @@ namespace Neo.VM.Collections
             }
             set
             {
-                if (collection.Contains(key))
-                    collection[key].Value = value;
+                if (collection.TryGetValue(key, out var entry))
+                    entry.Value = value;
                 else
                     Add(key, value);
             }
@@ -64,9 +64,9 @@ namespace Neo.VM.Collections
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            if (collection.Contains(key))
+            if (collection.TryGetValue(key, out var entry))
             {
-                value = collection[key].Value;
+                value = entry.Value;
                 return true;
             }
             value = default;
