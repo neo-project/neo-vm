@@ -61,11 +61,11 @@
       ]
     },
     {
-      "name": "Max length",
+      "name": "Max length (Parse Instruction Error)",
       "script": [
         "PUSHDATA4",
         "0x01001000",
-        "0xFF*1048577"
+        "0xFF"
       ],
       "steps": [
         {
