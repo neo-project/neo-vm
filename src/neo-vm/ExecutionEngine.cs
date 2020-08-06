@@ -1,4 +1,4 @@
-using Neo.VM.Types;
+﻿using Neo.VM.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -127,6 +127,7 @@ namespace Neo.VM
 
         public VMState Execute()
         {
+            OnExecutionStart();
             if (State == VMState.BREAK)
                 State = VMState.NONE;
             while (State != VMState.HALT && State != VMState.FAULT)
@@ -1405,6 +1406,10 @@ namespace Neo.VM
             };
             LoadContext(context);
             return context;
+        }
+
+        protected virtual void OnExecutionStart()
+        {
         }
 
         protected virtual void OnFault(Exception e)
