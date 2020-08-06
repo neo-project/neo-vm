@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,7 @@ namespace Neo.VM
     public sealed partial class ExecutionContext
     {
         private readonly SharedStates shared_states;
+        private int instructionPointer;
 
         /// <summary>
         /// Script
@@ -34,7 +36,19 @@ namespace Neo.VM
         /// <summary>
         /// Instruction pointer
         /// </summary>
-        public int InstructionPointer { get; set; }
+        public int InstructionPointer
+        {
+            get
+            {
+                return instructionPointer;
+            }
+            internal set
+            {
+                if (value < 0 || value > Script.Length)
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                instructionPointer = value;
+            }
+        }
 
         public Instruction CurrentInstruction
         {
@@ -63,18 +77,24 @@ namespace Neo.VM
         /// <param name="script">Script</param>
         /// <param name="rvcount">Number of items to be returned</param>
         internal ExecutionContext(Script script, ReferenceCounter referenceCounter)
-            : this(new SharedStates(script, referenceCounter))
+            : this(new SharedStates(script, referenceCounter), 0)
         {
         }
 
-        private ExecutionContext(SharedStates shared_states)
+        private ExecutionContext(SharedStates shared_states, int initialPosition)
         {
             this.shared_states = shared_states;
+            this.InstructionPointer = initialPosition;
         }
 
         public ExecutionContext Clone()
         {
-            return new ExecutionContext(shared_states);
+            return Clone(InstructionPointer);
+        }
+
+        public ExecutionContext Clone(int initialPosition)
+        {
+            return new ExecutionContext(shared_states, initialPosition);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

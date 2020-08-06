@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
+using System;
 using System.Collections.Generic;
 
 namespace Neo.Test
@@ -10,7 +11,7 @@ namespace Neo.Test
         [TestMethod]
         public void StateTest()
         {
-            var context = new ExecutionContext(null, new ReferenceCounter());
+            var context = new ExecutionContext(Array.Empty<byte>(), new ReferenceCounter());
 
             var stack = context.GetState<Stack<int>>();
             Assert.AreEqual(0, stack.Count);

@@ -27,9 +27,13 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer": 13,
-                "nextInstruction": "PUSH2",
+                "instructionPointer": 11,
+                "nextInstruction": "ENDTRY",
                 "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 1
+                  },
                   {
                     "type": "ByteString",
                     "value": "0x6572726f72"
@@ -42,6 +46,7 @@
         {
           "actions": [
             "stepInto",
+            "stepInto",
             "stepInto"
           ],
           "result": {
@@ -50,6 +55,10 @@
               {
                 "type": "integer",
                 "value": 2
+              },
+              {
+                "type": "integer",
+                "value": 1
               },
               {
                 "type": "ByteString",

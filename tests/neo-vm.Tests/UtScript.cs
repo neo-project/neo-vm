@@ -28,28 +28,6 @@ namespace Neo.Test
         }
 
         [TestMethod]
-        public void GetHashCodeTest()
-        {
-            var scriptA = new Script(new byte[] { 0x01 });
-            var scriptB = new Script(new byte[] { 0x01, 0x02 });
-            var scriptC = new Script(new byte[] { 0x01 });
-
-            Assert.AreNotEqual(scriptA.GetHashCode(), scriptB.GetHashCode());
-            Assert.AreEqual(scriptA.GetHashCode(), scriptC.GetHashCode());
-        }
-
-        [TestMethod]
-        public void EqualTest()
-        {
-            var scriptA = new Script(new byte[] { 0x01 });
-            var scriptB = new Script(new byte[] { 0x01, 0x02 });
-            var scriptC = new Script(new byte[] { 0x01 });
-
-            Assert.IsFalse(scriptA.Equals(scriptB));
-            Assert.IsTrue(scriptA.Equals(scriptC));
-        }
-
-        [TestMethod]
         public void Parse()
         {
             Script script;
