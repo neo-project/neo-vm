@@ -37,5 +37,22 @@ namespace Neo.VM.Types
             if (_object is T t) return t;
             throw new InvalidCastException();
         }
+
+        public bool TryGetInterface<T>(out T value)
+        {
+            if (_object is T t)
+            {
+                value = t;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        public string GetInterfaceName()
+        {
+            return _object.GetType().FullName;
+        }
     }
 }
