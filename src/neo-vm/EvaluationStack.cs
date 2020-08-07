@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    public sealed class EvaluationStack : IReadOnlyCollection<StackItem>
+    public sealed class EvaluationStack : IReadOnlyList<StackItem>
     {
         private readonly List<StackItem> innerList = new List<StackItem>();
         private readonly ReferenceCounter referenceCounter;
@@ -64,6 +64,8 @@ namespace Neo.VM
             }
             return innerList[innerList.Count - index - 1];
         }
+
+        StackItem IReadOnlyList<StackItem>.this[int index] => Peek(index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
