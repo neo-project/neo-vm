@@ -20,7 +20,7 @@ namespace Neo.VM
             if (e is Array array && array.Count > 0 && array[0] is ByteString s)
             {
                 sb.Append(' ');
-                sb.Append(Utility.StrictUTF8.GetString(s.GetSpan()));
+                sb.Append(Encoding.UTF8.GetString(s.GetSpan()));
             }
             return sb.ToString();
         }
