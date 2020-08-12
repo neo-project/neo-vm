@@ -42,7 +42,7 @@ namespace Neo.VM
             {
                 return instructionPointer;
             }
-            internal set
+            set
             {
                 if (value < 0 || value > Script.Length)
                     throw new ArgumentOutOfRangeException(nameof(value));
