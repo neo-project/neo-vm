@@ -42,7 +42,7 @@ namespace Neo.VM
             {
                 return instructionPointer;
             }
-            set
+            internal set
             {
                 if (value < 0 || value > Script.Length)
                     throw new ArgumentOutOfRangeException(nameof(value));
@@ -110,7 +110,7 @@ namespace Neo.VM
             return (T)value;
         }
 
-        internal bool MoveNext()
+        public bool MoveNext()
         {
             InstructionPointer += CurrentInstruction.Size;
             return InstructionPointer < Script.Length;
