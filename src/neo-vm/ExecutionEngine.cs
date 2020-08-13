@@ -1407,7 +1407,7 @@ namespace Neo.VM
                 ++pop;
             }
 
-            throw new UnhandledException(UncaughtException);
+            throw new VMUnhandledException(UncaughtException);
         }
 
         protected virtual void LoadContext(ExecutionContext context)

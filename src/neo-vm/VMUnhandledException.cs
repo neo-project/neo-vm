@@ -5,11 +5,11 @@ using Array = Neo.VM.Types.Array;
 
 namespace Neo.VM
 {
-    public class UnhandledException : Exception
+    public class VMUnhandledException : Exception
     {
         public StackItem ExceptionObject { get; }
 
-        public UnhandledException(StackItem e) : base(GetExceptionMessage(e))
+        public VMUnhandledException(StackItem e) : base(GetExceptionMessage(e))
         {
             ExceptionObject = e;
         }
