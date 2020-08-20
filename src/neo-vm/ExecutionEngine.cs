@@ -1366,11 +1366,12 @@ namespace Neo.VM
         {
             if (catchOffset == 0 && finallyOffset == 0)
                 throw new InvalidOperationException($"catchOffset and finallyOffset can't be 0 in a TRY block");
-            if (InvocationStack.Select(p => p.TryStack?.Count ?? 0).Sum() >= MaxTryNestingDepth)
+            if (CurrentContext.TryStack is null)
+                CurrentContext.TryStack = new Stack<ExceptionHandlingContext>();
+            else if (CurrentContext.TryStack.Count >= MaxTryNestingDepth)
                 throw new InvalidOperationException("MaxTryNestingDepth exceed.");
             int catchPointer = catchOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + catchOffset);
             int finallyPointer = finallyOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + finallyOffset);
-            CurrentContext.TryStack ??= new Stack<ExceptionHandlingContext>();
             CurrentContext.TryStack.Push(new ExceptionHandlingContext(catchPointer, finallyPointer));
         }
 
