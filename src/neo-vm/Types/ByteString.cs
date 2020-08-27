@@ -22,10 +22,12 @@ namespace Neo.VM.Types
 
         public override bool Equals(StackItem other)
         {
-            if (Size > MaxComparableSize) throw new InvalidOperationException();
+            if (Size > MaxComparableSize)
+                throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
             if (ReferenceEquals(this, other)) return true;
             if (!(other is ByteString b)) return false;
-            if (b.Size > MaxComparableSize) throw new InvalidOperationException();
+            if (b.Size > MaxComparableSize)
+                throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
             return GetSpan().SequenceEqual(b.GetSpan());
         }
 
