@@ -8,6 +8,8 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(Memory.ToArray()).Replace(\"-\", string.Empty)}")]
     public class ByteString : PrimitiveType
     {
+        public const int MaxComparableSize = ushort.MaxValue;
+
         public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
 
         internal override ReadOnlyMemory<byte> Memory { get; }
@@ -20,9 +22,13 @@ namespace Neo.VM.Types
 
         public override bool Equals(StackItem other)
         {
+            if (Size > MaxComparableSize)
+                throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
             if (ReferenceEquals(this, other)) return true;
-            if (other is ByteString b) return GetSpan().SequenceEqual(b.GetSpan());
-            return false;
+            if (!(other is ByteString b)) return false;
+            if (b.Size > MaxComparableSize)
+                throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
+            return GetSpan().SequenceEqual(b.GetSpan());
         }
 
         public override bool GetBoolean()
