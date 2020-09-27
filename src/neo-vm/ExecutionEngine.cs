@@ -969,6 +969,7 @@ namespace Neo.VM
                         for (int i = array.Count - 1; i >= 0; i--)
                             Push(array[i]);
                         Push(array.Count);
+                        array.Clear();
                         break;
                     }
                 case OpCode.NEWARRAY0:
