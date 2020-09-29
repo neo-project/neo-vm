@@ -146,5 +146,31 @@ namespace Neo.Test
             Assert.AreEqual(VMState.HALT, debugger.Execute());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
+
+        [TestMethod]
+        public void TestUnpack()
+        {
+            const int size = 1000;
+            using ScriptBuilder sb = new ScriptBuilder();
+            for (int i = 0; i < size; i++)
+                sb.Emit(OpCode.PUSH1);
+            sb.EmitPush(size);
+            sb.Emit(OpCode.PACK);
+            sb.Emit(OpCode.UNPACK);
+            sb.Emit(OpCode.RET);
+            using ExecutionEngine engine = new ExecutionEngine();
+            Debugger debugger = new Debugger(engine);
+            engine.LoadScript(sb.ToArray());
+            for (int i = 0; i < size; i++)
+                Assert.AreEqual(VMState.BREAK, debugger.StepInto());
+            Assert.AreEqual(size, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.BREAK, debugger.StepInto());
+            Assert.AreEqual(size + 1, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.BREAK, debugger.StepInto());
+            Assert.AreEqual(size + 1, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.BREAK, debugger.StepInto());
+            Assert.AreEqual(size + 1, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.HALT, debugger.Execute());
+        }
     }
 }
