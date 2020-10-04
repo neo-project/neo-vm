@@ -52,6 +52,12 @@ namespace Neo.VM
                 entry.StackReferences++;
             else
                 counter.Add(compound, new Entry { StackReferences = 1 });
+            zero_referred.Remove(compound);
+        }
+
+        internal void AddZeroReferred(CompoundType item)
+        {
+            zero_referred.Add(item);
         }
 
         internal int CheckZeroReferred()
@@ -67,14 +73,14 @@ namespace Neo.VM
                     while (toBeChecked.Count > 0)
                     {
                         CompoundType c = toBeChecked.Dequeue();
-                        Entry entry = counter[c];
-                        if (entry.StackReferences > 0)
+                        counter.TryGetValue(c, out Entry entry);
+                        if (entry?.StackReferences > 0)
                         {
                             toBeDestroyedInLoop.Clear();
                             break;
                         }
                         toBeDestroyedInLoop.Add(c);
-                        if (entry.ObjectReferences is null) continue;
+                        if (entry?.ObjectReferences is null) continue;
                         foreach (var pair in entry.ObjectReferences)
                             if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key))
                                 toBeChecked.Enqueue(pair.Key);
