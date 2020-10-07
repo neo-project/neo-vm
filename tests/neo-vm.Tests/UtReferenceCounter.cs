@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
+using Neo.VM.Types;
 
 namespace Neo.Test
 {
@@ -144,6 +145,20 @@ namespace Neo.Test
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.HALT, debugger.Execute());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+
+        [TestMethod]
+        public void TestArrayNoPush()
+        {
+            using ScriptBuilder sb = new ScriptBuilder();
+            sb.Emit(OpCode.RET);
+            using ExecutionEngine engine = new ExecutionEngine();
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+            Array array = new Array(engine.ReferenceCounter, new StackItem[] { 1, 2, 3, 4 });
+            Assert.AreEqual(array.Count, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }

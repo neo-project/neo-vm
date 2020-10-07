@@ -12,6 +12,7 @@ namespace Neo.VM.Types
         protected CompoundType(ReferenceCounter referenceCounter)
         {
             this.ReferenceCounter = referenceCounter;
+            referenceCounter?.AddZeroReferred(this);
         }
 
         public abstract int Count { get; }
