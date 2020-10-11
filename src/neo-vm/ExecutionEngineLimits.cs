@@ -3,12 +3,12 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
-    public sealed class ExecutionEngineLimmits
+    public sealed class ExecutionEngineLimits
     {
         /// <summary>
         /// Default limits
         /// </summary>
-        public static readonly ExecutionEngineLimmits Default = new ExecutionEngineLimmits();
+        public static readonly ExecutionEngineLimits Default = new ExecutionEngineLimits();
 
         /// <summary>
         /// Max value for SHL and SHR
@@ -35,12 +35,12 @@ namespace Neo.VM
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExecutionEngineLimmits() { }
+        public ExecutionEngineLimits() { }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExecutionEngineLimmits(int maxShift, uint maxStackSize, uint maxItemSize, uint maxInvocationStackSize, uint maxTryNestingDepth)
+        public ExecutionEngineLimits(int maxShift, uint maxStackSize, uint maxItemSize, uint maxInvocationStackSize, uint maxTryNestingDepth)
         {
             MaxShift = maxShift;
             MaxStackSize = maxStackSize;

@@ -15,7 +15,7 @@ namespace Neo.VM
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
 
-        public ExecutionEngineLimmits Limmits { get; }
+        public ExecutionEngineLimmits Limits { get; }
         public ReferenceCounter ReferenceCounter { get; }
         public Stack<ExecutionContext> InvocationStack { get; } = new Stack<ExecutionContext>();
         public ExecutionContext CurrentContext { get; private set; }
@@ -47,7 +47,7 @@ namespace Neo.VM
         {
             this.ReferenceCounter = referenceCounter;
             this.ResultStack = new EvaluationStack(referenceCounter);
-            this.Limmits = limits ?? ExecutionEngineLimmits.Default;
+            this.Limits = limits ?? ExecutionEngineLimmits.Default;
         }
 
         protected virtual void ContextUnloaded(ExecutionContext context)
@@ -122,7 +122,7 @@ namespace Neo.VM
                 case OpCode.PUSHDATA2:
                 case OpCode.PUSHDATA4:
                     {
-                        Limmits.AssertMaxItemSize(instruction.Operand.Length);
+                        Limits.AssertMaxItemSize(instruction.Operand.Length);
                         Push(instruction.Operand);
                         break;
                     }
@@ -597,7 +597,7 @@ namespace Neo.VM
                 case OpCode.NEWBUFFER:
                     {
                         int length = (int)Pop().GetInteger();
-                        Limmits.AssertMaxItemSize(length);
+                        Limits.AssertMaxItemSize(length);
                         Push(new Buffer(length));
                         break;
                     }
@@ -626,7 +626,7 @@ namespace Neo.VM
                         var x2 = Pop().GetSpan();
                         var x1 = Pop().GetSpan();
                         int length = x1.Length + x2.Length;
-                        Limmits.AssertMaxItemSize(length);
+                        Limits.AssertMaxItemSize(length);
                         Buffer result = new Buffer(length);
                         x1.CopyTo(result.InnerBuffer);
                         x2.CopyTo(result.InnerBuffer.AsSpan(x1.Length));
@@ -788,7 +788,7 @@ namespace Neo.VM
                 case OpCode.SHL:
                     {
                         int shift = (int)Pop().GetInteger();
-                        Limmits.AssertShift(shift);
+                        Limits.AssertShift(shift);
                         if (shift == 0) break;
                         var x = Pop().GetInteger();
                         Push(x << shift);
@@ -797,7 +797,7 @@ namespace Neo.VM
                 case OpCode.SHR:
                     {
                         int shift = (int)Pop().GetInteger();
-                        Limmits.AssertShift(shift);
+                        Limits.AssertShift(shift);
                         if (shift == 0) break;
                         var x = Pop().GetInteger();
                         Push(x >> shift);
@@ -926,7 +926,7 @@ namespace Neo.VM
                 case OpCode.NEWARRAY_T:
                     {
                         int n = (int)Pop().GetInteger();
-                        if (n < 0 || n > Limmits.MaxStackSize)
+                        if (n < 0 || n > Limits.MaxStackSize)
                             throw new InvalidOperationException($"MaxStackSize exceed: {n}");
                         StackItem item;
                         if (instruction.OpCode == OpCode.NEWARRAY_T)
@@ -957,7 +957,7 @@ namespace Neo.VM
                 case OpCode.NEWSTRUCT:
                     {
                         int n = (int)Pop().GetInteger();
-                        if (n < 0 || n > Limmits.MaxStackSize)
+                        if (n < 0 || n > Limits.MaxStackSize)
                             throw new InvalidOperationException($"MaxStackSize exceed: {n}");
                         Struct result = new Struct(ReferenceCounter);
                         for (var i = 0; i < n; i++)
@@ -1314,7 +1314,7 @@ namespace Neo.VM
                 throw new InvalidOperationException($"catchOffset and finallyOffset can't be 0 in a TRY block");
             if (CurrentContext.TryStack is null)
                 CurrentContext.TryStack = new Stack<ExceptionHandlingContext>();
-            else if (CurrentContext.TryStack.Count >= Limmits.MaxTryNestingDepth)
+            else if (CurrentContext.TryStack.Count >= Limits.MaxTryNestingDepth)
                 throw new InvalidOperationException("MaxTryNestingDepth exceed.");
             int catchPointer = catchOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + catchOffset);
             int finallyPointer = finallyOffset == 0 ? -1 : checked(CurrentContext.InstructionPointer + finallyOffset);
@@ -1363,7 +1363,7 @@ namespace Neo.VM
 
         protected virtual void LoadContext(ExecutionContext context)
         {
-            if (InvocationStack.Count >= Limmits.MaxInvocationStackSize)
+            if (InvocationStack.Count >= Limits.MaxInvocationStackSize)
                 throw new InvalidOperationException();
             InvocationStack.Push(context);
             if (EntryContext is null) EntryContext = context;
@@ -1414,7 +1414,7 @@ namespace Neo.VM
 
         protected virtual void PostExecuteInstruction()
         {
-            if (ReferenceCounter.CheckZeroReferred() > Limmits.MaxStackSize)
+            if (ReferenceCounter.CheckZeroReferred() > Limits.MaxStackSize)
                 throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}");
         }
 
