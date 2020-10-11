@@ -38,7 +38,7 @@ namespace Neo.VM
         /// <summary>
         /// Constructor
         /// </summary>
-        public ExecutionEngineLimits() { }
+        private ExecutionEngineLimits() { }
 
         /// <summary>
         /// Constructor
