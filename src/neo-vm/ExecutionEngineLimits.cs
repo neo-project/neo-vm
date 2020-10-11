@@ -13,24 +13,27 @@ namespace Neo.VM
         /// <summary>
         /// Max value for SHL and SHR
         /// </summary>
-        public int MaxShift { get; private set; } = 256;
+        public int MaxShift { get; } = 256;
 
         /// <summary>
         /// Set the max Stack Size
         /// </summary>
-        public uint MaxStackSize { get; private set; } = 2 * 1024;
+        public uint MaxStackSize { get; } = 2 * 1024;
 
         /// <summary>
         /// Set Max Item Size
         /// </summary>
-        public uint MaxItemSize { get; private set; } = 1024 * 1024;
+        public uint MaxItemSize { get; } = 1024 * 1024;
 
         /// <summary>
         /// Set Max Invocation Stack Size
         /// </summary>
-        public uint MaxInvocationStackSize { get; private set; } = 1024;
+        public uint MaxInvocationStackSize { get; } = 1024;
 
-        public uint MaxTryNestingDepth { get; private set; } = 16;
+        /// <summary>
+        /// Set Max TryStack Count
+        /// </summary>
+        public uint MaxTryNestingDepth { get; } = 16;
 
         /// <summary>
         /// Constructor
@@ -40,6 +43,11 @@ namespace Neo.VM
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <param name="maxShift">Max value for SHL and SHR</param>
+        /// <param name="maxStackSize">Set the max Stack Size</param>
+        /// <param name="maxItemSize">Set Max Item Size</param>
+        /// <param name="maxInvocationStackSize">Set Max Invocation Stack Size</param>
+        /// <param name="maxTryNestingDepth">Set Max TryStack Count</param>
         public ExecutionEngineLimits(int maxShift, uint maxStackSize, uint maxItemSize, uint maxInvocationStackSize, uint maxTryNestingDepth)
         {
             MaxShift = maxShift;

@@ -15,7 +15,7 @@ namespace Neo.VM
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
 
-        public ExecutionEngineLimmits Limits { get; }
+        public ExecutionEngineLimits Limits { get; }
         public ReferenceCounter ReferenceCounter { get; }
         public Stack<ExecutionContext> InvocationStack { get; } = new Stack<ExecutionContext>();
         public ExecutionContext CurrentContext { get; private set; }
@@ -39,15 +39,15 @@ namespace Neo.VM
             }
         }
 
-        public ExecutionEngine(ExecutionEngineLimmits limits = null) : this(new ReferenceCounter(), limits)
+        public ExecutionEngine(ExecutionEngineLimits limits = null) : this(new ReferenceCounter(), limits)
         {
         }
 
-        protected ExecutionEngine(ReferenceCounter referenceCounter, ExecutionEngineLimmits limits = null)
+        protected ExecutionEngine(ReferenceCounter referenceCounter, ExecutionEngineLimits limits = null)
         {
             this.ReferenceCounter = referenceCounter;
             this.ResultStack = new EvaluationStack(referenceCounter);
-            this.Limits = limits ?? ExecutionEngineLimmits.Default;
+            this.Limits = limits ?? ExecutionEngineLimits.Default;
         }
 
         protected virtual void ContextUnloaded(ExecutionContext context)
