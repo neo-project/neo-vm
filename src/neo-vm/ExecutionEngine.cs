@@ -39,15 +39,15 @@ namespace Neo.VM
             }
         }
 
-        public ExecutionEngine(ExecutionEngineLimits limits = null) : this(new ReferenceCounter(), limits)
+        public ExecutionEngine() : this(new ReferenceCounter(), ExecutionEngineLimits.Default)
         {
         }
 
-        protected ExecutionEngine(ReferenceCounter referenceCounter, ExecutionEngineLimits limits = null)
+        protected ExecutionEngine(ReferenceCounter referenceCounter, ExecutionEngineLimits limits)
         {
+            this.Limits = limits;
             this.ReferenceCounter = referenceCounter;
             this.ResultStack = new EvaluationStack(referenceCounter);
-            this.Limits = limits ?? ExecutionEngineLimits.Default;
         }
 
         protected virtual void ContextUnloaded(ExecutionContext context)
