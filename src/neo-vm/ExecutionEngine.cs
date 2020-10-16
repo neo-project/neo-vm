@@ -1371,7 +1371,7 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ExecutionContext CreateContext(Script script, int initialPosition = 0)
+        protected ExecutionContext CreateContext(Script script, int initialPosition = 0)
         {
             return new ExecutionContext(script, ReferenceCounter)
             {
