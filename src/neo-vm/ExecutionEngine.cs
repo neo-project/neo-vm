@@ -1370,12 +1370,18 @@ namespace Neo.VM
             CurrentContext = context;
         }
 
-        public ExecutionContext LoadScript(Script script, int initialPosition = 0)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected ExecutionContext CreateContext(Script script, int initialPosition = 0)
         {
-            ExecutionContext context = new ExecutionContext(script, ReferenceCounter)
+            return new ExecutionContext(script, ReferenceCounter)
             {
                 InstructionPointer = initialPosition
             };
+        }
+
+        public ExecutionContext LoadScript(Script script, int initialPosition = 0)
+        {
+            ExecutionContext context = CreateContext(script, initialPosition);
             LoadContext(context);
             return context;
         }
