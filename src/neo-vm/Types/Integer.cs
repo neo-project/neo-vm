@@ -53,6 +53,15 @@ namespace Neo.VM.Types
             return value;
         }
 
+        public override StackItem ConvertTo(StackItemType type)
+        {
+            if (type is StackItemType.ByteString)
+                return GetInteger().ToString();
+            else
+                return base.ConvertTo(type);
+        }
+
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator Integer(int value)
         {
