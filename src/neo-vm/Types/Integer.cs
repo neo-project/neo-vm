@@ -61,7 +61,6 @@ namespace Neo.VM.Types
                 return base.ConvertTo(type);
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator Integer(int value)
         {
