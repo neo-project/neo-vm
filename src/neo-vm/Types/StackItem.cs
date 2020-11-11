@@ -1,6 +1,5 @@
 #pragma warning disable CS0659
 
-using Neo.VM.Collections;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -25,7 +24,7 @@ namespace Neo.VM.Types
 
         public StackItem DeepCopy()
         {
-            return DeepCopy(new Dictionary<StackItem, StackItem>(ReferenceEqualityComparer.Default));
+            return DeepCopy(new Dictionary<StackItem, StackItem>(ReferenceEqualityComparer.Instance));
         }
 
         internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)

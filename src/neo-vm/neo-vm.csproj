@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Copyright>2016-2019 The Neo Project</Copyright>
+    <Copyright>2016-2020 The Neo Project</Copyright>
     <AssemblyTitle>Neo.VM</AssemblyTitle>
     <Description>Neo.VM</Description>
     <VersionPrefix>3.0.0</VersionPrefix>
     <VersionSuffix>preview3</VersionSuffix>
     <Authors>The Neo Project</Authors>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>Neo.VM</AssemblyName>
     <PackageId>Neo.VM</PackageId>
     <PackageTags>NEO;AntShares;Blockchain;Smart Contract;VM</PackageTags>
