@@ -44,6 +44,30 @@ namespace Neo.VM.Types
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(sbyte value)
+        {
+            return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(byte value)
+        {
+            return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(short value)
+        {
+            return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator PrimitiveType(ushort value)
+        {
+            return (Integer)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator PrimitiveType(int value)
         {
             return (Integer)value;
