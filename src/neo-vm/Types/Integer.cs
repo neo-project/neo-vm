@@ -54,6 +54,30 @@ namespace Neo.VM.Types
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Integer(sbyte value)
+        {
+            return (BigInteger)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Integer(byte value)
+        {
+            return (BigInteger)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Integer(short value)
+        {
+            return (BigInteger)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Integer(ushort value)
+        {
+            return (BigInteger)value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator Integer(int value)
         {
             return (BigInteger)value;

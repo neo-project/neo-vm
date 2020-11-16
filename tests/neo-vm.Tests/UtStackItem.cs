@@ -97,9 +97,37 @@ namespace Neo.Test
         [TestMethod]
         public void CastTest()
         {
+            // Signed byte
+
+            StackItem item = sbyte.MaxValue;
+
+            Assert.IsInstanceOfType(item, typeof(Integer));
+            Assert.AreEqual(new BigInteger(sbyte.MaxValue), ((Integer)item).GetInteger());
+
+            // Unsigned byte
+
+            item = byte.MaxValue;
+
+            Assert.IsInstanceOfType(item, typeof(Integer));
+            Assert.AreEqual(new BigInteger(byte.MaxValue), ((Integer)item).GetInteger());
+
+            // Signed short
+
+            item = short.MaxValue;
+
+            Assert.IsInstanceOfType(item, typeof(Integer));
+            Assert.AreEqual(new BigInteger(short.MaxValue), ((Integer)item).GetInteger());
+
+            // Unsigned short
+
+            item = ushort.MaxValue;
+
+            Assert.IsInstanceOfType(item, typeof(Integer));
+            Assert.AreEqual(new BigInteger(ushort.MaxValue), ((Integer)item).GetInteger());
+
             // Signed integer
 
-            StackItem item = int.MaxValue;
+            item = int.MaxValue;
 
             Assert.IsInstanceOfType(item, typeof(Integer));
             Assert.AreEqual(new BigInteger(int.MaxValue), ((Integer)item).GetInteger());
