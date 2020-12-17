@@ -57,6 +57,8 @@ namespace Neo.VM
 
         internal void MoveTo(EvaluationStack stack, int count = -1)
         {
+            if (count < -1 || count > innerList.Count)
+                throw new ArgumentOutOfRangeException(nameof(count));
             if (count == 0) return;
             CopyTo(stack, count);
             if (count == -1 || count == innerList.Count)
