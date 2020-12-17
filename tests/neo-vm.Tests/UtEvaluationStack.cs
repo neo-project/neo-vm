@@ -46,6 +46,9 @@ namespace Neo.Test
             var stack = CreateOrderedStack(3);
             var copy = new EvaluationStack(new ReferenceCounter());
 
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.CopyTo(copy, -2));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.CopyTo(copy, 4));
+
             stack.CopyTo(copy, 0);
 
             Assert.AreEqual(3, stack.Count);
@@ -72,6 +75,40 @@ namespace Neo.Test
 
             CollectionAssert.AreEqual(new Integer[] { 1, 2, 3, 2, 3 }, stack.ToArray());
             CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, copy.ToArray());
+        }
+
+        [TestMethod]
+        public void TestMoveTo()
+        {
+            var stack = CreateOrderedStack(3);
+            var other = new EvaluationStack(new ReferenceCounter());
+
+            stack.MoveTo(other, 0);
+
+            Assert.AreEqual(3, stack.Count);
+            Assert.AreEqual(0, other.Count);
+            CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, stack.ToArray());
+
+            stack.MoveTo(other, -1);
+
+            Assert.AreEqual(0, stack.Count);
+            Assert.AreEqual(3, other.Count);
+            CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, other.ToArray());
+
+            // Test IEnumerable
+
+            var enumerable = (IEnumerable)other;
+            var enumerator = enumerable.GetEnumerator();
+
+            CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, GetEnumerable(enumerator).Cast<Integer>().ToArray());
+
+            other.MoveTo(stack, 2);
+
+            Assert.AreEqual(2, stack.Count);
+            Assert.AreEqual(1, other.Count);
+
+            CollectionAssert.AreEqual(new Integer[] { 2, 3 }, stack.ToArray());
+            CollectionAssert.AreEqual(new Integer[] { 1 }, other.ToArray());
         }
 
         [TestMethod]
