@@ -228,11 +228,11 @@ namespace Neo.VM
         /// <summary>
         /// It turns the vm state to FAULT immediately, and cannot be caught.
         /// </summary>
-        ABORT = 0x37,
+        ABORT = 0x38,
         /// <summary>
         /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT.
         /// </summary>
-        ASSERT = 0x38,
+        ASSERT = 0x39,
         /// <summary>
         /// Pop the top value of the stack, and throw it.
         /// </summary>
