@@ -226,6 +226,11 @@ namespace Neo.VM
         /// </summary>
         CALLA = 0x36,
         /// <summary>
+        /// Call Token.
+        /// </summary>
+        [OperandSize(Size = 2)]
+        CALLT = 0x37,
+        /// <summary>
         /// It turns the vm state to FAULT immediately, and cannot be caught.
         /// </summary>
         ABORT = 0x38,

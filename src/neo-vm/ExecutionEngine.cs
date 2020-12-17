@@ -299,6 +299,13 @@ namespace Neo.VM
                         ExecuteCall(x.Position);
                         break;
                     }
+                case OpCode.CALLT:
+                    {
+                        ExecutionContext context_current = CurrentContext;
+                        IToken token = LoadToken(instruction.TokenU16, out ExecutionContext context_loaded);
+                        context_current.EvaluationStack.MoveTo(context_loaded.EvaluationStack, token.ParametersCount);
+                        break;
+                    }
                 case OpCode.ABORT:
                     {
                         throw new Exception($"{OpCode.ABORT} is executed.");
@@ -1384,6 +1391,11 @@ namespace Neo.VM
             ExecutionContext context = CreateContext(script, initialPosition);
             LoadContext(context);
             return context;
+        }
+
+        protected virtual IToken LoadToken(ushort token, out ExecutionContext context)
+        {
+            throw new InvalidOperationException($"Token not found: {token}");
         }
 
         protected virtual void OnFault(Exception e)
