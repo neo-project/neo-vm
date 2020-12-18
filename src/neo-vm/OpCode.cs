@@ -226,7 +226,7 @@ namespace Neo.VM
         /// </summary>
         CALLA = 0x36,
         /// <summary>
-        /// Call Token.
+        /// Calls the function which is described by the token.
         /// </summary>
         [OperandSize(Size = 2)]
         CALLT = 0x37,
