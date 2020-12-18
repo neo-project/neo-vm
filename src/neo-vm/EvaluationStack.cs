@@ -28,8 +28,10 @@ namespace Neo.VM
 
         internal void CopyTo(EvaluationStack stack, int count = -1)
         {
+            if (count < -1 || count > innerList.Count)
+                throw new ArgumentOutOfRangeException(nameof(count));
             if (count == 0) return;
-            if (count == -1)
+            if (count == -1 || count == innerList.Count)
                 stack.innerList.AddRange(innerList);
             else
                 stack.innerList.AddRange(innerList.Skip(innerList.Count - count));
@@ -51,6 +53,16 @@ namespace Neo.VM
             if (index > innerList.Count) throw new InvalidOperationException();
             innerList.Insert(innerList.Count - index, item);
             referenceCounter.AddStackReference(item);
+        }
+
+        internal void MoveTo(EvaluationStack stack, int count = -1)
+        {
+            if (count == 0) return;
+            CopyTo(stack, count);
+            if (count == -1 || count == innerList.Count)
+                innerList.Clear();
+            else
+                innerList.RemoveRange(innerList.Count - count, count);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

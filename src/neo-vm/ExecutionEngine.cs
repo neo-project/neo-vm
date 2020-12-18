@@ -299,6 +299,13 @@ namespace Neo.VM
                         ExecuteCall(x.Position);
                         break;
                     }
+                case OpCode.CALLT:
+                    {
+                        ExecutionContext context_current = CurrentContext;
+                        ExecutionContext context_loaded = LoadToken(instruction.TokenU16);
+                        context_current.EvaluationStack.MoveTo(context_loaded.EvaluationStack, context_loaded.ParametersCount);
+                        break;
+                    }
                 case OpCode.ABORT:
                     {
                         throw new Exception($"{OpCode.ABORT} is executed.");
@@ -361,7 +368,11 @@ namespace Neo.VM
                         ExecutionContext context_pop = InvocationStack.Pop();
                         EvaluationStack stack_eval = InvocationStack.Count == 0 ? ResultStack : InvocationStack.Peek().EvaluationStack;
                         if (context_pop.EvaluationStack != stack_eval)
+                        {
+                            if (context_pop.RVCount >= 0 && context_pop.EvaluationStack.Count != context_pop.RVCount)
+                                throw new InvalidOperationException();
                             context_pop.EvaluationStack.CopyTo(stack_eval);
+                        }
                         if (InvocationStack.Count == 0)
                             State = VMState.HALT;
                         ContextUnloaded(context_pop);
@@ -1371,19 +1382,24 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected ExecutionContext CreateContext(Script script, int initialPosition = 0)
+        protected ExecutionContext CreateContext(Script script, ushort pcount, int rvcount, int initialPosition)
         {
-            return new ExecutionContext(script, ReferenceCounter)
+            return new ExecutionContext(script, pcount, rvcount, ReferenceCounter)
             {
                 InstructionPointer = initialPosition
             };
         }
 
-        public ExecutionContext LoadScript(Script script, int initialPosition = 0)
+        public ExecutionContext LoadScript(Script script, ushort pcount = 0, int rvcount = -1, int initialPosition = 0)
         {
-            ExecutionContext context = CreateContext(script, initialPosition);
+            ExecutionContext context = CreateContext(script, pcount, rvcount, initialPosition);
             LoadContext(context);
             return context;
+        }
+
+        protected virtual ExecutionContext LoadToken(ushort token)
+        {
+            throw new InvalidOperationException($"Token not found: {token}");
         }
 
         protected virtual void OnFault(Exception e)
