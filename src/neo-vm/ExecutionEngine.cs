@@ -369,13 +369,9 @@ namespace Neo.VM
                         EvaluationStack stack_eval = InvocationStack.Count == 0 ? ResultStack : InvocationStack.Peek().EvaluationStack;
                         if (context_pop.EvaluationStack != stack_eval)
                         {
-                            int rvcount = context_pop.RVCount;
-                            if (rvcount < 0)
-                                rvcount = context_pop.EvaluationStack.Count;
-                            else if (context_pop.EvaluationStack.Count != rvcount)
+                            if (context_pop.RVCount >= 0 && context_pop.EvaluationStack.Count != context_pop.RVCount)
                                 throw new InvalidOperationException();
-                            if (rvcount > 0)
-                                context_pop.EvaluationStack.CopyTo(stack_eval);
+                            context_pop.EvaluationStack.CopyTo(stack_eval);
                         }
                         if (InvocationStack.Count == 0)
                             State = VMState.HALT;
