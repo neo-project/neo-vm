@@ -26,7 +26,7 @@ namespace Neo.VM
             innerList.Clear();
         }
 
-        internal void CopyTo(EvaluationStack stack, int count = -1)
+        public void CopyTo(EvaluationStack stack, int count = -1)
         {
             if (count < -1 || count > innerList.Count)
                 throw new ArgumentOutOfRangeException(nameof(count));
@@ -55,7 +55,7 @@ namespace Neo.VM
             referenceCounter.AddStackReference(item);
         }
 
-        internal void MoveTo(EvaluationStack stack, int count = -1)
+        public void MoveTo(EvaluationStack stack, int count = -1)
         {
             if (count == 0) return;
             CopyTo(stack, count);
