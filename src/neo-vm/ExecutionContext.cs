@@ -106,9 +106,9 @@ namespace Neo.VM
             return Clone(InstructionPointer);
         }
 
-        public ExecutionContext Clone(int initialPosition)
+        public ExecutionContext Clone(int initialPosition, ushort pcount = 0, ushort rvcount = 0)
         {
-            return new ExecutionContext(shared_states, 0, 0, initialPosition);
+            return new ExecutionContext(shared_states, pcount, rvcount, initialPosition);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
