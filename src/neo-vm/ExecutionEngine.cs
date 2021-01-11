@@ -523,6 +523,11 @@ namespace Neo.VM
                         ExecuteLoadFromSlot(CurrentContext.StaticFields, instruction.TokenU8);
                         break;
                     }
+                case OpCode.LDSFLDN:
+                    {
+                        ExecuteLoadFromSlot(CurrentContext.StaticFields, (int)CurrentContext.EvaluationStack.Pop().GetInteger());
+                        break;
+                    }
                 case OpCode.STSFLD0:
                 case OpCode.STSFLD1:
                 case OpCode.STSFLD2:
@@ -537,6 +542,11 @@ namespace Neo.VM
                 case OpCode.STSFLD:
                     {
                         ExecuteStoreToSlot(CurrentContext.StaticFields, instruction.TokenU8);
+                        break;
+                    }
+                case OpCode.STSFLDN:
+                    {
+                        ExecuteStoreToSlot(CurrentContext.StaticFields, (int)CurrentContext.EvaluationStack.Pop().GetInteger());
                         break;
                     }
                 case OpCode.LDLOC0:
@@ -555,6 +565,11 @@ namespace Neo.VM
                         ExecuteLoadFromSlot(CurrentContext.LocalVariables, instruction.TokenU8);
                         break;
                     }
+                case OpCode.LDLOCN:
+                    {
+                        ExecuteLoadFromSlot(CurrentContext.LocalVariables, (int)CurrentContext.EvaluationStack.Pop().GetInteger());
+                        break;
+                    }
                 case OpCode.STLOC0:
                 case OpCode.STLOC1:
                 case OpCode.STLOC2:
@@ -569,6 +584,11 @@ namespace Neo.VM
                 case OpCode.STLOC:
                     {
                         ExecuteStoreToSlot(CurrentContext.LocalVariables, instruction.TokenU8);
+                        break;
+                    }
+                case OpCode.STLOCN:
+                    {
+                        ExecuteStoreToSlot(CurrentContext.LocalVariables, (int)CurrentContext.EvaluationStack.Pop().GetInteger());
                         break;
                     }
                 case OpCode.LDARG0:
@@ -587,6 +607,11 @@ namespace Neo.VM
                         ExecuteLoadFromSlot(CurrentContext.Arguments, instruction.TokenU8);
                         break;
                     }
+                case OpCode.LDARGN:
+                    {
+                        ExecuteLoadFromSlot(CurrentContext.Arguments, (int)CurrentContext.EvaluationStack.Pop().GetInteger());
+                        break;
+                    }
                 case OpCode.STARG0:
                 case OpCode.STARG1:
                 case OpCode.STARG2:
@@ -601,6 +626,11 @@ namespace Neo.VM
                 case OpCode.STARG:
                     {
                         ExecuteStoreToSlot(CurrentContext.Arguments, instruction.TokenU8);
+                        break;
+                    }
+                case OpCode.STSFLDN:
+                    {
+                        ExecuteStoreToSlot(CurrentContext.Arguments, (int)CurrentContext.EvaluationStack.Pop().GetInteger());
                         break;
                     }
 
