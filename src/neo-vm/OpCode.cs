@@ -788,6 +788,10 @@ namespace Neo.VM
         /// Remove all the items from the compound-type.
         /// </summary>
         CLEARITEMS = 0xD3,
+        /// <summary>
+        /// Remove the last element from an array, and push it onto the stack.
+        /// </summary>
+        POPITEM = 0xD4,
 
         #endregion
 
