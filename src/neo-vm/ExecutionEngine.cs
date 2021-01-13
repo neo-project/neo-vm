@@ -302,8 +302,7 @@ namespace Neo.VM
                 case OpCode.CALLT:
                     {
                         ExecutionContext context_current = CurrentContext;
-                        ExecutionContext context_loaded = LoadToken(instruction.TokenU16);
-                        context_current.EvaluationStack.MoveTo(context_loaded.EvaluationStack, context_loaded.ParametersCount);
+                        LoadToken(instruction.TokenU16);
                         break;
                     }
                 case OpCode.ABORT:
