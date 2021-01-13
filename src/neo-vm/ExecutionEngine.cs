@@ -1202,7 +1202,7 @@ namespace Neo.VM
                         x.Clear();
                         break;
                     }
-                case OpCode.POP:
+                case OpCode.POPITEM:
                     {
                         VMArray x = Pop<VMArray>();
                         int index = x.Count - 1;

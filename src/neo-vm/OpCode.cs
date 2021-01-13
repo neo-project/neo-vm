@@ -791,7 +791,7 @@ namespace Neo.VM
         /// <summary>
         /// Remove the last element from an array, and push it onto the stack.
         /// </summary>
-        POP = 0xD4,
+        POPITEM = 0xD4,
 
         #endregion
 
