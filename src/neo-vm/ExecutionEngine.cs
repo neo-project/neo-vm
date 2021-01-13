@@ -301,9 +301,7 @@ namespace Neo.VM
                     }
                 case OpCode.CALLT:
                     {
-                        ExecutionContext context_current = CurrentContext;
-                        ExecutionContext context_loaded = LoadToken(instruction.TokenU16);
-                        context_current.EvaluationStack.MoveTo(context_loaded.EvaluationStack, context_loaded.ParametersCount);
+                        LoadToken(instruction.TokenU16);
                         break;
                     }
                 case OpCode.ABORT:
@@ -1390,17 +1388,17 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected ExecutionContext CreateContext(Script script, ushort pcount, int rvcount, int initialPosition)
+        protected ExecutionContext CreateContext(Script script, int rvcount, int initialPosition)
         {
-            return new ExecutionContext(script, pcount, rvcount, ReferenceCounter)
+            return new ExecutionContext(script, rvcount, ReferenceCounter)
             {
                 InstructionPointer = initialPosition
             };
         }
 
-        public ExecutionContext LoadScript(Script script, ushort pcount = 0, int rvcount = -1, int initialPosition = 0)
+        public ExecutionContext LoadScript(Script script, int rvcount = -1, int initialPosition = 0)
         {
-            ExecutionContext context = CreateContext(script, pcount, rvcount, initialPosition);
+            ExecutionContext context = CreateContext(script, rvcount, initialPosition);
             LoadContext(context);
             return context;
         }
