@@ -161,7 +161,7 @@ namespace Neo.VM
             {
                 ip += operandSizePrefix;
                 if (ip + operandSize > script.Length)
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException($"Instrucion out of bounds. InstructionPointer: {ip}, operandSize: {operandSize}, length: {script.Length}");
                 Operand = new ReadOnlyMemory<byte>(script, ip, operandSize);
             }
         }

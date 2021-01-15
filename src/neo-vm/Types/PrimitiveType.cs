@@ -39,7 +39,7 @@ namespace Neo.VM.Types
         public int ToInt32()
         {
             BigInteger i = GetInteger();
-            if (i < int.MinValue || i > int.MaxValue) throw new InvalidCastException();
+            if (i < int.MinValue || i > int.MaxValue) throw new InvalidCastException($"{i} can't be converted to a valid integer value");
             return (int)i;
         }
 

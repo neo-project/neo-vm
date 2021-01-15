@@ -28,9 +28,7 @@ namespace Neo.Test
         }
 
         [TestMethod]
-#pragma warning disable xUnit1024 // Test methods cannot have overloads
         public void Equals()
-#pragma warning restore xUnit1024 // Test methods cannot have overloads
         {
             Struct s1 = new Struct { 1, new Struct { 2 } };
             Struct s2 = new Struct { 1, new Struct { 2 } };

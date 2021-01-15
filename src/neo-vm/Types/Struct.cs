@@ -53,7 +53,7 @@ namespace Neo.VM.Types
 
         public override bool Equals(StackItem other)
         {
-            if (!(other is Struct s)) return false;
+            if (other is not Struct s) return false;
             Stack<StackItem> stack1 = new Stack<StackItem>();
             Stack<StackItem> stack2 = new Stack<StackItem>();
             stack1.Push(this);
@@ -65,7 +65,7 @@ namespace Neo.VM.Types
                 if (a is Struct sa)
                 {
                     if (ReferenceEquals(a, b)) continue;
-                    if (!(b is Struct sb)) return false;
+                    if (b is not Struct sb) return false;
                     if (sa.Count != sb.Count) return false;
                     foreach (StackItem item in sa)
                         stack1.Push(item);

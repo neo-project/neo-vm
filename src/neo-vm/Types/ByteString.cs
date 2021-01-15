@@ -25,7 +25,7 @@ namespace Neo.VM.Types
             if (Size > MaxComparableSize)
                 throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
             if (ReferenceEquals(this, other)) return true;
-            if (!(other is ByteString b)) return false;
+            if (other is not ByteString b) return false;
             if (b.Size > MaxComparableSize)
                 throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
             return GetSpan().SequenceEqual(b.GetSpan());
@@ -50,7 +50,7 @@ namespace Neo.VM.Types
 
         public override BigInteger GetInteger()
         {
-            if (Size > Integer.MaxSize) throw new InvalidCastException();
+            if (Size > Integer.MaxSize) throw new InvalidCastException($"MaxSize exceed: {Size}");
             return new BigInteger(GetSpan());
         }
 

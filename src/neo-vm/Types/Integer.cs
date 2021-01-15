@@ -26,7 +26,7 @@ namespace Neo.VM.Types
             else
             {
                 Size = value.GetByteCount();
-                if (Size > MaxSize) throw new ArgumentException();
+                if (Size > MaxSize) throw new ArgumentException($"MaxSize exceed: {Size}");
             }
             this.value = value;
         }

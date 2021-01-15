@@ -368,7 +368,7 @@ namespace Neo.VM
                         if (context_pop.EvaluationStack != stack_eval)
                         {
                             if (context_pop.RVCount >= 0 && context_pop.EvaluationStack.Count != context_pop.RVCount)
-                                throw new InvalidOperationException();
+                                throw new InvalidOperationException("RVCount doesn't match with EvaluationStack");
                             context_pop.EvaluationStack.CopyTo(stack_eval);
                         }
                         if (InvocationStack.Count == 0)
@@ -1046,19 +1046,13 @@ namespace Neo.VM
                     }
                 case OpCode.VALUES:
                     {
-                        IEnumerable<StackItem> values;
                         var x = Pop();
-                        switch (x)
+                        IEnumerable<StackItem> values = x switch
                         {
-                            case VMArray array:
-                                values = array;
-                                break;
-                            case Map map:
-                                values = map.Values;
-                                break;
-                            default:
-                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
-                        }
+                            VMArray array => array,
+                            Map map => map.Values,
+                            _ => throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}"),
+                        };
                         VMArray newArray = new VMArray(ReferenceCounter);
                         foreach (StackItem item in values)
                             if (item is Struct s)
@@ -1145,7 +1139,7 @@ namespace Neo.VM
                                     int index = key.ToInt32();
                                     if (index < 0 || index >= buffer.Size)
                                         throw new InvalidOperationException($"The value {index} is out of range.");
-                                    if (!(value is PrimitiveType p))
+                                    if (value is not PrimitiveType p)
                                         throw new InvalidOperationException($"Value must be a primitive type in {instruction.OpCode}");
                                     int b = p.ToInt32();
                                     if (b < sbyte.MinValue || b > byte.MaxValue)
@@ -1381,7 +1375,7 @@ namespace Neo.VM
         protected virtual void LoadContext(ExecutionContext context)
         {
             if (InvocationStack.Count >= Limits.MaxInvocationStackSize)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"MaxInvocationStackSize exceed: {InvocationStack.Count}");
             InvocationStack.Push(context);
             if (EntryContext is null) EntryContext = context;
             CurrentContext = context;

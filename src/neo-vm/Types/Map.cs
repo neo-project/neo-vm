@@ -21,7 +21,7 @@ namespace Neo.VM.Types
             set
             {
                 if (key.Size > MaxKeySize)
-                    throw new ArgumentException();
+                    throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
                 if (ReferenceCounter != null)
                 {
                     if (dictionary.TryGetValue(key, out StackItem old_value))
