@@ -368,7 +368,7 @@ namespace Neo.VM
                         if (context_pop.EvaluationStack != stack_eval)
                         {
                             if (context_pop.RVCount >= 0 && context_pop.EvaluationStack.Count != context_pop.RVCount)
-                                throw new InvalidOperationException();
+                                throw new InvalidOperationException("RVCount doesn't match with EvaluationStack");
                             context_pop.EvaluationStack.CopyTo(stack_eval);
                         }
                         if (InvocationStack.Count == 0)
@@ -1381,7 +1381,7 @@ namespace Neo.VM
         protected virtual void LoadContext(ExecutionContext context)
         {
             if (InvocationStack.Count >= Limits.MaxInvocationStackSize)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"MaxInvocationStackSize exceed: {InvocationStack.Count}");
             InvocationStack.Push(context);
             if (EntryContext is null) EntryContext = context;
             CurrentContext = context;

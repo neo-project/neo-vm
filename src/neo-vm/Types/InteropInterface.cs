@@ -12,7 +12,7 @@ namespace Neo.VM.Types
 
         public InteropInterface(object value)
         {
-            _object = value ?? throw new ArgumentException();
+            _object = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         public override bool Equals(StackItem other)
@@ -35,7 +35,7 @@ namespace Neo.VM.Types
         public override T GetInterface<T>()
         {
             if (_object is T t) return t;
-            throw new InvalidCastException();
+            throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
         }
     }
 }
