@@ -1046,19 +1046,13 @@ namespace Neo.VM
                     }
                 case OpCode.VALUES:
                     {
-                        IEnumerable<StackItem> values;
                         var x = Pop();
-                        switch (x)
+                        IEnumerable<StackItem> values = x switch
                         {
-                            case VMArray array:
-                                values = array;
-                                break;
-                            case Map map:
-                                values = map.Values;
-                                break;
-                            default:
-                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
-                        }
+                            VMArray array => array,
+                            Map map => map.Values,
+                            _ => throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}"),
+                        };
                         VMArray newArray = new VMArray(ReferenceCounter);
                         foreach (StackItem item in values)
                             if (item is Struct s)
@@ -1145,7 +1139,7 @@ namespace Neo.VM
                                     int index = key.ToInt32();
                                     if (index < 0 || index >= buffer.Size)
                                         throw new InvalidOperationException($"The value {index} is out of range.");
-                                    if (!(value is PrimitiveType p))
+                                    if (value is not PrimitiveType p)
                                         throw new InvalidOperationException($"Value must be a primitive type in {instruction.OpCode}");
                                     int b = p.ToInt32();
                                     if (b < sbyte.MinValue || b > byte.MaxValue)

@@ -59,7 +59,7 @@ namespace Neo.Test
 
             Assert.IsTrue(itemA.GetHashCode() == itemB.GetHashCode());
 
-            var script = new Script(new byte[0]);
+            var script = new Script(System.Array.Empty<byte>());
             itemA = new Pointer(script, 123);
             itemB = new Pointer(script, 123);
             itemC = new Pointer(script, 1234);
@@ -71,7 +71,7 @@ namespace Neo.Test
         [TestMethod]
         public void NullTest()
         {
-            StackItem nullItem = new byte[0];
+            StackItem nullItem = System.Array.Empty<byte>();
             Assert.AreNotEqual(StackItem.Null, nullItem);
 
             nullItem = new Null();

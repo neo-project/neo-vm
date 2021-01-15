@@ -9,7 +9,7 @@ namespace Neo.Test
         [TestMethod]
         public void NotZero()
         {
-            Assert.IsFalse(Unsafe.NotZero(new byte[0]));
+            Assert.IsFalse(Unsafe.NotZero(System.Array.Empty<byte>()));
             Assert.IsFalse(Unsafe.NotZero(new byte[4]));
             Assert.IsFalse(Unsafe.NotZero(new byte[8]));
             Assert.IsFalse(Unsafe.NotZero(new byte[11]));
