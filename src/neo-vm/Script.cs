@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -5,7 +6,7 @@ using System.Runtime.CompilerServices;
 namespace Neo.VM
 {
     [DebuggerDisplay("Length={Length}")]
-    public class Script
+    public class Script : IEnumerable<(int, Instruction)>
     {
         private readonly byte[] _value;
         private readonly Dictionary<int, Instruction> _instructions = new Dictionary<int, Instruction>();
@@ -54,6 +55,21 @@ namespace Neo.VM
                 _instructions.Add(ip, instruction);
             }
             return instruction;
+        }
+
+        public IEnumerator<(int, Instruction)> GetEnumerator()
+        {
+            for (int ip = 0; ip < Length;)
+            {
+                var instruction = GetInstruction(ip);
+                yield return (ip, instruction);
+                ip += instruction.Size;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         public static implicit operator byte[](Script script) => script._value;
