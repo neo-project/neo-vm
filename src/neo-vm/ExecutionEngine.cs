@@ -1225,8 +1225,7 @@ namespace Neo.VM
                         Push(x.ConvertTo((StackItemType)instruction.TokenU8));
                         break;
                     }
-
-                default: throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
+                default: throw new WrongScriptException($"Opcode {instruction.OpCode} is undefined.");
             }
         }
 
@@ -1259,7 +1258,7 @@ namespace Neo.VM
         protected void ExecuteJump(int position)
         {
             if (position < 0 || position > CurrentContext.Script.Length)
-                throw new ArgumentOutOfRangeException($"Jump out of range for position: {position}");
+                throw new WrongScriptException($"Jump out of range for position: {position}");
             CurrentContext.InstructionPointer = position;
             isJumping = true;
         }
