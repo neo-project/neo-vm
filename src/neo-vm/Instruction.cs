@@ -134,12 +134,12 @@ namespace Neo.VM
 
         private Instruction(OpCode opcode)
         {
-            OpCode = opcode;
+            this.OpCode = opcode;
+            if (!Enum.IsDefined(opcode)) throw new BadScriptException();
         }
 
-        internal Instruction(byte[] script, int ip)
+        internal Instruction(byte[] script, int ip) : this((OpCode)script[ip++])
         {
-            OpCode = (OpCode)script[ip++];
             int operandSizePrefix = OperandSizePrefixTable[(int)OpCode];
             int operandSize = 0;
             switch (operandSizePrefix)
