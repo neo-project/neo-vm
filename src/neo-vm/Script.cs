@@ -49,7 +49,6 @@ namespace Neo.VM
 
         public Script(byte[] script, bool strictMode)
         {
-            this._value = script;
             if (strictMode)
             {
                 for (int ip = 0; ip < script.Length; ip += GetInstruction(ip).Size)
@@ -111,6 +110,7 @@ namespace Neo.VM
                     }
                 }
             }
+            this._value = script;
             this.strictMode = strictMode;
         }
 
