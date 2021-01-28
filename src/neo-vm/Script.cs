@@ -50,13 +50,13 @@ namespace Neo.VM
         public Script(byte[] script, bool strictMode)
         {
             this._value = script;
-            this.strictMode = strictMode;
             if (strictMode)
             {
                 for (int ip = 0; ip < script.Length;)
                 {
                     Instruction instruction = GetInstruction(ip);
-                    _instructions.Add(ip, instruction);
+                    if (!Enum.IsDefined(instruction.OpCode))
+                        throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                     ip += instruction.Size;
                 }
                 foreach (var (ip, instruction) in _instructions)
@@ -75,7 +75,7 @@ namespace Neo.VM
                         case OpCode.CALL:
                         case OpCode.ENDTRY:
                             if (!_instructions.ContainsKey(checked(ip + instruction.TokenI8)))
-                                throw new BadScriptException();
+                                throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                             break;
                         case OpCode.PUSHA:
                         case OpCode.JMP_L:
@@ -90,19 +90,19 @@ namespace Neo.VM
                         case OpCode.CALL_L:
                         case OpCode.ENDTRY_L:
                             if (!_instructions.ContainsKey(checked(ip + instruction.TokenI32)))
-                                throw new BadScriptException();
+                                throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                             break;
                         case OpCode.TRY:
                             if (!_instructions.ContainsKey(checked(ip + instruction.TokenI8)))
-                                throw new BadScriptException();
+                                throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                             if (!_instructions.ContainsKey(checked(ip + instruction.TokenI8_1)))
-                                throw new BadScriptException();
+                                throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                             break;
                         case OpCode.TRY_L:
                             if (!_instructions.ContainsKey(checked(ip + instruction.TokenI32)))
-                                throw new BadScriptException();
+                                throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                             if (!_instructions.ContainsKey(checked(ip + instruction.TokenI32_1)))
-                                throw new BadScriptException();
+                                throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                             break;
                         case OpCode.NEWARRAY_T:
                         case OpCode.ISTYPE:
@@ -111,11 +111,12 @@ namespace Neo.VM
                             if (!Enum.IsDefined(typeof(StackItemType), type))
                                 throw new BadScriptException();
                             if (instruction.OpCode != OpCode.NEWARRAY_T && type == StackItemType.Any)
-                                throw new BadScriptException();
+                                throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                             break;
                     }
                 }
             }
+            this.strictMode = strictMode;
         }
 
         public Instruction GetInstruction(int ip)
@@ -123,9 +124,16 @@ namespace Neo.VM
             if (ip >= Length) return Instruction.RET;
             if (!_instructions.TryGetValue(ip, out Instruction instruction))
             {
-                if (strictMode) throw new ArgumentException(null, nameof(ip));
-                instruction = new Instruction(_value, ip);
-                _instructions.Add(ip, instruction);
+                if (strictMode) throw new ArgumentException($"ip not found with strict mode", nameof(ip));
+                try
+                {
+                    instruction = new Instruction(_value, ip);
+                    _instructions.Add(ip, instruction);
+                }
+                catch
+                {
+                    throw new BadScriptException($"ip: {ip}, opcode: {_value[ip]}");
+                }
             }
             return instruction;
         }

@@ -28,6 +28,16 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void StrictMode()
+        {
+            var rawScript = new byte[] { (byte)OpCode.PUSH0, 0xFF };
+            Assert.ThrowsException<BadScriptException>(() => new Script(rawScript, true));
+
+            var script = new Script(rawScript, false);
+            Assert.AreEqual(2, script.Length);
+        }
+
+        [TestMethod]
         public void Parse()
         {
             Script script;
