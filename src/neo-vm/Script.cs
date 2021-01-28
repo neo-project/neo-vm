@@ -52,8 +52,7 @@ namespace Neo.VM
             this._value = script;
             if (strictMode)
             {
-                for (int ip = 0; ip < script.Length; ip += GetInstruction(ip).Size)
-                    ;
+                for (int ip = 0; ip < script.Length; ip += GetInstruction(ip).Size) { }
                 foreach (var (ip, instruction) in _instructions)
                 {
                     switch (instruction.OpCode)
