@@ -52,13 +52,8 @@ namespace Neo.VM
             this._value = script;
             if (strictMode)
             {
-                for (int ip = 0; ip < script.Length;)
-                {
-                    Instruction instruction = GetInstruction(ip);
-                    if (!Enum.IsDefined(instruction.OpCode))
-                        throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
-                    ip += instruction.Size;
-                }
+                for (int ip = 0; ip < script.Length; ip += GetInstruction(ip).Size)
+                    ;
                 foreach (var (ip, instruction) in _instructions)
                 {
                     switch (instruction.OpCode)
@@ -125,15 +120,8 @@ namespace Neo.VM
             if (!_instructions.TryGetValue(ip, out Instruction instruction))
             {
                 if (strictMode) throw new ArgumentException($"ip not found with strict mode", nameof(ip));
-                try
-                {
-                    instruction = new Instruction(_value, ip);
-                    _instructions.Add(ip, instruction);
-                }
-                catch
-                {
-                    throw new BadScriptException($"ip: {ip}, opcode: {_value[ip]}");
-                }
+                instruction = new Instruction(_value, ip);
+                _instructions.Add(ip, instruction);
             }
             return instruction;
         }
