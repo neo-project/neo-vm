@@ -59,6 +59,8 @@ namespace Neo.VM.Types
 
         public bool ContainsKey(PrimitiveType key)
         {
+            if (key.Size > MaxKeySize)
+                throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
             return dictionary.ContainsKey(key);
         }
 
@@ -84,6 +86,8 @@ namespace Neo.VM.Types
 
         public bool Remove(PrimitiveType key)
         {
+            if (key.Size > MaxKeySize)
+                throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
             if (!dictionary.Remove(key, out StackItem old_value))
                 return false;
             ReferenceCounter?.RemoveReference(key, this);
@@ -93,6 +97,8 @@ namespace Neo.VM.Types
 
         public bool TryGetValue(PrimitiveType key, out StackItem value)
         {
+            if (key.Size > MaxKeySize)
+                throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
             return dictionary.TryGetValue(key, out value);
         }
     }

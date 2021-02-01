@@ -206,6 +206,71 @@
           }
         }
       ]
+    },
+    {
+      "name": "Check key size [Map]",
+      "script": [
+        "NEWMAP",
+        "PUSHINT8",
+        "0x41",
+        "NEWBUFFER",
+        "CONVERT",
+        "0x28",
+        "HASKEY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepinto",
+            "stepinto",
+            "stepinto",
+            "stepinto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "HASKEY",
+                "evaluationStack": [
+                  {
+                    "type": "ByteString",
+                    "value": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                  },
+                  {
+                    "type": "map",
+                    "value": {}
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepinto"
+          ],
+          "result": {
+            "state": "FAULT",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "HASKEY",
+                "evaluationStack": [
+                  {
+                    "type": "ByteString",
+                    "value": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                  },
+                  {
+                    "type": "map",
+                    "value": {}
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }
