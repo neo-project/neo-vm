@@ -39,6 +39,9 @@ namespace Neo.VM.Types
 
         public override int GetHashCode()
         {
+            if (Size > MaxComparableSize)
+                throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
+
             unchecked
             {
                 int hash = 17;
