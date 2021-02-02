@@ -16,6 +16,8 @@ namespace Neo.VM.Types
         {
             get
             {
+                if (key.Size > MaxKeySize)
+                    throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
                 return dictionary[key];
             }
             set
