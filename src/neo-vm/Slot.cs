@@ -1,7 +1,6 @@
 using Neo.VM.Types;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Neo.VM
 {
@@ -35,8 +34,12 @@ namespace Neo.VM
         }
 
         public Slot(int count, ReferenceCounter referenceCounter)
-            : this(Enumerable.Repeat(StackItem.Null, count).ToArray(), referenceCounter)
         {
+            this.referenceCounter = referenceCounter;
+            this.items = new StackItem[count];
+            var item = StackItem.Null;
+            for (int x = 0; x < count; x++) this.items[x] = item;
+            referenceCounter.AddStackReferences(count);
         }
 
         internal void ClearReferences()
