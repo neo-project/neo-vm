@@ -1141,10 +1141,7 @@ namespace Neo.VM
                                         throw new InvalidOperationException($"The value {index} is out of range.");
                                     if (value is not PrimitiveType p)
                                         throw new InvalidOperationException($"Value must be a primitive type in {instruction.OpCode}");
-                                    int b = p.ToInt32();
-                                    if (b < sbyte.MinValue || b > byte.MaxValue)
-                                        throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
-                                    buffer.InnerBuffer[index] = (byte)b;
+                                    buffer.InnerBuffer[index] = checked((byte)p.ToInt32());
                                     break;
                                 }
                             default:
