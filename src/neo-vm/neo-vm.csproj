@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Copyright>2016-2020 The Neo Project</Copyright>
+    <Copyright>2016-2021 The Neo Project</Copyright>
     <AssemblyTitle>Neo.VM</AssemblyTitle>
     <Description>Neo.VM</Description>
     <VersionPrefix>3.0.0</VersionPrefix>
-    <VersionSuffix>preview4</VersionSuffix>
+    <VersionSuffix>preview5</VersionSuffix>
     <Authors>The Neo Project</Authors>
     <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>Neo.VM</AssemblyName>
