@@ -43,6 +43,11 @@ namespace Neo.VM
             tracing.ObjectReferences[parent] = count;
         }
 
+        internal void AddReferences(int count)
+        {
+            references_count += count;
+        }
+
         internal void AddStackReference(StackItem referred)
         {
             references_count++;
