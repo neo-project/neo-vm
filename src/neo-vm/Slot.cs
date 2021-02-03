@@ -37,9 +37,8 @@ namespace Neo.VM
         {
             this.referenceCounter = referenceCounter;
             this.items = new StackItem[count];
-            var item = StackItem.Null;
-            for (int x = 0; x < count; x++) this.items[x] = item;
-            referenceCounter.AddStackReferences(count);
+            System.Array.Fill(items, StackItem.Null);
+            referenceCounter.AddReferences(count);
         }
 
         internal void ClearReferences()
