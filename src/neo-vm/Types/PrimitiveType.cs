@@ -5,9 +5,16 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// The base class for primitive types in the VM.
+    /// </summary>
     public abstract class PrimitiveType : StackItem
     {
         internal abstract ReadOnlyMemory<byte> Memory { get; }
+
+        /// <summary>
+        /// The size of the VM object in bytes.
+        /// </summary>
         public virtual int Size => Memory.Length;
 
         public override StackItem ConvertTo(StackItemType type)
@@ -29,18 +36,15 @@ namespace Neo.VM.Types
 
         public abstract override bool Equals(StackItem other);
 
+        /// <summary>
+        /// Get the hash code of the VM object, which is used for key comparison in the <see cref="Map"/>.
+        /// </summary>
+        /// <returns>The hash code of this VM object.</returns>
         public abstract override int GetHashCode();
 
         public sealed override ReadOnlySpan<byte> GetSpan()
         {
             return Memory.Span;
-        }
-
-        public int ToInt32()
-        {
-            BigInteger i = GetInteger();
-            if (i < int.MinValue || i > int.MaxValue) throw new InvalidCastException($"{i} can't be converted to a valid integer value");
-            return (int)i;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

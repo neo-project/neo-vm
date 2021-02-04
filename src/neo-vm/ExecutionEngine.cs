@@ -10,19 +10,52 @@ using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Represents the VM used to execute the script.
+    /// </summary>
     public class ExecutionEngine : IDisposable
     {
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
 
+        /// <summary>
+        /// Restrictions on the VM.
+        /// </summary>
         public ExecutionEngineLimits Limits { get; }
+
+        /// <summary>
+        /// Used for reference counting of objects in the VM.
+        /// </summary>
         public ReferenceCounter ReferenceCounter { get; }
+
+        /// <summary>
+        /// The invocation stack of the VM.
+        /// </summary>
         public Stack<ExecutionContext> InvocationStack { get; } = new Stack<ExecutionContext>();
+
+        /// <summary>
+        /// The top frame of the invocation stack.
+        /// </summary>
         public ExecutionContext CurrentContext { get; private set; }
+
+        /// <summary>
+        /// The bottom frame of the invocation stack.
+        /// </summary>
         public ExecutionContext EntryContext { get; private set; }
+
+        /// <summary>
+        /// The stack to store the return values.
+        /// </summary>
         public EvaluationStack ResultStack { get; }
+
+        /// <summary>
+        /// The VM object representing the uncaught exception.
+        /// </summary>
         public StackItem UncaughtException { get; private set; }
 
+        /// <summary>
+        /// The current state of the VM.
+        /// </summary>
         public VMState State
         {
             get
@@ -39,10 +72,18 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExecutionEngine"/> class.
+        /// </summary>
         public ExecutionEngine() : this(new ReferenceCounter(), ExecutionEngineLimits.Default)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExecutionEngine"/> class with the specified <see cref="VM.ReferenceCounter"/> and <see cref="ExecutionEngineLimits"/>.
+        /// </summary>
+        /// <param name="referenceCounter">The reference counter to be used.</param>
+        /// <param name="limits">Restrictions on the VM.</param>
         protected ExecutionEngine(ReferenceCounter referenceCounter, ExecutionEngineLimits limits)
         {
             this.Limits = limits;
@@ -50,6 +91,10 @@ namespace Neo.VM
             this.ResultStack = new EvaluationStack(referenceCounter);
         }
 
+        /// <summary>
+        /// Called when a context is unloaded.
+        /// </summary>
+        /// <param name="context">The context being unloaded.</param>
         protected virtual void ContextUnloaded(ExecutionContext context)
         {
             if (InvocationStack.Count == 0)
@@ -74,6 +119,10 @@ namespace Neo.VM
             InvocationStack.Clear();
         }
 
+        /// <summary>
+        /// Start execution of the VM.
+        /// </summary>
+        /// <returns></returns>
         public virtual VMState Execute()
         {
             if (State == VMState.BREAK)
@@ -1006,7 +1055,7 @@ namespace Neo.VM
                         {
                             case VMArray array:
                                 {
-                                    int index = key.ToInt32();
+                                    int index = (int)key.GetInteger();
                                     if (index < 0)
                                         throw new InvalidOperationException($"The negative value {index} is invalid for OpCode.{instruction.OpCode}.");
                                     Push(index < array.Count);
@@ -1019,7 +1068,7 @@ namespace Neo.VM
                                 }
                             case Buffer buffer:
                                 {
-                                    int index = key.ToInt32();
+                                    int index = (int)key.GetInteger();
                                     if (index < 0)
                                         throw new InvalidOperationException($"The negative value {index} is invalid for OpCode.{instruction.OpCode}.");
                                     Push(index < buffer.Size);
@@ -1027,7 +1076,7 @@ namespace Neo.VM
                                 }
                             case ByteString array:
                                 {
-                                    int index = key.ToInt32();
+                                    int index = (int)key.GetInteger();
                                     if (index < 0)
                                         throw new InvalidOperationException($"The negative value {index} is invalid for OpCode.{instruction.OpCode}.");
                                     Push(index < array.Size);
@@ -1070,7 +1119,7 @@ namespace Neo.VM
                         {
                             case VMArray array:
                                 {
-                                    int index = key.ToInt32();
+                                    int index = (int)key.GetInteger();
                                     if (index < 0 || index >= array.Count)
                                         throw new InvalidOperationException($"The value {index} is out of range.");
                                     Push(array[index]);
@@ -1086,7 +1135,7 @@ namespace Neo.VM
                             case PrimitiveType primitive:
                                 {
                                     ReadOnlySpan<byte> byteArray = primitive.GetSpan();
-                                    int index = key.ToInt32();
+                                    int index = (int)key.GetInteger();
                                     if (index < 0 || index >= byteArray.Length)
                                         throw new InvalidOperationException($"The value {index} is out of range.");
                                     Push((BigInteger)byteArray[index]);
@@ -1094,7 +1143,7 @@ namespace Neo.VM
                                 }
                             case Buffer buffer:
                                 {
-                                    int index = key.ToInt32();
+                                    int index = (int)key.GetInteger();
                                     if (index < 0 || index >= buffer.Size)
                                         throw new InvalidOperationException($"The value {index} is out of range.");
                                     Push((BigInteger)buffer.InnerBuffer[index]);
@@ -1123,7 +1172,7 @@ namespace Neo.VM
                         {
                             case VMArray array:
                                 {
-                                    int index = key.ToInt32();
+                                    int index = (int)key.GetInteger();
                                     if (index < 0 || index >= array.Count)
                                         throw new InvalidOperationException($"The value {index} is out of range.");
                                     array[index] = value;
@@ -1136,12 +1185,12 @@ namespace Neo.VM
                                 }
                             case Buffer buffer:
                                 {
-                                    int index = key.ToInt32();
+                                    int index = (int)key.GetInteger();
                                     if (index < 0 || index >= buffer.Size)
                                         throw new InvalidOperationException($"The value {index} is out of range.");
                                     if (value is not PrimitiveType p)
                                         throw new InvalidOperationException($"Value must be a primitive type in {instruction.OpCode}");
-                                    int b = p.ToInt32();
+                                    int b = (int)p.GetInteger();
                                     if (b < sbyte.MinValue || b > byte.MaxValue)
                                         throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
                                     buffer.InnerBuffer[index] = (byte)b;
@@ -1175,7 +1224,7 @@ namespace Neo.VM
                         switch (x)
                         {
                             case VMArray array:
-                                int index = key.ToInt32();
+                                int index = (int)key.GetInteger();
                                 if (index < 0 || index >= array.Count)
                                     throw new InvalidOperationException($"The value {index} is out of range.");
                                 array.RemoveAt(index);
@@ -1255,6 +1304,10 @@ namespace Neo.VM
             isJumping = true;
         }
 
+        /// <summary>
+        /// Jump to the specified position.
+        /// </summary>
+        /// <param name="position">The position to jump to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void ExecuteJump(int position)
         {
@@ -1264,6 +1317,10 @@ namespace Neo.VM
             isJumping = true;
         }
 
+        /// <summary>
+        /// Jump to the specified offset from the current position.
+        /// </summary>
+        /// <param name="offset">The offset from the current position to jump to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void ExecuteJumpOffset(int offset)
         {
@@ -1279,6 +1336,9 @@ namespace Neo.VM
             Push(slot[index]);
         }
 
+        /// <summary>
+        /// Execute the next instruction.
+        /// </summary>
         internal protected void ExecuteNext()
         {
             if (InvocationStack.Count == 0)
@@ -1312,6 +1372,10 @@ namespace Neo.VM
             slot[index] = Pop();
         }
 
+        /// <summary>
+        /// Throws a specified exception in the VM.
+        /// </summary>
+        /// <param name="ex">The exception to be thrown.</param>
         protected void ExecuteThrow(StackItem ex)
         {
             UncaughtException = ex;
@@ -1372,6 +1436,10 @@ namespace Neo.VM
             throw new VMUnhandledException(UncaughtException);
         }
 
+        /// <summary>
+        /// Loads the specified context into the invocation stack.
+        /// </summary>
+        /// <param name="context">The context to load.</param>
         protected virtual void LoadContext(ExecutionContext context)
         {
             if (InvocationStack.Count >= Limits.MaxInvocationStackSize)
@@ -1381,6 +1449,13 @@ namespace Neo.VM
             CurrentContext = context;
         }
 
+        /// <summary>
+        /// Create a new context with the specified script without loading.
+        /// </summary>
+        /// <param name="script">The script used to create the context.</param>
+        /// <param name="rvcount">The number of values that the context should return when it is unloaded.</param>
+        /// <param name="initialPosition">The pointer indicating the current instruction.</param>
+        /// <returns>The created context.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected ExecutionContext CreateContext(Script script, int rvcount, int initialPosition)
         {
@@ -1390,6 +1465,13 @@ namespace Neo.VM
             };
         }
 
+        /// <summary>
+        /// Create a new context with the specified script and load it.
+        /// </summary>
+        /// <param name="script">The script used to create the context.</param>
+        /// <param name="rvcount">The number of values that the context should return when it is unloaded.</param>
+        /// <param name="initialPosition">The pointer indicating the current instruction.</param>
+        /// <returns>The created context.</returns>
         public ExecutionContext LoadScript(Script script, int rvcount = -1, int initialPosition = 0)
         {
             ExecutionContext context = CreateContext(script, rvcount, initialPosition);
@@ -1397,51 +1479,93 @@ namespace Neo.VM
             return context;
         }
 
+        /// <summary>
+        /// When overridden in a derived class, loads the specified method token.
+        /// Called when <see cref="OpCode.CALLT"/> is executed.
+        /// </summary>
+        /// <param name="token">The method token to be loaded.</param>
+        /// <returns>The created context.</returns>
         protected virtual ExecutionContext LoadToken(ushort token)
         {
             throw new InvalidOperationException($"Token not found: {token}");
         }
 
-        protected virtual void OnFault(Exception e)
+        /// <summary>
+        /// Called when an exception that cannot be caught by the VM is thrown.
+        /// </summary>
+        /// <param name="ex">The exception that caused the <see cref="VMState.FAULT"/> state.</param>
+        protected virtual void OnFault(Exception ex)
         {
             State = VMState.FAULT;
         }
 
+        /// <summary>
+        /// Called when the state of the VM changed.
+        /// </summary>
         protected virtual void OnStateChanged()
         {
         }
 
+        /// <summary>
+        /// When overridden in a derived class, invokes the specified system call.
+        /// Called when <see cref="OpCode.SYSCALL"/> is executed.
+        /// </summary>
+        /// <param name="method">The system call to be invoked.</param>
         protected virtual void OnSysCall(uint method)
         {
             throw new InvalidOperationException($"Syscall not found: {method}");
         }
 
+        /// <summary>
+        /// Returns the item at the specified index from the top of the current stack without removing it.
+        /// </summary>
+        /// <param name="index">The index of the object from the top of the stack.</param>
+        /// <returns>The item at the specified index.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Peek(int index = 0)
         {
             return CurrentContext.EvaluationStack.Peek(index);
         }
 
+        /// <summary>
+        /// Removes and returns the item at the top of the current stack.
+        /// </summary>
+        /// <returns>The item removed from the top of the stack.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Pop()
         {
             return CurrentContext.EvaluationStack.Pop();
         }
 
+        /// <summary>
+        /// Removes and returns the item at the top of the current stack and convert it to the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to convert to.</typeparam>
+        /// <returns>The item removed from the top of the stack.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Pop<T>() where T : StackItem
         {
             return CurrentContext.EvaluationStack.Pop<T>();
         }
 
+        /// <summary>
+        /// Called after an instruction is executed.
+        /// </summary>
         protected virtual void PostExecuteInstruction()
         {
             if (ReferenceCounter.CheckZeroReferred() > Limits.MaxStackSize)
                 throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}");
         }
 
+        /// <summary>
+        /// Called before an instruction is executed.
+        /// </summary>
         protected virtual void PreExecuteInstruction() { }
 
+        /// <summary>
+        /// Pushes an item onto the top of the current stack.
+        /// </summary>
+        /// <param name="item">The item to be pushed.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
         {

@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Used for reference counting of objects in the VM.
+    /// </summary>
     public sealed class ReferenceCounter
     {
         private class Entry
@@ -16,6 +19,9 @@ namespace Neo.VM
         private readonly HashSet<CompoundType> zero_referred = new HashSet<CompoundType>(ReferenceEqualityComparer.Instance);
         private int references_count = 0;
 
+        /// <summary>
+        /// Indicates the number of this counter.
+        /// </summary>
         public int Count => references_count;
 
         internal void AddReference(StackItem referred, CompoundType parent)

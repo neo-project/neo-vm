@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Represents a frame in the VM execution stack.
+    /// </summary>
     [DebuggerDisplay("InstructionPointer={InstructionPointer}")]
     public sealed partial class ExecutionContext
     {
@@ -12,34 +15,46 @@ namespace Neo.VM
         private int instructionPointer;
 
         /// <summary>
-        /// Number of items to be returned
+        /// Indicates the number of values that the context should return when it is unloaded.
         /// </summary>
         public int RVCount { get; }
 
         /// <summary>
-        /// Script
+        /// The script to run in this context.
         /// </summary>
         public Script Script => shared_states.Script;
 
         /// <summary>
-        /// Evaluation stack
+        /// The evaluation stack for this context.
         /// </summary>
         public EvaluationStack EvaluationStack => shared_states.EvaluationStack;
 
+        /// <summary>
+        /// The slot used to store the static fields.
+        /// </summary>
         public Slot StaticFields
         {
             get => shared_states.StaticFields;
             internal set => shared_states.StaticFields = value;
         }
 
+        /// <summary>
+        /// The slot used to store the local variables of the current method.
+        /// </summary>
         public Slot LocalVariables { get; internal set; }
 
+        /// <summary>
+        /// The slot used to store the arguments of the current method.
+        /// </summary>
         public Slot Arguments { get; internal set; }
 
+        /// <summary>
+        /// The stack containing nested <see cref="ExceptionHandlingContext"/>.
+        /// </summary>
         public Stack<ExceptionHandlingContext> TryStack { get; internal set; }
 
         /// <summary>
-        /// Instruction pointer
+        /// The pointer indicating the current instruction.
         /// </summary>
         public int InstructionPointer
         {
@@ -55,6 +70,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Returns the current <see cref="Instruction"/>.
+        /// </summary>
         public Instruction CurrentInstruction
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -65,7 +83,7 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// Next instruction
+        /// Returns the next <see cref="Instruction"/>.
         /// </summary>
         public Instruction NextInstruction
         {
@@ -76,11 +94,6 @@ namespace Neo.VM
             }
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="script">Script</param>
-        /// <param name="rvcount">Number of items to be returned</param>
         internal ExecutionContext(Script script, int rvcount, ReferenceCounter referenceCounter)
             : this(new SharedStates(script, referenceCounter), rvcount, 0)
         {
@@ -95,11 +108,20 @@ namespace Neo.VM
             this.InstructionPointer = initialPosition;
         }
 
+        /// <summary>
+        /// Clones the context so that they share the same script, stack, and static fields.
+        /// </summary>
+        /// <returns>The cloned context.</returns>
         public ExecutionContext Clone()
         {
             return Clone(InstructionPointer);
         }
 
+        /// <summary>
+        /// Clones the context so that they share the same script, stack, and static fields.
+        /// </summary>
+        /// <param name="initialPosition">The instruction pointer of the new context.</param>
+        /// <returns>The cloned context.</returns>
         public ExecutionContext Clone(int initialPosition)
         {
             return new ExecutionContext(shared_states, 0, initialPosition);
@@ -108,6 +130,11 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Instruction GetInstruction(int ip) => Script.GetInstruction(ip);
 
+        /// <summary>
+        /// Gets custom data of the specified type. If the data does not exist, create a new one.
+        /// </summary>
+        /// <typeparam name="T">The type of data to be obtained.</typeparam>
+        /// <returns>The custom data of the specified type.</returns>
         public T GetState<T>() where T : class, new()
         {
             if (!shared_states.States.TryGetValue(typeof(T), out object value))

@@ -2,6 +2,9 @@ using System;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// Represents <see langword="null"/> in the VM.
+    /// </summary>
     public class Null : StackItem
     {
         public override StackItemType Type => StackItemType.Any;

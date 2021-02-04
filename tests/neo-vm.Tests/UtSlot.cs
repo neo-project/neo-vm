@@ -4,6 +4,7 @@ using Neo.VM.Types;
 using System;
 using System.Collections;
 using System.Linq;
+using System.Numerics;
 
 namespace Neo.Test
 {
@@ -48,10 +49,10 @@ namespace Neo.Test
         {
             var slot = CreateOrderedSlot(3);
 
-            var i = 1;
+            BigInteger i = 1;
             foreach (Integer item in slot)
             {
-                Assert.AreEqual(item.ToInt32(), i);
+                Assert.AreEqual(item.GetInteger(), i);
                 i++;
             }
 

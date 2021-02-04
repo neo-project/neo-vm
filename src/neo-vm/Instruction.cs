@@ -7,17 +7,33 @@ using System.Text;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Represents instructions in the VM script.
+    /// </summary>
     [DebuggerDisplay("OpCode={OpCode}")]
     public class Instruction
     {
+        /// <summary>
+        /// Represents the instruction with <see cref="OpCode.RET"/>.
+        /// </summary>
         public static Instruction RET { get; } = new Instruction(OpCode.RET);
 
+        /// <summary>
+        /// The <see cref="VM.OpCode"/> of the instruction.
+        /// </summary>
         public readonly OpCode OpCode;
+
+        /// <summary>
+        /// The operand of the instruction.
+        /// </summary>
         public readonly ReadOnlyMemory<byte> Operand;
 
         private static readonly int[] OperandSizePrefixTable = new int[256];
         private static readonly int[] OperandSizeTable = new int[256];
 
+        /// <summary>
+        /// Gets the size of the instruction.
+        /// </summary>
         public int Size
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -30,6 +46,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the first operand as <see cref="short"/>.
+        /// </summary>
         public short TokenI16
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -39,6 +58,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the first operand as <see cref="int"/>.
+        /// </summary>
         public int TokenI32
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,6 +70,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the second operand as <see cref="int"/>.
+        /// </summary>
         public int TokenI32_1
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -57,6 +82,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the first operand as <see cref="sbyte"/>.
+        /// </summary>
         public sbyte TokenI8
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -66,6 +94,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the second operand as <see cref="sbyte"/>.
+        /// </summary>
         public sbyte TokenI8_1
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -75,6 +106,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the operand as <see cref="string"/>.
+        /// </summary>
         public string TokenString
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -84,6 +118,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the first operand as <see cref="ushort"/>.
+        /// </summary>
         public ushort TokenU16
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -93,6 +130,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the first operand as <see cref="uint"/>.
+        /// </summary>
         public uint TokenU32
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -102,6 +142,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the first operand as <see cref="byte"/>.
+        /// </summary>
         public byte TokenU8
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -111,6 +154,9 @@ namespace Neo.VM
             }
         }
 
+        /// <summary>
+        /// Gets the second operand as <see cref="byte"/>.
+        /// </summary>
         public byte TokenU8_1
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

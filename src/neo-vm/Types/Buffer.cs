@@ -5,19 +5,36 @@ using System.Numerics;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// Represents a memory block that can be used for reading and writing in the VM.
+    /// </summary>
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(InnerBuffer).Replace(\"-\", string.Empty)}")]
     public class Buffer : StackItem
     {
+        /// <summary>
+        /// The internal byte array used to store the actual data.
+        /// </summary>
         public readonly byte[] InnerBuffer;
 
+        /// <summary>
+        /// The size of the buffer.
+        /// </summary>
         public int Size => InnerBuffer.Length;
         public override StackItemType Type => StackItemType.Buffer;
 
+        /// <summary>
+        /// Create a buffer of the specified size.
+        /// </summary>
+        /// <param name="size">The size of this buffer.</param>
         public Buffer(int size)
         {
             InnerBuffer = new byte[size];
         }
 
+        /// <summary>
+        /// Create a buffer with the specified data.
+        /// </summary>
+        /// <param name="data">The data to be contained in this buffer.</param>
         public Buffer(ReadOnlySpan<byte> data)
             : this(data.Length)
         {

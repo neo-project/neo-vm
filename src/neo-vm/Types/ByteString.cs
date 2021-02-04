@@ -5,19 +5,32 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// Represents an immutable memory block in the VM.
+    /// </summary>
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(Memory.ToArray()).Replace(\"-\", string.Empty)}")]
     public class ByteString : PrimitiveType
     {
+        /// <summary>
+        /// The largest comparable size. If a <see cref="ByteString"/> exceeds this size, comparison operations on it cannot be performed in the VM.
+        /// </summary>
         public const int MaxComparableSize = ushort.MaxValue;
 
+        /// <summary>
+        /// An empty <see cref="ByteString"/>.
+        /// </summary>
         public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
 
         internal override ReadOnlyMemory<byte> Memory { get; }
         public override StackItemType Type => StackItemType.ByteString;
 
-        public ByteString(ReadOnlyMemory<byte> value)
+        /// <summary>
+        /// Create a new <see cref="ByteString"/> with the specified data.
+        /// </summary>
+        /// <param name="data">The data to be contained in this <see cref="ByteString"/>.</param>
+        public ByteString(ReadOnlyMemory<byte> data)
         {
-            this.Memory = value;
+            this.Memory = data;
         }
 
         public override bool Equals(StackItem other)

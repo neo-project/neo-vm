@@ -5,6 +5,9 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// Represents a boolean (<see langword="true" /> or <see langword="false" />) value in the VM.
+    /// </summary>
     [DebuggerDisplay("Type={GetType().Name}, Value={value}")]
     public class Boolean : PrimitiveType
     {
@@ -17,6 +20,10 @@ namespace Neo.VM.Types
         public override int Size => sizeof(bool);
         public override StackItemType Type => StackItemType.Boolean;
 
+        /// <summary>
+        /// Create a new VM object representing the boolean type.
+        /// </summary>
+        /// <param name="value">The initial value of the object.</param>
         public Boolean(bool value)
         {
             this.value = value;

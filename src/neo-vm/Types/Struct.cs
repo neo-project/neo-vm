@@ -2,20 +2,36 @@ using System.Collections.Generic;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// Represents a structure in the VM.
+    /// </summary>
     public class Struct : Array
     {
         public override StackItemType Type => StackItemType.Struct;
 
-        public Struct(IEnumerable<StackItem> value = null)
-            : this(null, value)
+        /// <summary>
+        /// Create a structure with the specified fields.
+        /// </summary>
+        /// <param name="fields">The fields to be included in the structure.</param>
+        public Struct(IEnumerable<StackItem> fields = null)
+            : this(null, fields)
         {
         }
 
-        public Struct(ReferenceCounter referenceCounter, IEnumerable<StackItem> value = null)
-            : base(referenceCounter, value)
+        /// <summary>
+        /// Create a structure with the specified fields. And make the structure use the specified <see cref="ReferenceCounter"/>.
+        /// </summary>
+        /// <param name="referenceCounter">The <see cref="ReferenceCounter"/> to be used by this structure.</param>
+        /// <param name="fields">The fields to be included in the structure.</param>
+        public Struct(ReferenceCounter referenceCounter, IEnumerable<StackItem> fields = null)
+            : base(referenceCounter, fields)
         {
         }
 
+        /// <summary>
+        /// Create a new structure with the same content as this structure. All nested structures will be copied by value.
+        /// </summary>
+        /// <returns>The copied structure.</returns>
         public Struct Clone()
         {
             Struct result = new Struct(ReferenceCounter);
