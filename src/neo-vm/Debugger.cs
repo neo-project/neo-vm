@@ -13,7 +13,7 @@ namespace Neo.VM
         /// <summary>
         /// Create a debugger on the specified <see cref="ExecutionEngine"/>.
         /// </summary>
-        /// <param name="engine"></param>
+        /// <param name="engine">The <see cref="ExecutionEngine"/> to attach the debugger.</param>
         public Debugger(ExecutionEngine engine)
         {
             this.engine = engine;
@@ -62,7 +62,10 @@ namespace Neo.VM
         /// </summary>
         /// <param name="script">The script to remove the breakpoint.</param>
         /// <param name="position">The position of the breakpoint in the script.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// <see langword="true"/> if the breakpoint is successfully found and removed;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
         public bool RemoveBreakPoint(Script script, uint position)
         {
             if (!break_points.TryGetValue(script, out HashSet<uint> hashset)) return false;
