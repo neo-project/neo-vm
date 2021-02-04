@@ -1,23 +1,46 @@
+using Neo.VM.Types;
+
 namespace Neo.VM
 {
+    /// <summary>
+    /// Represents the opcode of an <see cref="Instruction"/>.
+    /// </summary>
     public enum OpCode : byte
     {
         #region Constants
 
+        /// <summary>
+        /// Pushes a 1-byte signed integer onto the stack.
+        /// </summary>
         [OperandSize(Size = 1)]
         PUSHINT8 = 0x00,
+        /// <summary>
+        /// Pushes a 2-bytes signed integer onto the stack.
+        /// </summary>
         [OperandSize(Size = 2)]
         PUSHINT16 = 0x01,
+        /// <summary>
+        /// Pushes a 4-bytes signed integer onto the stack.
+        /// </summary>
         [OperandSize(Size = 4)]
         PUSHINT32 = 0x02,
+        /// <summary>
+        /// Pushes a 8-bytes signed integer onto the stack.
+        /// </summary>
         [OperandSize(Size = 8)]
         PUSHINT64 = 0x03,
+        /// <summary>
+        /// Pushes a 16-bytes signed integer onto the stack.
+        /// </summary>
         [OperandSize(Size = 16)]
         PUSHINT128 = 0x04,
+        /// <summary>
+        /// Pushes a 32-bytes signed integer onto the stack.
+        /// </summary>
         [OperandSize(Size = 32)]
         PUSHINT256 = 0x05,
         /// <summary>
-        /// Convert the next four bytes to an address, and push the address onto the stack.
+        /// Converts the 4-bytes offset to an <see cref="Pointer"/>, and pushes it onto the stack.
         /// </summary>
         [OperandSize(Size = 4)]
         PUSHA = 0x0A,
@@ -558,7 +581,13 @@ namespace Neo.VM
 
         #region Splice
 
+        /// <summary>
+        /// Creates a new <see cref="Buffer"/> and pushes it onto the stack.
+        /// </summary>
         NEWBUFFER = 0x88,
+        /// <summary>
+        /// Copies a range of bytes from one <see cref="Buffer"/> to another.
+        /// </summary>
         MEMCPY = 0x89,
         /// <summary>
         /// Concatenates two strings.
@@ -798,16 +827,18 @@ namespace Neo.VM
         #region Types
 
         /// <summary>
-        /// Returns true if the input is null. Returns false otherwise.
+        /// Returns <see langword="true"/> if the input is <see langword="null"/>;
+        /// <see langword="false"/> otherwise.
         /// </summary>
         ISNULL = 0xD8,
         /// <summary>
-        /// Returns true if the top item is of the specified type.
+        /// Returns <see langword="true"/> if the top item of the stack is of the specified type;
+        /// <see langword="false"/> otherwise.
         /// </summary>
         [OperandSize(Size = 1)]
         ISTYPE = 0xD9,
         /// <summary>
-        /// Converts the top item to the specified type.
+        /// Converts the top item of the stack to the specified type.
         /// </summary>
         [OperandSize(Size = 1)]
         CONVERT = 0xDB,

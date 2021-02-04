@@ -1,11 +1,11 @@
-using System;
-using System.Linq;
-using System.Numerics;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.Test.Extensions;
 using Neo.Test.Helpers;
 using Neo.VM;
+using System;
+using System.Linq;
+using System.Numerics;
+using System.Text;
 
 namespace Neo.Test
 {
@@ -17,9 +17,9 @@ namespace Neo.Test
         {
             using (var script = new ScriptBuilder())
             {
-                Assert.AreEqual(0, script.Offset);
+                Assert.AreEqual(0, script.Length);
                 script.Emit(OpCode.NOP);
-                Assert.AreEqual(1, script.Offset);
+                Assert.AreEqual(1, script.Length);
 
                 CollectionAssert.AreEqual(new byte[] { 0x21 }, script.ToArray());
             }

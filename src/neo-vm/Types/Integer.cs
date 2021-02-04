@@ -5,11 +5,20 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// Represents an integer value in the VM.
+    /// </summary>
     [DebuggerDisplay("Type={GetType().Name}, Value={value}")]
     public class Integer : PrimitiveType
     {
+        /// <summary>
+        /// The maximum size of an integer in bytes.
+        /// </summary>
         public const int MaxSize = 32;
 
+        /// <summary>
+        /// Represents the number 0.
+        /// </summary>
         public static readonly Integer Zero = 0;
         private readonly BigInteger value;
 
@@ -17,6 +26,10 @@ namespace Neo.VM.Types
         public override int Size { get; }
         public override StackItemType Type => StackItemType.Integer;
 
+        /// <summary>
+        /// Create an integer with the specified value.
+        /// </summary>
+        /// <param name="value">The value of the integer.</param>
         public Integer(BigInteger value)
         {
             if (value.IsZero)

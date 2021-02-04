@@ -6,6 +6,9 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Represents the script executed in the VM.
+    /// </summary>
     [DebuggerDisplay("Length={Length}")]
     public class Script
     {
@@ -14,7 +17,7 @@ namespace Neo.VM
         private readonly Dictionary<int, Instruction> _instructions = new Dictionary<int, Instruction>();
 
         /// <summary>
-        /// Script length
+        /// The length of the script.
         /// </summary>
         public int Length
         {
@@ -26,10 +29,10 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// Get opcode
+        /// Gets the <see cref="OpCode"/> at the specified index.
         /// </summary>
-        /// <param name="index">Index</param>
-        /// <returns>Returns the opcode</returns>
+        /// <param name="index">The index to locate.</param>
+        /// <returns>The <see cref="OpCode"/> at the specified index.</returns>
         public OpCode this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -40,13 +43,22 @@ namespace Neo.VM
         }
 
         /// <summary>
-        /// Constructor
+        /// Initializes a new instance of the <see cref="Script"/> class.
         /// </summary>
-        /// <param name="script">Script</param>
+        /// <param name="script">The bytecodes of the script.</param>
         public Script(byte[] script) : this(script, false)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Script"/> class.
+        /// </summary>
+        /// <param name="script">The bytecodes of the script.</param>
+        /// <param name="strictMode">
+        /// Indicates whether strict mode is enabled.
+        /// In strict mode, the script will be checked, but the loading speed will be slower.
+        /// </param>
+        /// <exception cref="BadScriptException">In strict mode, the script was found to contain bad instructions.</exception>
         public Script(byte[] script, bool strictMode)
         {
             this._value = script;
@@ -113,6 +125,12 @@ namespace Neo.VM
             this.strictMode = strictMode;
         }
 
+        /// <summary>
+        /// Get the <see cref="Instruction"/> at the specified position.
+        /// </summary>
+        /// <param name="ip">The position to get the <see cref="Instruction"/>.</param>
+        /// <returns>The <see cref="Instruction"/> at the specified position.</returns>
+        /// <exception cref="ArgumentException">In strict mode, the <see cref="Instruction"/> was not found at the specified position.</exception>
         public Instruction GetInstruction(int ip)
         {
             if (ip >= Length) return Instruction.RET;

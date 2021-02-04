@@ -6,12 +6,23 @@ using System.Linq;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// Represents an ordered collection of key-value pairs in the VM.
+    /// </summary>
     public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     {
+        /// <summary>
+        /// Indicates the maximum size of keys in bytes.
+        /// </summary>
         public const int MaxKeySize = 64;
 
         private readonly OrderedDictionary<PrimitiveType, StackItem> dictionary = new OrderedDictionary<PrimitiveType, StackItem>();
 
+        /// <summary>
+        /// Gets or sets the element that has the specified key in the map.
+        /// </summary>
+        /// <param name="key">The key to locate.</param>
+        /// <returns>The element that has the specified key in the map.</returns>
         public StackItem this[PrimitiveType key]
         {
             get
@@ -37,12 +48,27 @@ namespace Neo.VM.Types
         }
 
         public override int Count => dictionary.Count;
+
+        /// <summary>
+        /// Gets an enumerable collection that contains the keys in the map.
+        /// </summary>
         public IEnumerable<PrimitiveType> Keys => dictionary.Keys;
+
         internal override IEnumerable<StackItem> SubItems => Keys.Concat(Values);
+
         internal override int SubItemsCount => dictionary.Count * 2;
+
         public override StackItemType Type => StackItemType.Map;
+
+        /// <summary>
+        /// Gets an enumerable collection that contains the values in the map.
+        /// </summary>
         public IEnumerable<StackItem> Values => dictionary.Values;
 
+        /// <summary>
+        /// Create a new map with the specified reference counter.
+        /// </summary>
+        /// <param name="referenceCounter">The reference counter to be used.</param>
         public Map(ReferenceCounter referenceCounter = null)
             : base(referenceCounter)
         {
@@ -59,6 +85,14 @@ namespace Neo.VM.Types
             dictionary.Clear();
         }
 
+        /// <summary>
+        /// Determines whether the map contains an element that has the specified key.
+        /// </summary>
+        /// <param name="key">The key to locate.</param>
+        /// <returns>
+        /// <see langword="true" /> if the map contains an element that has the specified key;
+        /// otherwise, <see langword="false" />.
+        /// </returns>
         public bool ContainsKey(PrimitiveType key)
         {
             if (key.Size > MaxKeySize)
@@ -86,6 +120,15 @@ namespace Neo.VM.Types
             return ((IDictionary<PrimitiveType, StackItem>)dictionary).GetEnumerator();
         }
 
+        /// <summary>
+        /// Removes the element with the specified key from the map.
+        /// </summary>
+        /// <param name="key">The key of the element to remove.</param>
+        /// <returns>
+        /// <see langword="true" /> if the element is successfully removed;
+        /// otherwise, <see langword="false"/>.
+        /// This method also returns <see langword="false"/> if <paramref name="key"/> was not found in the original map.
+        /// </returns>
         public bool Remove(PrimitiveType key)
         {
             if (key.Size > MaxKeySize)
@@ -97,6 +140,18 @@ namespace Neo.VM.Types
             return true;
         }
 
+        /// <summary>
+        /// Gets the value that is associated with the specified key.
+        /// </summary>
+        /// <param name="key">The key to locate.</param>
+        /// <param name="value">
+        /// When this method returns, the value associated with the specified key, if the key is found;
+        /// otherwise, <see langword="null"/>.
+        /// </param>
+        /// <returns>
+        /// <see langword="true" /> if the map contains an element that has the specified key;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
         public bool TryGetValue(PrimitiveType key, out StackItem value)
         {
             if (key.Size > MaxKeySize)

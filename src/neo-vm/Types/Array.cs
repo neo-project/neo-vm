@@ -3,10 +3,18 @@ using System.Collections.Generic;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// Represents an array or a complex object in the VM.
+    /// </summary>
     public class Array : CompoundType, IReadOnlyList<StackItem>
     {
         protected readonly List<StackItem> _array;
 
+        /// <summary>
+        /// Get or set item in the array.
+        /// </summary>
+        /// <param name="index">The index of the item in the array.</param>
+        /// <returns>The item at the specified index.</returns>
         public StackItem this[int index]
         {
             get
@@ -21,30 +29,46 @@ namespace Neo.VM.Types
             }
         }
 
+        /// <summary>
+        /// The number of items in the array.
+        /// </summary>
         public override int Count => _array.Count;
         internal override IEnumerable<StackItem> SubItems => _array;
         internal override int SubItemsCount => _array.Count;
         public override StackItemType Type => StackItemType.Array;
 
-        public Array(IEnumerable<StackItem> value = null)
-            : this(null, value)
+        /// <summary>
+        /// Create an array containing the specified items.
+        /// </summary>
+        /// <param name="items">The items to be included in the array.</param>
+        public Array(IEnumerable<StackItem> items = null)
+            : this(null, items)
         {
         }
 
-        public Array(ReferenceCounter referenceCounter, IEnumerable<StackItem> value = null)
+        /// <summary>
+        /// Create an array containing the specified items. And make the array use the specified <see cref="ReferenceCounter"/>.
+        /// </summary>
+        /// <param name="referenceCounter">The <see cref="ReferenceCounter"/> to be used by this array.</param>
+        /// <param name="items">The items to be included in the array.</param>
+        public Array(ReferenceCounter referenceCounter, IEnumerable<StackItem> items = null)
             : base(referenceCounter)
         {
-            _array = value switch
+            _array = items switch
             {
                 null => new List<StackItem>(),
                 List<StackItem> list => list,
-                _ => new List<StackItem>(value)
+                _ => new List<StackItem>(items)
             };
             if (referenceCounter != null)
                 foreach (StackItem item in _array)
                     referenceCounter.AddReference(item, this);
         }
 
+        /// <summary>
+        /// Add a new item at the end of the array.
+        /// </summary>
+        /// <param name="item">The item to be added.</param>
         public void Add(StackItem item)
         {
             _array.Add(item);
@@ -86,12 +110,19 @@ namespace Neo.VM.Types
             return _array.GetEnumerator();
         }
 
+        /// <summary>
+        /// Remove the item at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item to be removed.</param>
         public void RemoveAt(int index)
         {
             ReferenceCounter?.RemoveReference(_array[index], this);
             _array.RemoveAt(index);
         }
 
+        /// <summary>
+        /// Reverse all items in the array.
+        /// </summary>
         public void Reverse()
         {
             _array.Reverse();

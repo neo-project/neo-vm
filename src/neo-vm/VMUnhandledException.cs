@@ -5,13 +5,24 @@ using Array = Neo.VM.Types.Array;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Represents an unhandled exception in the VM.
+    /// Thrown when there is an exception in the VM that is not caught by any script.
+    /// </summary>
     public class VMUnhandledException : Exception
     {
+        /// <summary>
+        /// The unhandled exception in the VM.
+        /// </summary>
         public StackItem ExceptionObject { get; }
 
-        public VMUnhandledException(StackItem e) : base(GetExceptionMessage(e))
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VMUnhandledException"/> class.
+        /// </summary>
+        /// <param name="ex">The unhandled exception in the VM.</param>
+        public VMUnhandledException(StackItem ex) : base(GetExceptionMessage(ex))
         {
-            ExceptionObject = e;
+            ExceptionObject = ex;
         }
 
         private static string GetExceptionMessage(StackItem e)

@@ -7,6 +7,9 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM
 {
+    /// <summary>
+    /// Represents the evaluation stack in the VM.
+    /// </summary>
     public sealed class EvaluationStack : IReadOnlyList<StackItem>
     {
         private readonly List<StackItem> innerList = new List<StackItem>();
@@ -17,6 +20,9 @@ namespace Neo.VM
             this.referenceCounter = referenceCounter;
         }
 
+        /// <summary>
+        /// Gets the number of items on the stack.
+        /// </summary>
         public int Count => innerList.Count;
 
         internal void Clear()
@@ -65,6 +71,11 @@ namespace Neo.VM
                 innerList.RemoveRange(innerList.Count - count, count);
         }
 
+        /// <summary>
+        /// Returns the item at the specified index from the top of the stack without removing it.
+        /// </summary>
+        /// <param name="index">The index of the object from the top of the stack.</param>
+        /// <returns>The item at the specified index.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Peek(int index = 0)
         {
@@ -79,6 +90,10 @@ namespace Neo.VM
 
         StackItem IReadOnlyList<StackItem>.this[int index] => Peek(index);
 
+        /// <summary>
+        /// Pushes an item onto the top of the stack.
+        /// </summary>
+        /// <param name="item">The item to be pushed.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
         {
@@ -95,12 +110,21 @@ namespace Neo.VM
             innerList.Reverse(innerList.Count - n, n);
         }
 
+        /// <summary>
+        /// Removes and returns the item at the top of the stack.
+        /// </summary>
+        /// <returns>The item removed from the top of the stack.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Pop()
         {
             return Remove<StackItem>(0);
         }
 
+        /// <summary>
+        /// Removes and returns the item at the top of the stack and convert it to the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type to convert to.</typeparam>
+        /// <returns>The item removed from the top of the stack.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Pop<T>() where T : StackItem
         {

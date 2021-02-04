@@ -3,6 +3,9 @@ using System.Diagnostics;
 
 namespace Neo.VM.Types
 {
+    /// <summary>
+    /// Represents an interface used to interoperate with the outside of the the VM.
+    /// </summary>
     [DebuggerDisplay("Type={GetType().Name}, Value={_object}")]
     public class InteropInterface : StackItem
     {
@@ -10,6 +13,10 @@ namespace Neo.VM.Types
 
         public override StackItemType Type => StackItemType.InteropInterface;
 
+        /// <summary>
+        /// Create an interoperability interface that wraps the specified <see cref="object"/>.
+        /// </summary>
+        /// <param name="value">The wrapped <see cref="object"/>.</param>
         public InteropInterface(object value)
         {
             _object = value ?? throw new ArgumentNullException(nameof(value));
