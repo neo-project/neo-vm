@@ -680,6 +680,14 @@ namespace Neo.VM
         /// </summary>
         MOD = 0xA2,
         /// <summary>
+        /// The result of raising value to the exponent power.
+        /// </summary>
+        POW = 0xA3,
+        /// <summary>
+        /// Returns the square root of a specified number.
+        /// </summary>
+        SQRT = 0xA4,
+        /// <summary>
         /// Shifts a left b bits, preserving sign.
         /// </summary>
         SHL = 0xA8,
