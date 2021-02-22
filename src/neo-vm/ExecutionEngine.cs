@@ -852,23 +852,7 @@ namespace Neo.VM
                     }
                 case OpCode.SQRT:
                     {
-                        var value = Pop().GetInteger();
-
-                        if (value < 0) throw new InvalidOperationException("value can not be negative");
-                        if (value > 3)
-                        {
-                            var z = value;
-                            var x = value / 2 + 1;
-                            while (x < z)
-                            {
-                                z = x;
-                                x = (value / x + x) / 2;
-                            }
-
-                            Push(z);
-                        }
-                        else if (value != 0) Push(1);
-                        else Push(0);
+                        Push(Pop().GetInteger().Sqrt());
                         break;
                     }
                 case OpCode.SHL:
