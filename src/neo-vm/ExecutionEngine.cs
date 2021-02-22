@@ -854,38 +854,21 @@ namespace Neo.VM
                     {
                         var value = Pop().GetInteger();
 
-                        if (value < 9)
+                        if (value < 0) throw new InvalidOperationException("value can not be negative");
+                        if (value > 3)
                         {
-                            if (value == 0) value = 0;
-                            if (value < 4) value = 1;
-                            else value = 2;
-                            Push(value);
-                        }
-                        else
-                        {
-                            BigInteger n = 0, p = 0;
-                            var high = value >> 1;
-                            var low = BigInteger.Zero;
-
-                            while (high > low + 1)
+                            var z = value;
+                            var x = value / 2 + 1;
+                            while (x < z)
                             {
-                                n = (high + low) >> 1;
-                                p = n * n;
-                                if (value < p)
-                                {
-                                    high = n;
-                                }
-                                else if (value > p)
-                                {
-                                    low = n;
-                                }
-                                else
-                                {
-                                    break;
-                                }
+                                z = x;
+                                x = (value / x + x) / 2;
                             }
-                            Push(value == p ? n : low);
+
+                            Push(z);
                         }
+                        else if (value != 0) Push(1);
+                        else Push(0);
                         break;
                     }
                 case OpCode.SHL:
