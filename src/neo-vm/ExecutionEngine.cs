@@ -843,6 +843,18 @@ namespace Neo.VM
                         Push(x1 % x2);
                         break;
                     }
+                case OpCode.POW:
+                    {
+                        var exponent = (int)Pop().GetInteger();
+                        var value = Pop().GetInteger();
+                        Push(BigInteger.Pow(value, exponent));
+                        break;
+                    }
+                case OpCode.SQRT:
+                    {
+                        Push(Pop().GetInteger().Sqrt());
+                        break;
+                    }
                 case OpCode.SHL:
                     {
                         int shift = (int)Pop().GetInteger();
