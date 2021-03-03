@@ -441,7 +441,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Buffer",
+                "type": "ByteString",
                 "value": "0x02"
               }
             ]

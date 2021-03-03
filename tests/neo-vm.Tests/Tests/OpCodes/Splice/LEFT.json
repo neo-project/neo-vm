@@ -200,7 +200,7 @@
                 "nextInstruction": "RET",
                 "evaluationStack": [
                   {
-                    "type": "Buffer",
+                    "type": "ByteString",
                     "value": "0x0102"
                   }
                 ]
@@ -216,7 +216,7 @@
             "state": "HALT",
             "resultStack": [
               {
-                "type": "Buffer",
+                "type": "ByteString",
                 "value": "0x0102"
               }
             ]
