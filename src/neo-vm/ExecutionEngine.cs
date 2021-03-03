@@ -681,14 +681,19 @@ namespace Neo.VM
                     }
                 case OpCode.CAT:
                     {
-                        var x2 = Pop().GetSpan();
-                        var x1 = Pop().GetSpan();
+                        var x2item = Pop();
+                        var x1item = Pop();
+                        var x2 = x2item.GetSpan();
+                        var x1 = x1item.GetSpan();
                         int length = x1.Length + x2.Length;
                         Limits.AssertMaxItemSize(length);
+
                         Buffer result = new Buffer(length);
                         x1.CopyTo(result.InnerBuffer);
                         x2.CopyTo(result.InnerBuffer.AsSpan(x1.Length));
-                        Push(result);
+
+                        if (x2item is ByteString && x1item is ByteString) Push(result.ConvertTo(StackItemType.ByteString));
+                        else Push(result);
                         break;
                     }
                 case OpCode.SUBSTR:
@@ -699,12 +704,21 @@ namespace Neo.VM
                         int index = (int)Pop().GetInteger();
                         if (index < 0)
                             throw new InvalidOperationException($"The value {index} is out of range.");
-                        var x = Pop().GetSpan();
+                        var xItem = Pop();
+                        var x = xItem.GetSpan();
                         if (index + count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new Buffer(count);
-                        x.Slice(index, count).CopyTo(result.InnerBuffer);
-                        Push(result);
+                        if (xItem is ByteString)
+                        {
+                            ByteString result = new ByteString(x.Slice(index, count).ToArray());
+                            Push(result);
+                        }
+                        else
+                        {
+                            Buffer result = new Buffer(count);
+                            x.Slice(index, count).CopyTo(result.InnerBuffer);
+                            Push(result);
+                        }
                         break;
                     }
                 case OpCode.LEFT:
@@ -712,12 +726,21 @@ namespace Neo.VM
                         int count = (int)Pop().GetInteger();
                         if (count < 0)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        var x = Pop().GetSpan();
+                        var xItem = Pop();
+                        var x = xItem.GetSpan();
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new Buffer(count);
-                        x[..count].CopyTo(result.InnerBuffer);
-                        Push(result);
+                        if (xItem is ByteString)
+                        {
+                            ByteString result = new ByteString(x[..count].ToArray());
+                            Push(result);
+                        }
+                        else
+                        {
+                            Buffer result = new Buffer(count);
+                            x[..count].CopyTo(result.InnerBuffer);
+                            Push(result);
+                        }
                         break;
                     }
                 case OpCode.RIGHT:
@@ -725,12 +748,21 @@ namespace Neo.VM
                         int count = (int)Pop().GetInteger();
                         if (count < 0)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        var x = Pop().GetSpan();
+                        var xItem = Pop();
+                        var x = xItem.GetSpan();
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new Buffer(count);
-                        x[^count..^0].CopyTo(result.InnerBuffer);
-                        Push(result);
+                        if (xItem is ByteString)
+                        {
+                            ByteString result = new ByteString(x[^count..^0].ToArray());
+                            Push(result);
+                        }
+                        else
+                        {
+                            Buffer result = new Buffer(count);
+                            x[^count..^0].CopyTo(result.InnerBuffer);
+                            Push(result);
+                        }
                         break;
                     }
 
