@@ -15,7 +15,7 @@ namespace Neo.Test
         [TestMethod]
         public void TestEmit()
         {
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 Assert.AreEqual(0, script.Length);
                 script.Emit(OpCode.NOP);
@@ -24,7 +24,7 @@ namespace Neo.Test
                 CollectionAssert.AreEqual(new byte[] { 0x21 }, script.ToArray());
             }
 
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 script.Emit(OpCode.NOP, new byte[] { 0x66 });
                 CollectionAssert.AreEqual(new byte[] { 0x21, 0x66 }, script.ToArray());
@@ -34,27 +34,25 @@ namespace Neo.Test
         [TestMethod]
         public void TestEmitSysCall()
         {
-            using (var script = new ScriptBuilder())
-            {
-                script.EmitSysCall(0xE393C875);
-                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.SYSCALL, 0x75, 0xC8, 0x93, 0xE3 }.ToArray(), script.ToArray());
-            }
+            using ScriptBuilder script = new();
+            script.EmitSysCall(0xE393C875);
+            CollectionAssert.AreEqual(new byte[] { (byte)OpCode.SYSCALL, 0x75, 0xC8, 0x93, 0xE3 }.ToArray(), script.ToArray());
         }
 
         [TestMethod]
         public void TestEmitCall()
         {
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 script.EmitCall(0);
                 CollectionAssert.AreEqual(new[] { (byte)OpCode.CALL, (byte)0 }, script.ToArray());
             }
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 script.EmitCall(12345);
                 CollectionAssert.AreEqual(new[] { (byte)OpCode.CALL_L }.Concat(BitConverter.GetBytes(12345)).ToArray(), script.ToArray());
             }
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 script.EmitCall(-12345);
                 CollectionAssert.AreEqual(new[] { (byte)OpCode.CALL_L }.Concat(BitConverter.GetBytes(-12345)).ToArray(), script.ToArray());
@@ -69,22 +67,20 @@ namespace Neo.Test
 
             foreach (OpCode op in Enum.GetValues(typeof(OpCode)))
             {
-                using (var script = new ScriptBuilder())
+                using ScriptBuilder script = new();
+                if (op < OpCode.JMP || op > OpCode.JMPLE_L)
                 {
-                    if (op < OpCode.JMP || op > OpCode.JMPLE_L)
-                    {
-                        Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i8));
-                        Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i32));
-                    }
+                    Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i8));
+                    Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i32));
+                }
+                else
+                {
+                    script.EmitJump(op, offset_i8);
+                    script.EmitJump(op, offset_i32);
+                    if ((int)op % 2 == 0)
+                        CollectionAssert.AreEqual(new[] { (byte)op, (byte)offset_i8, (byte)(op + 1) }.Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
                     else
-                    {
-                        script.EmitJump(op, offset_i8);
-                        script.EmitJump(op, offset_i32);
-                        if ((int)op % 2 == 0)
-                            CollectionAssert.AreEqual(new[] { (byte)op, (byte)offset_i8, (byte)(op + 1) }.Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
-                        else
-                            CollectionAssert.AreEqual(new[] { (byte)op }.Concat(BitConverter.GetBytes((int)offset_i8)).Concat(new[] { (byte)op }).Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
-                    }
+                        CollectionAssert.AreEqual(new[] { (byte)op }.Concat(BitConverter.GetBytes((int)offset_i8)).Concat(new[] { (byte)op }).Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
                 }
             }
 
@@ -93,22 +89,20 @@ namespace Neo.Test
 
             foreach (OpCode op in Enum.GetValues(typeof(OpCode)))
             {
-                using (var script = new ScriptBuilder())
+                using ScriptBuilder script = new();
+                if (op < OpCode.JMP || op > OpCode.JMPLE_L)
                 {
-                    if (op < OpCode.JMP || op > OpCode.JMPLE_L)
-                    {
-                        Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i8));
-                        Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i32));
-                    }
+                    Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i8));
+                    Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.EmitJump(op, offset_i32));
+                }
+                else
+                {
+                    script.EmitJump(op, offset_i8);
+                    script.EmitJump(op, offset_i32);
+                    if ((int)op % 2 == 0)
+                        CollectionAssert.AreEqual(new[] { (byte)op, (byte)offset_i8, (byte)(op + 1) }.Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
                     else
-                    {
-                        script.EmitJump(op, offset_i8);
-                        script.EmitJump(op, offset_i32);
-                        if ((int)op % 2 == 0)
-                            CollectionAssert.AreEqual(new[] { (byte)op, (byte)offset_i8, (byte)(op + 1) }.Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
-                        else
-                            CollectionAssert.AreEqual(new[] { (byte)op }.Concat(BitConverter.GetBytes((int)offset_i8)).Concat(new[] { (byte)op }).Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
-                    }
+                        CollectionAssert.AreEqual(new[] { (byte)op }.Concat(BitConverter.GetBytes((int)offset_i8)).Concat(new[] { (byte)op }).Concat(BitConverter.GetBytes(offset_i32)).ToArray(), script.ToArray());
                 }
             }
         }
@@ -116,13 +110,13 @@ namespace Neo.Test
         [TestMethod]
         public void TestEmitPushBigInteger()
         {
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 script.EmitPush(BigInteger.MinusOne);
                 CollectionAssert.AreEqual(new byte[] { 0x0F }, script.ToArray());
             }
 
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 script.EmitPush(BigInteger.Zero);
                 CollectionAssert.AreEqual(new byte[] { 0x10 }, script.ToArray());
@@ -130,11 +124,9 @@ namespace Neo.Test
 
             for (byte x = 1; x <= 16; x++)
             {
-                using (var script = new ScriptBuilder())
-                {
-                    script.EmitPush(new BigInteger(x));
-                    CollectionAssert.AreEqual(new byte[] { (byte)(OpCode.PUSH0 + x) }, script.ToArray());
-                }
+                using ScriptBuilder script = new();
+                script.EmitPush(new BigInteger(x));
+                CollectionAssert.AreEqual(new byte[] { (byte)(OpCode.PUSH0 + x) }, script.ToArray());
             }
 
             CollectionAssert.AreEqual("0080".FromHexString(), new ScriptBuilder().EmitPush(sbyte.MinValue).ToArray());
@@ -158,13 +150,13 @@ namespace Neo.Test
         [TestMethod]
         public void TestEmitPushBool()
         {
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 script.EmitPush(true);
                 CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH1 }, script.ToArray());
             }
 
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 script.EmitPush(false);
                 CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH0 }, script.ToArray());
@@ -174,12 +166,12 @@ namespace Neo.Test
         [TestMethod]
         public void TestEmitPushByteArray()
         {
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 Assert.ThrowsException<ArgumentNullException>(() => script.EmitPush((byte[])null));
             }
 
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 var data = RandomHelper.RandBuffer(0x4C);
 
@@ -187,7 +179,7 @@ namespace Neo.Test
                 CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSHDATA1, (byte)data.Length }.Concat(data).ToArray(), script.ToArray());
             }
 
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 var data = RandomHelper.RandBuffer(0x100);
 
@@ -195,7 +187,7 @@ namespace Neo.Test
                 CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSHDATA2 }.Concat(BitConverter.GetBytes((short)data.Length)).Concat(data).ToArray(), script.ToArray());
             }
 
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 var data = RandomHelper.RandBuffer(0x10000);
 
@@ -207,12 +199,12 @@ namespace Neo.Test
         [TestMethod]
         public void TestEmitPushString()
         {
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 Assert.ThrowsException<ArgumentNullException>(() => script.EmitPush((string)null));
             }
 
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 var data = RandomHelper.RandString(0x4C);
 
@@ -220,7 +212,7 @@ namespace Neo.Test
                 CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSHDATA1, (byte)data.Length }.Concat(Encoding.UTF8.GetBytes(data)).ToArray(), script.ToArray());
             }
 
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 var data = RandomHelper.RandString(0x100);
 
@@ -228,7 +220,7 @@ namespace Neo.Test
                 CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSHDATA2 }.Concat(BitConverter.GetBytes((short)data.Length)).Concat(Encoding.UTF8.GetBytes(data)).ToArray(), script.ToArray());
             }
 
-            using (var script = new ScriptBuilder())
+            using (ScriptBuilder script = new())
             {
                 var data = RandomHelper.RandString(0x10000);
 

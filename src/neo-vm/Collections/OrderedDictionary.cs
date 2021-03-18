@@ -21,7 +21,7 @@ namespace Neo.VM.Collections
             }
         }
 
-        private readonly InternalCollection collection = new InternalCollection();
+        private readonly InternalCollection collection = new();
 
         public int Count => collection.Count;
         public bool IsReadOnly => false;

@@ -15,8 +15,8 @@ namespace Neo.VM
             public Dictionary<CompoundType, int> ObjectReferences;
         }
 
-        private readonly Dictionary<CompoundType, Entry> counter = new Dictionary<CompoundType, Entry>(ReferenceEqualityComparer.Instance);
-        private readonly HashSet<CompoundType> zero_referred = new HashSet<CompoundType>(ReferenceEqualityComparer.Instance);
+        private readonly Dictionary<CompoundType, Entry> counter = new(ReferenceEqualityComparer.Instance);
+        private readonly HashSet<CompoundType> zero_referred = new(ReferenceEqualityComparer.Instance);
         private int references_count = 0;
 
         /// <summary>
@@ -74,11 +74,11 @@ namespace Neo.VM
         {
             while (zero_referred.Count > 0)
             {
-                HashSet<CompoundType> toBeDestroyed = new HashSet<CompoundType>(ReferenceEqualityComparer.Instance);
+                HashSet<CompoundType> toBeDestroyed = new(ReferenceEqualityComparer.Instance);
                 foreach (CompoundType compound in zero_referred)
                 {
-                    HashSet<CompoundType> toBeDestroyedInLoop = new HashSet<CompoundType>(ReferenceEqualityComparer.Instance);
-                    Queue<CompoundType> toBeChecked = new Queue<CompoundType>();
+                    HashSet<CompoundType> toBeDestroyedInLoop = new(ReferenceEqualityComparer.Instance);
+                    Queue<CompoundType> toBeChecked = new();
                     toBeChecked.Enqueue(compound);
                     while (toBeChecked.Count > 0)
                     {

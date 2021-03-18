@@ -9,7 +9,7 @@ namespace Neo.VM
     /// </summary>
     public class ScriptBuilder : IDisposable
     {
-        private readonly MemoryStream ms = new MemoryStream();
+        private readonly MemoryStream ms = new();
         private readonly BinaryWriter writer;
 
         /// <summary>

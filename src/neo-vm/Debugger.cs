@@ -8,7 +8,7 @@ namespace Neo.VM
     public class Debugger
     {
         private readonly ExecutionEngine engine;
-        private readonly Dictionary<Script, HashSet<uint>> break_points = new Dictionary<Script, HashSet<uint>>();
+        private readonly Dictionary<Script, HashSet<uint>> break_points = new();
 
         /// <summary>
         /// Create a debugger on the specified <see cref="ExecutionEngine"/>.

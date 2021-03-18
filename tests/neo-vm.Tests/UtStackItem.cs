@@ -178,7 +178,7 @@ namespace Neo.Test
         [TestMethod]
         public void DeepCopyTest()
         {
-            Array a = new Array
+            Array a = new()
             {
                 true,
                 1,
