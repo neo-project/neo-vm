@@ -114,9 +114,7 @@ namespace Neo.VM
             context.Arguments?.ClearReferences();
         }
 
-#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
         public virtual void Dispose()
-#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
         {
             InvocationStack.Clear();
         }
