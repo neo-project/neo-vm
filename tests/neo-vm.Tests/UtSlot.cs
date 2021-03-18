@@ -11,7 +11,7 @@ namespace Neo.Test
     [TestClass]
     public class UtSlot
     {
-        Slot CreateOrderedSlot(int count)
+        private static Slot CreateOrderedSlot(int count)
         {
             var check = new Integer[count];
 
@@ -28,7 +28,7 @@ namespace Neo.Test
             return slot;
         }
 
-        public IEnumerable GetEnumerable(IEnumerator enumerator)
+        public static IEnumerable GetEnumerable(IEnumerator enumerator)
         {
             while (enumerator.MoveNext()) yield return enumerator.Current;
         }
@@ -73,18 +73,18 @@ namespace Neo.Test
 
             slot = CreateOrderedSlot(0);
 
-            CollectionAssert.AreEqual(new Integer[] { }, slot.ToArray());
+            CollectionAssert.AreEqual(System.Array.Empty<Integer>(), slot.ToArray());
 
             // Test IEnumerable
 
             enumerable = (IEnumerable)slot;
             enumerator = enumerable.GetEnumerator();
 
-            CollectionAssert.AreEqual(new Integer[] { }, GetEnumerable(enumerator).Cast<Integer>().ToArray());
+            CollectionAssert.AreEqual(System.Array.Empty<Integer>(), GetEnumerable(enumerator).Cast<Integer>().ToArray());
 
             Assert.AreEqual(0, slot.Count);
 
-            CollectionAssert.AreEqual(new Integer[] { }, slot.ToArray());
+            CollectionAssert.AreEqual(System.Array.Empty<Integer>(), slot.ToArray());
         }
     }
 }

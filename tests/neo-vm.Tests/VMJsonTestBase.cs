@@ -23,40 +23,38 @@ namespace Neo.Test
             {
                 Assert.IsFalse(string.IsNullOrEmpty(test.Name), "Name is required");
 
-                using (var engine = new TestEngine())
+                using TestEngine engine = new();
+                Debugger debugger = new(engine);
+
+                if (test.Script.Length > 0)
                 {
-                    Debugger debugger = new Debugger(engine);
+                    engine.LoadScript(test.Script);
+                }
 
-                    if (test.Script.Length > 0)
+                // Execute Steps
+
+                if (test.Steps != null)
+                {
+                    foreach (var step in test.Steps)
                     {
-                        engine.LoadScript(test.Script);
-                    }
+                        // Actions
 
-                    // Execute Steps
-
-                    if (test.Steps != null)
-                    {
-                        foreach (var step in test.Steps)
-                        {
-                            // Actions
-
-                            if (step.Actions != null) foreach (var run in step.Actions)
+                        if (step.Actions != null) foreach (var run in step.Actions)
+                            {
+                                switch (run)
                                 {
-                                    switch (run)
-                                    {
-                                        case VMUTActionType.Execute: debugger.Execute(); break;
-                                        case VMUTActionType.StepInto: debugger.StepInto(); break;
-                                        case VMUTActionType.StepOut: debugger.StepOut(); break;
-                                        case VMUTActionType.StepOver: debugger.StepOver(); break;
-                                    }
+                                    case VMUTActionType.Execute: debugger.Execute(); break;
+                                    case VMUTActionType.StepInto: debugger.StepInto(); break;
+                                    case VMUTActionType.StepOut: debugger.StepOut(); break;
+                                    case VMUTActionType.StepOver: debugger.StepOver(); break;
                                 }
+                            }
 
-                            // Review results
+                        // Review results
 
-                            var add = string.IsNullOrEmpty(step.Name) ? "" : "-" + step.Name;
+                        var add = string.IsNullOrEmpty(step.Name) ? "" : "-" + step.Name;
 
-                            AssertResult(step.Result, engine, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
-                        }
+                        AssertResult(step.Result, engine, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
                     }
                 }
             }
@@ -292,7 +290,7 @@ namespace Neo.Test
         /// <param name="expected">A</param>
         /// <param name="actual">B</param>
         /// <param name="message">Message</param>
-        private void AssertAreEqual(object expected, object actual, string message)
+        private static void AssertAreEqual(object expected, object actual, string message)
         {
             if (expected is byte[] ba) expected = ba.ToHexString().ToUpperInvariant();
             if (actual is byte[] bb) actual = bb.ToHexString().ToUpperInvariant();

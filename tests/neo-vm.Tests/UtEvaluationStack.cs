@@ -10,7 +10,7 @@ namespace Neo.Test
     [TestClass]
     public class UtEvaluationStack
     {
-        EvaluationStack CreateOrderedStack(int count)
+        private static EvaluationStack CreateOrderedStack(int count)
         {
             var check = new Integer[count];
             var stack = new EvaluationStack(new ReferenceCounter());
@@ -27,7 +27,7 @@ namespace Neo.Test
             return stack;
         }
 
-        public IEnumerable GetEnumerable(IEnumerator enumerator)
+        public static IEnumerable GetEnumerable(IEnumerator enumerator)
         {
             while (enumerator.MoveNext()) yield return enumerator.Current;
         }

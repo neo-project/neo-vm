@@ -61,7 +61,7 @@ namespace Neo.VM.Types
         internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
         {
             if (refMap.TryGetValue(this, out StackItem mappedItem)) return mappedItem;
-            Buffer result = new Buffer(InnerBuffer);
+            Buffer result = new(InnerBuffer);
             refMap.Add(this, result);
             return result;
         }

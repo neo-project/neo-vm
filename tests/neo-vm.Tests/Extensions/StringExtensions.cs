@@ -41,9 +41,9 @@ namespace Neo.Test.Extensions
         public static byte[] FromHexString(this string value)
         {
             if (string.IsNullOrEmpty(value))
-                return new byte[0];
+                return Array.Empty<byte>();
             if (value.StartsWith("0x"))
-                value = value.Substring(2);
+                value = value[2..];
             if (value.Length % 2 == 1)
                 throw new FormatException();
 

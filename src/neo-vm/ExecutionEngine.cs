@@ -114,7 +114,9 @@ namespace Neo.VM
             context.Arguments?.ClearReferences();
         }
 
+#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
         public virtual void Dispose()
+#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
         {
             InvocationStack.Clear();
         }
@@ -685,7 +687,7 @@ namespace Neo.VM
                         var x1 = Pop().GetSpan();
                         int length = x1.Length + x2.Length;
                         Limits.AssertMaxItemSize(length);
-                        Buffer result = new Buffer(length);
+                        Buffer result = new(length);
                         x1.CopyTo(result.InnerBuffer);
                         x2.CopyTo(result.InnerBuffer.AsSpan(x1.Length));
                         Push(result);
@@ -702,7 +704,7 @@ namespace Neo.VM
                         var x = Pop().GetSpan();
                         if (index + count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new Buffer(count);
+                        Buffer result = new(count);
                         x.Slice(index, count).CopyTo(result.InnerBuffer);
                         Push(result);
                         break;
@@ -715,7 +717,7 @@ namespace Neo.VM
                         var x = Pop().GetSpan();
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new Buffer(count);
+                        Buffer result = new(count);
                         x[..count].CopyTo(result.InnerBuffer);
                         Push(result);
                         break;
@@ -728,7 +730,7 @@ namespace Neo.VM
                         var x = Pop().GetSpan();
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new Buffer(count);
+                        Buffer result = new(count);
                         x[^count..^0].CopyTo(result.InnerBuffer);
                         Push(result);
                         break;
@@ -970,7 +972,7 @@ namespace Neo.VM
                         int size = (int)Pop().GetInteger();
                         if (size < 0 || size > CurrentContext.EvaluationStack.Count)
                             throw new InvalidOperationException($"The value {size} is out of range.");
-                        VMArray array = new VMArray(ReferenceCounter);
+                        VMArray array = new(ReferenceCounter);
                         for (int i = 0; i < size; i++)
                         {
                             StackItem item = Pop();
@@ -1029,7 +1031,7 @@ namespace Neo.VM
                         int n = (int)Pop().GetInteger();
                         if (n < 0 || n > Limits.MaxStackSize)
                             throw new InvalidOperationException($"MaxStackSize exceed: {n}");
-                        Struct result = new Struct(ReferenceCounter);
+                        Struct result = new(ReferenceCounter);
                         for (var i = 0; i < n; i++)
                             result.Add(StackItem.Null);
                         Push(result);
@@ -1114,7 +1116,7 @@ namespace Neo.VM
                             Map map => map.Values,
                             _ => throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}"),
                         };
-                        VMArray newArray = new VMArray(ReferenceCounter);
+                        VMArray newArray = new(ReferenceCounter);
                         foreach (StackItem item in values)
                             if (item is Struct s)
                                 newArray.Add(s.Clone());

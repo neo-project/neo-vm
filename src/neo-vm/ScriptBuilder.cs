@@ -9,7 +9,7 @@ namespace Neo.VM
     /// </summary>
     public class ScriptBuilder : IDisposable
     {
-        private readonly MemoryStream ms = new MemoryStream();
+        private readonly MemoryStream ms = new();
         private readonly BinaryWriter writer;
 
         /// <summary>
@@ -25,7 +25,9 @@ namespace Neo.VM
             writer = new BinaryWriter(ms);
         }
 
+#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
         public void Dispose()
+#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
         {
             writer.Dispose();
             ms.Dispose();

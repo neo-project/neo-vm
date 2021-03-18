@@ -10,7 +10,7 @@ namespace Neo.Test
         [TestMethod]
         public void TestCircularReferences()
         {
-            using ScriptBuilder sb = new ScriptBuilder();
+            using ScriptBuilder sb = new();
             sb.Emit(OpCode.INITSSLOT, new byte[] { 1 }); //{}|{null}:1
             sb.EmitPush(0); //{0}|{null}:2
             sb.Emit(OpCode.NEWARRAY); //{A[]}|{null}:2
@@ -41,8 +41,9 @@ namespace Neo.Test
             sb.Emit(OpCode.REMOVE); //{A[A]}|{null}:3
             sb.Emit(OpCode.STSFLD0); //{}|{A[A]}:2
             sb.Emit(OpCode.RET); //{}:0
-            using ExecutionEngine engine = new ExecutionEngine();
-            Debugger debugger = new Debugger(engine);
+
+            using ExecutionEngine engine = new();
+            Debugger debugger = new(engine);
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
@@ -109,7 +110,7 @@ namespace Neo.Test
         [TestMethod]
         public void TestRemoveReferrer()
         {
-            using ScriptBuilder sb = new ScriptBuilder();
+            using ScriptBuilder sb = new();
             sb.Emit(OpCode.INITSSLOT, new byte[] { 1 }); //{}|{null}:1
             sb.EmitPush(0); //{0}|{null}:2
             sb.Emit(OpCode.NEWARRAY); //{A[]}|{null}:2
@@ -121,8 +122,9 @@ namespace Neo.Test
             sb.Emit(OpCode.APPEND); //{A[B]}|{B[]}:3
             sb.Emit(OpCode.DROP); //{}|{B[]}:1
             sb.Emit(OpCode.RET); //{}:0
-            using ExecutionEngine engine = new ExecutionEngine();
-            Debugger debugger = new Debugger(engine);
+
+            using ExecutionEngine engine = new();
+            Debugger debugger = new(engine);
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
@@ -151,12 +153,12 @@ namespace Neo.Test
         [TestMethod]
         public void TestArrayNoPush()
         {
-            using ScriptBuilder sb = new ScriptBuilder();
+            using ScriptBuilder sb = new();
             sb.Emit(OpCode.RET);
-            using ExecutionEngine engine = new ExecutionEngine();
+            using ExecutionEngine engine = new();
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
-            Array array = new Array(engine.ReferenceCounter, new StackItem[] { 1, 2, 3, 4 });
+            Array array = new(engine.ReferenceCounter, new StackItem[] { 1, 2, 3, 4 });
             Assert.AreEqual(array.Count, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);

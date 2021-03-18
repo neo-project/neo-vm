@@ -4,8 +4,8 @@ namespace Neo.Test.Helpers
 {
     public class RandomHelper
     {
-        const string _randchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        static Random _rand = new Random();
+        private const string _randchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        private static readonly Random _rand = new();
 
         /// <summary>
         /// Get random buffer
@@ -27,11 +27,10 @@ namespace Neo.Test.Helpers
         public static string RandString(int length)
         {
             var stringChars = new char[length];
-            var random = new Random();
 
             for (int i = 0; i < stringChars.Length; i++)
             {
-                stringChars[i] = _randchars[random.Next(_randchars.Length)];
+                stringChars[i] = _randchars[_rand.Next(_randchars.Length)];
             }
 
             return new string(stringChars);

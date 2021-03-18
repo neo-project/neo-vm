@@ -34,8 +34,8 @@ namespace Neo.VM.Types
         /// <returns>The copied structure.</returns>
         public Struct Clone()
         {
-            Struct result = new Struct(ReferenceCounter);
-            Queue<Struct> queue = new Queue<Struct>();
+            Struct result = new(ReferenceCounter);
+            Queue<Struct> queue = new();
             queue.Enqueue(result);
             queue.Enqueue(this);
             while (queue.Count > 0)
@@ -46,7 +46,7 @@ namespace Neo.VM.Types
                 {
                     if (item is Struct sb)
                     {
-                        Struct sa = new Struct(ReferenceCounter);
+                        Struct sa = new(ReferenceCounter);
                         a.Add(sa);
                         queue.Enqueue(sa);
                         queue.Enqueue(sb);
@@ -70,8 +70,8 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem other)
         {
             if (other is not Struct s) return false;
-            Stack<StackItem> stack1 = new Stack<StackItem>();
-            Stack<StackItem> stack2 = new Stack<StackItem>();
+            Stack<StackItem> stack1 = new();
+            Stack<StackItem> stack2 = new();
             stack1.Push(this);
             stack2.Push(s);
             while (stack1.Count > 0)

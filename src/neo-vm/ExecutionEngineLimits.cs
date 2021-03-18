@@ -11,7 +11,7 @@ namespace Neo.VM
         /// <summary>
         /// The default strategy.
         /// </summary>
-        public static readonly ExecutionEngineLimits Default = new ExecutionEngineLimits();
+        public static readonly ExecutionEngineLimits Default = new();
 
         /// <summary>
         /// The maximum number of bits that <see cref="OpCode.SHL"/> and <see cref="OpCode.SHR"/> can shift.
