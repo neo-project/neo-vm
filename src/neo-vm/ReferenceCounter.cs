@@ -106,8 +106,9 @@ namespace Neo.VM
                     foreach (CompoundType subitem in compound.SubItems.OfType<CompoundType>())
                     {
                         if (toBeDestroyed.Contains(subitem)) continue;
+                        if (!counter.ContainsKey(subitem)) continue;
                         Entry entry = counter[subitem];
-                        entry.ObjectReferences.Remove(compound);
+                        entry.ObjectReferences?.Remove(compound);
                         if (entry.StackReferences == 0)
                             zero_referred.Add(subitem);
                     }
