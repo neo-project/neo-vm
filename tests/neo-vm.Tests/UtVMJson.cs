@@ -32,7 +32,7 @@ namespace Neo.Test
         public void TestOpCodesPush() => TestJson("./Tests/OpCodes/Push");
 
         [TestMethod]
-        public void TestOpCodesNumeric() => TestJson("./Tests/OpCodes/Numeric");
+        public void TestOpCodesArithmetic() => TestJson("./Tests/OpCodes/Arithmetic");
 
         [TestMethod]
         public void TestOpCodesBitwiseLogic() => TestJson("./Tests/OpCodes/BitwiseLogic");

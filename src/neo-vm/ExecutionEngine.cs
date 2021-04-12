@@ -915,30 +915,42 @@ namespace Neo.VM
                     }
                 case OpCode.LT:
                     {
-                        var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 < x2);
+                        var x2 = Pop();
+                        var x1 = Pop();
+                        if (x1.IsNull || x2.IsNull)
+                            Push(false);
+                        else
+                            Push(x1.GetInteger() < x2.GetInteger());
                         break;
                     }
                 case OpCode.LE:
                     {
-                        var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 <= x2);
+                        var x2 = Pop();
+                        var x1 = Pop();
+                        if (x1.IsNull || x2.IsNull)
+                            Push(false);
+                        else
+                            Push(x1.GetInteger() <= x2.GetInteger());
                         break;
                     }
                 case OpCode.GT:
                     {
-                        var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 > x2);
+                        var x2 = Pop();
+                        var x1 = Pop();
+                        if (x1.IsNull || x2.IsNull)
+                            Push(false);
+                        else
+                            Push(x1.GetInteger() > x2.GetInteger());
                         break;
                     }
                 case OpCode.GE:
                     {
-                        var x2 = Pop().GetInteger();
-                        var x1 = Pop().GetInteger();
-                        Push(x1 >= x2);
+                        var x2 = Pop();
+                        var x1 = Pop();
+                        if (x1.IsNull || x2.IsNull)
+                            Push(false);
+                        else
+                            Push(x1.GetInteger() >= x2.GetInteger());
                         break;
                     }
                 case OpCode.MIN:
