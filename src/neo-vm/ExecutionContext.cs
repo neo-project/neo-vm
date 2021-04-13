@@ -32,7 +32,7 @@ namespace Neo.VM
         /// <summary>
         /// The slot used to store the static fields.
         /// </summary>
-        public Slot StaticFields
+        public Slot? StaticFields
         {
             get => shared_states.StaticFields;
             internal set => shared_states.StaticFields = value;
@@ -41,17 +41,17 @@ namespace Neo.VM
         /// <summary>
         /// The slot used to store the local variables of the current method.
         /// </summary>
-        public Slot LocalVariables { get; internal set; }
+        public Slot? LocalVariables { get; internal set; }
 
         /// <summary>
         /// The slot used to store the arguments of the current method.
         /// </summary>
-        public Slot Arguments { get; internal set; }
+        public Slot? Arguments { get; internal set; }
 
         /// <summary>
         /// The stack containing nested <see cref="ExceptionHandlingContext"/>.
         /// </summary>
-        public Stack<ExceptionHandlingContext> TryStack { get; internal set; }
+        public Stack<ExceptionHandlingContext>? TryStack { get; internal set; }
 
         /// <summary>
         /// The pointer indicating the current instruction.
@@ -137,7 +137,7 @@ namespace Neo.VM
         /// <returns>The custom data of the specified type.</returns>
         public T GetState<T>() where T : class, new()
         {
-            if (!shared_states.States.TryGetValue(typeof(T), out object value))
+            if (!shared_states.States.TryGetValue(typeof(T), out object? value))
             {
                 value = new T();
                 shared_states.States[typeof(T)] = value;

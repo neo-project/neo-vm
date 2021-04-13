@@ -37,7 +37,7 @@ namespace Neo.VM
         /// <param name="opcode">The <see cref="OpCode"/> to be emitted.</param>
         /// <param name="operand">The operand to be emitted.</param>
         /// <returns>A reference to this instance after the emit operation has completed.</returns>
-        public ScriptBuilder Emit(OpCode opcode, byte[] operand = null)
+        public ScriptBuilder Emit(OpCode opcode, byte[]? operand = null)
         {
             writer.Write((byte)opcode);
             if (operand != null)
@@ -149,7 +149,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="script">The raw script to be emitted.</param>
         /// <returns>A reference to this instance after the emit operation has completed.</returns>
-        public ScriptBuilder EmitRaw(byte[] script = null)
+        public ScriptBuilder EmitRaw(byte[]? script = null)
         {
             if (script != null)
                 writer.Write(script);

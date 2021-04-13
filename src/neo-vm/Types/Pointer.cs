@@ -32,7 +32,7 @@ namespace Neo.VM.Types
             this.Position = position;
         }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(StackItem? other)
         {
             if (other == this) return true;
             if (other is Pointer p) return Position == p.Position && Script == p.Script;

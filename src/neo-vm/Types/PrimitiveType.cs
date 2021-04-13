@@ -34,7 +34,7 @@ namespace Neo.VM.Types
             return this;
         }
 
-        public abstract override bool Equals(StackItem other);
+        public abstract override bool Equals(StackItem? other);
 
         /// <summary>
         /// Get the hash code of the VM object, which is used for key comparison in the <see cref="Map"/>.

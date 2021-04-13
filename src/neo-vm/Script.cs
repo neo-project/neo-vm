@@ -134,7 +134,7 @@ namespace Neo.VM
         public Instruction GetInstruction(int ip)
         {
             if (ip >= Length) return Instruction.RET;
-            if (!_instructions.TryGetValue(ip, out Instruction instruction))
+            if (!_instructions.TryGetValue(ip, out Instruction? instruction))
             {
                 if (strictMode) throw new ArgumentException($"ip not found with strict mode", nameof(ip));
                 instruction = new Instruction(_value, ip);

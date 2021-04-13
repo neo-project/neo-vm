@@ -17,6 +17,7 @@
     <RepositoryUrl>https://github.com/neo-project/neo-vm.git</RepositoryUrl>
     <RootNamespace>Neo.VM</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 

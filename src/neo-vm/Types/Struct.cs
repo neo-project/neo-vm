@@ -13,7 +13,7 @@ namespace Neo.VM.Types
         /// Create a structure with the specified fields.
         /// </summary>
         /// <param name="fields">The fields to be included in the structure.</param>
-        public Struct(IEnumerable<StackItem> fields = null)
+        public Struct(IEnumerable<StackItem>? fields = null)
             : this(null, fields)
         {
         }
@@ -23,7 +23,7 @@ namespace Neo.VM.Types
         /// </summary>
         /// <param name="referenceCounter">The <see cref="ReferenceCounter"/> to be used by this structure.</param>
         /// <param name="fields">The fields to be included in the structure.</param>
-        public Struct(ReferenceCounter referenceCounter, IEnumerable<StackItem> fields = null)
+        public Struct(ReferenceCounter? referenceCounter, IEnumerable<StackItem>? fields = null)
             : base(referenceCounter, fields)
         {
         }
@@ -67,7 +67,7 @@ namespace Neo.VM.Types
             return base.ConvertTo(type);
         }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(StackItem? other)
         {
             if (other is not Struct s) return false;
             Stack<StackItem> stack1 = new();

@@ -18,7 +18,7 @@ namespace Neo.VM.Types
             return this;
         }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(StackItem? other)
         {
             if (ReferenceEquals(this, other)) return true;
             return other is Null;
@@ -34,12 +34,12 @@ namespace Neo.VM.Types
             return 0;
         }
 
-        public override T GetInterface<T>()
+        public override T? GetInterface<T>() where T : class
         {
             return null;
         }
 
-        public override string GetString()
+        public override string? GetString()
         {
             return null;
         }

@@ -63,14 +63,14 @@ namespace Neo.VM.Types
             return this;
         }
 
-        public sealed override bool Equals(object obj)
+        public sealed override bool Equals(object? obj)
         {
             if (ReferenceEquals(this, obj)) return true;
             if (obj is StackItem item) return Equals(item);
             return false;
         }
 
-        public virtual bool Equals(StackItem other)
+        public virtual bool Equals(StackItem? other)
         {
             return ReferenceEquals(this, other);
         }
@@ -80,7 +80,7 @@ namespace Neo.VM.Types
         /// </summary>
         /// <param name="value">The wrapped <see cref="object"/>.</param>
         /// <returns></returns>
-        public static StackItem FromInterface(object value)
+        public static StackItem FromInterface(object? value)
         {
             if (value is null) return Null;
             return new InteropInterface(value);
@@ -106,7 +106,7 @@ namespace Neo.VM.Types
         /// </summary>
         /// <typeparam name="T">The type to convert to.</typeparam>
         /// <returns>The wrapped <see cref="object"/>.</returns>
-        public virtual T GetInterface<T>() where T : class
+        public virtual T? GetInterface<T>() where T : class
         {
             throw new InvalidCastException();
         }
@@ -124,7 +124,7 @@ namespace Neo.VM.Types
         /// Get the <see cref="string"/> value represented by the VM object.
         /// </summary>
         /// <returns>The <see cref="string"/> value represented by the VM object.</returns>
-        public virtual string GetString()
+        public virtual string? GetString()
         {
             return Utility.StrictUTF8.GetString(GetSpan());
         }
