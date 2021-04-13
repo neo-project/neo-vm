@@ -1,16 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Neo.VM.Collections
 {
     internal class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+        where TKey : notnull
     {
         private class TItem
         {
-            public TKey Key;
+            public readonly TKey Key;
             public TValue Value;
+
+            public TItem(TKey key, TValue value)
+            {
+                this.Key = key;
+                this.Value = value;
+            }
         }
 
         private class InternalCollection : KeyedCollection<TKey, TItem>
@@ -45,11 +53,7 @@ namespace Neo.VM.Collections
 
         public void Add(TKey key, TValue value)
         {
-            collection.Add(new TItem
-            {
-                Key = key,
-                Value = value
-            });
+            collection.Add(new TItem(key, value));
         }
 
         public bool ContainsKey(TKey key)
@@ -62,7 +66,7 @@ namespace Neo.VM.Collections
             return collection.Remove(key);
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
             if (collection.TryGetValue(key, out var entry))
             {

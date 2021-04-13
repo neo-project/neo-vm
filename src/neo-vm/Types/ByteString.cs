@@ -33,7 +33,7 @@ namespace Neo.VM.Types
             this.Memory = data;
         }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(StackItem? other)
         {
             if (Size > MaxComparableSize)
                 throw new InvalidOperationException("The operand exceeds the maximum comparable size.");

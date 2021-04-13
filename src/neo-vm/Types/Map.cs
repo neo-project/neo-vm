@@ -2,6 +2,7 @@ using Neo.VM.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Neo.VM.Types
@@ -37,7 +38,7 @@ namespace Neo.VM.Types
                     throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
                 if (ReferenceCounter != null)
                 {
-                    if (dictionary.TryGetValue(key, out StackItem old_value))
+                    if (dictionary.TryGetValue(key, out StackItem? old_value))
                         ReferenceCounter.RemoveReference(old_value, this);
                     else
                         ReferenceCounter.AddReference(key, this);
@@ -69,7 +70,7 @@ namespace Neo.VM.Types
         /// Create a new map with the specified reference counter.
         /// </summary>
         /// <param name="referenceCounter">The reference counter to be used.</param>
-        public Map(ReferenceCounter referenceCounter = null)
+        public Map(ReferenceCounter? referenceCounter = null)
             : base(referenceCounter)
         {
         }
@@ -102,7 +103,7 @@ namespace Neo.VM.Types
 
         internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
         {
-            if (refMap.TryGetValue(this, out StackItem mappedItem)) return mappedItem;
+            if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
             Map result = new(ReferenceCounter);
             refMap.Add(this, result);
             foreach (var pair in dictionary)
@@ -133,7 +134,7 @@ namespace Neo.VM.Types
         {
             if (key.Size > MaxKeySize)
                 throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
-            if (!dictionary.Remove(key, out StackItem old_value))
+            if (!dictionary.Remove(key, out StackItem? old_value))
                 return false;
             ReferenceCounter?.RemoveReference(key, this);
             ReferenceCounter?.RemoveReference(old_value, this);
@@ -152,7 +153,7 @@ namespace Neo.VM.Types
         /// <see langword="true" /> if the map contains an element that has the specified key;
         /// otherwise, <see langword="false"/>.
         /// </returns>
-        public bool TryGetValue(PrimitiveType key, out StackItem value)
+        public bool TryGetValue(PrimitiveType key, [MaybeNullWhen(false)] out StackItem value)
         {
             if (key.Size > MaxKeySize)
                 throw new ArgumentException($"MaxKeySize exceed: {key.Size}");

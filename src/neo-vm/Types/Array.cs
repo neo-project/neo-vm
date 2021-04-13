@@ -41,7 +41,7 @@ namespace Neo.VM.Types
         /// Create an array containing the specified items.
         /// </summary>
         /// <param name="items">The items to be included in the array.</param>
-        public Array(IEnumerable<StackItem> items = null)
+        public Array(IEnumerable<StackItem>? items = null)
             : this(null, items)
         {
         }
@@ -51,7 +51,7 @@ namespace Neo.VM.Types
         /// </summary>
         /// <param name="referenceCounter">The <see cref="ReferenceCounter"/> to be used by this array.</param>
         /// <param name="items">The items to be included in the array.</param>
-        public Array(ReferenceCounter referenceCounter, IEnumerable<StackItem> items = null)
+        public Array(ReferenceCounter? referenceCounter, IEnumerable<StackItem>? items = null)
             : base(referenceCounter)
         {
             _array = items switch
@@ -92,7 +92,7 @@ namespace Neo.VM.Types
 
         internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
         {
-            if (refMap.TryGetValue(this, out StackItem mappedItem)) return mappedItem;
+            if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
             Array result = this is Struct ? new Struct(ReferenceCounter) : new Array(ReferenceCounter);
             refMap.Add(this, result);
             foreach (StackItem item in _array)

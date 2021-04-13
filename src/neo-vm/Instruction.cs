@@ -170,9 +170,9 @@ namespace Neo.VM
         {
             foreach (FieldInfo field in typeof(OpCode).GetFields(BindingFlags.Public | BindingFlags.Static))
             {
-                OperandSizeAttribute attribute = field.GetCustomAttribute<OperandSizeAttribute>();
+                OperandSizeAttribute? attribute = field.GetCustomAttribute<OperandSizeAttribute>();
                 if (attribute == null) continue;
-                int index = (int)(OpCode)field.GetValue(null);
+                int index = (int)(OpCode)field.GetValue(null)!;
                 OperandSizePrefixTable[index] = attribute.SizePrefix;
                 OperandSizeTable[index] = attribute.Size;
             }

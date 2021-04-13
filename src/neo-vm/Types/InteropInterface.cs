@@ -22,7 +22,7 @@ namespace Neo.VM.Types
             _object = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(StackItem? other)
         {
             if (ReferenceEquals(this, other)) return true;
             if (other is InteropInterface i) return _object.Equals(i._object);

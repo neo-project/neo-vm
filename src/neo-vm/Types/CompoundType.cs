@@ -13,13 +13,13 @@ namespace Neo.VM.Types
         /// <summary>
         /// The reference counter used to count the items in the VM object.
         /// </summary>
-        protected readonly ReferenceCounter ReferenceCounter;
+        protected readonly ReferenceCounter? ReferenceCounter;
 
         /// <summary>
         /// Create a new <see cref="CompoundType"/> with the specified reference counter.
         /// </summary>
         /// <param name="referenceCounter">The reference counter to be used.</param>
-        protected CompoundType(ReferenceCounter referenceCounter)
+        protected CompoundType(ReferenceCounter? referenceCounter)
         {
             this.ReferenceCounter = referenceCounter;
             referenceCounter?.AddZeroReferred(this);

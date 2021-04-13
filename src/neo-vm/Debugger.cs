@@ -26,7 +26,7 @@ namespace Neo.VM
         /// <param name="position">The position of the breakpoint in the script.</param>
         public void AddBreakPoint(Script script, uint position)
         {
-            if (!break_points.TryGetValue(script, out HashSet<uint> hashset))
+            if (!break_points.TryGetValue(script, out HashSet<uint>? hashset))
             {
                 hashset = new HashSet<uint>();
                 break_points.Add(script, hashset);
@@ -52,7 +52,7 @@ namespace Neo.VM
             engine.ExecuteNext();
             if (engine.State == VMState.NONE && engine.InvocationStack.Count > 0 && break_points.Count > 0)
             {
-                if (break_points.TryGetValue(engine.CurrentContext.Script, out HashSet<uint> hashset) && hashset.Contains((uint)engine.CurrentContext.InstructionPointer))
+                if (break_points.TryGetValue(engine.CurrentContext!.Script, out HashSet<uint>? hashset) && hashset.Contains((uint)engine.CurrentContext.InstructionPointer))
                     engine.State = VMState.BREAK;
             }
         }
@@ -68,7 +68,7 @@ namespace Neo.VM
         /// </returns>
         public bool RemoveBreakPoint(Script script, uint position)
         {
-            if (!break_points.TryGetValue(script, out HashSet<uint> hashset)) return false;
+            if (!break_points.TryGetValue(script, out HashSet<uint>? hashset)) return false;
             if (!hashset.Remove(position)) return false;
             if (hashset.Count == 0) break_points.Remove(script);
             return true;

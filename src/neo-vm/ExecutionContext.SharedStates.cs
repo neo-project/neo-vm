@@ -9,7 +9,7 @@ namespace Neo.VM
         {
             public readonly Script Script;
             public readonly EvaluationStack EvaluationStack;
-            public Slot StaticFields;
+            public Slot? StaticFields;
             public readonly Dictionary<Type, object> States;
 
             public SharedStates(Script script, ReferenceCounter referenceCounter)

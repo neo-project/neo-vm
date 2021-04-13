@@ -44,7 +44,7 @@ namespace Neo.VM.Types
             this.value = value;
         }
 
-        public override bool Equals(StackItem other)
+        public override bool Equals(StackItem? other)
         {
             if (ReferenceEquals(this, other)) return true;
             if (other is Integer i) return value == i.value;
