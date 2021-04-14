@@ -25,8 +25,9 @@ namespace Neo.VM
             }
             internal set
             {
-                referenceCounter.RemoveStackReference(items[index]);
-                items[index] = value;
+                ref var oldValue = ref items[index];
+                referenceCounter.RemoveStackReference(oldValue);
+                oldValue = value;
                 referenceCounter.AddStackReference(value);
             }
         }
