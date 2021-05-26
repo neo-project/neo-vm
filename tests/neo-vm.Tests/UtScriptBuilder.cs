@@ -32,6 +32,18 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void TestBigInteger()
+        {
+            using ScriptBuilder script = new();
+
+            Assert.AreEqual(0, script.Length);
+            script.EmitPush(-100000);
+            Assert.AreEqual(5, script.Length);
+
+            CollectionAssert.AreEqual(new byte[] { 2, 96, 121, 254, 255 }, script.ToArray());
+        }
+
+        [TestMethod]
         public void TestEmitSysCall()
         {
             using ScriptBuilder script = new();
