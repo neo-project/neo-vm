@@ -1,4 +1,5 @@
 using System;
+using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -58,8 +59,31 @@ namespace Neo.VM.Types
             unchecked
             {
                 _hashCode = 17;
-                foreach (byte element in GetSpan())
-                    _hashCode = HashCode.Combine(_hashCode, element);
+                var buffer = GetSpan();
+                for (int x = 0, max = buffer.Length; x < max;)
+                {
+                    var left = max - x;
+                    if (left >= 8)
+                    {
+                        _hashCode = HashCode.Combine(_hashCode, BinaryPrimitives.ReadInt64LittleEndian(buffer.Slice(x)));
+                        x += 8;
+                    }
+                    else if (left >= 4)
+                    {
+                        _hashCode = HashCode.Combine(_hashCode, BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(x)));
+                        x += 4;
+                    }
+                    else if (left >= 2)
+                    {
+                        _hashCode = HashCode.Combine(_hashCode, BinaryPrimitives.ReadInt16LittleEndian(buffer.Slice(x)));
+                        x += 2;
+                    }
+                    else
+                    {
+                        _hashCode = HashCode.Combine(_hashCode, buffer[x]);
+                        x++;
+                    }
+                }
                 return _hashCode;
             }
         }
