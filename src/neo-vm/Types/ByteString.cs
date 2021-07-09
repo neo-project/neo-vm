@@ -16,6 +16,8 @@ namespace Neo.VM.Types
         /// </summary>
         public const int MaxComparableSize = ushort.MaxValue;
 
+        private int _hashCode = -1;
+
         /// <summary>
         /// An empty <see cref="ByteString"/>.
         /// </summary>
@@ -52,12 +54,13 @@ namespace Neo.VM.Types
 
         public override int GetHashCode()
         {
+            if (_hashCode != -1) return _hashCode;
             unchecked
             {
-                int hash = 17;
+                _hashCode = 17;
                 foreach (byte element in GetSpan())
-                    hash = hash * 31 + element;
-                return hash;
+                    _hashCode = HashCode.Combine(_hashCode, element);
+                return _hashCode;
             }
         }
 
