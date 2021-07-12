@@ -55,37 +55,14 @@ namespace Neo.VM.Types
 
         public override int GetHashCode()
         {
-            if (_hashCode != -1) return _hashCode;
-            unchecked
+            if (_hashCode == -1)
             {
-                _hashCode = 17;
-                var buffer = GetSpan();
-                for (int x = 0, max = buffer.Length; x < max;)
+                unchecked
                 {
-                    var left = max - x;
-                    if (left >= 8)
-                    {
-                        _hashCode = HashCode.Combine(_hashCode, BinaryPrimitives.ReadInt64LittleEndian(buffer.Slice(x)));
-                        x += 8;
-                    }
-                    else if (left >= 4)
-                    {
-                        _hashCode = HashCode.Combine(_hashCode, BinaryPrimitives.ReadInt32LittleEndian(buffer.Slice(x)));
-                        x += 4;
-                    }
-                    else if (left >= 2)
-                    {
-                        _hashCode = HashCode.Combine(_hashCode, BinaryPrimitives.ReadInt16LittleEndian(buffer.Slice(x)));
-                        x += 2;
-                    }
-                    else
-                    {
-                        _hashCode = HashCode.Combine(_hashCode, buffer[x]);
-                        x++;
-                    }
+                    _hashCode = (int)BitConverter.ToInt64(new Murmur128((uint)GetSpan().Length).ComputeHash(GetSpan().ToArray()));
                 }
-                return _hashCode;
             }
+            return _hashCode;
         }
 
         public override BigInteger GetInteger()
