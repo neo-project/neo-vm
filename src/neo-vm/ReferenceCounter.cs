@@ -91,7 +91,7 @@ namespace Neo.VM
                         if (!toBeDestroyedInLoop.Add(c)) continue;
                         if (entry?.ObjectReferences is null) continue;
                         foreach (var pair in entry.ObjectReferences)
-                            if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key))
+                            if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key))
                                 toBeChecked.Enqueue(pair.Key);
                     }
                     if (toBeDestroyedInLoop.Count > 0)
