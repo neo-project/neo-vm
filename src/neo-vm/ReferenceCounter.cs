@@ -74,7 +74,6 @@ namespace Neo.VM
         {
             while (zero_referred.Count > 0)
             {
-                HashSet<CompoundType> unique = new(ReferenceEqualityComparer.Instance);
                 HashSet<CompoundType> toBeDestroyed = new(ReferenceEqualityComparer.Instance);
                 foreach (CompoundType compound in zero_referred)
                 {
@@ -92,7 +91,7 @@ namespace Neo.VM
                         if (!toBeDestroyedInLoop.Add(c)) continue;
                         if (entry?.ObjectReferences is null) continue;
                         foreach (var pair in entry.ObjectReferences)
-                            if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key) && unique.Add(pair.Key))
+                            if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key))
                                 toBeChecked.Enqueue(pair.Key);
                     }
                     if (toBeDestroyedInLoop.Count > 0)
