@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Neo.VM.Types
@@ -34,12 +35,15 @@ namespace Neo.VM.Types
         /// <returns>The copied structure.</returns>
         public Struct Clone()
         {
+            var count = ReferenceCounter?.Limits.MaxInvocationStackSize;
             Struct result = new(ReferenceCounter);
             Queue<Struct> queue = new();
             queue.Enqueue(result);
             queue.Enqueue(this);
             while (queue.Count > 0)
             {
+                if (count == 0) throw new ArgumentException();
+                count--;
                 Struct a = queue.Dequeue();
                 Struct b = queue.Dequeue();
                 foreach (StackItem item in b)
