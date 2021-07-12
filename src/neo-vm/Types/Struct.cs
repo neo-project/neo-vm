@@ -43,12 +43,13 @@ namespace Neo.VM.Types
             queue.Enqueue(this);
             while (queue.Count > 0)
             {
-                if (count == 0) throw new ArgumentException();
-                count--;
                 Struct a = queue.Dequeue();
                 Struct b = queue.Dequeue();
                 foreach (StackItem item in b)
                 {
+                    if (count == 0) throw new ArgumentException();
+                    count--;
+
                     if (item is Struct sb)
                     {
                         Struct sa = new(ReferenceCounter);
