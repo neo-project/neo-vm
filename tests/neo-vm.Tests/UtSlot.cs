@@ -20,7 +20,7 @@ namespace Neo.Test
                 check[x - 1] = x;
             }
 
-            var slot = new Slot(check, new ReferenceCounter(ExecutionEngineLimits.Default));
+            var slot = new Slot(check, new ReferenceCounter());
 
             Assert.AreEqual(count, slot.Count);
             CollectionAssert.AreEqual(check, slot.ToArray());

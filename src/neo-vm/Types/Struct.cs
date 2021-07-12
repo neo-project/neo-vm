@@ -32,10 +32,11 @@ namespace Neo.VM.Types
         /// <summary>
         /// Create a new structure with the same content as this structure. All nested structures will be copied by value.
         /// </summary>
+        /// <param name="limits">Execution engine limits</param>
         /// <returns>The copied structure.</returns>
-        public Struct Clone()
+        public Struct Clone(ExecutionEngineLimits limits)
         {
-            var count = ReferenceCounter?.Limits.MaxInvocationStackSize;
+            var count = limits.MaxInvocationStackSize;
             Struct result = new(ReferenceCounter);
             Queue<Struct> queue = new();
             queue.Enqueue(result);

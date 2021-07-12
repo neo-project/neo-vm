@@ -13,7 +13,7 @@ namespace Neo.Test
         private static EvaluationStack CreateOrderedStack(int count)
         {
             var check = new Integer[count];
-            var stack = new EvaluationStack(new ReferenceCounter(ExecutionEngineLimits.Default));
+            var stack = new EvaluationStack(new ReferenceCounter());
 
             for (int x = 1; x <= count; x++)
             {
@@ -44,7 +44,7 @@ namespace Neo.Test
         public void TestCopyTo()
         {
             var stack = CreateOrderedStack(3);
-            var copy = new EvaluationStack(new ReferenceCounter(ExecutionEngineLimits.Default));
+            var copy = new EvaluationStack(new ReferenceCounter());
 
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.CopyTo(copy, -2));
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.CopyTo(copy, 4));
@@ -81,7 +81,7 @@ namespace Neo.Test
         public void TestMoveTo()
         {
             var stack = CreateOrderedStack(3);
-            var other = new EvaluationStack(new ReferenceCounter(ExecutionEngineLimits.Default));
+            var other = new EvaluationStack(new ReferenceCounter());
 
             stack.MoveTo(other, 0);
 
@@ -114,7 +114,7 @@ namespace Neo.Test
         [TestMethod]
         public void TestInsertPeek()
         {
-            var stack = new EvaluationStack(new ReferenceCounter(ExecutionEngineLimits.Default));
+            var stack = new EvaluationStack(new ReferenceCounter());
 
             stack.Insert(0, 3);
             stack.Insert(1, 1);

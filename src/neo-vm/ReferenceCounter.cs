@@ -20,19 +20,9 @@ namespace Neo.VM
         private int references_count = 0;
 
         /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="limits">Execution engine limits</param>
-        public ReferenceCounter(ExecutionEngineLimits limits)
-        {
-            Limits = limits;
-        }
-
-        /// <summary>
         /// Indicates the number of this counter.
         /// </summary>
         public int Count => references_count;
-        public ExecutionEngineLimits Limits { get; }
 
         internal void AddReference(StackItem referred, CompoundType parent)
         {
