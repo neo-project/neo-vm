@@ -82,8 +82,7 @@ namespace Neo.VM
                     toBeChecked.Enqueue(compound);
                     while (toBeChecked.TryDequeue(out var c))
                     {
-                        counter.TryGetValue(c, out Entry? entry);
-                        if (entry?.StackReferences > 0)
+                        if (counter.TryGetValue(c, out Entry? entry) && entry.StackReferences > 0)
                         {
                             toBeDestroyedInLoop.Clear();
                             break;
