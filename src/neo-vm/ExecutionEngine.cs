@@ -129,6 +129,7 @@ namespace Neo.VM
                 State = VMState.NONE;
             while (State != VMState.HALT && State != VMState.FAULT)
                 ExecuteNext();
+            ReferenceCounter.CheckZeroReferred();
             return State;
         }
 
@@ -1577,7 +1578,11 @@ namespace Neo.VM
         /// </summary>
         protected virtual void PostExecuteInstruction()
         {
-            if (ReferenceCounter.CheckZeroReferred() > Limits.MaxStackSize)
+            if (ReferenceCounter.Count > Limits.MaxStackSize)
+            {
+                ReferenceCounter.CheckZeroReferred();
+            }
+            if (ReferenceCounter.Count > Limits.MaxStackSize)
                 throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}");
         }
 
