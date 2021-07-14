@@ -59,7 +59,8 @@ namespace Neo.VM.Types
             {
                 unchecked
                 {
-                    _hashCode = (int)BitConverter.ToInt64(new Murmur128((uint)GetSpan().Length).ComputeHash(GetSpan().ToArray()));
+                    using Murmur3 murmur = new((uint)GetSpan().Length);
+                    return BinaryPrimitives.ReadInt32LittleEndian(murmur.ComputeHash(GetSpan().ToArray()));
                 }
             }
             return _hashCode;
