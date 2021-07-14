@@ -80,16 +80,14 @@ namespace Neo.VM
                     HashSet<CompoundType> toBeDestroyedInLoop = new(ReferenceEqualityComparer.Instance);
                     Queue<CompoundType> toBeChecked = new();
                     toBeChecked.Enqueue(compound);
-                    while (toBeChecked.Count > 0)
+                    while (toBeChecked.TryDequeue(out var c))
                     {
-                        CompoundType c = toBeChecked.Dequeue();
-                        counter.TryGetValue(c, out Entry? entry);
-                        if (entry?.StackReferences > 0)
+                        if (counter.TryGetValue(c, out Entry? entry) && entry.StackReferences > 0)
                         {
                             toBeDestroyedInLoop.Clear();
                             break;
                         }
-                        toBeDestroyedInLoop.Add(c);
+                        if (!toBeDestroyedInLoop.Add(c)) continue;
                         if (entry?.ObjectReferences is null) continue;
                         foreach (var pair in entry.ObjectReferences)
                             if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key))

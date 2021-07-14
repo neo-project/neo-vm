@@ -846,6 +846,7 @@ namespace Neo.VM
                 case OpCode.POW:
                     {
                         var exponent = (int)Pop().GetInteger();
+                        Limits.AssertShift(exponent);
                         var value = Pop().GetInteger();
                         Push(BigInteger.Pow(value, exponent));
                         break;
