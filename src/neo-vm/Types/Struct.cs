@@ -36,7 +36,7 @@ namespace Neo.VM.Types
         /// <returns>The copied structure.</returns>
         public Struct Clone(ExecutionEngineLimits limits)
         {
-            var count = limits.MaxStackSize - 1;
+            int count = (int)(limits.MaxStackSize - 1);
             Struct result = new(ReferenceCounter);
             Queue<Struct> queue = new();
             queue.Enqueue(result);
@@ -59,6 +59,11 @@ namespace Neo.VM.Types
                     }
                     else
                     {
+                        if (item is CompoundType ar)
+                        {
+                            count -= ar.SubItemsCount;
+                            if (count <= 0) throw new ArgumentException();
+                        }
                         a.Add(item);
                     }
                 }
