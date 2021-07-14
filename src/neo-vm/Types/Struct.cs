@@ -36,7 +36,7 @@ namespace Neo.VM.Types
         /// <returns>The copied structure.</returns>
         public Struct Clone(ExecutionEngineLimits limits)
         {
-            var count = limits.MaxInvocationStackSize - 1;
+            var count = limits.MaxStackSize - 1;
             Struct result = new(ReferenceCounter);
             Queue<Struct> queue = new();
             queue.Enqueue(result);
