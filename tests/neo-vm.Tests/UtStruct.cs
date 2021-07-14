@@ -1,3 +1,4 @@
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM.Types;
 
@@ -35,7 +36,7 @@ namespace Neo.Test
             Assert.IsTrue(s1.Equals(s2));
             Struct s3 = new() { 1, new Struct { 3 } };
             Assert.IsFalse(s1.Equals(s3));
-            Assert.IsTrue(@struct.Equals(@struct.Clone()));
+            Assert.ThrowsException<InvalidOperationException>(() => @struct.Equals(@struct.Clone()));
         }
     }
 }
