@@ -60,7 +60,7 @@ namespace Neo.VM.Types
                 unchecked
                 {
                     using Murmur3 murmur = new((uint)GetSpan().Length);
-                    return BinaryPrimitives.ReadInt32LittleEndian(murmur.ComputeHash(GetSpan().ToArray()));
+                    _hashCode = BinaryPrimitives.ReadInt32LittleEndian(murmur.ComputeHash(GetSpan().ToArray()));
                 }
             }
             return _hashCode;
