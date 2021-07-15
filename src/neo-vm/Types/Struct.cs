@@ -47,9 +47,7 @@ namespace Neo.VM.Types
                 Struct b = queue.Dequeue();
                 foreach (StackItem item in b)
                 {
-                    if (count == 0) throw new ArgumentException();
                     count--;
-
                     if (item is Struct sb)
                     {
                         Struct sa = new(ReferenceCounter);
@@ -60,12 +58,10 @@ namespace Neo.VM.Types
                     else
                     {
                         if (item is CompoundType ar)
-                        {
                             count -= ar.SubItemsCount;
-                            if (count <= 0) throw new ArgumentException();
-                        }
                         a.Add(item);
                     }
+                    if (count < 0) throw new InvalidOperationException();
                 }
             }
             return result;
