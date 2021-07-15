@@ -19,7 +19,7 @@ namespace Neo.VM.Types
         /// </summary>
         public const int MaxComparableSize = ushort.MaxValue;
 
-        private int _hashCode = -1;
+        private int _hashCode = 0;
 
         /// <summary>
         /// An empty <see cref="ByteString"/>.
@@ -57,7 +57,7 @@ namespace Neo.VM.Types
 
         public override int GetHashCode()
         {
-            if (_hashCode == -1)
+            if (_hashCode == 0)
             {
                 unchecked
                 {
