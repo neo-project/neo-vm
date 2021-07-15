@@ -12,6 +12,8 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(Memory.ToArray()).Replace(\"-\", string.Empty)}")]
     public class ByteString : PrimitiveType
     {
+        private static readonly uint s_seed = unchecked((uint)new Random().Next());
+
         /// <summary>
         /// The largest comparable size. If a <see cref="ByteString"/> exceeds this size, comparison operations on it cannot be performed in the VM.
         /// </summary>
@@ -59,7 +61,7 @@ namespace Neo.VM.Types
             {
                 unchecked
                 {
-                    using Murmur3 murmur = new((uint)GetSpan().Length);
+                    using Murmur32 murmur = new(s_seed);
                     _hashCode = BinaryPrimitives.ReadInt32LittleEndian(murmur.ComputeHash(GetSpan().ToArray()));
                 }
             }
