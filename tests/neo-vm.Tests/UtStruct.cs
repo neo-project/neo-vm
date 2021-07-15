@@ -26,7 +26,7 @@ namespace Neo.Test
             Assert.AreEqual(1, s2[0]);
             ((Struct)s1[1])[0] = 3;
             Assert.AreEqual(2, ((Struct)s2[1])[0]);
-            Assert.ThrowsException<ArgumentException>(() => @struct.Clone(ExecutionEngineLimits.Default));
+            Assert.ThrowsException<InvalidOperationException>(() => @struct.Clone(ExecutionEngineLimits.Default));
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace Neo.Test
             Assert.IsTrue(s1.Equals(s2));
             Struct s3 = new() { 1, new Struct { 3 } };
             Assert.IsFalse(s1.Equals(s3));
-            Assert.ThrowsException<ArgumentException>(() => @struct.Equals(@struct.Clone(ExecutionEngineLimits.Default)));
+            Assert.ThrowsException<InvalidOperationException>(() => @struct.Equals(@struct.Clone(ExecutionEngineLimits.Default)));
         }
     }
 }
