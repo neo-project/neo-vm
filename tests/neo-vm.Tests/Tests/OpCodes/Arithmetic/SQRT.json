@@ -161,6 +161,56 @@
           }
         }
       ]
+    },
+    {
+      "name": "Real test with 4",
+      "script": [
+        "PUSHINT8",
+        "0x04",
+        "SQRT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 2
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test with 2",
+      "script": [
+        "PUSHINT8",
+        "0x02",
+        "SQRT"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 1
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }
