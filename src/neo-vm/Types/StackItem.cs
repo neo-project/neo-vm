@@ -75,6 +75,11 @@ namespace Neo.VM.Types
             return ReferenceEquals(this, other);
         }
 
+        internal virtual bool Equals(StackItem? other, ExecutionEngineLimits limits)
+        {
+            return Equals(other);
+        }
+
         /// <summary>
         /// Wrap the specified <see cref="object"/> and return an <see cref="InteropInterface"/> containing the <see cref="object"/>.
         /// </summary>
