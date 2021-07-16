@@ -3,12 +3,12 @@ using System.Buffers.Binary;
 using System.Numerics;
 using System.Security.Cryptography;
 
-namespace Neo.VM
+namespace Neo.VM.Cryptography
 {
     /// <summary>
     /// Computes the murmur hash for the input data.
     /// </summary>
-    public sealed class Murmur32 : HashAlgorithm
+    sealed class Murmur32 : HashAlgorithm
     {
         private const uint c1 = 0xcc9e2d51;
         private const uint c2 = 0x1b873593;
