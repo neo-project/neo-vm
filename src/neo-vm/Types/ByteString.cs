@@ -13,19 +13,18 @@ namespace Neo.VM.Types
     [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(Memory.ToArray()).Replace(\"-\", string.Empty)}")]
     public class ByteString : PrimitiveType
     {
-        private static readonly uint s_seed = unchecked((uint)new Random().Next());
-
         /// <summary>
         /// The largest comparable size. If a <see cref="ByteString"/> exceeds this size, comparison operations on it cannot be performed in the VM.
         /// </summary>
         public const int MaxComparableSize = ushort.MaxValue;
 
-        private int _hashCode = 0;
-
         /// <summary>
         /// An empty <see cref="ByteString"/>.
         /// </summary>
         public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
+
+        private static readonly uint s_seed = unchecked((uint)new Random().Next());
+        private int _hashCode = 0;
 
         internal override ReadOnlyMemory<byte> Memory { get; }
         public override StackItemType Type => StackItemType.ByteString;
@@ -60,11 +59,8 @@ namespace Neo.VM.Types
         {
             if (_hashCode == 0)
             {
-                unchecked
-                {
-                    using Murmur32 murmur = new(s_seed);
-                    _hashCode = BinaryPrimitives.ReadInt32LittleEndian(murmur.ComputeHash(GetSpan().ToArray()));
-                }
+                using Murmur32 murmur = new(s_seed);
+                _hashCode = BinaryPrimitives.ReadInt32LittleEndian(murmur.ComputeHash(GetSpan().ToArray()));
             }
             return _hashCode;
         }
