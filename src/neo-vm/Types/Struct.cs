@@ -70,20 +70,21 @@ namespace Neo.VM.Types
 
         public override bool Equals(StackItem? other)
         {
-            return InternalEquals(other, ExecutionEngineLimits.Default.MaxStackSize);
+            throw new NotSupportedException();
         }
 
-        public bool InternalEquals(StackItem? other, uint limits)
+        internal override bool Equals(StackItem? other, ExecutionEngineLimits limits)
         {
             if (other is not Struct s) return false;
             Stack<StackItem> stack1 = new();
             Stack<StackItem> stack2 = new();
             stack1.Push(this);
             stack2.Push(s);
+            uint count = limits.MaxStackSize;
             while (stack1.Count > 0)
             {
-                limits--;
-                if (limits == 0) throw new InvalidOperationException("Too many struct items to compare.");
+                if (count-- == 0)
+                    throw new InvalidOperationException("Too many struct items to compare.");
                 StackItem a = stack1.Pop();
                 StackItem b = stack2.Pop();
                 if (a is Struct sa)
