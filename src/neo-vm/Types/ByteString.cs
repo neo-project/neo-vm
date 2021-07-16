@@ -1,4 +1,6 @@
+using Neo.VM.Cryptography;
 using System;
+using System.Buffers.Binary;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -20,6 +22,9 @@ namespace Neo.VM.Types
         /// An empty <see cref="ByteString"/>.
         /// </summary>
         public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
+
+        private static readonly uint s_seed = unchecked((uint)new Random().Next());
+        private int _hashCode = 0;
 
         internal override ReadOnlyMemory<byte> Memory { get; }
         public override StackItemType Type => StackItemType.ByteString;
@@ -52,13 +57,12 @@ namespace Neo.VM.Types
 
         public override int GetHashCode()
         {
-            unchecked
+            if (_hashCode == 0)
             {
-                int hash = 17;
-                foreach (byte element in GetSpan())
-                    hash = hash * 31 + element;
-                return hash;
+                using Murmur32 murmur = new(s_seed);
+                _hashCode = BinaryPrimitives.ReadInt32LittleEndian(murmur.ComputeHash(GetSpan().ToArray()));
             }
+            return _hashCode;
         }
 
         public override BigInteger GetInteger()
