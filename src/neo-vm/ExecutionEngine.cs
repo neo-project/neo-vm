@@ -766,14 +766,14 @@ namespace Neo.VM
                     {
                         StackItem x2 = Pop();
                         StackItem x1 = Pop();
-                        Push(x1.Equals(x2));
+                        Push(x1.Equals(x2, Limits));
                         break;
                     }
                 case OpCode.NOTEQUAL:
                     {
                         StackItem x2 = Pop();
                         StackItem x1 = Pop();
-                        Push(!x1.Equals(x2));
+                        Push(!x1.Equals(x2, Limits));
                         break;
                     }
 
