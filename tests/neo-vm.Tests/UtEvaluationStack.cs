@@ -4,7 +4,6 @@ using Neo.VM.Types;
 using System;
 using System.Collections;
 using System.Linq;
-using System.Numerics;
 
 namespace Neo.Test
 {
