@@ -833,7 +833,6 @@ namespace Neo.VM
                     {
                         var x2 = Pop().GetInteger();
                         var x1 = Pop().GetInteger();
-                        if (x2.IsZero) throw new InvalidOperationException($"The value {x2} is out of range.");
                         Push(x1 / x2);
                         break;
                     }
