@@ -1273,6 +1273,8 @@ namespace Neo.VM
                     {
                         VMArray x = Pop<VMArray>();
                         int index = x.Count - 1;
+                        if (index < 0)
+                            throw new InvalidOperationException($"The value {index} is out of range.");
                         Push(x[index]);
                         x.RemoveAt(index);
                         break;
