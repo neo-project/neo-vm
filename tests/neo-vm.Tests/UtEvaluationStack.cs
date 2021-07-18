@@ -188,16 +188,14 @@ namespace Neo.Test
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop<Integer>().Equals(0));
         }
 
-
         [TestMethod]
         public void TestOpCodeBOOL_Bitwise()
         {
             var a = true;
             var b = false;
 
-            Assert.AreEqual(a&&b, a & b);
+            Assert.AreEqual(a && b, a & b);
             Assert.AreEqual(a || b, a | b);
-
         }
     }
 }
