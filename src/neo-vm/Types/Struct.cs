@@ -57,8 +57,6 @@ namespace Neo.VM.Types
                     }
                     else
                     {
-                        if (item is CompoundType ar)
-                            count -= ar.SubItemsCount;
                         a.Add(item);
                     }
                     if (count < 0) throw new InvalidOperationException();
