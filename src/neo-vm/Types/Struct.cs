@@ -48,6 +48,7 @@ namespace Neo.VM.Types
                 foreach (StackItem item in b)
                 {
                     count--;
+                    if (count < 0) throw new InvalidOperationException();
                     if (item is Struct sb)
                     {
                         Struct sa = new(ReferenceCounter);
@@ -59,7 +60,6 @@ namespace Neo.VM.Types
                     {
                         a.Add(item);
                     }
-                    if (count < 0) throw new InvalidOperationException();
                 }
             }
             return result;
