@@ -48,7 +48,7 @@ namespace Neo.VM.Types
                 foreach (StackItem item in b)
                 {
                     count--;
-                    if (count < 0) throw new InvalidOperationException();
+                    if (count < 0) throw new InvalidOperationException("Beyond clone limits!");
                     if (item is Struct sb)
                     {
                         Struct sa = new(ReferenceCounter);
