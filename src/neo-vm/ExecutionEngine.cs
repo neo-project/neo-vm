@@ -1130,7 +1130,7 @@ namespace Neo.VM
                         VMArray newArray = new(ReferenceCounter);
                         foreach (StackItem item in values)
                             if (item is Struct s)
-                                newArray.Add(s.Clone());
+                                newArray.Add(s.Clone(Limits));
                             else
                                 newArray.Add(item);
                         Push(newArray);
@@ -1183,14 +1183,14 @@ namespace Neo.VM
                     {
                         StackItem newItem = Pop();
                         VMArray array = Pop<VMArray>();
-                        if (newItem is Struct s) newItem = s.Clone();
+                        if (newItem is Struct s) newItem = s.Clone(Limits);
                         array.Add(newItem);
                         break;
                     }
                 case OpCode.SETITEM:
                     {
                         StackItem value = Pop();
-                        if (value is Struct s) value = s.Clone();
+                        if (value is Struct s) value = s.Clone(Limits);
                         PrimitiveType key = Pop<PrimitiveType>();
                         var x = Pop();
                         switch (x)
