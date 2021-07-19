@@ -884,14 +884,14 @@ namespace Neo.VM
                     {
                         var x2 = Pop().GetBoolean();
                         var x1 = Pop().GetBoolean();
-                        Push(x1 && x2);
+                        Push(x1 & x2);
                         break;
                     }
                 case OpCode.BOOLOR:
                     {
                         var x2 = Pop().GetBoolean();
                         var x1 = Pop().GetBoolean();
-                        Push(x1 || x2);
+                        Push(x1 | x2);
                         break;
                     }
                 case OpCode.NZ:
