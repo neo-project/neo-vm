@@ -1209,7 +1209,7 @@ namespace Neo.VM
                                 {
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= array.Count)
-                                        throw new InvalidOperationException($"The value {index} is out of range.");
+                                        throw new CatcheableException($"The value {index} is out of range.");
                                     array[index] = value;
                                     break;
                                 }
@@ -1222,7 +1222,7 @@ namespace Neo.VM
                                 {
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= buffer.Size)
-                                        throw new InvalidOperationException($"The value {index} is out of range.");
+                                        throw new CatcheableException($"The value {index} is out of range.");
                                     if (value is not PrimitiveType p)
                                         throw new InvalidOperationException($"Value must be a primitive type in {instruction.OpCode}");
                                     int b = (int)p.GetInteger();
