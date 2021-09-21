@@ -1156,14 +1156,14 @@ namespace Neo.VM
                                 {
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= array.Count)
-                                        throw new InvalidOperationException($"The value {index} is out of range.");
+                                        throw new CatcheableException($"The value {index} is out of range.");
                                     Push(array[index]);
                                     break;
                                 }
                             case Map map:
                                 {
                                     if (!map.TryGetValue(key, out StackItem? value))
-                                        throw new InvalidOperationException($"Key not found in {nameof(Map)}");
+                                        throw new CatcheableException($"Key not found in {nameof(Map)}");
                                     Push(value);
                                     break;
                                 }
@@ -1172,7 +1172,7 @@ namespace Neo.VM
                                     ReadOnlySpan<byte> byteArray = primitive.GetSpan();
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= byteArray.Length)
-                                        throw new InvalidOperationException($"The value {index} is out of range.");
+                                        throw new CatcheableException($"The value {index} is out of range.");
                                     Push((BigInteger)byteArray[index]);
                                     break;
                                 }
@@ -1180,7 +1180,7 @@ namespace Neo.VM
                                 {
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= buffer.Size)
-                                        throw new InvalidOperationException($"The value {index} is out of range.");
+                                        throw new CatcheableException($"The value {index} is out of range.");
                                     Push((BigInteger)buffer.InnerBuffer[index]);
                                     break;
                                 }
@@ -1390,6 +1390,11 @@ namespace Neo.VM
                     PostExecuteInstruction();
                     if (!isJumping) context.MoveNext();
                     isJumping = false;
+                }
+                catch (CatcheableException e)
+                {
+                    if (Limits.CatchEngineExceptions) ExecuteThrow(e.Message ?? string.Empty);
+                    else OnFault(e);
                 }
                 catch (Exception e)
                 {

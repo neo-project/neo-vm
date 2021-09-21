@@ -49,6 +49,11 @@ namespace Neo.VM
         public uint MaxTryNestingDepth { get; init; } = 16;
 
         /// <summary>
+        /// Allow to catch the ExecutionEngine Exceptions
+        /// </summary>
+        public bool CatchEngineExceptions { get; init; } = true;
+
+        /// <summary>
         /// Assert that the size of the item meets the limit.
         /// </summary>
         /// <param name="size">The size to be checked.</param>
