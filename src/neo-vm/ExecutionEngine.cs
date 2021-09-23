@@ -1156,14 +1156,14 @@ namespace Neo.VM
                                 {
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= array.Count)
-                                        throw new CatcheableException($"The value {index} is out of range.");
+                                        throw new CatchableException($"The value {index} is out of range.");
                                     Push(array[index]);
                                     break;
                                 }
                             case Map map:
                                 {
                                     if (!map.TryGetValue(key, out StackItem? value))
-                                        throw new CatcheableException($"Key not found in {nameof(Map)}");
+                                        throw new CatchableException($"Key not found in {nameof(Map)}");
                                     Push(value);
                                     break;
                                 }
@@ -1172,7 +1172,7 @@ namespace Neo.VM
                                     ReadOnlySpan<byte> byteArray = primitive.GetSpan();
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= byteArray.Length)
-                                        throw new CatcheableException($"The value {index} is out of range.");
+                                        throw new CatchableException($"The value {index} is out of range.");
                                     Push((BigInteger)byteArray[index]);
                                     break;
                                 }
@@ -1180,7 +1180,7 @@ namespace Neo.VM
                                 {
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= buffer.Size)
-                                        throw new CatcheableException($"The value {index} is out of range.");
+                                        throw new CatchableException($"The value {index} is out of range.");
                                     Push((BigInteger)buffer.InnerBuffer[index]);
                                     break;
                                 }
@@ -1209,7 +1209,7 @@ namespace Neo.VM
                                 {
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= array.Count)
-                                        throw new CatcheableException($"The value {index} is out of range.");
+                                        throw new CatchableException($"The value {index} is out of range.");
                                     array[index] = value;
                                     break;
                                 }
@@ -1222,7 +1222,7 @@ namespace Neo.VM
                                 {
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= buffer.Size)
-                                        throw new CatcheableException($"The value {index} is out of range.");
+                                        throw new CatchableException($"The value {index} is out of range.");
                                     if (value is not PrimitiveType p)
                                         throw new InvalidOperationException($"Value must be a primitive type in {instruction.OpCode}");
                                     int b = (int)p.GetInteger();
@@ -1391,7 +1391,7 @@ namespace Neo.VM
                     if (!isJumping) context.MoveNext();
                     isJumping = false;
                 }
-                catch (CatcheableException e)
+                catch (CatchableException e)
                 {
                     if (Limits.CatchEngineExceptions) ExecuteThrow(e.Message ?? string.Empty);
                     else OnFault(e);
