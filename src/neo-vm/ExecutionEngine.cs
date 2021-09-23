@@ -1386,15 +1386,17 @@ namespace Neo.VM
                 {
                     ExecutionContext context = CurrentContext!;
                     PreExecuteInstruction();
-                    ExecuteInstruction();
+                    try
+                    {
+                        ExecuteInstruction();
+                    }
+                    catch (CatchableException ex) when (Limits.CatchEngineExceptions)
+                    {
+                        ExecuteThrow(ex.Message);
+                    }
                     PostExecuteInstruction();
                     if (!isJumping) context.MoveNext();
                     isJumping = false;
-                }
-                catch (CatchableException e)
-                {
-                    if (Limits.CatchEngineExceptions) ExecuteThrow(e.Message ?? string.Empty);
-                    else OnFault(e);
                 }
                 catch (Exception e)
                 {
