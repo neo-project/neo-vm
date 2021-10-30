@@ -211,13 +211,14 @@ namespace Neo.VM
                     break;
                 case 4:
                     operandSize = BitConverter.ToInt32(script, ip);
+                    if (operandSize < 0) throw new BadScriptException();
                     break;
             }
+            ip += operandSizePrefix;
             if (operandSize > 0)
             {
-                ip += operandSizePrefix;
                 if (ip + operandSize > script.Length)
-                    throw new InvalidOperationException($"Instrucion out of bounds. InstructionPointer: {ip}, operandSize: {operandSize}, length: {script.Length}");
+                    throw new BadScriptException($"Instrucion out of bounds. InstructionPointer: {ip}, operandSize: {operandSize}, length: {script.Length}");
                 Operand = new ReadOnlyMemory<byte>(script, ip, operandSize);
             }
         }
