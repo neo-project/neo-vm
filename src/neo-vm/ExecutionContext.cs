@@ -24,6 +24,8 @@ namespace Neo.VM
         private readonly SharedStates shared_states;
         private int instructionPointer;
 
+        public string Compiler { get; set; }
+
         /// <summary>
         /// Indicates the number of values that the context should return when it is unloaded.
         /// </summary>
