@@ -370,10 +370,12 @@ namespace Neo.VM
                 case OpCode.ASSERT:
                     {
                         var x = Pop().GetBoolean();
-                        string msg = "";
-                        if (CurrentContext.Compiler is not null
-                            && String.CompareOrdinal(CurrentContext.Compiler, "nccs v3.0.3") > 0)
-                            msg = $" error message: {Pop().GetString()}";
+                        string? msg = "";
+                        if (String.CompareOrdinal(CurrentContext.Compiler, "nccs v3.0.3") > 0)
+                        {
+                            msg = Pop().GetString();
+                            msg = msg is { Length: > 0 } ? $" error message: {msg}" : "";
+                        }
                         if (!x)
                             throw new Exception($"{OpCode.ASSERT} is executed with false result{msg}.");
                         break;
