@@ -372,12 +372,12 @@ namespace Neo.VM
                         var x = Pop().GetBoolean();
                         string? msg = "";
                         if (String.CompareOrdinal(CurrentContext.Compiler, "nccs v3.0.3") > 0)
-                        {
                             msg = Pop().GetString();
-                            msg = msg is { Length: > 0 } ? $" error message: {msg}" : "";
-                        }
                         if (!x)
+                        {
+                            msg = msg is { Length: > 0 } ? $" error message: {msg}" : "";
                             throw new Exception($"{OpCode.ASSERT} is executed with false result{msg}.");
+                        }
                         break;
                     }
                 case OpCode.THROW:
