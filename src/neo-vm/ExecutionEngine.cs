@@ -1286,6 +1286,32 @@ namespace Neo.VM
                         x.RemoveAt(index);
                         break;
                     }
+                case OpCode.FILL:
+                    {
+                        CompoundType x = Pop<CompoundType>();
+                        int size = (int)Pop().GetInteger();
+                        switch(x)
+                        {
+                            case VMArray array:
+                                for (int i = 0; i < size; i++)
+                                {
+                                    StackItem value = Pop();
+                                    array.Add(value);
+                                }
+                                break;
+                            case Map map:
+                                for (int i = 0; i < size; i++)
+                                {
+                                    StackItem value = Pop();
+                                    PrimitiveType key = Pop<PrimitiveType>();
+                                    map[key] = value;
+                                }
+                                break;
+                            default:
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
+                        }
+                        break;
+                    }
 
                 //Types
                 case OpCode.ISNULL:

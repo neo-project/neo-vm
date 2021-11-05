@@ -839,6 +839,10 @@ namespace Neo.VM
         /// Remove the last element from an array, and push it onto the stack.
         /// </summary>
         POPITEM = 0xD4,
+        /// <summary>
+        /// Fill a CompoundItem with the stack items.
+        /// </summary>
+        FILL = 0xD5,
 
         #endregion
 
