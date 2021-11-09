@@ -1,4 +1,4 @@
-﻿{
+{
   "category": "Arrays",
   "name": "UNPACK",
   "tests": [
@@ -123,6 +123,40 @@
               },
               {
                 "type": "integer",
+                "value": 5
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "With map",
+      "script": [
+        "PUSH5",
+        "PUSH6",
+        "PUSH1",
+        "PACKMAP",
+        "UNPACK"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Integer",
+                "value": 1
+              },
+              {
+                "type": "Integer",
+                "value": 6
+              },
+              {
+                "type": "Integer",
                 "value": 5
               }
             ]
