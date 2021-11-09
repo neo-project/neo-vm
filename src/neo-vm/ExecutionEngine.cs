@@ -991,13 +991,13 @@ namespace Neo.VM
                 case OpCode.PACKMAP:
                     {
                         int size = (int)Pop().GetInteger();
-                        if (size < 0 || size > CurrentContext.EvaluationStack.Count)
+                        if (size < 0 || size * 2 > CurrentContext.EvaluationStack.Count)
                             throw new InvalidOperationException($"The value {size} is out of range.");
                         Map map = new(ReferenceCounter);
                         for (int i = 0; i < size; i++)
                         {
-                            StackItem value = Pop();
                             PrimitiveType key = Pop<PrimitiveType>();
+                            StackItem value = Pop();
                             map[key] = value;
                         }
                         Push(map);

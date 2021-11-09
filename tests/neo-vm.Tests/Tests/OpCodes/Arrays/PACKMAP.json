@@ -21,9 +21,9 @@
               {
                 "type": "Map",
                 "value": {
-                  "0x05": {
+                  "0x06": {
                     "type": "Integer",
-                    "value": "6"
+                    "value": "5"
                   }
                 }
               }
