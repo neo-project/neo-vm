@@ -1312,6 +1312,7 @@ namespace Neo.VM
                             PrimitiveType key = Pop<PrimitiveType>();
                             map[key] = value;
                         }
+                        Push(map);
                         break;
                     }
 
