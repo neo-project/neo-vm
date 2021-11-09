@@ -1033,10 +1033,26 @@ namespace Neo.VM
                     }
                 case OpCode.UNPACK:
                     {
-                        VMArray array = Pop<VMArray>();
-                        for (int i = array.Count - 1; i >= 0; i--)
-                            Push(array[i]);
-                        Push(array.Count);
+                        CompoundType compound = Pop<CompoundType>();
+                        switch (compound)
+                        {
+                            case Map map:
+                                foreach (var (key, value) in map.Reverse())
+                                {
+                                    Push(value);
+                                    Push(key);
+                                }
+                                break;
+                            case VMArray array:
+                                for (int i = array.Count - 1; i >= 0; i--)
+                                {
+                                    Push(array[i]);
+                                }
+                                break;
+                            default:
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {compound.Type}");
+                        }
+                        Push(compound.Count);
                         break;
                     }
                 case OpCode.NEWARRAY0:
