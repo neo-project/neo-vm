@@ -988,6 +988,35 @@ namespace Neo.VM
                     }
 
                 // Compound-type
+                case OpCode.PACKMAP:
+                    {
+                        int size = (int)Pop().GetInteger();
+                        if (size < 0 || size > CurrentContext.EvaluationStack.Count)
+                            throw new InvalidOperationException($"The value {size} is out of range.");
+                        Map map = new(ReferenceCounter);
+                        for (int i = 0; i < size; i++)
+                        {
+                            StackItem value = Pop();
+                            PrimitiveType key = Pop<PrimitiveType>();
+                            map[key] = value;
+                        }
+                        Push(map);
+                        break;
+                    }
+                case OpCode.PACKSTRUCT:
+                    {
+                        int size = (int)Pop().GetInteger();
+                        if (size < 0 || size > CurrentContext.EvaluationStack.Count)
+                            throw new InvalidOperationException($"The value {size} is out of range.");
+                        Struct @struct = new(ReferenceCounter);
+                        for (int i = 0; i < size; i++)
+                        {
+                            StackItem item = Pop();
+                            @struct.Add(item);
+                        }
+                        Push(@struct);
+                        break;
+                    }
                 case OpCode.PACK:
                     {
                         int size = (int)Pop().GetInteger();
@@ -1284,35 +1313,6 @@ namespace Neo.VM
                         int index = x.Count - 1;
                         Push(x[index]);
                         x.RemoveAt(index);
-                        break;
-                    }
-                case OpCode.PACKSTRUCT:
-                    {
-                        int size = (int)Pop().GetInteger();
-                        if (size < 0 || size > CurrentContext.EvaluationStack.Count)
-                            throw new InvalidOperationException($"The value {size} is out of range.");
-                        Struct @struct = new(ReferenceCounter);
-                        for (int i = 0; i < size; i++)
-                        {
-                            StackItem item = Pop();
-                            @struct.Add(item);
-                        }
-                        Push(@struct);
-                        break;
-                    }
-                case OpCode.PACKMAP:
-                    {
-                        int size = (int)Pop().GetInteger();
-                        if (size < 0 || size > CurrentContext.EvaluationStack.Count)
-                            throw new InvalidOperationException($"The value {size} is out of range.");
-                        Map map = new(ReferenceCounter);
-                        for (int i = 0; i < size; i++)
-                        {
-                            StackItem value = Pop();
-                            PrimitiveType key = Pop<PrimitiveType>();
-                            map[key] = value;
-                        }
-                        Push(map);
                         break;
                     }
 
