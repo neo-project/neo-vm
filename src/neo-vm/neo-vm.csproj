@@ -6,7 +6,7 @@
     <Description>Neo.VM</Description>
     <VersionPrefix>3.0.1</VersionPrefix>
     <Authors>The Neo Project</Authors>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>Neo.VM</AssemblyName>
     <PackageId>Neo.VM</PackageId>
     <PackageTags>NEO;AntShares;Blockchain;Smart Contract;VM</PackageTags>
