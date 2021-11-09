@@ -21,7 +21,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Check format
       run: |
-        dotnet format --check -v diagnostic
+        dotnet format --verify-no-changes --verbosity diagnostic
     - name: Test
       run: |
         find tests -name *.csproj | xargs -I % dotnet add % package coverlet.msbuild
