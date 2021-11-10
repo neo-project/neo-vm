@@ -988,6 +988,35 @@ namespace Neo.VM
                     }
 
                 // Compound-type
+                case OpCode.PACKMAP:
+                    {
+                        int size = (int)Pop().GetInteger();
+                        if (size < 0 || size * 2 > CurrentContext.EvaluationStack.Count)
+                            throw new InvalidOperationException($"The value {size} is out of range.");
+                        Map map = new(ReferenceCounter);
+                        for (int i = 0; i < size; i++)
+                        {
+                            PrimitiveType key = Pop<PrimitiveType>();
+                            StackItem value = Pop();
+                            map[key] = value;
+                        }
+                        Push(map);
+                        break;
+                    }
+                case OpCode.PACKSTRUCT:
+                    {
+                        int size = (int)Pop().GetInteger();
+                        if (size < 0 || size > CurrentContext.EvaluationStack.Count)
+                            throw new InvalidOperationException($"The value {size} is out of range.");
+                        Struct @struct = new(ReferenceCounter);
+                        for (int i = 0; i < size; i++)
+                        {
+                            StackItem item = Pop();
+                            @struct.Add(item);
+                        }
+                        Push(@struct);
+                        break;
+                    }
                 case OpCode.PACK:
                     {
                         int size = (int)Pop().GetInteger();
@@ -1004,10 +1033,26 @@ namespace Neo.VM
                     }
                 case OpCode.UNPACK:
                     {
-                        VMArray array = Pop<VMArray>();
-                        for (int i = array.Count - 1; i >= 0; i--)
-                            Push(array[i]);
-                        Push(array.Count);
+                        CompoundType compound = Pop<CompoundType>();
+                        switch (compound)
+                        {
+                            case Map map:
+                                foreach (var (key, value) in map.Reverse())
+                                {
+                                    Push(value);
+                                    Push(key);
+                                }
+                                break;
+                            case VMArray array:
+                                for (int i = array.Count - 1; i >= 0; i--)
+                                {
+                                    Push(array[i]);
+                                }
+                                break;
+                            default:
+                                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {compound.Type}");
+                        }
+                        Push(compound.Count);
                         break;
                     }
                 case OpCode.NEWARRAY0:
