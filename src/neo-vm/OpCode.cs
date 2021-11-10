@@ -763,6 +763,14 @@ namespace Neo.VM
         #region Compound-type
 
         /// <summary>
+        /// A value n is taken from top of main stack. The next n*2 items on main stack are removed, put inside n-sized map and this map is put on top of the main stack.
+        /// </summary>
+        PACKMAP = 0xBE,
+        /// <summary>
+        /// A value n is taken from top of main stack. The next n items on main stack are removed, put inside n-sized struct and this struct is put on top of the main stack.
+        /// </summary>
+        PACKSTRUCT = 0xBF,
+        /// <summary>
         /// A value n is taken from top of main stack. The next n items on main stack are removed, put inside n-sized array and this array is put on top of the main stack.
         /// </summary>
         PACK = 0xC0,
