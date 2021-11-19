@@ -775,7 +775,7 @@ namespace Neo.VM
         /// </summary>
         PACK = 0xC0,
         /// <summary>
-        /// A compunt item is removed from top of the main stack. Its elements are put on top of the main stack (in reverse order) and the collection size is also put on main stack.
+        /// A collection is removed from top of the main stack. Its elements are put on top of the main stack (in reverse order) and the collection size is also put on main stack.
         /// </summary>
         UNPACK = 0xC1,
         /// <summary>
