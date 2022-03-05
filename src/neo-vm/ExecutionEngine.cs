@@ -687,6 +687,7 @@ namespace Neo.VM
                         if (checked(di + count) > dst.Size)
                             throw new InvalidOperationException($"The value {count} is out of range.");
                         src.Slice(si, count).CopyTo(dst.InnerBuffer.AsSpan(di));
+                        Push(dst);
                         break;
                     }
                 case OpCode.CAT:
