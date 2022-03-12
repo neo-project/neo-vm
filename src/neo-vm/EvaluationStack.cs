@@ -25,15 +25,18 @@ namespace Neo.VM
         private readonly List<StackItem> innerList = new();
         private readonly ReferenceCounter referenceCounter;
 
-        internal EvaluationStack(ReferenceCounter referenceCounter)
+        internal EvaluationStack(ReferenceCounter referenceCounter, int maxSize = int.MaxValue)
         {
             this.referenceCounter = referenceCounter;
+            MaxSize = maxSize;
         }
 
         /// <summary>
         /// Gets the number of items on the stack.
         /// </summary>
         public int Count => innerList.Count;
+
+        public int MaxSize { get; }
 
         internal void Clear()
         {

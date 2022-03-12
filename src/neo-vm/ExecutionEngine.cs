@@ -98,7 +98,7 @@ namespace Neo.VM
         {
             this.Limits = limits;
             this.ReferenceCounter = referenceCounter;
-            this.ResultStack = new EvaluationStack(referenceCounter);
+            this.ResultStack = new EvaluationStack(referenceCounter, short.MaxValue);
         }
 
         /// <summary>
