@@ -121,16 +121,6 @@ namespace Neo.VM
         /// <returns>A reference to this instance after the emit operation has completed.</returns>
         public ScriptBuilder EmitPush(ReadOnlySpan<byte> data)
         {
-            return EmitPush(data.ToArray());
-        }
-
-        /// <summary>
-        /// Emits a push <see cref="Instruction"/> with the specified data.
-        /// </summary>
-        /// <param name="data">The data to be pushed.</param>
-        /// <returns>A reference to this instance after the emit operation has completed.</returns>
-        public ScriptBuilder EmitPush(byte[] data)
-        {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
             if (data.Length < 0x100)
