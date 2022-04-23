@@ -114,7 +114,17 @@ namespace Neo.VM.Types
                 }
                 else
                 {
-                    if (!a.Equals(b, ref equalCount)) return false;
+                    if (a is ByteString byteString)
+                    {
+                        if (!byteString.Equals(b, ref equalCount)) return false;
+                    }
+                    else
+                    {
+                        if (equalCount <= 0)
+                            throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
+                        equalCount -= 1;
+                        if (!a.Equals(b)) return false;
+                    }
                 }
             }
             return true;
