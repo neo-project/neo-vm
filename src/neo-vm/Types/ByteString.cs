@@ -58,6 +58,14 @@ namespace Neo.VM.Types
                 throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
             return GetSpan().SequenceEqual(b.GetSpan());
         }
+        public override bool Equals(StackItem? other, ref uint limits)
+        {
+            if (other is not ByteString b) return false;
+            if (limits < Size || b.Size > limits)
+                throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
+            limits = (uint)(limits - Size == b.Size ? Size : 1);
+            return Equals(b);
+        }
 
         public override bool GetBoolean()
         {

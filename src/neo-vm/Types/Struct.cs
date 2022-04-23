@@ -95,6 +95,7 @@ namespace Neo.VM.Types
             stack1.Push(this);
             stack2.Push(s);
             uint count = limits.MaxStackSize;
+            uint equalCount = limits.MaxEqualCompare;
             while (stack1.Count > 0)
             {
                 if (count-- == 0)
@@ -113,7 +114,7 @@ namespace Neo.VM.Types
                 }
                 else
                 {
-                    if (!a.Equals(b)) return false;
+                    if (!a.Equals(b, ref equalCount)) return false;
                 }
             }
             return true;

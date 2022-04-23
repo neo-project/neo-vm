@@ -39,6 +39,11 @@ namespace Neo.VM
         public uint MaxItemSize { get; init; } = 1024 * 1024;
 
         /// <summary>
+        /// The maximum number of equal compares.
+        /// </summary>
+        public uint MaxEqualCompare => 1024 * 1024 * 10;
+
+        /// <summary>
         /// The maximum number of frames in the invocation stack of the VM.
         /// </summary>
         public uint MaxInvocationStackSize { get; init; } = 1024;

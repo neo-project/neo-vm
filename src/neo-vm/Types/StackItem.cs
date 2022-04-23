@@ -85,6 +85,11 @@ namespace Neo.VM.Types
             return ReferenceEquals(this, other);
         }
 
+        public virtual bool Equals(StackItem? other, ref uint limits)
+        {
+            throw new NotImplementedException();
+        }
+
         internal virtual bool Equals(StackItem? other, ExecutionEngineLimits limits)
         {
             return Equals(other);
