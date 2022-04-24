@@ -46,7 +46,14 @@ namespace Neo.Test
             string payloadStr = new string('h', 65535);
             Struct s1 = new();
             Struct s2 = new();
-            for (int i = 0; i < 1024; i++)
+            for (int i = 0; i < 2; i++)
+            {
+                s1.Add(payloadStr);
+                s2.Add(payloadStr);
+            }
+            Assert.ThrowsException<InvalidOperationException>(() => s1.Equals(s2, ExecutionEngineLimits.Default));
+
+            for (int i = 0; i < 1000; i++)
             {
                 s1.Add(payloadStr);
                 s2.Add(payloadStr);
