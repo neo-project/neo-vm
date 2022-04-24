@@ -39,9 +39,9 @@ namespace Neo.VM
         public uint MaxItemSize { get; init; } = 1024 * 1024;
 
         /// <summary>
-        /// The maximum number of equal compares.
+        /// The largest comparable size. If a <see cref="Types.ByteString"/> or <see cref="Types.Struct"/> exceeds this size, comparison operations on it cannot be performed in the VM.
         /// </summary>
-        public uint MaxEqualCompare => 1024 * 1024 * 10;
+        public uint MaxComparableSize { get; init; } = 65536;
 
         /// <summary>
         /// The maximum number of frames in the invocation stack of the VM.
