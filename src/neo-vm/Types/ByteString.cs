@@ -63,6 +63,7 @@ namespace Neo.VM.Types
 
         internal bool Equals(StackItem? other, ref uint limits)
         {
+            if (ReferenceEquals(this, other)) return true;
             if (Size > limits || limits == 0)
                 throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
             uint comparedSize = 1;
@@ -70,7 +71,6 @@ namespace Neo.VM.Types
             {
                 if (other is not ByteString b) return false;
                 comparedSize = Math.Max((uint)Math.Max(Size, b.Size), comparedSize);
-                if (ReferenceEquals(this, b)) return true;
                 if (b.Size > limits)
                     throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
                 return Equals(b);
