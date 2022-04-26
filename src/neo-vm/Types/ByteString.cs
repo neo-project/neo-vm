@@ -69,8 +69,8 @@ namespace Neo.VM.Types
             try
             {
                 if (other is not ByteString b) return false;
-                if (ReferenceEquals(this, other)) return true;
                 comparedSize = Math.Max((uint)Math.Max(Size, b.Size), comparedSize);
+                if (ReferenceEquals(this, b)) return true;
                 if (b.Size > limits)
                     throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
                 return Equals(b);
