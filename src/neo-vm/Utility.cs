@@ -25,6 +25,26 @@ namespace Neo.VM
             StrictUTF8.EncoderFallback = EncoderFallback.ExceptionFallback;
         }
 
+        public static BigInteger ModInverse(this BigInteger n, BigInteger modulus)
+        {
+            if (n <= 0) throw new ArgumentOutOfRangeException(nameof(n));
+            if (modulus < 2) throw new ArgumentOutOfRangeException(nameof(modulus));
+            BigInteger m = modulus, v = 0, d = 1;
+            while (n > 0)
+            {
+                BigInteger t = m / n, x = n;
+                n = m % x;
+                m = x;
+                x = d;
+                d = checked(v - t * x);
+                v = x;
+            }
+            v %= modulus;
+            if (v < 0) v += modulus;
+            if (!(n * v % modulus).IsOne) throw new InvalidOperationException();
+            return v;
+        }
+
         public static BigInteger Sqrt(this BigInteger value)
         {
             if (value < 0) throw new InvalidOperationException("value can not be negative");

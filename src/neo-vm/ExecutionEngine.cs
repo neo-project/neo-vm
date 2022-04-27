@@ -866,6 +866,25 @@ namespace Neo.VM
                         Push(Pop().GetInteger().Sqrt());
                         break;
                     }
+                case OpCode.MODMUL:
+                    {
+                        var modulus = Pop().GetInteger();
+                        var x2 = Pop().GetInteger();
+                        var x1 = Pop().GetInteger();
+                        Push(x1 * x2 % modulus);
+                        break;
+                    }
+                case OpCode.MODPOW:
+                    {
+                        var modulus = Pop().GetInteger();
+                        var exponent = Pop().GetInteger();
+                        var value = Pop().GetInteger();
+                        var result = exponent == -1
+                            ? value.ModInverse(modulus)
+                            : BigInteger.ModPow(value, exponent, modulus);
+                        Push(result);
+                        break;
+                    }
                 case OpCode.SHL:
                     {
                         int shift = (int)Pop().GetInteger();
