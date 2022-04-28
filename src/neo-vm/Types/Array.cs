@@ -27,10 +27,7 @@ namespace Neo.VM.Types
         /// <returns>The item at the specified index.</returns>
         public StackItem this[int index]
         {
-            get
-            {
-                return _array[index];
-            }
+            get => _array[index];
             set
             {
                 ReferenceCounter?.RemoveReference(_array[index], this);
