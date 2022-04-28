@@ -30,7 +30,7 @@ namespace Neo.Test
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => BigInteger.Zero.ModInverse(BigInteger.One));
             Assert.ThrowsException<InvalidOperationException>(() => new BigInteger(ushort.MaxValue).ModInverse(byte.MaxValue));
 
-            Assert.AreEqual(new BigInteger(151), new BigInteger(19).ModInverse(141));
+            Assert.AreEqual(new BigInteger(52), new BigInteger(19).ModInverse(141));
         }
     }
 }
