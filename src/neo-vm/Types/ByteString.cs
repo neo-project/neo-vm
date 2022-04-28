@@ -24,11 +24,6 @@ namespace Neo.VM.Types
     public class ByteString : PrimitiveType
     {
         /// <summary>
-        /// The largest comparable size. If a <see cref="ByteString"/> exceeds this size, comparison operations on it cannot be performed in the VM.
-        /// </summary>
-        public const int MaxComparableSize = ushort.MaxValue;
-
-        /// <summary>
         /// An empty <see cref="ByteString"/>.
         /// </summary>
         public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
@@ -48,15 +43,42 @@ namespace Neo.VM.Types
             this.Memory = data;
         }
 
+        private bool Equals(ByteString other)
+        {
+            return GetSpan().SequenceEqual(other.GetSpan());
+        }
+
         public override bool Equals(StackItem? other)
         {
-            if (Size > MaxComparableSize)
-                throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
             if (ReferenceEquals(this, other)) return true;
             if (other is not ByteString b) return false;
-            if (b.Size > MaxComparableSize)
+            return Equals(b);
+        }
+
+        internal override bool Equals(StackItem? other, ExecutionEngineLimits limits)
+        {
+            uint maxComparableSize = limits.MaxComparableSize;
+            return Equals(other, ref maxComparableSize);
+        }
+
+        internal bool Equals(StackItem? other, ref uint limits)
+        {
+            if (Size > limits || limits == 0)
                 throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
-            return GetSpan().SequenceEqual(b.GetSpan());
+            uint comparedSize = 1;
+            try
+            {
+                if (other is not ByteString b) return false;
+                comparedSize = Math.Max((uint)Math.Max(Size, b.Size), comparedSize);
+                if (ReferenceEquals(this, b)) return true;
+                if (b.Size > limits)
+                    throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
+                return Equals(b);
+            }
+            finally
+            {
+                limits -= comparedSize;
+            }
         }
 
         public override bool GetBoolean()
