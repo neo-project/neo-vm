@@ -29,20 +29,17 @@ namespace Neo.VM
         {
             if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
             if (modulus < 2) throw new ArgumentOutOfRangeException(nameof(modulus));
-            BigInteger n = value, m = modulus, v = 0, d = 1;
-            while (n > 0)
+            BigInteger r = value, old_r = modulus, s = 1, old_s = 0;
+            while (r > 0)
             {
-                BigInteger t = m / n, x = n;
-                n = m % x;
-                m = x;
-                x = d;
-                d = v - t * x;
-                v = x;
+                BigInteger q = old_r / r;
+                (old_r, r) = (r, old_r % r);
+                (old_s, s) = (s, old_s - q * s);
             }
-            v %= modulus;
-            if (v < 0) v += modulus;
-            if (!(value * v % modulus).IsOne) throw new InvalidOperationException();
-            return v;
+            BigInteger result = old_s % modulus;
+            if (result < 0) result += modulus;
+            if (!(value * result % modulus).IsOne) throw new InvalidOperationException();
+            return result;
         }
 
         public static BigInteger Sqrt(this BigInteger value)
