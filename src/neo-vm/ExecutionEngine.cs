@@ -1465,6 +1465,8 @@ namespace Neo.VM
         /// <param name="ex">The exception to be thrown.</param>
         protected void ExecuteThrow(StackItem ex)
         {
+            if (ex is not PrimitiveType)
+                throw new InvalidOperationException("Only PrimitiveTypes could be used as a message");
             UncaughtException = ex;
             HandleException();
         }
