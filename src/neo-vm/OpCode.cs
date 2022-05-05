@@ -698,6 +698,14 @@ namespace Neo.VM
         /// </summary>
         SQRT = 0xA4,
         /// <summary>
+        /// Performs modulus division on a number multiplied by another number.
+        /// </summary>
+        MODMUL = 0xA5,
+        /// <summary>
+        /// Performs modulus division on a number raised to the power of another number. If the exponent is -1, it will have the calculation of the modular inverse.
+        /// </summary>
+        MODPOW = 0xA6,
+        /// <summary>
         /// Shifts a left b bits, preserving sign.
         /// </summary>
         SHL = 0xA8,
