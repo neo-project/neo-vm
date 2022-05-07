@@ -1686,7 +1686,7 @@ namespace Neo.VM
                 Array.Clear(_maxOpCodes, 0, _maxOpCodes.Length);
             }
             _maxOpCodes[(byte)opCode]++;
-            if (_maxOpCodes[(byte)opCode] > 1024 * 1024 / OpCodePrices[opCode])
+            if (_maxOpCodes[(byte)opCode] > 1024 * 1024 / (OpCodePrices[opCode] == 0 ? 1 : OpCodePrices[opCode]))
                 throw new InvalidOperationException($"MaxOpCodeSize exceed: {ReferenceCounter.Count}");
         }
 
