@@ -27,6 +27,8 @@ namespace Neo.VM
     {
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
+        private uint[]? _maxOpCodes;
+
 
         /// <summary>
         /// Restrictions on the VM.
@@ -68,10 +70,7 @@ namespace Neo.VM
         /// </summary>
         public VMState State
         {
-            get
-            {
-                return state;
-            }
+            get => state;
             internal protected set
             {
                 if (state != value)
@@ -151,6 +150,7 @@ namespace Neo.VM
         private void ExecuteInstruction()
         {
             Instruction instruction = CurrentContext!.CurrentInstruction;
+            CheckOpCode(instruction.OpCode);
             switch (instruction.OpCode)
             {
                 //Push
@@ -1676,6 +1676,18 @@ namespace Neo.VM
         public void Push(StackItem item)
         {
             CurrentContext!.EvaluationStack.Push(item);
+        }
+
+        private void CheckOpCode(OpCode opCode)
+        {
+            if (_maxOpCodes == null)
+            {
+                _maxOpCodes = new uint[byte.MaxValue];
+                Array.Clear(_maxOpCodes, 0, _maxOpCodes.Length);
+            }
+            _maxOpCodes[(byte)opCode]++;
+            if (_maxOpCodes[(byte)opCode] > 2048 * 2048)
+                throw new InvalidOperationException($"MaxOpCodeSize exceed: {ReferenceCounter.Count}");
         }
     }
 }
