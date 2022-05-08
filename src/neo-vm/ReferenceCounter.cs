@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -8,6 +8,7 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+using Neo.VM.StronglyConnectedComponents;
 using Neo.VM.Types;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,8 +26,8 @@ namespace Neo.VM
             public Dictionary<CompoundType, int>? ObjectReferences;
         }
 
-        private readonly Dictionary<CompoundType, Entry> counter = new(ReferenceEqualityComparer.Instance);
-        private readonly HashSet<CompoundType> zero_referred = new(ReferenceEqualityComparer.Instance);
+        private readonly Dictionary<StackItem, Entry> counter = new(ReferenceEqualityComparer.Instance);
+        private readonly HashSet<StackItem> zero_referred = new(ReferenceEqualityComparer.Instance);
         private int references_count = 0;
 
         /// <summary>
@@ -34,19 +35,18 @@ namespace Neo.VM
         /// </summary>
         public int Count => references_count;
 
-        internal void AddReference(StackItem referred, CompoundType parent)
+        internal void AddReference(StackItem item, CompoundType parent)
         {
             references_count++;
-            if (referred is not CompoundType compound) return;
-            if (!counter.TryGetValue(compound, out Entry? tracing))
+            if (!counter.TryGetValue(item, out Entry? tracing))
             {
                 tracing = new Entry();
-                counter.Add(compound, tracing);
+                counter.Add(item, tracing);
             }
             int count;
             if (tracing.ObjectReferences is null)
             {
-                tracing.ObjectReferences = new Dictionary<CompoundType, int>(ReferenceEqualityComparer.Instance);
+                tracing.ObjectReferences = new(ReferenceEqualityComparer.Instance);
                 count = 1;
             }
             else
@@ -59,87 +59,99 @@ namespace Neo.VM
             tracing.ObjectReferences[parent] = count;
         }
 
-        internal void AddReferences(int count)
+        internal void AddStackReference(StackItem item, int count = 1)
         {
             references_count += count;
-        }
-
-        internal void AddStackReference(StackItem referred)
-        {
-            references_count++;
-            if (referred is not CompoundType compound) return;
-            if (counter.TryGetValue(compound, out Entry? entry))
-                entry.StackReferences++;
+            if (counter.TryGetValue(item, out Entry? entry))
+                entry.StackReferences += count;
             else
-                counter.Add(compound, new Entry { StackReferences = 1 });
-            zero_referred.Remove(compound);
+                counter.Add(item, new Entry { StackReferences = count });
+            zero_referred.Remove(item);
         }
 
-        internal void AddZeroReferred(CompoundType item)
+        internal void AddZeroReferred(StackItem item)
         {
             zero_referred.Add(item);
         }
 
         internal int CheckZeroReferred()
         {
+            HashSet<StackItem> items_on_stack = new(ReferenceEqualityComparer.Instance);
             while (zero_referred.Count > 0)
             {
-                HashSet<CompoundType> toBeDestroyed = new(ReferenceEqualityComparer.Instance);
-                foreach (CompoundType compound in zero_referred)
-                {
-                    HashSet<CompoundType> toBeDestroyedInLoop = new(ReferenceEqualityComparer.Instance);
-                    Queue<CompoundType> toBeChecked = new();
-                    toBeChecked.Enqueue(compound);
-                    while (toBeChecked.TryDequeue(out var c))
-                    {
-                        if (counter.TryGetValue(c, out Entry? entry) && entry.StackReferences > 0)
-                        {
-                            toBeDestroyedInLoop.Clear();
-                            break;
-                        }
-                        if (!toBeDestroyedInLoop.Add(c)) continue;
-                        if (entry?.ObjectReferences is null) continue;
-                        foreach (var pair in entry.ObjectReferences)
-                            if (pair.Value > 0 && !toBeDestroyed.Contains(pair.Key) && !toBeDestroyedInLoop.Contains(pair.Key))
-                                toBeChecked.Enqueue(pair.Key);
-                    }
-                    if (toBeDestroyedInLoop.Count > 0)
-                        toBeDestroyed.UnionWith(toBeDestroyedInLoop);
-                }
+                var vertexsTable = zero_referred.ToDictionary<StackItem, StackItem, Vertex<StackItem>>(p => p, p => new Vertex<StackItem>(p), ReferenceEqualityComparer.Instance);
                 zero_referred.Clear();
-                foreach (CompoundType compound in toBeDestroyed)
+                Tarjan<StackItem> tarjan = new(vertexsTable.Values.ToArray(), v =>
                 {
-                    counter.Remove(compound);
-                    references_count -= compound.SubItemsCount;
-                    foreach (CompoundType subitem in compound.SubItems.OfType<CompoundType>())
+                    if (!counter.TryGetValue(v.Value, out Entry? entry))
+                        return System.Array.Empty<Vertex<StackItem>>();
+                    if (entry.ObjectReferences is null)
+                        return System.Array.Empty<Vertex<StackItem>>();
+                    return entry.ObjectReferences.Where(p => p.Value > 0).Select(p =>
                     {
-                        if (toBeDestroyed.Contains(subitem)) continue;
-                        Entry entry = counter[subitem];
-                        entry.ObjectReferences!.Remove(compound);
-                        if (entry.StackReferences == 0)
-                            zero_referred.Add(subitem);
+                        if (!vertexsTable.TryGetValue(p.Key, out var vertex))
+                        {
+                            vertex = new Vertex<StackItem>(p.Key);
+                            vertexsTable.Add(p.Key, vertex);
+                        }
+                        return vertex;
+                    });
+                });
+                var components = tarjan.Invoke();
+                foreach (var component in components)
+                {
+                    bool on_stack = false;
+                    foreach (var vertex in component)
+                        if (counter.TryGetValue(vertex.Value, out var entry))
+                            if (entry.StackReferences > 0 || entry.ObjectReferences?.Any(p => p.Value > 0 && items_on_stack.Contains(p.Key)) == true)
+                            {
+                                on_stack = true;
+                                break;
+                            }
+                    if (on_stack)
+                    {
+                        items_on_stack.UnionWith(component.Select(p => p.Value));
+                    }
+                    else
+                    {
+                        HashSet<StackItem> toBeDestroyed = new(component.Select(p => p.Value), ReferenceEqualityComparer.Instance);
+                        foreach (var item in toBeDestroyed)
+                        {
+                            counter.Remove(item);
+                            if (item is CompoundType compound)
+                            {
+                                references_count -= compound.SubItemsCount;
+                                foreach (StackItem subitem in compound.SubItems)
+                                {
+                                    if (toBeDestroyed.Contains(subitem)) continue;
+                                    Entry entry = counter[subitem];
+                                    if (!entry.ObjectReferences!.Remove(compound)) continue;
+                                    if (entry.StackReferences == 0) zero_referred.Add(subitem);
+                                }
+                            }
+                            // Todo: We can do StackItem cleanup here in the future.
+                        }
                     }
                 }
+                zero_referred.ExceptWith(components.SelectMany(p => p).Select(p => p.Value));
             }
             return references_count;
         }
 
-        internal void RemoveReference(StackItem referred, CompoundType parent)
+        internal void RemoveReference(StackItem item, CompoundType parent)
         {
             references_count--;
-            if (referred is not CompoundType compound) return;
-            Entry entry = counter[compound];
+            Entry entry = counter[item];
             entry.ObjectReferences![parent] -= 1;
             if (entry.StackReferences == 0)
-                zero_referred.Add(compound);
+                zero_referred.Add(item);
         }
 
-        internal void RemoveStackReference(StackItem referred)
+        internal void RemoveStackReference(StackItem item)
         {
             references_count--;
-            if (referred is not CompoundType item_compound) return;
-            if (--counter[item_compound].StackReferences == 0)
-                zero_referred.Add(item_compound);
+            if (--counter[item].StackReferences == 0)
+                zero_referred.Add(item);
         }
     }
 }
