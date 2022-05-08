@@ -16,15 +16,13 @@ namespace Neo.VM.StronglyConnectedComponents
     class Tarjan<T>
     {
         private readonly IEnumerable<Vertex<T>> vertexs;
-        private readonly Func<Vertex<T>, IEnumerable<Vertex<T>>> successors;
         private readonly LinkedList<LinkedList<Vertex<T>>> components = new();
         private readonly Stack<Vertex<T>> stack = new();
         private int index = 0;
 
-        public Tarjan(IEnumerable<Vertex<T>> vertexs, Func<Vertex<T>, IEnumerable<Vertex<T>>> successors)
+        public Tarjan(IEnumerable<Vertex<T>> vertexs)
         {
             this.vertexs = vertexs;
-            this.successors = successors;
         }
 
         public IReadOnlyCollection<IReadOnlyCollection<Vertex<T>>> Invoke()
@@ -46,7 +44,7 @@ namespace Neo.VM.StronglyConnectedComponents
             index++;
             stack.Push(v);
 
-            foreach (Vertex<T> w in successors(v))
+            foreach (Vertex<T> w in v.Successors)
             {
                 if (w.Index < 0)
                 {

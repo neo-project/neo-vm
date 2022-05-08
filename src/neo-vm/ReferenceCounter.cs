@@ -22,6 +22,7 @@ namespace Neo.VM
     {
         private class Entry
         {
+            public static readonly Entry Empty = new();
             public int StackReferences;
             public Dictionary<CompoundType, int>? ObjectReferences;
         }
@@ -76,45 +77,44 @@ namespace Neo.VM
 
         internal int CheckZeroReferred()
         {
-            HashSet<StackItem> items_on_stack = new(ReferenceEqualityComparer.Instance);
-            while (zero_referred.Count > 0)
+            if (zero_referred.Count > 0)
             {
-                var vertexsTable = zero_referred.ToDictionary<StackItem, StackItem, Vertex<StackItem>>(p => p, p => new Vertex<StackItem>(p), ReferenceEqualityComparer.Instance);
+                HashSet<StackItem> items_on_stack = new(ReferenceEqualityComparer.Instance);
+                var vertexsTable = counter.ToDictionary<KeyValuePair<StackItem, Entry>, StackItem, Vertex<(StackItem, Entry)>>(p => p.Key, p => new Vertex<(StackItem, Entry)>((p.Key, p.Value)), ReferenceEqualityComparer.Instance);
+                foreach (StackItem item in zero_referred)
+                    if (!vertexsTable.ContainsKey(item))
+                        vertexsTable.Add(item, new Vertex<(StackItem, Entry)>((item, Entry.Empty)));
                 zero_referred.Clear();
-                Tarjan<StackItem> tarjan = new(vertexsTable.Values.ToArray(), v =>
+                foreach (var (_, vertex) in vertexsTable)
                 {
-                    if (!counter.TryGetValue(v.Value, out Entry? entry))
-                        return System.Array.Empty<Vertex<StackItem>>();
-                    if (entry.ObjectReferences is null)
-                        return System.Array.Empty<Vertex<StackItem>>();
-                    return entry.ObjectReferences.Where(p => p.Value > 0).Select(p =>
-                    {
-                        if (!vertexsTable.TryGetValue(p.Key, out var vertex))
-                        {
-                            vertex = new Vertex<StackItem>(p.Key);
-                            vertexsTable.Add(p.Key, vertex);
-                        }
-                        return vertex;
-                    });
-                });
+                    var (_, entry) = vertex.Value;
+                    if (entry.ObjectReferences is null) continue;
+                    vertex.Successors = entry.ObjectReferences
+                        .Where(p => p.Value > 0)
+                        .Select(p => vertexsTable[p.Key])
+                        .ToArray();
+                }
+                Tarjan<(StackItem Item, Entry Entry)> tarjan = new(vertexsTable.Values);
                 var components = tarjan.Invoke();
                 foreach (var component in components)
                 {
                     bool on_stack = false;
                     foreach (var vertex in component)
-                        if (counter.TryGetValue(vertex.Value, out var entry))
-                            if (entry.StackReferences > 0 || entry.ObjectReferences?.Any(p => p.Value > 0 && items_on_stack.Contains(p.Key)) == true)
-                            {
-                                on_stack = true;
-                                break;
-                            }
+                    {
+                        var (_, entry) = vertex.Value;
+                        if (entry.StackReferences > 0 || entry.ObjectReferences?.Any(p => p.Value > 0 && items_on_stack.Contains(p.Key)) == true)
+                        {
+                            on_stack = true;
+                            break;
+                        }
+                    }
                     if (on_stack)
                     {
-                        items_on_stack.UnionWith(component.Select(p => p.Value));
+                        items_on_stack.UnionWith(component.Select(p => p.Value.Item));
                     }
                     else
                     {
-                        HashSet<StackItem> toBeDestroyed = new(component.Select(p => p.Value), ReferenceEqualityComparer.Instance);
+                        HashSet<StackItem> toBeDestroyed = new(component.Select(p => p.Value.Item), ReferenceEqualityComparer.Instance);
                         foreach (var item in toBeDestroyed)
                         {
                             counter.Remove(item);
@@ -124,16 +124,13 @@ namespace Neo.VM
                                 foreach (StackItem subitem in compound.SubItems)
                                 {
                                     if (toBeDestroyed.Contains(subitem)) continue;
-                                    Entry entry = counter[subitem];
-                                    if (!entry.ObjectReferences!.Remove(compound)) continue;
-                                    if (entry.StackReferences == 0) zero_referred.Add(subitem);
+                                    counter[subitem].ObjectReferences!.Remove(compound);
                                 }
                             }
                             // Todo: We can do StackItem cleanup here in the future.
                         }
                     }
                 }
-                zero_referred.ExceptWith(components.SelectMany(p => p).Select(p => p.Value));
             }
             return references_count;
         }

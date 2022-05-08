@@ -8,17 +8,21 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+using System;
+
 namespace Neo.VM.StronglyConnectedComponents
 {
     class Vertex<T>
     {
         public readonly T Value;
+        public Vertex<T>[] Successors;
         internal int Index = -1;
         internal int LowLink = 0;
 
         public Vertex(T value)
         {
             Value = value;
+            Successors = Array.Empty<Vertex<T>>();
         }
     }
 }
