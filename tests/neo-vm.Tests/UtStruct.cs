@@ -39,5 +39,26 @@ namespace Neo.Test
             Assert.IsFalse(s1.Equals(s3, ExecutionEngineLimits.Default));
             Assert.ThrowsException<InvalidOperationException>(() => @struct.Equals(@struct.Clone(ExecutionEngineLimits.Default), ExecutionEngineLimits.Default));
         }
+
+        [TestMethod]
+        public void EqualsDos()
+        {
+            string payloadStr = new string('h', 65535);
+            Struct s1 = new();
+            Struct s2 = new();
+            for (int i = 0; i < 2; i++)
+            {
+                s1.Add(payloadStr);
+                s2.Add(payloadStr);
+            }
+            Assert.ThrowsException<InvalidOperationException>(() => s1.Equals(s2, ExecutionEngineLimits.Default));
+
+            for (int i = 0; i < 1000; i++)
+            {
+                s1.Add(payloadStr);
+                s2.Add(payloadStr);
+            }
+            Assert.ThrowsException<InvalidOperationException>(() => s1.Equals(s2, ExecutionEngineLimits.Default));
+        }
     }
 }

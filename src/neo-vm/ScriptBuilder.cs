@@ -119,7 +119,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="data">The data to be pushed.</param>
         /// <returns>A reference to this instance after the emit operation has completed.</returns>
-        public ScriptBuilder EmitPush(byte[] data)
+        public ScriptBuilder EmitPush(ReadOnlySpan<byte> data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));

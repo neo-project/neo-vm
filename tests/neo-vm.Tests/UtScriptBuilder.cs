@@ -186,6 +186,16 @@ namespace Neo.Test
         }
 
         [TestMethod]
+        public void TestEmitPushReadOnlySpan()
+        {
+            using ScriptBuilder script = new();
+            var data = new byte[] { 0x01, 0x02 };
+            script.EmitPush(new ReadOnlySpan<byte>(data));
+
+            CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSHDATA1, (byte)data.Length }.Concat(data).ToArray(), script.ToArray());
+        }
+
+        [TestMethod]
         public void TestEmitPushByteArray()
         {
             using (ScriptBuilder script = new())

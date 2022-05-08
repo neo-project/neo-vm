@@ -95,25 +95,36 @@ namespace Neo.VM.Types
             stack1.Push(this);
             stack2.Push(s);
             uint count = limits.MaxStackSize;
+            uint maxComparableSize = limits.MaxComparableSize;
             while (stack1.Count > 0)
             {
                 if (count-- == 0)
                     throw new InvalidOperationException("Too many struct items to compare.");
                 StackItem a = stack1.Pop();
                 StackItem b = stack2.Pop();
-                if (a is Struct sa)
+                if (a is ByteString byteString)
                 {
-                    if (ReferenceEquals(a, b)) continue;
-                    if (b is not Struct sb) return false;
-                    if (sa.Count != sb.Count) return false;
-                    foreach (StackItem item in sa)
-                        stack1.Push(item);
-                    foreach (StackItem item in sb)
-                        stack2.Push(item);
+                    if (!byteString.Equals(b, ref maxComparableSize)) return false;
                 }
                 else
                 {
-                    if (!a.Equals(b)) return false;
+                    if (maxComparableSize == 0)
+                        throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
+                    maxComparableSize -= 1;
+                    if (a is Struct sa)
+                    {
+                        if (ReferenceEquals(a, b)) continue;
+                        if (b is not Struct sb) return false;
+                        if (sa.Count != sb.Count) return false;
+                        foreach (StackItem item in sa)
+                            stack1.Push(item);
+                        foreach (StackItem item in sb)
+                            stack2.Push(item);
+                    }
+                    else
+                    {
+                        if (!a.Equals(b)) return false;
+                    }
                 }
             }
             return true;
