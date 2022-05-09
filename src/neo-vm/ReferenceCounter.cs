@@ -33,7 +33,7 @@ namespace Neo.VM
             public int StackReferences;
             public Dictionary<CompoundType, ObjectReferenceEntry>? ObjectReferences;
             public ReferenceEntry(StackItem item) => Item = item;
-            protected internal override IEnumerable<ReferenceEntry> Successors => ObjectReferences?.Values.Select(p => p.Entry) ?? System.Array.Empty<ReferenceEntry>();
+            protected internal override IEnumerable<ReferenceEntry> Successors => ObjectReferences?.Values.Where(p => p.References > 0).Select(p => p.Entry) ?? System.Array.Empty<ReferenceEntry>();
         }
 
         private readonly Dictionary<StackItem, ReferenceEntry> counter = new(ReferenceEqualityComparer.Instance);
