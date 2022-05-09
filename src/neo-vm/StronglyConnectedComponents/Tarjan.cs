@@ -13,19 +13,19 @@ using System.Collections.Generic;
 
 namespace Neo.VM.StronglyConnectedComponents
 {
-    class Tarjan<T>
+    class Tarjan<TVertex> where TVertex : Vertex<TVertex>
     {
-        private readonly IEnumerable<Vertex<T>> vertexs;
-        private readonly LinkedList<LinkedList<Vertex<T>>> components = new();
-        private readonly Stack<Vertex<T>> stack = new();
+        private readonly IEnumerable<TVertex> vertexs;
+        private readonly LinkedList<LinkedList<TVertex>> components = new();
+        private readonly Stack<TVertex> stack = new();
         private int index = 0;
 
-        public Tarjan(IEnumerable<Vertex<T>> vertexs)
+        public Tarjan(IEnumerable<TVertex> vertexs)
         {
             this.vertexs = vertexs;
         }
 
-        public IReadOnlyCollection<IReadOnlyCollection<Vertex<T>>> Invoke()
+        public IReadOnlyCollection<IReadOnlyCollection<TVertex>> Invoke()
         {
             foreach (var v in vertexs)
             {
@@ -37,14 +37,14 @@ namespace Neo.VM.StronglyConnectedComponents
             return components;
         }
 
-        private void StrongConnect(Vertex<T> v)
+        private void StrongConnect(TVertex v)
         {
             v.Index = index;
             v.LowLink = index;
             index++;
             stack.Push(v);
 
-            foreach (Vertex<T> w in v.Successors)
+            foreach (TVertex w in v.Successors)
             {
                 if (w.Index < 0)
                 {
@@ -59,8 +59,8 @@ namespace Neo.VM.StronglyConnectedComponents
 
             if (v.LowLink == v.Index)
             {
-                LinkedList<Vertex<T>> scc = new();
-                Vertex<T> w;
+                LinkedList<TVertex> scc = new();
+                TVertex w;
                 do
                 {
                     w = stack.Pop();

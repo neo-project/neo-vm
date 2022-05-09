@@ -20,14 +20,23 @@ namespace Neo.VM
     /// </summary>
     public sealed class ReferenceCounter
     {
-        private class Entry
+        private class ObjectReferenceEntry
         {
-            public static readonly Entry Empty = new();
-            public int StackReferences;
-            public Dictionary<CompoundType, int>? ObjectReferences;
+            public ReferenceEntry Entry;
+            public int References;
+            public ObjectReferenceEntry(ReferenceEntry entry) => Entry = entry;
         }
 
-        private readonly Dictionary<StackItem, Entry> counter = new(ReferenceEqualityComparer.Instance);
+        private class ReferenceEntry : Vertex<ReferenceEntry>
+        {
+            public StackItem Item;
+            public int StackReferences;
+            public Dictionary<CompoundType, ObjectReferenceEntry>? ObjectReferences;
+            public ReferenceEntry(StackItem item) => Item = item;
+            protected internal override IEnumerable<ReferenceEntry> Successors => ObjectReferences?.Values.Select(p => p.Entry) ?? System.Array.Empty<ReferenceEntry>();
+        }
+
+        private readonly Dictionary<StackItem, ReferenceEntry> counter = new(ReferenceEqualityComparer.Instance);
         private readonly HashSet<StackItem> zero_referred = new(ReferenceEqualityComparer.Instance);
         private int references_count = 0;
 
@@ -39,39 +48,34 @@ namespace Neo.VM
         internal void AddReference(StackItem item, CompoundType parent)
         {
             references_count++;
-            if (!counter.TryGetValue(item, out Entry? tracing))
+            if (!counter.TryGetValue(item, out ReferenceEntry? tracing))
             {
-                tracing = new Entry();
+                tracing = new ReferenceEntry(item);
                 counter.Add(item, tracing);
             }
-            int count;
-            if (tracing.ObjectReferences is null)
+            tracing.ObjectReferences ??= new(ReferenceEqualityComparer.Instance);
+            if (!tracing.ObjectReferences.TryGetValue(parent, out ObjectReferenceEntry? objEntry))
             {
-                tracing.ObjectReferences = new(ReferenceEqualityComparer.Instance);
-                count = 1;
+                objEntry = new ObjectReferenceEntry(counter[parent]);
+                tracing.ObjectReferences.Add(parent, objEntry);
             }
-            else
-            {
-                if (tracing.ObjectReferences.TryGetValue(parent, out count))
-                    count++;
-                else
-                    count = 1;
-            }
-            tracing.ObjectReferences[parent] = count;
+            objEntry.References++;
         }
 
         internal void AddStackReference(StackItem item, int count = 1)
         {
             references_count += count;
-            if (counter.TryGetValue(item, out Entry? entry))
+            if (counter.TryGetValue(item, out ReferenceEntry? entry))
                 entry.StackReferences += count;
             else
-                counter.Add(item, new Entry { StackReferences = count });
+                counter.Add(item, new ReferenceEntry(item) { StackReferences = count });
             zero_referred.Remove(item);
         }
 
         internal void AddZeroReferred(StackItem item)
         {
+            if (!counter.ContainsKey(item))
+                counter.Add(item, new ReferenceEntry(item));
             zero_referred.Add(item);
         }
 
@@ -80,29 +84,17 @@ namespace Neo.VM
             if (zero_referred.Count > 0)
             {
                 HashSet<StackItem> items_on_stack = new(ReferenceEqualityComparer.Instance);
-                var vertexsTable = counter.ToDictionary<KeyValuePair<StackItem, Entry>, StackItem, Vertex<(StackItem, Entry)>>(p => p.Key, p => new Vertex<(StackItem, Entry)>((p.Key, p.Value)), ReferenceEqualityComparer.Instance);
-                foreach (StackItem item in zero_referred)
-                    if (!vertexsTable.ContainsKey(item))
-                        vertexsTable.Add(item, new Vertex<(StackItem, Entry)>((item, Entry.Empty)));
                 zero_referred.Clear();
-                foreach (var (_, vertex) in vertexsTable)
-                {
-                    var (_, entry) = vertex.Value;
-                    if (entry.ObjectReferences is null) continue;
-                    vertex.Successors = entry.ObjectReferences
-                        .Where(p => p.Value > 0)
-                        .Select(p => vertexsTable[p.Key])
-                        .ToArray();
-                }
-                Tarjan<(StackItem Item, Entry Entry)> tarjan = new(vertexsTable.Values);
+                foreach (ReferenceEntry entry in counter.Values)
+                    entry.Reset();
+                Tarjan<ReferenceEntry> tarjan = new(counter.Values);
                 var components = tarjan.Invoke();
                 foreach (var component in components)
                 {
                     bool on_stack = false;
                     foreach (var vertex in component)
                     {
-                        var (_, entry) = vertex.Value;
-                        if (entry.StackReferences > 0 || entry.ObjectReferences?.Any(p => p.Value > 0 && items_on_stack.Contains(p.Key)) == true)
+                        if (vertex.StackReferences > 0 || vertex.ObjectReferences?.Values.Any(p => p.References > 0 && items_on_stack.Contains(p.Entry.Item)) == true)
                         {
                             on_stack = true;
                             break;
@@ -110,11 +102,11 @@ namespace Neo.VM
                     }
                     if (on_stack)
                     {
-                        items_on_stack.UnionWith(component.Select(p => p.Value.Item));
+                        items_on_stack.UnionWith(component.Select(p => p.Item));
                     }
                     else
                     {
-                        HashSet<StackItem> toBeDestroyed = new(component.Select(p => p.Value.Item), ReferenceEqualityComparer.Instance);
+                        HashSet<StackItem> toBeDestroyed = new(component.Select(p => p.Item), ReferenceEqualityComparer.Instance);
                         foreach (var item in toBeDestroyed)
                         {
                             counter.Remove(item);
@@ -138,8 +130,8 @@ namespace Neo.VM
         internal void RemoveReference(StackItem item, CompoundType parent)
         {
             references_count--;
-            Entry entry = counter[item];
-            entry.ObjectReferences![parent] -= 1;
+            ReferenceEntry entry = counter[item];
+            entry.ObjectReferences![parent].References--;
             if (entry.StackReferences == 0)
                 zero_referred.Add(item);
         }
