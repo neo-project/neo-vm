@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -64,7 +64,11 @@ namespace Neo.VM
             references_count += count;
         }
 
-        internal void AddStackReference(StackItem referred)
+        /// <summary>
+        /// Adds a stack reference to a <see cref="StackItem"/>.
+        /// </summary>
+        /// <param name="referred">The referenced <see cref="StackItem"/>.</param>
+        public void AddStackReference(StackItem referred)
         {
             references_count++;
             if (referred is not CompoundType compound) return;
@@ -134,7 +138,11 @@ namespace Neo.VM
                 zero_referred.Add(compound);
         }
 
-        internal void RemoveStackReference(StackItem referred)
+        /// <summary>
+        /// Removes a stack reference to a <see cref="StackItem"/>.
+        /// </summary>
+        /// <param name="referred">The referenced <see cref="StackItem"/>.</param>
+        public void RemoveStackReference(StackItem referred)
         {
             references_count--;
             if (referred is not CompoundType item_compound) return;
