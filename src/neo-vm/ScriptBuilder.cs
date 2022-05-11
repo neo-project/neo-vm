@@ -47,11 +47,10 @@ namespace Neo.VM
         /// <param name="opcode">The <see cref="OpCode"/> to be emitted.</param>
         /// <param name="operand">The operand to be emitted.</param>
         /// <returns>A reference to this instance after the emit operation has completed.</returns>
-        public ScriptBuilder Emit(OpCode opcode, byte[]? operand = null)
+        public ScriptBuilder Emit(OpCode opcode, ReadOnlySpan<byte> operand = default)
         {
             writer.Write((byte)opcode);
-            if (operand != null)
-                writer.Write(operand);
+            writer.Write(operand);
             return this;
         }
 
@@ -94,14 +93,18 @@ namespace Neo.VM
         public ScriptBuilder EmitPush(BigInteger value)
         {
             if (value >= -1 && value <= 16) return Emit(OpCode.PUSH0 + (byte)(int)value);
-            byte[] data = value.ToByteArray(isUnsigned: false, isBigEndian: false);
-            if (data.Length == 1) return Emit(OpCode.PUSHINT8, data);
-            if (data.Length == 2) return Emit(OpCode.PUSHINT16, data);
-            if (data.Length <= 4) return Emit(OpCode.PUSHINT32, PadRight(data, 4, value.Sign < 0));
-            if (data.Length <= 8) return Emit(OpCode.PUSHINT64, PadRight(data, 8, value.Sign < 0));
-            if (data.Length <= 16) return Emit(OpCode.PUSHINT128, PadRight(data, 16, value.Sign < 0));
-            if (data.Length <= 32) return Emit(OpCode.PUSHINT256, PadRight(data, 32, value.Sign < 0));
-            throw new ArgumentOutOfRangeException(nameof(value));
+            Span<byte> buffer = stackalloc byte[32];
+            if (!value.TryWriteBytes(buffer, out int bytesWritten, isUnsigned: false, isBigEndian: false))
+                throw new ArgumentOutOfRangeException(nameof(value));
+            return bytesWritten switch
+            {
+                1 => Emit(OpCode.PUSHINT8, PadRight(buffer, bytesWritten, 1, value.Sign < 0)),
+                2 => Emit(OpCode.PUSHINT16, PadRight(buffer, bytesWritten, 2, value.Sign < 0)),
+                <= 4 => Emit(OpCode.PUSHINT32, PadRight(buffer, bytesWritten, 4, value.Sign < 0)),
+                <= 8 => Emit(OpCode.PUSHINT64, PadRight(buffer, bytesWritten, 8, value.Sign < 0)),
+                <= 16 => Emit(OpCode.PUSHINT128, PadRight(buffer, bytesWritten, 16, value.Sign < 0)),
+                _ => Emit(OpCode.PUSHINT256, PadRight(buffer, bytesWritten, 32, value.Sign < 0)),
+            };
         }
 
         /// <summary>
@@ -159,10 +162,9 @@ namespace Neo.VM
         /// </summary>
         /// <param name="script">The raw script to be emitted.</param>
         /// <returns>A reference to this instance after the emit operation has completed.</returns>
-        public ScriptBuilder EmitRaw(byte[]? script = null)
+        public ScriptBuilder EmitRaw(ReadOnlySpan<byte> script = default)
         {
-            if (script != null)
-                writer.Write(script);
+            writer.Write(script);
             return this;
         }
 
@@ -186,19 +188,12 @@ namespace Neo.VM
             return ms.ToArray();
         }
 
-        private static byte[] PadRight(byte[] data, int length, bool negative)
+        private static ReadOnlySpan<byte> PadRight(Span<byte> buffer, int dataLength, int padLength, bool negative)
         {
-            if (data.Length >= length) return data;
-            byte[] buffer = new byte[length];
-            Buffer.BlockCopy(data, 0, buffer, 0, data.Length);
-            if (negative)
-            {
-                for (int x = data.Length; x < length; x++)
-                {
-                    buffer[x] = byte.MaxValue;
-                }
-            }
-            return buffer;
+            byte pad = negative ? (byte)0xff : (byte)0;
+            for (int x = dataLength; x < padLength; x++)
+                buffer[x] = pad;
+            return buffer[..padLength];
         }
     }
 }

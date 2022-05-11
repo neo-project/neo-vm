@@ -34,7 +34,7 @@ namespace Neo.VM.Types
         /// Create a new VM object representing the boolean type.
         /// </summary>
         /// <param name="value">The initial value of the object.</param>
-        public Boolean(bool value)
+        internal Boolean(bool value)
         {
             this.value = value;
         }
@@ -64,7 +64,7 @@ namespace Neo.VM.Types
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator Boolean(bool value)
         {
-            return new Boolean(value);
+            return value ? True : False;
         }
     }
 }
