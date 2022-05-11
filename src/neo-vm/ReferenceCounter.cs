@@ -20,7 +20,7 @@ namespace Neo.VM
     /// </summary>
     public sealed class ReferenceCounter
     {
-        private static readonly bool TrackCompoundTypeOnly = true;
+        private const bool TrackCompoundTypeOnly = true;
 
         private class ObjectReferenceEntry
         {
