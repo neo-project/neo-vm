@@ -87,7 +87,7 @@ namespace Neo.VM
                 zero_referred.Clear();
                 foreach (ReferenceEntry entry in counter.Values)
                     entry.Reset();
-                Tarjan<ReferenceEntry> tarjan = new(counter.Values);
+                Tarjan<ReferenceEntry> tarjan = new(counter.Values.Where(p => p.StackReferences == 0));
                 var components = tarjan.Invoke();
                 foreach (var component in components)
                 {
