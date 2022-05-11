@@ -46,8 +46,8 @@ namespace Neo.VM.Types
         /// </summary>
         /// <param name="data">The data to be contained in this buffer.</param>
         public Buffer(ReadOnlySpan<byte> data)
-            : this(data.Length)
         {
+            InnerBuffer = GC.AllocateUninitializedArray<byte>(data.Length);
             if (!data.IsEmpty) data.CopyTo(InnerBuffer);
         }
 
@@ -60,7 +60,7 @@ namespace Neo.VM.Types
                         throw new InvalidCastException();
                     return new BigInteger(InnerBuffer);
                 case StackItemType.ByteString:
-                    byte[] clone = new byte[InnerBuffer.Length];
+                    byte[] clone = GC.AllocateUninitializedArray<byte>(InnerBuffer.Length);
                     InnerBuffer.CopyTo(clone.AsSpan());
                     return clone;
                 default:

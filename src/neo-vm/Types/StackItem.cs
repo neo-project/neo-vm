@@ -25,7 +25,7 @@ namespace Neo.VM.Types
         /// <summary>
         /// Represents <see langword="false"/> in the VM.
         /// </summary>
-        public static StackItem False { get; } = new Boolean(false);
+        public static Boolean False { get; } = new(false);
 
         /// <summary>
         /// Indicates whether the object is <see cref="Null"/>.
@@ -40,7 +40,7 @@ namespace Neo.VM.Types
         /// <summary>
         /// Represents <see langword="true"/> in the VM.
         /// </summary>
-        public static StackItem True { get; } = new Boolean(true);
+        public static Boolean True { get; } = new(true);
 
         /// <summary>
         /// The type of this VM object.
