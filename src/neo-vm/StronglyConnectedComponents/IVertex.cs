@@ -12,11 +12,11 @@ using System.Collections.Generic;
 
 namespace Neo.VM.StronglyConnectedComponents
 {
-    abstract class Vertex<T> where T : Vertex<T>
+    interface IVertex<T> where T : IVertex<T>
     {
-        internal int Index = -1;
-        internal int LowLink = 0;
-        internal protected abstract IEnumerable<T> Successors { get; }
+        int Index { get; set; }
+        int LowLink { get; set; }
+        IEnumerable<T> Successors { get; }
         public void Reset() => (Index, LowLink) = (-1, 0);
     }
 }

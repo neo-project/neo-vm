@@ -10,8 +10,10 @@
 
 #pragma warning disable CS0659
 
+using Neo.VM.StronglyConnectedComponents;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -20,8 +22,21 @@ namespace Neo.VM.Types
     /// <summary>
     /// The base class for all types in the VM.
     /// </summary>
-    public abstract class StackItem : IEquatable<StackItem>
+    public abstract class StackItem : IEquatable<StackItem>, IVertex<StackItem>
     {
+        internal class ObjectReferenceEntry
+        {
+            public StackItem Item;
+            public int References;
+            public ObjectReferenceEntry(StackItem item) => Item = item;
+        }
+
+        internal int StackReferences = 0;
+        internal Dictionary<CompoundType, ObjectReferenceEntry>? ObjectReferences;
+        int IVertex<StackItem>.Index { get; set; } = -1;
+        int IVertex<StackItem>.LowLink { get; set; } = 0;
+        IEnumerable<StackItem> IVertex<StackItem>.Successors => ObjectReferences?.Values.Where(p => p.References > 0).Select(p => p.Item) ?? System.Array.Empty<StackItem>();
+
         /// <summary>
         /// Represents <see langword="false"/> in the VM.
         /// </summary>

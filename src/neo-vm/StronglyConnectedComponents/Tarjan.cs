@@ -10,22 +10,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Neo.VM.StronglyConnectedComponents
 {
-    class Tarjan<TVertex> where TVertex : Vertex<TVertex>
+    class Tarjan<T> where T : class, IVertex<T>
     {
-        private readonly IEnumerable<TVertex> vertexs;
-        private readonly LinkedList<LinkedList<TVertex>> components = new();
-        private readonly Stack<TVertex> stack = new();
+        private readonly IEnumerable<T> vertexs;
+        private readonly LinkedList<HashSet<T>> components = new();
+        private readonly Stack<T> stack = new();
         private int index = 0;
 
-        public Tarjan(IEnumerable<TVertex> vertexs)
+        public Tarjan(IEnumerable<T> vertexs)
         {
             this.vertexs = vertexs;
         }
 
-        public IReadOnlyCollection<IReadOnlyCollection<TVertex>> Invoke()
+        public IReadOnlyCollection<IReadOnlySet<T>> Invoke()
         {
             foreach (var v in vertexs)
             {
@@ -37,21 +38,21 @@ namespace Neo.VM.StronglyConnectedComponents
             return components;
         }
 
-        private void StrongConnect(TVertex v)
+        private void StrongConnect(T v)
         {
             v.Index = index;
             v.LowLink = index;
             index++;
             stack.Push(v);
 
-            foreach (TVertex w in v.Successors)
+            foreach (T w in v.Successors)
             {
                 if (w.Index < 0)
                 {
                     StrongConnect(w);
                     v.LowLink = Math.Min(v.LowLink, w.LowLink);
                 }
-                else if (stack.Contains(w))
+                else if (stack.Any(p => p == w))
                 {
                     v.LowLink = Math.Min(v.LowLink, w.Index);
                 }
@@ -59,12 +60,12 @@ namespace Neo.VM.StronglyConnectedComponents
 
             if (v.LowLink == v.Index)
             {
-                LinkedList<TVertex> scc = new();
-                TVertex w;
+                HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
+                T w;
                 do
                 {
                     w = stack.Pop();
-                    scc.AddLast(w);
+                    scc.Add(w);
                 } while (v != w);
                 components.AddLast(scc);
             }
