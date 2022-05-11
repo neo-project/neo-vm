@@ -20,6 +20,8 @@ namespace Neo.VM
     /// </summary>
     public sealed class ReferenceCounter
     {
+        private static readonly bool TrackCompoundTypeOnly = true;
+
         private class ObjectReferenceEntry
         {
             public ReferenceEntry Entry;
@@ -48,6 +50,7 @@ namespace Neo.VM
         internal void AddReference(StackItem item, CompoundType parent)
         {
             references_count++;
+            if (TrackCompoundTypeOnly && item is not CompoundType) return;
             if (!counter.TryGetValue(item, out ReferenceEntry? tracing))
             {
                 tracing = new ReferenceEntry(item);
@@ -65,6 +68,7 @@ namespace Neo.VM
         internal void AddStackReference(StackItem item, int count = 1)
         {
             references_count += count;
+            if (TrackCompoundTypeOnly && item is not CompoundType) return;
             if (counter.TryGetValue(item, out ReferenceEntry? entry))
                 entry.StackReferences += count;
             else
@@ -74,9 +78,10 @@ namespace Neo.VM
 
         internal void AddZeroReferred(StackItem item)
         {
+            zero_referred.Add(item);
+            if (TrackCompoundTypeOnly && item is not CompoundType) return;
             if (!counter.ContainsKey(item))
                 counter.Add(item, new ReferenceEntry(item));
-            zero_referred.Add(item);
         }
 
         internal int CheckZeroReferred()
@@ -116,6 +121,7 @@ namespace Neo.VM
                                 foreach (StackItem subitem in compound.SubItems)
                                 {
                                     if (toBeDestroyed.Contains(subitem)) continue;
+                                    if (TrackCompoundTypeOnly && subitem is not CompoundType) continue;
                                     counter[subitem].ObjectReferences!.Remove(compound);
                                 }
                             }
@@ -130,6 +136,7 @@ namespace Neo.VM
         internal void RemoveReference(StackItem item, CompoundType parent)
         {
             references_count--;
+            if (TrackCompoundTypeOnly && item is not CompoundType) return;
             ReferenceEntry entry = counter[item];
             entry.ObjectReferences![parent].References--;
             if (entry.StackReferences == 0)
@@ -139,6 +146,7 @@ namespace Neo.VM
         internal void RemoveStackReference(StackItem item)
         {
             references_count--;
+            if (TrackCompoundTypeOnly && item is not CompoundType) return;
             if (--counter[item].StackReferences == 0)
                 zero_referred.Add(item);
         }
