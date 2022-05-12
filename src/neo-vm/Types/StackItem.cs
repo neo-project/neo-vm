@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -10,10 +10,8 @@
 
 #pragma warning disable CS0659
 
-using Neo.VM.StronglyConnectedComponents;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -22,21 +20,8 @@ namespace Neo.VM.Types
     /// <summary>
     /// The base class for all types in the VM.
     /// </summary>
-    public abstract class StackItem : IEquatable<StackItem>, IVertex<StackItem>
+    public abstract partial class StackItem : IEquatable<StackItem>
     {
-        internal class ObjectReferenceEntry
-        {
-            public StackItem Item;
-            public int References;
-            public ObjectReferenceEntry(StackItem item) => Item = item;
-        }
-
-        internal int StackReferences = 0;
-        internal Dictionary<CompoundType, ObjectReferenceEntry>? ObjectReferences;
-        int IVertex<StackItem>.Index { get; set; } = -1;
-        int IVertex<StackItem>.LowLink { get; set; } = 0;
-        IEnumerable<StackItem> IVertex<StackItem>.Successors => ObjectReferences?.Values.Where(p => p.References > 0).Select(p => p.Item) ?? System.Array.Empty<StackItem>();
-
         /// <summary>
         /// Represents <see langword="false"/> in the VM.
         /// </summary>

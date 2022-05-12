@@ -68,23 +68,22 @@ namespace Neo.VM
         {
             if (zero_referred.Count > 0)
             {
-                HashSet<StackItem> items_on_stack = new(ReferenceEqualityComparer.Instance);
                 zero_referred.Clear();
                 if (cached_components is null)
                 {
-                    foreach (IVertex<StackItem> vertex in tracked_items)
-                        vertex.Reset();
                     //Tarjan<StackItem> tarjan = new(tracked_items.Where(p => p.StackReferences == 0));
-                    Tarjan<StackItem> tarjan = new(tracked_items);
+                    Tarjan tarjan = new(tracked_items);
                     cached_components = tarjan.Invoke();
                 }
+                foreach (StackItem item in tracked_items)
+                    item.Reset();
                 for (var node = cached_components.First; node != null;)
                 {
                     var component = node.Value;
                     bool on_stack = false;
                     foreach (StackItem item in component)
                     {
-                        if (item.StackReferences > 0 || item.ObjectReferences?.Values.Any(p => p.References > 0 && items_on_stack.Contains(p.Item)) == true)
+                        if (item.StackReferences > 0 || item.ObjectReferences?.Values.Any(p => p.References > 0 && p.Item.OnStack) == true)
                         {
                             on_stack = true;
                             break;
@@ -92,7 +91,8 @@ namespace Neo.VM
                     }
                     if (on_stack)
                     {
-                        items_on_stack.UnionWith(component);
+                        foreach (StackItem item in component)
+                            item.OnStack = true;
                         node = node.Next;
                     }
                     else
