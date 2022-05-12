@@ -32,7 +32,7 @@ namespace Neo.VM.StronglyConnectedComponents
             {
                 if (v.Index < 0)
                 {
-                    StrongConnect(v);
+                    StrongConnectNonRecursive(v);
                 }
             }
             return components;
@@ -40,9 +40,7 @@ namespace Neo.VM.StronglyConnectedComponents
 
         private void StrongConnect(T v)
         {
-            v.Index = index;
-            v.LowLink = index;
-            index++;
+            v.Index = v.LowLink = ++index;
             stack.Push(v);
 
             foreach (T w in v.Successors)
@@ -68,6 +66,52 @@ namespace Neo.VM.StronglyConnectedComponents
                     scc.Add(w);
                 } while (v != w);
                 components.AddLast(scc);
+            }
+        }
+
+        private void StrongConnectNonRecursive(T v)
+        {
+            Stack<(T, T?, Queue<T>?, int)> sstack = new();
+            sstack.Push((v, null, null, 0));
+            while (sstack.TryPop(out var i))
+            {
+                (v, T? w, Queue<T>? q, int state) = i;
+                switch (state)
+                {
+                    case 0:
+                        v.Index = v.LowLink = ++index;
+                        stack.Push(v);
+                        q = new(v.Successors);
+                        goto case 2;
+                    case 1:
+                        v.LowLink = Math.Min(v.LowLink, w!.LowLink);
+                        goto case 2;
+                    case 2:
+                        while (q!.TryDequeue(out w))
+                        {
+                            if (w.Index < 0)
+                            {
+                                sstack.Push((v, w, q, 1));
+                                v = w;
+                                goto case 0;
+                            }
+                            else if (stack.Any(p => p == w))
+                            {
+                                v.LowLink = Math.Min(v.LowLink, w.Index);
+                            }
+                        }
+                        if (v.LowLink == v.Index)
+                        {
+                            HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
+                            do
+                            {
+                                w = stack.Pop();
+                                scc.Add(w);
+                            } while (v != w);
+                            components.AddLast(scc);
+                        }
+                        break;
+                }
             }
         }
     }
