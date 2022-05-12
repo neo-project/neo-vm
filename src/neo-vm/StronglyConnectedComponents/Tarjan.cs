@@ -71,27 +71,28 @@ namespace Neo.VM.StronglyConnectedComponents
 
         private void StrongConnectNonRecursive(T v)
         {
-            Stack<(T, T?, Queue<T>?, int)> sstack = new();
+            Stack<(T, T?, IEnumerator<T>?, int)> sstack = new();
             sstack.Push((v, null, null, 0));
-            while (sstack.TryPop(out var i))
+            while (sstack.TryPop(out var state))
             {
-                (v, T? w, Queue<T>? q, int state) = i;
-                switch (state)
+                (v, T? w, IEnumerator<T>? s, int n) = state;
+                switch (n)
                 {
                     case 0:
                         v.Index = v.LowLink = ++index;
                         stack.Push(v);
-                        q = new(v.Successors);
+                        s = v.Successors.GetEnumerator();
                         goto case 2;
                     case 1:
                         v.LowLink = Math.Min(v.LowLink, w!.LowLink);
                         goto case 2;
                     case 2:
-                        while (q!.TryDequeue(out w))
+                        while (s!.MoveNext())
                         {
+                            w = s.Current;
                             if (w.Index < 0)
                             {
-                                sstack.Push((v, w, q, 1));
+                                sstack.Push((v, w, s, 1));
                                 v = w;
                                 goto case 0;
                             }
