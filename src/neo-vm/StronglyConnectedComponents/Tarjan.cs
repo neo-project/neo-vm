@@ -26,7 +26,7 @@ namespace Neo.VM.StronglyConnectedComponents
             this.vertexs = vertexs;
         }
 
-        public IReadOnlyCollection<IReadOnlySet<T>> Invoke()
+        public LinkedList<HashSet<T>> Invoke()
         {
             foreach (var v in vertexs)
             {
