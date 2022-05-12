@@ -17,7 +17,7 @@ namespace Neo.VM.Types
     /// <summary>
     /// The base class for complex types in the VM.
     /// </summary>
-    [DebuggerDisplay("Type={GetType().Name}, Count={Count}")]
+    [DebuggerDisplay("Type={GetType().Name}, Count={Count}, Id={System.Collections.Generic.ReferenceEqualityComparer.Instance.GetHashCode(this)}")]
     public abstract class CompoundType : StackItem
     {
         /// <summary>

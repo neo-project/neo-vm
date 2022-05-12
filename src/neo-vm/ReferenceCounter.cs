@@ -22,24 +22,9 @@ namespace Neo.VM
     {
         private const bool TrackCompoundTypeOnly = true;
 
-        private class ObjectReferenceEntry
-        {
-            public ReferenceEntry Entry;
-            public int References;
-            public ObjectReferenceEntry(ReferenceEntry entry) => Entry = entry;
-        }
-
-        private class ReferenceEntry : Vertex<ReferenceEntry>
-        {
-            public StackItem Item;
-            public int StackReferences;
-            public Dictionary<CompoundType, ObjectReferenceEntry>? ObjectReferences;
-            public ReferenceEntry(StackItem item) => Item = item;
-            protected internal override IEnumerable<ReferenceEntry> Successors => ObjectReferences?.Values.Where(p => p.References > 0).Select(p => p.Entry) ?? System.Array.Empty<ReferenceEntry>();
-        }
-
-        private readonly Dictionary<StackItem, ReferenceEntry> counter = new(ReferenceEqualityComparer.Instance);
+        private readonly HashSet<StackItem> tracked_items = new(ReferenceEqualityComparer.Instance);
         private readonly HashSet<StackItem> zero_referred = new(ReferenceEqualityComparer.Instance);
+        private LinkedList<HashSet<StackItem>>? cached_components;
         private int references_count = 0;
 
         /// <summary>
@@ -51,28 +36,23 @@ namespace Neo.VM
         {
             references_count++;
             if (TrackCompoundTypeOnly && item is not CompoundType) return;
-            if (!counter.TryGetValue(item, out ReferenceEntry? tracing))
+            cached_components = null;
+            tracked_items.Add(item);
+            item.ObjectReferences ??= new(ReferenceEqualityComparer.Instance);
+            if (!item.ObjectReferences.TryGetValue(parent, out var pEntry))
             {
-                tracing = new ReferenceEntry(item);
-                counter.Add(item, tracing);
+                pEntry = new(parent);
+                item.ObjectReferences.Add(parent, pEntry);
             }
-            tracing.ObjectReferences ??= new(ReferenceEqualityComparer.Instance);
-            if (!tracing.ObjectReferences.TryGetValue(parent, out ObjectReferenceEntry? objEntry))
-            {
-                objEntry = new ObjectReferenceEntry(counter[parent]);
-                tracing.ObjectReferences.Add(parent, objEntry);
-            }
-            objEntry.References++;
+            pEntry.References++;
         }
 
         internal void AddStackReference(StackItem item, int count = 1)
         {
             references_count += count;
             if (TrackCompoundTypeOnly && item is not CompoundType) return;
-            if (counter.TryGetValue(item, out ReferenceEntry? entry))
-                entry.StackReferences += count;
-            else
-                counter.Add(item, new ReferenceEntry(item) { StackReferences = count });
+            tracked_items.Add(item);
+            item.StackReferences += count;
             zero_referred.Remove(item);
         }
 
@@ -80,26 +60,30 @@ namespace Neo.VM
         {
             zero_referred.Add(item);
             if (TrackCompoundTypeOnly && item is not CompoundType) return;
-            if (!counter.ContainsKey(item))
-                counter.Add(item, new ReferenceEntry(item));
+            cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
+            tracked_items.Add(item);
         }
 
         internal int CheckZeroReferred()
         {
             if (zero_referred.Count > 0)
             {
-                HashSet<StackItem> items_on_stack = new(ReferenceEqualityComparer.Instance);
                 zero_referred.Clear();
-                foreach (ReferenceEntry entry in counter.Values)
-                    entry.Reset();
-                Tarjan<ReferenceEntry> tarjan = new(counter.Values.Where(p => p.StackReferences == 0));
-                var components = tarjan.Invoke();
-                foreach (var component in components)
+                if (cached_components is null)
                 {
+                    //Tarjan<StackItem> tarjan = new(tracked_items.Where(p => p.StackReferences == 0));
+                    Tarjan tarjan = new(tracked_items);
+                    cached_components = tarjan.Invoke();
+                }
+                foreach (StackItem item in tracked_items)
+                    item.Reset();
+                for (var node = cached_components.First; node != null;)
+                {
+                    var component = node.Value;
                     bool on_stack = false;
-                    foreach (var vertex in component)
+                    foreach (StackItem item in component)
                     {
-                        if (vertex.StackReferences > 0 || vertex.ObjectReferences?.Values.Any(p => p.References > 0 && items_on_stack.Contains(p.Entry.Item)) == true)
+                        if (item.StackReferences > 0 || item.ObjectReferences?.Values.Any(p => p.References > 0 && p.Item.OnStack) == true)
                         {
                             on_stack = true;
                             break;
@@ -107,26 +91,30 @@ namespace Neo.VM
                     }
                     if (on_stack)
                     {
-                        items_on_stack.UnionWith(component.Select(p => p.Item));
+                        foreach (StackItem item in component)
+                            item.OnStack = true;
+                        node = node.Next;
                     }
                     else
                     {
-                        HashSet<StackItem> toBeDestroyed = new(component.Select(p => p.Item), ReferenceEqualityComparer.Instance);
-                        foreach (var item in toBeDestroyed)
+                        foreach (StackItem item in component)
                         {
-                            counter.Remove(item);
+                            tracked_items.Remove(item);
                             if (item is CompoundType compound)
                             {
                                 references_count -= compound.SubItemsCount;
                                 foreach (StackItem subitem in compound.SubItems)
                                 {
-                                    if (toBeDestroyed.Contains(subitem)) continue;
+                                    if (component.Contains(subitem)) continue;
                                     if (TrackCompoundTypeOnly && subitem is not CompoundType) continue;
-                                    counter[subitem].ObjectReferences!.Remove(compound);
+                                    subitem.ObjectReferences!.Remove(compound);
                                 }
                             }
                             // Todo: We can do StackItem cleanup here in the future.
                         }
+                        var nodeToRemove = node;
+                        node = node.Next;
+                        cached_components.Remove(nodeToRemove);
                     }
                 }
             }
@@ -137,9 +125,9 @@ namespace Neo.VM
         {
             references_count--;
             if (TrackCompoundTypeOnly && item is not CompoundType) return;
-            ReferenceEntry entry = counter[item];
-            entry.ObjectReferences![parent].References--;
-            if (entry.StackReferences == 0)
+            cached_components = null;
+            item.ObjectReferences![parent].References--;
+            if (item.StackReferences == 0)
                 zero_referred.Add(item);
         }
 
@@ -147,7 +135,7 @@ namespace Neo.VM
         {
             references_count--;
             if (TrackCompoundTypeOnly && item is not CompoundType) return;
-            if (--counter[item].StackReferences == 0)
+            if (--item.StackReferences == 0)
                 zero_referred.Add(item);
         }
     }

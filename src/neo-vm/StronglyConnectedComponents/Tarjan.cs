@@ -10,63 +10,113 @@
 
 using System;
 using System.Collections.Generic;
+using T = Neo.VM.Types.StackItem;
 
 namespace Neo.VM.StronglyConnectedComponents
 {
-    class Tarjan<TVertex> where TVertex : Vertex<TVertex>
+    class Tarjan
     {
-        private readonly IEnumerable<TVertex> vertexs;
-        private readonly LinkedList<LinkedList<TVertex>> components = new();
-        private readonly Stack<TVertex> stack = new();
+        private readonly IEnumerable<T> vertexs;
+        private readonly LinkedList<HashSet<T>> components = new();
+        private readonly Stack<T> stack = new();
         private int index = 0;
 
-        public Tarjan(IEnumerable<TVertex> vertexs)
+        public Tarjan(IEnumerable<T> vertexs)
         {
             this.vertexs = vertexs;
         }
 
-        public IReadOnlyCollection<IReadOnlyCollection<TVertex>> Invoke()
+        public LinkedList<HashSet<T>> Invoke()
         {
             foreach (var v in vertexs)
             {
-                if (v.Index < 0)
+                if (v.DFN < 0)
                 {
-                    StrongConnect(v);
+                    StrongConnectNonRecursive(v);
                 }
             }
             return components;
         }
 
-        private void StrongConnect(TVertex v)
+        private void StrongConnect(T v)
         {
-            v.Index = index;
-            v.LowLink = index;
-            index++;
+            v.DFN = v.LowLink = ++index;
             stack.Push(v);
+            v.OnStack = true;
 
-            foreach (TVertex w in v.Successors)
+            foreach (T w in v.Successors)
             {
-                if (w.Index < 0)
+                if (w.DFN < 0)
                 {
                     StrongConnect(w);
                     v.LowLink = Math.Min(v.LowLink, w.LowLink);
                 }
-                else if (stack.Contains(w))
+                else if (w.OnStack)
                 {
-                    v.LowLink = Math.Min(v.LowLink, w.Index);
+                    v.LowLink = Math.Min(v.LowLink, w.DFN);
                 }
             }
 
-            if (v.LowLink == v.Index)
+            if (v.LowLink == v.DFN)
             {
-                LinkedList<TVertex> scc = new();
-                TVertex w;
+                HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
+                T w;
                 do
                 {
                     w = stack.Pop();
-                    scc.AddLast(w);
+                    w.OnStack = false;
+                    scc.Add(w);
                 } while (v != w);
                 components.AddLast(scc);
+            }
+        }
+
+        private void StrongConnectNonRecursive(T v)
+        {
+            Stack<(T, T?, IEnumerator<T>?, int)> sstack = new();
+            sstack.Push((v, null, null, 0));
+            while (sstack.TryPop(out var state))
+            {
+                (v, T? w, IEnumerator<T>? s, int n) = state;
+                switch (n)
+                {
+                    case 0:
+                        v.DFN = v.LowLink = ++index;
+                        stack.Push(v);
+                        v.OnStack = true;
+                        s = v.Successors.GetEnumerator();
+                        goto case 2;
+                    case 1:
+                        v.LowLink = Math.Min(v.LowLink, w!.LowLink);
+                        goto case 2;
+                    case 2:
+                        while (s!.MoveNext())
+                        {
+                            w = s.Current;
+                            if (w.DFN < 0)
+                            {
+                                sstack.Push((v, w, s, 1));
+                                v = w;
+                                goto case 0;
+                            }
+                            else if (w.OnStack)
+                            {
+                                v.LowLink = Math.Min(v.LowLink, w.DFN);
+                            }
+                        }
+                        if (v.LowLink == v.DFN)
+                        {
+                            HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
+                            do
+                            {
+                                w = stack.Pop();
+                                w.OnStack = false;
+                                scc.Add(w);
+                            } while (v != w);
+                            components.AddLast(scc);
+                        }
+                        break;
+                }
             }
         }
     }
