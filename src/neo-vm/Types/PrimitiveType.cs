@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -20,7 +20,7 @@ namespace Neo.VM.Types
     /// </summary>
     public abstract class PrimitiveType : StackItem
     {
-        internal abstract ReadOnlyMemory<byte> Memory { get; }
+        public abstract ReadOnlyMemory<byte> Memory { get; }
 
         /// <summary>
         /// The size of the VM object in bytes.
