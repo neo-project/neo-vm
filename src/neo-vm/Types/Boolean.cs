@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -26,7 +26,7 @@ namespace Neo.VM.Types
 
         private readonly bool value;
 
-        internal override ReadOnlyMemory<byte> Memory => value ? TRUE : FALSE;
+        public override ReadOnlyMemory<byte> Memory => value ? TRUE : FALSE;
         public override int Size => sizeof(bool);
         public override StackItemType Type => StackItemType.Boolean;
 

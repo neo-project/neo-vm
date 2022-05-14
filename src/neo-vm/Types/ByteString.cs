@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -31,7 +31,7 @@ namespace Neo.VM.Types
         private static readonly uint s_seed = unchecked((uint)new Random().Next());
         private int _hashCode = 0;
 
-        internal override ReadOnlyMemory<byte> Memory { get; }
+        public override ReadOnlyMemory<byte> Memory { get; }
         public override StackItemType Type => StackItemType.ByteString;
 
         /// <summary>
