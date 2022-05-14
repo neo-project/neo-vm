@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -194,8 +194,9 @@ namespace Neo.VM
             if (!Enum.IsDefined(opcode)) throw new BadScriptException();
         }
 
-        internal Instruction(byte[] script, int ip) : this((OpCode)script[ip++])
+        internal Instruction(ReadOnlyMemory<byte> script, int ip) : this((OpCode)script.Span[ip++])
         {
+            ReadOnlySpan<byte> span = script.Span;
             int operandSizePrefix = OperandSizePrefixTable[(int)OpCode];
             int operandSize = 0;
             switch (operandSizePrefix)
@@ -204,13 +205,13 @@ namespace Neo.VM
                     operandSize = OperandSizeTable[(int)OpCode];
                     break;
                 case 1:
-                    operandSize = script[ip];
+                    operandSize = span[ip];
                     break;
                 case 2:
-                    operandSize = BitConverter.ToUInt16(script, ip);
+                    operandSize = BinaryPrimitives.ReadUInt16LittleEndian(span[ip..]);
                     break;
                 case 4:
-                    operandSize = BitConverter.ToInt32(script, ip);
+                    operandSize = BinaryPrimitives.ReadInt32LittleEndian(span[ip..]);
                     if (operandSize < 0) throw new BadScriptException();
                     break;
             }
@@ -219,7 +220,7 @@ namespace Neo.VM
             {
                 if (ip + operandSize > script.Length)
                     throw new BadScriptException($"Instrucion out of bounds. InstructionPointer: {ip}, operandSize: {operandSize}, length: {script.Length}");
-                Operand = new ReadOnlyMemory<byte>(script, ip, operandSize);
+                Operand = script.Slice(ip, operandSize);
             }
         }
     }
