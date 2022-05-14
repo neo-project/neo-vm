@@ -9,6 +9,25 @@ namespace Neo.Test
     public class UtScript
     {
         [TestMethod]
+        public void Conversion()
+        {
+            byte[] rawScript;
+            using (var builder = new ScriptBuilder())
+            {
+                builder.Emit(OpCode.PUSH0);
+                builder.Emit(OpCode.CALL, new byte[] { 0x00, 0x01 });
+                builder.EmitSysCall(123);
+
+                rawScript = builder.ToArray();
+            }
+
+            var script = new Script(rawScript);
+
+            ReadOnlyMemory<byte> scriptConversion = script;
+            Assert.AreEqual(rawScript, scriptConversion);
+        }
+
+        [TestMethod]
         public void StrictMode()
         {
             var rawScript = new byte[] { (byte)OpCode.PUSH0, 0xFF };
