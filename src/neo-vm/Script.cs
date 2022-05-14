@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -22,7 +22,7 @@ namespace Neo.VM
     [DebuggerDisplay("Length={Length}")]
     public class Script
     {
-        private readonly byte[] _value;
+        private readonly ReadOnlyMemory<byte> _value;
         private readonly bool strictMode;
         private readonly Dictionary<int, Instruction> _instructions = new();
 
@@ -48,7 +48,7 @@ namespace Neo.VM
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return (OpCode)_value[index];
+                return (OpCode)_value.Span[index];
             }
         }
 
@@ -56,7 +56,7 @@ namespace Neo.VM
         /// Initializes a new instance of the <see cref="Script"/> class.
         /// </summary>
         /// <param name="script">The bytecodes of the script.</param>
-        public Script(byte[] script) : this(script, false)
+        public Script(ReadOnlyMemory<byte> script) : this(script, false)
         {
         }
 
@@ -69,7 +69,7 @@ namespace Neo.VM
         /// In strict mode, the script will be checked, but the loading speed will be slower.
         /// </param>
         /// <exception cref="BadScriptException">In strict mode, the script was found to contain bad instructions.</exception>
-        public Script(byte[] script, bool strictMode)
+        public Script(ReadOnlyMemory<byte> script, bool strictMode)
         {
             this._value = script;
             if (strictMode)
@@ -153,7 +153,8 @@ namespace Neo.VM
             return instruction;
         }
 
-        public static implicit operator byte[](Script script) => script._value;
+        public static implicit operator ReadOnlyMemory<byte>(Script script) => script._value;
+        public static implicit operator Script(ReadOnlyMemory<byte> script) => new(script);
         public static implicit operator Script(byte[] script) => new(script);
     }
 }
