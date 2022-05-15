@@ -4,8 +4,9 @@ namespace Neo.VM
 {
     public static class Benchmarks
     {
-        public static void Tanya4()
+        public static void NeoIssue2528()
         {
+            // https://github.com/neo-project/neo/issues/2528
             // L01: INITSLOT 1, 0
             // L02: NEWARRAY0
             // L03: DUP
@@ -32,7 +33,41 @@ namespace Neo.VM
             // L24: LDLOC 0
             // L25: JMPIF_L L19
             // L26: DROP
-            Run(nameof(Tanya4), "VwEAwkpKAfsHdwARwG8AnXcAbwAl9////xHAzwJwlAAAdwAQzm8AnXcAbwAl9////0U=");
+            Run(nameof(NeoIssue2528), "VwEAwkpKAfsHdwARwG8AnXcAbwAl9////xHAzwJwlAAAdwAQzm8AnXcAbwAl9////0U=");
+        }
+
+        public static void NeoVMIssue418()
+        {
+            // https://github.com/neo-project/neo-vm/issues/418
+            // L00: NEWARRAY0
+            // L01: PUSH0
+            // L02: PICK
+            // L03: PUSH1
+            // L04: PACK
+            // L05: PUSH1
+            // L06: PICK
+            // L07: PUSH1
+            // L08: PACK
+            // L09: INITSSLOT 1
+            // L10: PUSHINT16 510
+            // L11: DEC
+            // L12: STSFLD0
+            // L13: PUSH1
+            // L14: PICK
+            // L15: PUSH1
+            // L16: PICK
+            // L17: PUSH2
+            // L18: PACK
+            // L19: REVERSE3
+            // L20: PUSH2
+            // L21: PACK
+            // L22: LDSFLD0
+            // L23: DUP
+            // L24: JMPIF L11
+            // L25: DROP
+            // L26: ROT
+            // L27: DROP
+            Run(nameof(NeoVMIssue418), "whBNEcARTRHAVgEB/gGdYBFNEU0SwFMSwFhKJPNFUUU=");
         }
 
         private static void Run(string name, string poc)
@@ -44,7 +79,7 @@ namespace Neo.VM
             engine.Execute();
             stopwatch.Stop();
             Debug.Assert(engine.State == VMState.HALT);
-            Console.WriteLine($"Benchmark: {name}, Time: {stopwatch.Elapsed}");
+            Console.WriteLine($"Benchmark: {name},\tTime: {stopwatch.Elapsed}");
         }
     }
 }
