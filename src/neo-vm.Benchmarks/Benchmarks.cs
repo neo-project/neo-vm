@@ -4,8 +4,9 @@ namespace Neo.VM
 {
     public static class Benchmarks
     {
-        public static void Tanya4()
+        public static void NeoIssue2528()
         {
+            // https://github.com/neo-project/neo/issues/2528
             // L01: INITSLOT 1, 0
             // L02: NEWARRAY0
             // L03: DUP
@@ -32,10 +33,10 @@ namespace Neo.VM
             // L24: LDLOC 0
             // L25: JMPIF_L L19
             // L26: DROP
-            Run(nameof(Tanya4), "VwEAwkpKAfsHdwARwG8AnXcAbwAl9////xHAzwJwlAAAdwAQzm8AnXcAbwAl9////0U=");
+            Run(nameof(NeoIssue2528), "VwEAwkpKAfsHdwARwG8AnXcAbwAl9////xHAzwJwlAAAdwAQzm8AnXcAbwAl9////0U=");
         }
 
-        public static void Issue418()
+        public static void NeoVMIssue418()
         {
             // https://github.com/neo-project/neo-vm/issues/418
             // L00: NEWARRAY0
@@ -66,7 +67,7 @@ namespace Neo.VM
             // L25: DROP
             // L26: ROT
             // L27: DROP
-            Run(nameof(Issue418), "whBNEcARTRHAVgEB/gGdYBFNEU0SwFMSwFhKJPNFUUU=");
+            Run(nameof(NeoVMIssue418), "whBNEcARTRHAVgEB/gGdYBFNEU0SwFMSwFhKJPNFUUU=");
         }
 
         private static void Run(string name, string poc)
