@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -36,9 +36,12 @@ namespace Neo.VM.Types
         /// Create a buffer of the specified size.
         /// </summary>
         /// <param name="size">The size of this buffer.</param>
-        public Buffer(int size)
+        /// <param name="zeroInitialize">Indicates whether the created buffer is zero-initialized.</param>
+        public Buffer(int size, bool zeroInitialize = true)
         {
-            InnerBuffer = new byte[size];
+            InnerBuffer = zeroInitialize
+                ? new byte[size]
+                : GC.AllocateUninitializedArray<byte>(size);
         }
 
         /// <summary>

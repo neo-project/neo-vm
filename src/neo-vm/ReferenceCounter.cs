@@ -51,7 +51,8 @@ namespace Neo.VM
         {
             references_count += count;
             if (TrackCompoundTypeOnly && item is not CompoundType) return;
-            tracked_items.Add(item);
+            if (tracked_items.Add(item))
+                cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
             item.StackReferences += count;
             zero_referred.Remove(item);
         }
