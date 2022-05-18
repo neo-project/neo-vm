@@ -695,7 +695,7 @@ namespace Neo.VM
                         var x1 = Pop().GetSpan();
                         int length = x1.Length + x2.Length;
                         Limits.AssertMaxItemSize(length);
-                        Buffer result = new(length);
+                        Buffer result = new(length, false);
                         x1.CopyTo(result.InnerBuffer);
                         x2.CopyTo(result.InnerBuffer.AsSpan(x1.Length));
                         Push(result);
@@ -712,7 +712,7 @@ namespace Neo.VM
                         var x = Pop().GetSpan();
                         if (index + count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new(count);
+                        Buffer result = new(count, false);
                         x.Slice(index, count).CopyTo(result.InnerBuffer);
                         Push(result);
                         break;
@@ -725,7 +725,7 @@ namespace Neo.VM
                         var x = Pop().GetSpan();
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new(count);
+                        Buffer result = new(count, false);
                         x[..count].CopyTo(result.InnerBuffer);
                         Push(result);
                         break;
@@ -738,7 +738,7 @@ namespace Neo.VM
                         var x = Pop().GetSpan();
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new(count);
+                        Buffer result = new(count, false);
                         x[^count..^0].CopyTo(result.InnerBuffer);
                         Push(result);
                         break;
