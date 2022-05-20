@@ -70,6 +70,22 @@ namespace Neo.VM
             Run(nameof(NeoVMIssue418), "whBNEcARTRHAVgEB/gGdYBFNEU0SwFMSwFhKJPNFUUU=");
         }
 
+        public static void NeoIssue2723()
+        {
+            // L00: INITSSLOT 1
+            // L01: PUSHINT32 130000
+            // L02: STSFLD 0
+            // L03: PUSHINT32 1048576
+            // L04: NEWBUFFER
+            // L05: DROP
+            // L06: LDSFLD 0
+            // L07: DEC
+            // L08: DUP
+            // L09: STSFLD 0
+            // L10: JMPIF L03
+            Run(nameof(NeoIssue2723), "VgEC0PsBAGcAAgAAEACIRV8AnUpnACTz");
+        }
+
         private static void Run(string name, string poc)
         {
             byte[] script = Convert.FromBase64String(poc);
