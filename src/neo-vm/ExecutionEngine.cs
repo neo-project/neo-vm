@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Array = System.Array;
 using Buffer = Neo.VM.Types.Buffer;
 using VMArray = Neo.VM.Types.Array;
 
@@ -686,7 +685,7 @@ namespace Neo.VM
                         Buffer dst = Pop<Buffer>();
                         if (checked(di + count) > dst.Size)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        src.Slice(si, count).CopyTo(dst.InnerBuffer.AsSpan(di));
+                        src.Slice(si, count).CopyTo(dst.InnerBuffer.Span[di..]);
                         break;
                     }
                 case OpCode.CAT:
@@ -696,8 +695,8 @@ namespace Neo.VM
                         int length = x1.Length + x2.Length;
                         Limits.AssertMaxItemSize(length);
                         Buffer result = new(length, false);
-                        x1.CopyTo(result.InnerBuffer);
-                        x2.CopyTo(result.InnerBuffer.AsSpan(x1.Length));
+                        x1.CopyTo(result.InnerBuffer.Span);
+                        x2.CopyTo(result.InnerBuffer.Span[x1.Length..]);
                         Push(result);
                         break;
                     }
@@ -713,7 +712,7 @@ namespace Neo.VM
                         if (index + count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
                         Buffer result = new(count, false);
-                        x.Slice(index, count).CopyTo(result.InnerBuffer);
+                        x.Slice(index, count).CopyTo(result.InnerBuffer.Span);
                         Push(result);
                         break;
                     }
@@ -726,7 +725,7 @@ namespace Neo.VM
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
                         Buffer result = new(count, false);
-                        x[..count].CopyTo(result.InnerBuffer);
+                        x[..count].CopyTo(result.InnerBuffer.Span);
                         Push(result);
                         break;
                     }
@@ -739,7 +738,7 @@ namespace Neo.VM
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
                         Buffer result = new(count, false);
-                        x[^count..^0].CopyTo(result.InnerBuffer);
+                        x[^count..^0].CopyTo(result.InnerBuffer.Span);
                         Push(result);
                         break;
                     }
@@ -1245,7 +1244,7 @@ namespace Neo.VM
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= buffer.Size)
                                         throw new CatchableException($"The value {index} is out of range.");
-                                    Push((BigInteger)buffer.InnerBuffer[index]);
+                                    Push((BigInteger)buffer.InnerBuffer.Span[index]);
                                     break;
                                 }
                             default:
@@ -1292,7 +1291,7 @@ namespace Neo.VM
                                     int b = (int)p.GetInteger();
                                     if (b < sbyte.MinValue || b > byte.MaxValue)
                                         throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
-                                    buffer.InnerBuffer[index] = (byte)b;
+                                    buffer.InnerBuffer.Span[index] = (byte)b;
                                     break;
                                 }
                             default:
@@ -1309,7 +1308,7 @@ namespace Neo.VM
                                 array.Reverse();
                                 break;
                             case Buffer buffer:
-                                Array.Reverse(buffer.InnerBuffer);
+                                buffer.InnerBuffer.Span.Reverse();
                                 break;
                             default:
                                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
