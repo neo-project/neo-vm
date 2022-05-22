@@ -19,7 +19,7 @@ namespace Neo.VM.Types
     /// <summary>
     /// Represents a memory block that can be used for reading and writing in the VM.
     /// </summary>
-    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(GetSpan().ToArray()).Replace(\"-\", string.Empty)}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={System.Convert.ToHexString(GetSpan().ToArray())}")]
     public class Buffer : StackItem
     {
         /// <summary>
