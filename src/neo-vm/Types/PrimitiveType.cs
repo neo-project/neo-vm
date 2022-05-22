@@ -39,7 +39,7 @@ namespace Neo.VM.Types
             };
         }
 
-        internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
+        internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
         {
             return this;
         }

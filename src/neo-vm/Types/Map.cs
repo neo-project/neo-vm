@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -46,6 +46,7 @@ namespace Neo.VM.Types
             {
                 if (key.Size > MaxKeySize)
                     throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
+                if (IsReadOnly) throw new InvalidOperationException();
                 if (ReferenceCounter != null)
                 {
                     if (dictionary.TryGetValue(key, out StackItem? old_value))
@@ -65,9 +66,9 @@ namespace Neo.VM.Types
         /// </summary>
         public IEnumerable<PrimitiveType> Keys => dictionary.Keys;
 
-        internal override IEnumerable<StackItem> SubItems => Keys.Concat(Values);
+        public override IEnumerable<StackItem> SubItems => Keys.Concat(Values);
 
-        internal override int SubItemsCount => dictionary.Count * 2;
+        public override int SubItemsCount => dictionary.Count * 2;
 
         public override StackItemType Type => StackItemType.Map;
 
@@ -87,6 +88,7 @@ namespace Neo.VM.Types
 
         public override void Clear()
         {
+            if (IsReadOnly) throw new InvalidOperationException();
             if (ReferenceCounter != null)
                 foreach (var pair in dictionary)
                 {
@@ -111,13 +113,14 @@ namespace Neo.VM.Types
             return dictionary.ContainsKey(key);
         }
 
-        internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
+        internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
         {
             if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
             Map result = new(ReferenceCounter);
             refMap.Add(this, result);
-            foreach (var pair in dictionary)
-                result[pair.Key] = pair.Value.DeepCopy(refMap);
+            foreach (var (k, v) in dictionary)
+                result[k] = v.DeepCopy(refMap, asImmutable);
+            result.IsReadOnly = true;
             return result;
         }
 
@@ -144,6 +147,7 @@ namespace Neo.VM.Types
         {
             if (key.Size > MaxKeySize)
                 throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
+            if (IsReadOnly) throw new InvalidOperationException();
             if (!dictionary.Remove(key, out StackItem? old_value))
                 return false;
             ReferenceCounter?.RemoveReference(key, this);

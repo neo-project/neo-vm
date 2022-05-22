@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Numerics;
 
 namespace Neo.VM.Types
@@ -71,10 +72,10 @@ namespace Neo.VM.Types
             }
         }
 
-        internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
+        internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
         {
             if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
-            Buffer result = new(InnerBuffer);
+            StackItem result = asImmutable ? new ByteString(InnerBuffer.ToArray()) : new Buffer(InnerBuffer);
             refMap.Add(this, result);
             return result;
         }
