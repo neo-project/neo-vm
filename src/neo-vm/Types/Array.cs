@@ -139,8 +139,6 @@ namespace Neo.VM.Types
         public void Reverse()
         {
             if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
-            List<StackItem> list = _array;
-            list.AsReadOnly();
             _array.Reverse();
         }
     }
