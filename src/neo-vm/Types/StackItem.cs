@@ -59,6 +59,10 @@ namespace Neo.VM.Types
             throw new InvalidCastException();
         }
 
+        internal virtual void Cleanup()
+        {
+        }
+
         /// <summary>
         /// Copy the object and all its children.
         /// </summary>

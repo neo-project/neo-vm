@@ -9,6 +9,7 @@
 // modifications are permitted.
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -19,19 +20,22 @@ namespace Neo.VM.Types
     /// <summary>
     /// Represents a memory block that can be used for reading and writing in the VM.
     /// </summary>
-    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(InnerBuffer).Replace(\"-\", string.Empty)}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={System.Convert.ToHexString(GetSpan().ToArray())}")]
     public class Buffer : StackItem
     {
         /// <summary>
         /// The internal byte array used to store the actual data.
         /// </summary>
-        public readonly byte[] InnerBuffer;
+        public readonly Memory<byte> InnerBuffer;
 
         /// <summary>
         /// The size of the buffer.
         /// </summary>
         public int Size => InnerBuffer.Length;
         public override StackItemType Type => StackItemType.Buffer;
+
+        private readonly byte[] _buffer;
+        private bool _keep_alive = false;
 
         /// <summary>
         /// Create a buffer of the specified size.
@@ -40,19 +44,29 @@ namespace Neo.VM.Types
         /// <param name="zeroInitialize">Indicates whether the created buffer is zero-initialized.</param>
         public Buffer(int size, bool zeroInitialize = true)
         {
-            InnerBuffer = zeroInitialize
-                ? new byte[size]
-                : GC.AllocateUninitializedArray<byte>(size);
+            _buffer = ArrayPool<byte>.Shared.Rent(size);
+            InnerBuffer = new Memory<byte>(_buffer, 0, size);
+            if (zeroInitialize) InnerBuffer.Span.Clear();
         }
 
         /// <summary>
         /// Create a buffer with the specified data.
         /// </summary>
         /// <param name="data">The data to be contained in this buffer.</param>
-        public Buffer(ReadOnlySpan<byte> data)
+        public Buffer(ReadOnlySpan<byte> data) : this(data.Length, false)
         {
-            InnerBuffer = GC.AllocateUninitializedArray<byte>(data.Length);
-            if (!data.IsEmpty) data.CopyTo(InnerBuffer);
+            data.CopyTo(InnerBuffer.Span);
+        }
+
+        internal override void Cleanup()
+        {
+            if (!_keep_alive)
+                ArrayPool<byte>.Shared.Return(_buffer, clearArray: false);
+        }
+
+        public void KeepAlive()
+        {
+            _keep_alive = true;
         }
 
         public override StackItem ConvertTo(StackItemType type)
@@ -62,10 +76,10 @@ namespace Neo.VM.Types
                 case StackItemType.Integer:
                     if (InnerBuffer.Length > Integer.MaxSize)
                         throw new InvalidCastException();
-                    return new BigInteger(InnerBuffer);
+                    return new BigInteger(InnerBuffer.Span);
                 case StackItemType.ByteString:
                     byte[] clone = GC.AllocateUninitializedArray<byte>(InnerBuffer.Length);
-                    InnerBuffer.CopyTo(clone.AsSpan());
+                    InnerBuffer.CopyTo(clone);
                     return clone;
                 default:
                     return base.ConvertTo(type);
@@ -75,7 +89,8 @@ namespace Neo.VM.Types
         internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
         {
             if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
-            StackItem result = asImmutable ? new ByteString(InnerBuffer.ToArray()) : new Buffer(InnerBuffer);
+            StackItem result = asImmutable ? new ByteString(InnerBuffer.Span) : new Buffer(InnerBuffer);
+            Buffer result = new(InnerBuffer.Span);
             refMap.Add(this, result);
             return result;
         }
@@ -87,7 +102,7 @@ namespace Neo.VM.Types
 
         public override ReadOnlySpan<byte> GetSpan()
         {
-            return InnerBuffer;
+            return InnerBuffer.Span;
         }
     }
 }
