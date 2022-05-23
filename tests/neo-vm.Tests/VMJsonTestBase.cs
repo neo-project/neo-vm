@@ -240,7 +240,7 @@ namespace Neo.Test
                 case VM.Types.Boolean v: value = new JValue(v.GetBoolean()); break;
                 case VM.Types.Integer v: value = new JValue(v.GetInteger().ToString()); break;
                 case VM.Types.ByteString v: value = new JValue(v.GetSpan().ToArray()); break;
-                case VM.Types.Buffer v: value = new JValue(v.InnerBuffer); break;
+                case VM.Types.Buffer v: value = new JValue(v.InnerBuffer.ToArray()); break;
                 //case VM.Types.Struct v:
                 case VM.Types.Array v:
                     {
