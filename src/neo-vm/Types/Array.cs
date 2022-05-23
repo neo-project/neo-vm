@@ -31,6 +31,7 @@ namespace Neo.VM.Types
             get => _array[index];
             set
             {
+                if (IsReadOnly) throw new InvalidOperationException();
                 ReferenceCounter?.RemoveReference(_array[index], this);
                 _array[index] = value;
                 ReferenceCounter?.AddReference(value, this);
