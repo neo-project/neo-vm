@@ -31,7 +31,7 @@ namespace Neo.VM.Types
             get => _array[index];
             set
             {
-                if (IsReadOnly) throw new InvalidOperationException();
+                if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
                 ReferenceCounter?.RemoveReference(_array[index], this);
                 _array[index] = value;
                 ReferenceCounter?.AddReference(value, this);
@@ -80,14 +80,14 @@ namespace Neo.VM.Types
         /// <param name="item">The item to be added.</param>
         public void Add(StackItem item)
         {
-            if (IsReadOnly) throw new InvalidOperationException();
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
             _array.Add(item);
             ReferenceCounter?.AddReference(item, this);
         }
 
         public override void Clear()
         {
-            if (IsReadOnly) throw new InvalidOperationException();
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
             if (ReferenceCounter != null)
                 foreach (StackItem item in _array)
                     ReferenceCounter.RemoveReference(item, this);
@@ -128,7 +128,7 @@ namespace Neo.VM.Types
         /// <param name="index">The index of the item to be removed.</param>
         public void RemoveAt(int index)
         {
-            if (IsReadOnly) throw new InvalidOperationException();
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
             ReferenceCounter?.RemoveReference(_array[index], this);
             _array.RemoveAt(index);
         }
@@ -138,7 +138,9 @@ namespace Neo.VM.Types
         /// </summary>
         public void Reverse()
         {
-            if (IsReadOnly) throw new InvalidOperationException();
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
+            List<StackItem> list = _array;
+            list.AsReadOnly();
             _array.Reverse();
         }
     }

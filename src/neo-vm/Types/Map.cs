@@ -46,7 +46,7 @@ namespace Neo.VM.Types
             {
                 if (key.Size > MaxKeySize)
                     throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
-                if (IsReadOnly) throw new InvalidOperationException();
+                if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
                 if (ReferenceCounter != null)
                 {
                     if (dictionary.TryGetValue(key, out StackItem? old_value))
@@ -88,7 +88,7 @@ namespace Neo.VM.Types
 
         public override void Clear()
         {
-            if (IsReadOnly) throw new InvalidOperationException();
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
             if (ReferenceCounter != null)
                 foreach (var pair in dictionary)
                 {
@@ -147,7 +147,7 @@ namespace Neo.VM.Types
         {
             if (key.Size > MaxKeySize)
                 throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
-            if (IsReadOnly) throw new InvalidOperationException();
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
             if (!dictionary.Remove(key, out StackItem? old_value))
                 return false;
             ReferenceCounter?.RemoveReference(key, this);
