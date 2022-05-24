@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -40,16 +40,18 @@ namespace Neo.VM.Types
         /// </summary>
         public abstract int Count { get; }
 
-        internal abstract IEnumerable<StackItem> SubItems { get; }
+        public abstract IEnumerable<StackItem> SubItems { get; }
 
-        internal abstract int SubItemsCount { get; }
+        public abstract int SubItemsCount { get; }
+
+        public bool IsReadOnly { get; protected set; }
 
         /// <summary>
         /// Remove all items from the VM object.
         /// </summary>
         public abstract void Clear();
 
-        internal abstract override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap);
+        internal abstract override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable);
 
         public sealed override bool GetBoolean()
         {

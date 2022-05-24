@@ -67,12 +67,12 @@ namespace Neo.VM.Types
         /// Copy the object and all its children.
         /// </summary>
         /// <returns>The copied object.</returns>
-        public StackItem DeepCopy()
+        public StackItem DeepCopy(bool asImmutable = false)
         {
-            return DeepCopy(new Dictionary<StackItem, StackItem>(ReferenceEqualityComparer.Instance));
+            return DeepCopy(new(ReferenceEqualityComparer.Instance), asImmutable);
         }
 
-        internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
+        internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
         {
             return this;
         }

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -8,6 +8,7 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -30,6 +31,7 @@ namespace Neo.VM.Types
             get => _array[index];
             set
             {
+                if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
                 ReferenceCounter?.RemoveReference(_array[index], this);
                 _array[index] = value;
                 ReferenceCounter?.AddReference(value, this);
@@ -40,8 +42,8 @@ namespace Neo.VM.Types
         /// The number of items in the array.
         /// </summary>
         public override int Count => _array.Count;
-        internal override IEnumerable<StackItem> SubItems => _array;
-        internal override int SubItemsCount => _array.Count;
+        public override IEnumerable<StackItem> SubItems => _array;
+        public override int SubItemsCount => _array.Count;
         public override StackItemType Type => StackItemType.Array;
 
         /// <summary>
@@ -78,12 +80,14 @@ namespace Neo.VM.Types
         /// <param name="item">The item to be added.</param>
         public void Add(StackItem item)
         {
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
             _array.Add(item);
             ReferenceCounter?.AddReference(item, this);
         }
 
         public override void Clear()
         {
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
             if (ReferenceCounter != null)
                 foreach (StackItem item in _array)
                     ReferenceCounter.RemoveReference(item, this);
@@ -97,13 +101,14 @@ namespace Neo.VM.Types
             return base.ConvertTo(type);
         }
 
-        internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
+        internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
         {
             if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
             Array result = this is Struct ? new Struct(ReferenceCounter) : new Array(ReferenceCounter);
             refMap.Add(this, result);
             foreach (StackItem item in _array)
-                result.Add(item.DeepCopy(refMap));
+                result.Add(item.DeepCopy(refMap, asImmutable));
+            result.IsReadOnly = true;
             return result;
         }
 
@@ -123,6 +128,7 @@ namespace Neo.VM.Types
         /// <param name="index">The index of the item to be removed.</param>
         public void RemoveAt(int index)
         {
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
             ReferenceCounter?.RemoveReference(_array[index], this);
             _array.RemoveAt(index);
         }
@@ -132,6 +138,7 @@ namespace Neo.VM.Types
         /// </summary>
         public void Reverse()
         {
+            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
             _array.Reverse();
         }
     }

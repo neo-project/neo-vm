@@ -85,10 +85,10 @@ namespace Neo.VM.Types
             }
         }
 
-        internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap)
+        internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
         {
             if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
-            Buffer result = new(InnerBuffer.Span);
+            StackItem result = asImmutable ? new ByteString(InnerBuffer.ToArray()) : new Buffer(InnerBuffer.Span);
             refMap.Add(this, result);
             return result;
         }
