@@ -3,23 +3,23 @@
   "name": "TRY_CATCH_FINALLY",
   "tests": [
     {
-    "name": "try + finally without ENDTRY",
-    "script": [
-      "TRY",
-      "0x0003",
-      "ENDFINALLY"
-    ],
-    "steps": [
-      {
-      "actions": [
-        "stepInto",
-        "stepInto"
+      "name": "try + finally without ENDTRY",
+      "script": [
+        "TRY",
+        "0x0003",
+        "ENDFINALLY"
       ],
-      "result": {
-        "state": "FAULT"
-      }
-      }
-    ]
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
     }
   ]
-  }
+}
