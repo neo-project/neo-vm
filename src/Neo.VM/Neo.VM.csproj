@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Copyright>2016-2022 The Neo Project</Copyright>
+    <Description>Neo virtual machine</Description>
+    <VersionPrefix>3.2.0</VersionPrefix>
+    <Authors>The Neo Project</Authors>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackageTags>NEO;AntShares;Blockchain;Smart Contract;VM</PackageTags>
+    <PackageProjectUrl>https://github.com/neo-project/neo-vm</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/neo-project/neo-vm.git</RepositoryUrl>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+</Project>
