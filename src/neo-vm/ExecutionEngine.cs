@@ -89,7 +89,7 @@ namespace Neo.VM
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecutionEngine"/> class.
         /// </summary>
-        public ExecutionEngine() : this(new ReferenceCounter(), ExecutionEngineLimits.Default, RuntimeVersion.Latest)
+        public ExecutionEngine() : this(new ReferenceCounter(), ExecutionEngineLimits.Default)
         {
         }
 
@@ -99,7 +99,7 @@ namespace Neo.VM
         /// <param name="referenceCounter">The reference counter to be used.</param>
         /// <param name="limits">Restrictions on the VM.</param>
         /// <param name="version">Indicates which version of the runtime this <see cref="ExecutionEngine"/> should use.</param>
-        protected ExecutionEngine(ReferenceCounter referenceCounter, ExecutionEngineLimits limits, RuntimeVersion version)
+        protected ExecutionEngine(ReferenceCounter referenceCounter, ExecutionEngineLimits limits, RuntimeVersion version = RuntimeVersion.Latest)
         {
             this.RuntimeVersion = version;
             this.Limits = limits;
