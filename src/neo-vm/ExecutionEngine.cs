@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2021 The Neo Project.
+// Copyright (C) 2016-2022 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -26,6 +26,11 @@ namespace Neo.VM
     {
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
+
+        /// <summary>
+        /// Indicates which version of the runtime this <see cref="ExecutionEngine"/> is using.
+        /// </summary>
+        public RuntimeVersion RuntimeVersion { get; }
 
         /// <summary>
         /// Restrictions on the VM.
@@ -84,7 +89,7 @@ namespace Neo.VM
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecutionEngine"/> class.
         /// </summary>
-        public ExecutionEngine() : this(new ReferenceCounter(), ExecutionEngineLimits.Default)
+        public ExecutionEngine() : this(new ReferenceCounter(), ExecutionEngineLimits.Default, RuntimeVersion.Latest)
         {
         }
 
@@ -93,8 +98,10 @@ namespace Neo.VM
         /// </summary>
         /// <param name="referenceCounter">The reference counter to be used.</param>
         /// <param name="limits">Restrictions on the VM.</param>
-        protected ExecutionEngine(ReferenceCounter referenceCounter, ExecutionEngineLimits limits)
+        /// <param name="version">Indicates which version of the runtime this <see cref="ExecutionEngine"/> should use.</param>
+        protected ExecutionEngine(ReferenceCounter referenceCounter, ExecutionEngineLimits limits, RuntimeVersion version)
         {
+            this.RuntimeVersion = version;
             this.Limits = limits;
             this.ReferenceCounter = referenceCounter;
             this.ResultStack = new EvaluationStack(referenceCounter);
