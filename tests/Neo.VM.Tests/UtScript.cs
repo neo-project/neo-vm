@@ -78,9 +78,7 @@ namespace Neo.Test
             Assert.AreEqual(Encoding.ASCII.GetString(new byte[] { 123, 0x00, 0x00, 0x00 }), ins.TokenString);
             Assert.AreEqual(123U, ins.TokenU32);
 
-            ins = script.GetInstruction(100);
-
-            Assert.AreSame(Instruction.RET, ins);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => script.GetInstruction(100));
         }
     }
 }

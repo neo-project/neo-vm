@@ -83,7 +83,7 @@ namespace Neo.VM
         /// <summary>
         /// Returns the current <see cref="Instruction"/>.
         /// </summary>
-        public Instruction CurrentInstruction
+        public Instruction? CurrentInstruction
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
@@ -95,12 +95,14 @@ namespace Neo.VM
         /// <summary>
         /// Returns the next <see cref="Instruction"/>.
         /// </summary>
-        public Instruction NextInstruction
+        public Instruction? NextInstruction
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                return GetInstruction(InstructionPointer + CurrentInstruction.Size);
+                Instruction? current = CurrentInstruction;
+                if (current is null) return null;
+                return GetInstruction(InstructionPointer + current.Size);
             }
         }
 
@@ -138,7 +140,7 @@ namespace Neo.VM
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Instruction GetInstruction(int ip) => Script.GetInstruction(ip);
+        private Instruction? GetInstruction(int ip) => ip >= Script.Length ? null : Script.GetInstruction(ip);
 
         /// <summary>
         /// Gets custom data of the specified type. If the data does not exist, create a new one.
@@ -157,7 +159,9 @@ namespace Neo.VM
 
         internal bool MoveNext()
         {
-            InstructionPointer += CurrentInstruction.Size;
+            Instruction? current = CurrentInstruction;
+            if (current is null) return false;
+            InstructionPointer += current.Size;
             return InstructionPointer < Script.Length;
         }
     }
