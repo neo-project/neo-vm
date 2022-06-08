@@ -28,7 +28,7 @@ namespace Neo.VM.Types
         /// <summary>
         /// Represents <see langword="true"/> in the VM.
         /// </summary>
-        public static Boolean True 
+        public static Boolean True
         {
             get
             {
