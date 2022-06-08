@@ -26,7 +26,7 @@ namespace Neo.VM.Types
         /// Represents <see langword="null"/> in the VM.
         /// </summary>
         [ThreadStatic]
-        public static readonly StackItem Null { get; } = new Null();
+        public static StackItem Null { get; } = new Null();
 
         /// <summary>
         /// Indicates whether the object is <see cref="Null"/>.
@@ -37,13 +37,13 @@ namespace Neo.VM.Types
         /// Represents <see langword="false"/> in the VM.
         /// </summary>
         [ThreadStatic]
-        public static readonly Boolean False { get; } = new(false);
+        public static Boolean False { get; } = new(false);
 
         /// <summary>
         /// Represents <see langword="true"/> in the VM.
         /// </summary>
         [ThreadStatic]
-        public static readonly Boolean True { get; } = new(true);
+        public static Boolean True { get; } = new(true);
 
         /// <summary>
         /// The type of this VM object.
