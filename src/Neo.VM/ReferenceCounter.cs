@@ -10,8 +10,10 @@
 
 using Neo.VM.StronglyConnectedComponents;
 using Neo.VM.Types;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Neo.VM
 {
@@ -35,12 +37,13 @@ namespace Neo.VM
             references_count++;
             cached_components = null;
             tracked_items.Add(item);
-            item.ObjectReferences ??= new(ReferenceEqualityComparer.Instance);
-            if (!item.ObjectReferences.TryGetValue(parent, out var pEntry))
+            if (item.ObjectReferences is null)
             {
-                pEntry = new(parent);
-                item.ObjectReferences.Add(parent, pEntry);
+                var dict = new ConcurrentDictionary<CompoundType, StackItem.ObjectReferenceEntry>(ReferenceEqualityComparer.Instance);
+                Interlocked.CompareExchange(ref item.ObjectReferences, dict, null);
             }
+
+            var pEntry = item.ObjectReferences.GetOrAdd(parent, static parent => new(parent));
             pEntry.References++;
         }
 
@@ -102,7 +105,7 @@ namespace Neo.VM
                                 foreach (StackItem subitem in compound.SubItems)
                                 {
                                     if (component.Contains(subitem)) continue;
-                                    subitem.ObjectReferences!.Remove(compound);
+                                    subitem.ObjectReferences!.TryRemove(compound, out _);
                                 }
                             }
                             item.Cleanup();
@@ -120,7 +123,10 @@ namespace Neo.VM
         {
             references_count--;
             cached_components = null;
-            item.ObjectReferences![parent].References--;
+            if (item.ObjectReferences!.TryGetValue(parent, out var value))
+            {
+                value.References--;
+            }
             if (item.StackReferences == 0)
                 zero_referred.Add(item);
         }

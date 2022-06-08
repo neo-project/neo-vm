@@ -8,6 +8,7 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,7 +24,7 @@ namespace Neo.VM.Types
         }
 
         internal int StackReferences = 0;
-        internal Dictionary<CompoundType, ObjectReferenceEntry>? ObjectReferences;
+        internal ConcurrentDictionary<CompoundType, ObjectReferenceEntry>? ObjectReferences;
         internal int DFN = -1;
         internal int LowLink = 0;
         internal bool OnStack = false;
