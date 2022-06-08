@@ -8,8 +8,6 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-#pragma warning disable CS0659
-
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -25,7 +23,8 @@ namespace Neo.VM.Types
         /// <summary>
         /// Represents <see langword="false"/> in the VM.
         /// </summary>
-        public static Boolean False { get; } = new(false);
+        [ThreadStatic]
+        public static readonly Boolean False = new(false);
 
         /// <summary>
         /// Indicates whether the object is <see cref="Null"/>.
@@ -35,12 +34,14 @@ namespace Neo.VM.Types
         /// <summary>
         /// Represents <see langword="null"/> in the VM.
         /// </summary>
-        public static StackItem Null { get; } = new Null();
+        [ThreadStatic]
+        public static readonly StackItem Null = new Null();
 
         /// <summary>
         /// Represents <see langword="true"/> in the VM.
         /// </summary>
-        public static Boolean True { get; } = new(true);
+        [ThreadStatic]
+        public static readonly Boolean True = new(true);
 
         /// <summary>
         /// The type of this VM object.
