@@ -8,6 +8,8 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+#pragma warning disable CS0659
+
 using System;
 using System.Collections.Generic;
 using System.Numerics;
