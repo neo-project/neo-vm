@@ -64,7 +64,7 @@ namespace Neo.VM.Types
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator Boolean(bool value)
         {
-            return value ? True : False;
+            return new Boolean(value);
         }
     }
 }

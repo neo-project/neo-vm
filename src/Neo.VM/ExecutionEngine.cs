@@ -28,6 +28,21 @@ namespace Neo.VM
         private bool isJumping = false;
 
         /// <summary>
+        /// Represents <see langword="false"/> in the VM.
+        /// </summary>
+        private Types.Boolean False { get; } = new(false);
+
+        /// <summary>
+        /// Represents <see langword="null"/> in the VM.
+        /// </summary>
+        private StackItem Null { get; } = new Null();
+
+        /// <summary>
+        /// Represents <see langword="true"/> in the VM.
+        /// </summary>
+        private Types.Boolean True { get; } = new(true);
+
+        /// <summary>
         /// Restrictions on the VM.
         /// </summary>
         public ExecutionEngineLimits Limits { get; }
@@ -173,7 +188,7 @@ namespace Neo.VM
                     }
                 case OpCode.PUSHNULL:
                     {
-                        Push(StackItem.Null);
+                        Push(Null);
                         break;
                     }
                 case OpCode.PUSHDATA1:
@@ -1092,15 +1107,15 @@ namespace Neo.VM
                                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {instruction.TokenU8}");
                             item = instruction.TokenU8 switch
                             {
-                                (byte)StackItemType.Boolean => StackItem.False,
+                                (byte)StackItemType.Boolean => False,
                                 (byte)StackItemType.Integer => Integer.Zero,
                                 (byte)StackItemType.ByteString => ByteString.Empty,
-                                _ => StackItem.Null
+                                _ => Null
                             };
                         }
                         else
                         {
-                            item = StackItem.Null;
+                            item = Null;
                         }
                         Push(new VMArray(ReferenceCounter, Enumerable.Repeat(item, n)));
                         break;
@@ -1117,7 +1132,7 @@ namespace Neo.VM
                             throw new InvalidOperationException($"MaxStackSize exceed: {n}");
                         Struct result = new(ReferenceCounter);
                         for (var i = 0; i < n; i++)
-                            result.Add(StackItem.Null);
+                            result.Add(Null);
                         Push(result);
                         break;
                     }

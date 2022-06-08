@@ -23,24 +23,9 @@ namespace Neo.VM.Types
     public abstract partial class StackItem : IEquatable<StackItem>
     {
         /// <summary>
-        /// Represents <see langword="false"/> in the VM.
-        /// </summary>
-        public static Boolean False { get; } = new(false);
-
-        /// <summary>
         /// Indicates whether the object is <see cref="Null"/>.
         /// </summary>
         public bool IsNull => this is Null;
-
-        /// <summary>
-        /// Represents <see langword="null"/> in the VM.
-        /// </summary>
-        public static StackItem Null { get; } = new Null();
-
-        /// <summary>
-        /// Represents <see langword="true"/> in the VM.
-        /// </summary>
-        public static Boolean True { get; } = new(true);
 
         /// <summary>
         /// The type of this VM object.
@@ -101,7 +86,7 @@ namespace Neo.VM.Types
         /// <returns></returns>
         public static StackItem FromInterface(object? value)
         {
-            if (value is null) return Null;
+            if (value is null) return new Null();
             return new InteropInterface(value);
         }
 
@@ -205,7 +190,7 @@ namespace Neo.VM.Types
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static implicit operator StackItem(bool value)
         {
-            return value ? True : False;
+            return new Boolean(value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

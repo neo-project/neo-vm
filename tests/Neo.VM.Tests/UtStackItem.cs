@@ -72,10 +72,10 @@ namespace Neo.Test
         public void NullTest()
         {
             StackItem nullItem = System.Array.Empty<byte>();
-            Assert.AreNotEqual(StackItem.Null, nullItem);
+            Assert.AreNotEqual(new Null(), nullItem);
 
             nullItem = new Null();
-            Assert.AreEqual(StackItem.Null, nullItem);
+            Assert.AreEqual(new Null(), nullItem);
         }
 
         [TestMethod]
@@ -183,7 +183,7 @@ namespace Neo.Test
                 true,
                 1,
                 new byte[] { 1 },
-                StackItem.Null,
+                new Null(),
                 new Buffer(new byte[] { 1 }),
                 new Map { [0] = 1, [2] = 3 },
                 new Struct { 1, 2, 3 }
