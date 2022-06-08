@@ -23,10 +23,10 @@ namespace Neo.VM.Types
     public abstract partial class StackItem : IEquatable<StackItem>
     {
         /// <summary>
-        /// Represents <see langword="false"/> in the VM.
+        /// Represents <see langword="null"/> in the VM.
         /// </summary>
         [ThreadStatic]
-        public static readonly Boolean False = new(false);
+        public static readonly StackItem Null { get; } = new Null();
 
         /// <summary>
         /// Indicates whether the object is <see cref="Null"/>.
@@ -34,16 +34,16 @@ namespace Neo.VM.Types
         public bool IsNull => this is Null;
 
         /// <summary>
-        /// Represents <see langword="null"/> in the VM.
+        /// Represents <see langword="false"/> in the VM.
         /// </summary>
         [ThreadStatic]
-        public static readonly StackItem Null = new Null();
+        public static readonly Boolean False { get; } = new(false);
 
         /// <summary>
         /// Represents <see langword="true"/> in the VM.
         /// </summary>
         [ThreadStatic]
-        public static readonly Boolean True = new(true);
+        public static readonly Boolean True { get; } = new(true);
 
         /// <summary>
         /// The type of this VM object.
