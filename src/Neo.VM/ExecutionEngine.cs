@@ -26,21 +26,8 @@ namespace Neo.VM
     {
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
-
-        /// <summary>
-        /// Represents <see langword="false"/> in the VM.
-        /// </summary>
-        private Types.Boolean False { get; } = new(false);
-
-        /// <summary>
-        /// Represents <see langword="null"/> in the VM.
-        /// </summary>
-        private StackItem Null { get; } = new Null();
-
-        /// <summary>
-        /// Represents <see langword="true"/> in the VM.
-        /// </summary>
-        private Types.Boolean True { get; } = new(true);
+        private readonly Types.Boolean False = new(false);
+        private readonly StackItem Null = new Null();
 
         /// <summary>
         /// Restrictions on the VM.
