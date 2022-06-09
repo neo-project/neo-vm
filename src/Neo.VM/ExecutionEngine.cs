@@ -1447,6 +1447,8 @@ namespace Neo.VM
             {
                 try
                 {
+                    NeoVmEventSource.Log.InstructionExecutionStart(CurrentContext!.CurrentInstruction.OpCode);
+
                     ExecutionContext context = CurrentContext!;
                     PreExecuteInstruction();
                     try
@@ -1464,6 +1466,10 @@ namespace Neo.VM
                 catch (Exception e)
                 {
                     OnFault(e);
+                }
+                finally
+                {
+                    NeoVmEventSource.Log.InstructionExecutionStop();
                 }
             }
         }

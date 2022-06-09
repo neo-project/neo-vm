@@ -42,6 +42,7 @@ namespace Neo.VM
                 item.ObjectReferences.Add(parent, pEntry);
             }
             pEntry.References++;
+            NeoVmEventSource.Log.AddReference(item.Type, parent.Type, references_count, pEntry.References);
         }
 
         internal void AddStackReference(StackItem item, int count = 1)
@@ -51,6 +52,7 @@ namespace Neo.VM
                 cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
             item.StackReferences += count;
             zero_referred.Remove(item);
+            NeoVmEventSource.Log.AddStackReference(item.Type, count, references_count, item.StackReferences, zero_referred.Count);
         }
 
         internal void AddZeroReferred(StackItem item)
@@ -58,10 +60,12 @@ namespace Neo.VM
             zero_referred.Add(item);
             cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
             tracked_items.Add(item);
+            NeoVmEventSource.Log.AddZeroReferred(item.Type, zero_referred.Count);
         }
 
         internal int CheckZeroReferred()
         {
+            NeoVmEventSource.Log.CheckZeroReferredStart(zero_referred.Count);
             if (zero_referred.Count > 0)
             {
                 zero_referred.Clear();
@@ -113,6 +117,7 @@ namespace Neo.VM
                     }
                 }
             }
+            NeoVmEventSource.Log.CheckZeroReferredStop(references_count);
             return references_count;
         }
 
@@ -120,9 +125,11 @@ namespace Neo.VM
         {
             references_count--;
             cached_components = null;
-            item.ObjectReferences![parent].References--;
+            var pEntry = item.ObjectReferences![parent];
+            pEntry.References--;
             if (item.StackReferences == 0)
                 zero_referred.Add(item);
+            NeoVmEventSource.Log.RemoveReference(item.Type, parent.Type, references_count, item.StackReferences, pEntry.References, zero_referred.Count);
         }
 
         internal void RemoveStackReference(StackItem item)
@@ -130,6 +137,7 @@ namespace Neo.VM
             references_count--;
             if (--item.StackReferences == 0)
                 zero_referred.Add(item);
+            NeoVmEventSource.Log.RemoveStackReference(item.Type, references_count, item.StackReferences, zero_referred.Count);
         }
     }
 }
