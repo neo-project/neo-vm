@@ -25,7 +25,8 @@ namespace Neo.VM
     /// </summary>
     public class ExecutionEngine : IDisposable
     {
-        internal static DiagnosticSource DiagnosticSource = new DiagnosticListener("Neo.VM.ExecutionEngine");
+        public const string LoggerCategory = "Neo.VM.ExecutionEngine";
+        internal static DiagnosticSource DiagnosticSource = new DiagnosticListener(LoggerCategory);
 
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
