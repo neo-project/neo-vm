@@ -11,6 +11,7 @@
 using Neo.VM.Types;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -24,6 +25,8 @@ namespace Neo.VM
     /// </summary>
     public class ExecutionEngine : IDisposable
     {
+        private static DiagnosticSource diagSrc = new DiagnosticListener("Neo.VM.ExecutionEngine");
+
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
 
@@ -134,10 +137,22 @@ namespace Neo.VM
         /// <returns></returns>
         public virtual VMState Execute()
         {
+            Activity? activity = null;
+            if (diagSrc.IsEnabled(nameof(Execute)))
+            {
+                activity = new Activity(nameof(Execute));
+                diagSrc.StartActivity(activity, EntryContext);
+            }
+
             if (State == VMState.BREAK)
                 State = VMState.NONE;
             while (State != VMState.HALT && State != VMState.FAULT)
                 ExecuteNext();
+
+            if (activity is not null)
+            {
+                diagSrc.StopActivity(activity, new  { State, ResultStack });
+            }
             return State;
         }
 
@@ -1445,6 +1460,12 @@ namespace Neo.VM
             }
             else
             {
+                Activity? activity = null;
+                if (diagSrc.IsEnabled(nameof(ExecuteNext)))
+                {
+                    activity = new Activity(nameof(ExecuteNext));
+                    diagSrc.StartActivity(activity, CurrentContext!.CurrentInstruction);
+                }
                 try
                 {
                     ExecutionContext context = CurrentContext!;
@@ -1464,6 +1485,13 @@ namespace Neo.VM
                 catch (Exception e)
                 {
                     OnFault(e);
+                }
+                finally
+                {
+                    if (activity is not null)
+                    {
+                        diagSrc.StopActivity(activity, null);
+                    }
                 }
             }
         }

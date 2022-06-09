@@ -11,6 +11,7 @@
 using Neo.VM.StronglyConnectedComponents;
 using Neo.VM.Types;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Neo.VM
@@ -20,6 +21,8 @@ namespace Neo.VM
     /// </summary>
     public sealed class ReferenceCounter
     {
+        private static DiagnosticSource diagSrc = new DiagnosticListener("Neo.VM.ReferenceCounter");
+        
         private readonly HashSet<StackItem> tracked_items = new(ReferenceEqualityComparer.Instance);
         private readonly HashSet<StackItem> zero_referred = new(ReferenceEqualityComparer.Instance);
         private LinkedList<HashSet<StackItem>>? cached_components;
@@ -79,6 +82,13 @@ namespace Neo.VM
 
         internal int CheckZeroReferred()
         {
+            Activity? activity = null;
+            if (diagSrc.IsEnabled(nameof(CheckZeroReferred)))
+            {
+                activity = new Activity(nameof(CheckZeroReferred));
+                diagSrc.StartActivity(activity, null);
+            }
+
             if (zero_referred.Count > 0)
             {
                 zero_referred.Clear();
@@ -134,6 +144,11 @@ namespace Neo.VM
                         cached_components.Remove(nodeToRemove);
                     }
                 }
+            }
+
+            if (activity is not null)
+            { 
+                diagSrc.StopActivity(activity, null); 
             }
             return references_count;
         }
