@@ -33,8 +33,11 @@ namespace Neo.VM.Types
         public int Size => InnerBuffer.Length;
         public override StackItemType Type => StackItemType.Buffer;
 
+
+#if !TRACK_COMPOUND_ONLY
         private readonly byte[] _buffer;
         private bool _keep_alive = false;
+#endif
 
         /// <summary>
         /// Create a buffer of the specified size.
@@ -43,9 +46,16 @@ namespace Neo.VM.Types
         /// <param name="zeroInitialize">Indicates whether the created buffer is zero-initialized.</param>
         public Buffer(int size, bool zeroInitialize = true)
         {
+#if TRACK_COMPOUND_ONLY
+            var buffer = zeroInitialize
+                ? new byte[size]
+                : GC.AllocateUninitializedArray<byte>(size);
+            InnerBuffer = new Memory<byte>(buffer, 0, size);
+#else
             _buffer = ArrayPool<byte>.Shared.Rent(size);
             InnerBuffer = new Memory<byte>(_buffer, 0, size);
             if (zeroInitialize) InnerBuffer.Span.Clear();
+#endif
         }
 
         /// <summary>
@@ -57,16 +67,17 @@ namespace Neo.VM.Types
             data.CopyTo(InnerBuffer.Span);
         }
 
+#if !TRACK_COMPOUND_ONLY
         internal override void Cleanup()
         {
-            if (!_keep_alive)
-                ArrayPool<byte>.Shared.Return(_buffer, clearArray: false);
+            if (!_keep_alive) ArrayPool<byte>.Shared.Return(_buffer, clearArray: false);
         }
 
         public void KeepAlive()
         {
             _keep_alive = true;
         }
+#endif
 
         public override StackItem ConvertTo(StackItemType type)
         {

@@ -89,9 +89,11 @@ namespace Neo.VM.Types
             throw new InvalidCastException();
         }
 
+#if !TRACK_COMPOUND_ONLY
         internal virtual void Cleanup()
         {
         }
+#endif
 
         /// <summary>
         /// Copy the object and all its children.

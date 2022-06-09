@@ -14,6 +14,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- <DefineConstants>TRACK_COMPOUND_ONLY</DefineConstants> -->
   </PropertyGroup>
 
 </Project>
