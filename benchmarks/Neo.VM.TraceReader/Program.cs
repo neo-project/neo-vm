@@ -1,7 +1,5 @@
 ﻿using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
-using Microsoft.Diagnostics.Tracing.Parsers;
-
 
 foreach (var arg in args)
 {
@@ -22,6 +20,7 @@ static (IReadOnlyList<Execution> instruction, IReadOnlyList<Execution> checkZero
     List<Execution> insList = new();
     List<Execution> czrList = new();
 
+    Console.WriteLine($"Starting to process {Path.GetFileName(path)} results");
     using var traceLog = new TraceLog(TraceLog.CreateFromEventPipeDataFile(path));
     var traceSource = traceLog.Events.GetSource();
     traceSource.AllEvents += e =>
@@ -76,12 +75,11 @@ static void PrintResults(string path, (IReadOnlyList<Execution> instruction, IRe
 
     Console.WriteLine($"{Path.GetFileName(path)} results");
     Console.WriteLine($"  Counts: {ins.Count} {czr.Count}");
-    Console.WriteLine($"  Durations: {i:0.00} {z:0.00}");
-    Console.WriteLine($"  CZR %: {pct:0.00}");
+    Console.WriteLine($"  Durations: {i:0,0.00}ms {z:0,0.00}ms");
+    Console.WriteLine($"  CZR %: {pct:0.00}%");
 
     static double CalcDuration(IReadOnlyList<Execution> executions)
         => executions.Aggregate(0.0, (total, exec) => total + exec.Duration);
-
 }
 
 readonly record struct Execution(Neo.VM.OpCode opCode, double start, double end)
