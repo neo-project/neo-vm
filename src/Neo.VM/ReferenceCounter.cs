@@ -33,33 +33,50 @@ namespace Neo.VM
         internal void AddReference(StackItem item, CompoundType parent)
         {
             references_count++;
-            cached_components = null;
-            tracked_items.Add(item);
-            item.ObjectReferences ??= new(ReferenceEqualityComparer.Instance);
-            if (!item.ObjectReferences.TryGetValue(parent, out var pEntry))
+            var entryRefCount = -1;
+#if TRACK_COMPOUND_ONLY
+            if (item is CompoundType)
+#endif
             {
-                pEntry = new(parent);
-                item.ObjectReferences.Add(parent, pEntry);
+                cached_components = null;
+                tracked_items.Add(item);
+                item.ObjectReferences ??= new(ReferenceEqualityComparer.Instance);
+                if (!item.ObjectReferences.TryGetValue(parent, out var pEntry))
+                {
+                    pEntry = new(parent);
+                    item.ObjectReferences.Add(parent, pEntry);
+                }
+                pEntry.References++;
+                entryRefCount = pEntry.References;
             }
-            pEntry.References++;
-            NeoVmEventSource.Log.AddReference(item.Type, parent.Type, references_count, pEntry.References);
+            NeoVmEventSource.Log.AddReference(item.Type, parent.Type, references_count, entryRefCount);
         }
 
         internal void AddStackReference(StackItem item, int count = 1)
         {
             references_count += count;
-            if (tracked_items.Add(item))
-                cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
-            item.StackReferences += count;
-            zero_referred.Remove(item);
+#if TRACK_COMPOUND_ONLY
+            if (item is CompoundType)
+#endif
+            {
+                if (tracked_items.Add(item))
+                    cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
+                item.StackReferences += count;
+                zero_referred.Remove(item);
+            }
             NeoVmEventSource.Log.AddStackReference(item.Type, count, references_count, item.StackReferences, zero_referred.Count);
         }
 
         internal void AddZeroReferred(StackItem item)
         {
             zero_referred.Add(item);
-            cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
-            tracked_items.Add(item);
+#if TRACK_COMPOUND_ONLY
+            if (item is CompoundType)
+#endif
+            {
+                cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
+                tracked_items.Add(item);
+            }
             NeoVmEventSource.Log.AddZeroReferred(item.Type, zero_referred.Count);
         }
 
@@ -106,10 +123,15 @@ namespace Neo.VM
                                 foreach (StackItem subitem in compound.SubItems)
                                 {
                                     if (component.Contains(subitem)) continue;
+#if TRACK_COMPOUND_ONLY
+                                    if (subitem is not CompoundType) continue;
+#endif
                                     subitem.ObjectReferences!.Remove(compound);
                                 }
                             }
+#if !TRACK_COMPOUND_ONLY
                             item.Cleanup();
+#endif
                         }
                         var nodeToRemove = node;
                         node = node.Next;
@@ -124,19 +146,31 @@ namespace Neo.VM
         internal void RemoveReference(StackItem item, CompoundType parent)
         {
             references_count--;
-            cached_components = null;
-            var pEntry = item.ObjectReferences![parent];
-            pEntry.References--;
-            if (item.StackReferences == 0)
-                zero_referred.Add(item);
-            NeoVmEventSource.Log.RemoveReference(item.Type, parent.Type, references_count, item.StackReferences, pEntry.References, zero_referred.Count);
+            var entryRefCount = -1;
+#if TRACK_COMPOUND_ONLY
+            if (item is CompoundType)
+#endif
+            {
+                cached_components = null;
+                var pEntry = item.ObjectReferences![parent];
+                pEntry.References--;
+                entryRefCount = pEntry.References;
+                if (item.StackReferences == 0)
+                    zero_referred.Add(item);
+            }
+            NeoVmEventSource.Log.RemoveReference(item.Type, parent.Type, references_count, item.StackReferences, entryRefCount, zero_referred.Count);
         }
 
         internal void RemoveStackReference(StackItem item)
         {
             references_count--;
-            if (--item.StackReferences == 0)
-                zero_referred.Add(item);
+#if TRACK_COMPOUND_ONLY
+            if (item is not CompoundType)
+#endif
+            {
+                if (--item.StackReferences == 0)
+                    zero_referred.Add(item);
+            }
             NeoVmEventSource.Log.RemoveStackReference(item.Type, references_count, item.StackReferences, zero_referred.Count);
         }
     }
