@@ -67,7 +67,7 @@ namespace Neo.VM
 
         // custom WriteEvent overloads to avoid array allocation as per 
         // https://docs.microsoft.com/en-us/dotnet/core/diagnostics/eventsource-instrumentation#optimizing-performance-for-high-volume-events
-        
+
         [NonEvent]
         public unsafe void WriteEvent(int eventId, int arg1, int arg2, int arg3, int arg4)
         {
