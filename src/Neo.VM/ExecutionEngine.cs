@@ -25,7 +25,7 @@ namespace Neo.VM
     /// </summary>
     public class ExecutionEngine : IDisposable
     {
-        private static DiagnosticSource diagSrc = new DiagnosticListener("Neo.VM.ExecutionEngine");
+        internal static DiagnosticSource DiagnosticSource = new DiagnosticListener("Neo.VM.ExecutionEngine");
 
         private VMState state = VMState.BREAK;
         private bool isJumping = false;
@@ -138,10 +138,10 @@ namespace Neo.VM
         public virtual VMState Execute()
         {
             Activity? activity = null;
-            if (diagSrc.IsEnabled(nameof(Execute)))
+            if (DiagnosticSource.IsEnabled(nameof(Execute)))
             {
                 activity = new Activity(nameof(Execute));
-                diagSrc.StartActivity(activity, EntryContext);
+                DiagnosticSource.StartActivity(activity, EntryContext);
             }
 
             if (State == VMState.BREAK)
@@ -151,7 +151,7 @@ namespace Neo.VM
 
             if (activity is not null)
             {
-                diagSrc.StopActivity(activity, new  { State, ResultStack });
+                DiagnosticSource.StopActivity(activity, new  { State, ResultStack });
             }
             return State;
         }
@@ -1461,10 +1461,10 @@ namespace Neo.VM
             else
             {
                 Activity? activity = null;
-                if (diagSrc.IsEnabled(nameof(ExecuteNext)))
+                if (DiagnosticSource.IsEnabled(nameof(ExecuteNext)))
                 {
                     activity = new Activity(nameof(ExecuteNext));
-                    diagSrc.StartActivity(activity, CurrentContext!.CurrentInstruction);
+                    DiagnosticSource.StartActivity(activity, CurrentContext!);
                 }
                 try
                 {
@@ -1490,7 +1490,7 @@ namespace Neo.VM
                 {
                     if (activity is not null)
                     {
-                        diagSrc.StopActivity(activity, null);
+                        DiagnosticSource.StopActivity(activity, null);
                     }
                 }
             }
