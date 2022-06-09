@@ -145,8 +145,8 @@ namespace Neo.VM
             }
 
             if (activity is not null)
-            { 
-                ExecutionEngine.DiagnosticSource.StopActivity(activity, null); 
+            {
+                ExecutionEngine.DiagnosticSource.StopActivity(activity, null);
             }
             return references_count;
         }

@@ -152,7 +152,7 @@ namespace Neo.VM
 
             if (activity is not null)
             {
-                DiagnosticSource.StopActivity(activity, new  { State, ResultStack });
+                DiagnosticSource.StopActivity(activity, new { State, ResultStack });
             }
             return State;
         }
