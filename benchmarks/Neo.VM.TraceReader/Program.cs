@@ -1,4 +1,4 @@
-﻿using Microsoft.Diagnostics.Tracing;
+using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
 
 foreach (var arg in args)
@@ -71,7 +71,7 @@ static void PrintResults(string path, (IReadOnlyList<Execution> instruction, IRe
     var (ins, czr) = tuple;
     var i = CalcDuration(ins);
     var z = CalcDuration(czr);
-    var pct = z/i * 100;
+    var pct = z / i * 100;
 
     Console.WriteLine($"{Path.GetFileName(path)} results");
     Console.WriteLine($"  Counts: {ins.Count} {czr.Count}");
