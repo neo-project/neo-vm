@@ -33,6 +33,7 @@ namespace Neo.VM
         internal void AddReference(StackItem item, CompoundType parent)
         {
             references_count++;
+            if (item is not CompoundType) return;
             cached_components = null;
             tracked_items.Add(item);
             item.ObjectReferences ??= new(ReferenceEqualityComparer.Instance);
@@ -47,6 +48,7 @@ namespace Neo.VM
         internal void AddStackReference(StackItem item, int count = 1)
         {
             references_count += count;
+            if (item is not CompoundType) return;
             if (tracked_items.Add(item))
                 cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
             item.StackReferences += count;
@@ -56,6 +58,7 @@ namespace Neo.VM
         internal void AddZeroReferred(StackItem item)
         {
             zero_referred.Add(item);
+            if (item is not CompoundType) return;
             cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
             tracked_items.Add(item);
         }
@@ -102,6 +105,7 @@ namespace Neo.VM
                                 foreach (StackItem subitem in compound.SubItems)
                                 {
                                     if (component.Contains(subitem)) continue;
+                                    if (subitem is not CompoundType) continue;
                                     subitem.ObjectReferences!.Remove(compound);
                                 }
                             }
@@ -119,6 +123,7 @@ namespace Neo.VM
         internal void RemoveReference(StackItem item, CompoundType parent)
         {
             references_count--;
+            if (item is not CompoundType) return;
             cached_components = null;
             item.ObjectReferences![parent].References--;
             if (item.StackReferences == 0)
@@ -128,6 +133,7 @@ namespace Neo.VM
         internal void RemoveStackReference(StackItem item)
         {
             references_count--;
+            if (item is not CompoundType) return;
             if (--item.StackReferences == 0)
                 zero_referred.Add(item);
         }
