@@ -22,25 +22,55 @@ namespace Neo.VM.Types
     /// </summary>
     public abstract partial class StackItem : IEquatable<StackItem>
     {
+        [ThreadStatic]
+        private static Boolean? tls_true = null;
+
+        /// <summary>
+        /// Represents <see langword="true"/> in the VM.
+        /// </summary>
+        public static Boolean True
+        {
+            get
+            {
+                tls_true ??= new(true);
+                return tls_true;
+            }
+        }
+
+        [ThreadStatic]
+        private static Boolean? tls_false = null;
+
         /// <summary>
         /// Represents <see langword="false"/> in the VM.
         /// </summary>
-        public static Boolean False { get; } = new(false);
+        public static Boolean False
+        {
+            get
+            {
+                tls_false ??= new(false);
+                return tls_false;
+            }
+        }
+
+        [ThreadStatic]
+        private static Null? tls_null = null;
+
+        /// <summary>
+        /// Represents <see langword="null"/> in the VM.
+        /// </summary>
+        public static StackItem Null
+        {
+            get
+            {
+                tls_null ??= new();
+                return tls_null;
+            }
+        }
 
         /// <summary>
         /// Indicates whether the object is <see cref="Null"/>.
         /// </summary>
         public bool IsNull => this is Null;
-
-        /// <summary>
-        /// Represents <see langword="null"/> in the VM.
-        /// </summary>
-        public static StackItem Null { get; } = new Null();
-
-        /// <summary>
-        /// Represents <see langword="true"/> in the VM.
-        /// </summary>
-        public static Boolean True { get; } = new(true);
 
         /// <summary>
         /// The type of this VM object.
