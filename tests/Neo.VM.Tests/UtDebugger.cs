@@ -21,24 +21,21 @@ namespace Neo.Test
             Debugger debugger = new(engine);
 
             Assert.IsFalse(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 3));
-            Assert.IsFalse(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 4));
 
             Assert.AreEqual(OpCode.NOP, engine.CurrentContext.NextInstruction.OpCode);
 
+            debugger.AddBreakPoint(engine.CurrentContext.Script, 2);
             debugger.AddBreakPoint(engine.CurrentContext.Script, 3);
-            debugger.AddBreakPoint(engine.CurrentContext.Script, 4);
             debugger.Execute();
-
-            Assert.AreEqual(OpCode.RET, engine.CurrentContext.NextInstruction.OpCode);
-            Assert.AreEqual(3, engine.CurrentContext.InstructionPointer);
+            Assert.AreEqual(OpCode.NOP, engine.CurrentContext.NextInstruction.OpCode);
+            Assert.AreEqual(2, engine.CurrentContext.InstructionPointer);
             Assert.AreEqual(VMState.BREAK, engine.State);
 
+            Assert.IsTrue(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 2));
+            Assert.IsFalse(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 2));
             Assert.IsTrue(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 3));
             Assert.IsFalse(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 3));
-            Assert.IsTrue(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 4));
-            Assert.IsFalse(debugger.RemoveBreakPoint(engine.CurrentContext.Script, 4));
             debugger.Execute();
-
             Assert.AreEqual(VMState.HALT, engine.State);
         }
 
@@ -197,7 +194,7 @@ namespace Neo.Test
             debugger.AddBreakPoint(engine.CurrentContext.Script, 5);
             Assert.AreEqual(VMState.BREAK, debugger.StepOver());
 
-            Assert.AreEqual(OpCode.RET, engine.CurrentContext.NextInstruction.OpCode);
+            Assert.IsNull(engine.CurrentContext.NextInstruction);
             Assert.AreEqual(5, engine.CurrentContext.InstructionPointer);
             Assert.AreEqual(VMState.BREAK, engine.State);
 
