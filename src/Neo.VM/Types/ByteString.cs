@@ -20,7 +20,7 @@ namespace Neo.VM.Types
     /// <summary>
     /// Represents an immutable memory block in the VM.
     /// </summary>
-    [DebuggerDisplay("Type={GetType().Name}, Value={System.BitConverter.ToString(Memory.ToArray()).Replace(\"-\", string.Empty)}")]
+    [DebuggerDisplay("Type={GetType().Name}, Value={System.Convert.ToHexString(GetSpan())}")]
     public class ByteString : PrimitiveType
     {
         /// <summary>

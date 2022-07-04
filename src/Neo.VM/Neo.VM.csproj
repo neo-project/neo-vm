@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Copyright>2016-2022 The Neo Project</Copyright>
     <Description>Neo virtual machine</Description>
-    <VersionPrefix>3.3.0</VersionPrefix>
+    <VersionPrefix>3.3.1</VersionPrefix>
     <Authors>The Neo Project</Authors>
     <TargetFramework>net6.0</TargetFramework>
     <PackageTags>NEO;AntShares;Blockchain;Smart Contract;VM</PackageTags>
