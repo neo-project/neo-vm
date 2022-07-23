@@ -9,6 +9,7 @@
 // modifications are permitted.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Neo.VM.Types
 {
@@ -44,9 +45,10 @@ namespace Neo.VM.Types
             return 0;
         }
 
-        public override T? GetInterface<T>() where T : class
+        [return: MaybeNull]
+        public override T GetInterface<T>()
         {
-            return null;
+            return default;
         }
 
         public override string? GetString()

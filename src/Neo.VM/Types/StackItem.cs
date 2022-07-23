@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -155,7 +156,8 @@ namespace Neo.VM.Types
         /// </summary>
         /// <typeparam name="T">The type to convert to.</typeparam>
         /// <returns>The wrapped <see cref="object"/>.</returns>
-        public virtual T? GetInterface<T>() where T : class
+        [return: MaybeNull]
+        public virtual T GetInterface<T>() where T : notnull
         {
             throw new InvalidCastException();
         }
