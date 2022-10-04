@@ -1371,7 +1371,19 @@ namespace Neo.VM
                         Push(x.ConvertTo((StackItemType)instruction.TokenU8));
                         break;
                     }
-
+                case OpCode.ABORTMSG:
+                    {
+                        var msg = Pop().GetString();
+                        throw new Exception($"{OpCode.ABORTMSG} is executed. Reason: {msg}");
+                    }
+                case OpCode.ASSERTMSG:
+                    {
+                        var msg = Pop().GetString();
+                        var x = Pop().GetBoolean();
+                        if (!x)
+                            throw new Exception($"{OpCode.ASSERTMSG} is executed with false result. Reason: {msg}");
+                        break;
+                    }
                 default: throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
             }
         }
