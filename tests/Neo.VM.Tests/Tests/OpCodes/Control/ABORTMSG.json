@@ -16,7 +16,8 @@
             "execute"
           ],
           "result": {
-            "state": "FAULT"
+            "state": "FAULT",
+            "exceptionMessage": "ABORTMSG is executed. Reason: NEO"
           }
         }
       ]

@@ -66,10 +66,17 @@ namespace Neo.Test
         /// <param name="engine">Engine</param>
         /// <param name="result">Result</param>
         /// <param name="message">Message</param>
-        private void AssertResult(VMUTExecutionEngineState result, ExecutionEngine engine, string message)
+        private void AssertResult(VMUTExecutionEngineState result, TestEngine engine, string message)
         {
             AssertAreEqual(result.State.ToString().ToLowerInvariant(), engine.State.ToString().ToLowerInvariant(), message + "State is different");
-            if (engine.State == VMState.FAULT) return;
+            if (engine.State == VMState.FAULT)
+            {
+                if (result.ExceptionMessage != null)
+                {
+                    AssertAreEqual(result.ExceptionMessage, engine.FaultException.Message, message + " [Exception]");
+                }
+                return;
+            }
             AssertResult(result.InvocationStack, engine.InvocationStack, message + " [Invocation stack]");
             AssertResult(result.ResultStack, engine.ResultStack, message + " [Result stack] ");
         }

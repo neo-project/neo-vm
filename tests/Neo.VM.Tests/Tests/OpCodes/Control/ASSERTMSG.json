@@ -17,7 +17,8 @@
             "execute"
           ],
           "result": {
-            "state": "FAULT"
+            "state": "FAULT",
+            "exceptionMessage": "ASSERTMSG is executed with false result. Reason: FAIL"
           }
         }
       ]
