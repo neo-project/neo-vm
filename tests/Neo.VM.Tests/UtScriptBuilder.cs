@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using Neo.VM.Types;
 
 namespace Neo.Test
 {
@@ -175,13 +176,13 @@ namespace Neo.Test
             using (ScriptBuilder script = new())
             {
                 script.EmitPush(true);
-                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH1 }, script.ToArray());
+                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.CONVERT, (byte)StackItemType.Boolean }, script.ToArray());
             }
 
             using (ScriptBuilder script = new())
             {
                 script.EmitPush(false);
-                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH0 }, script.ToArray());
+                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH0, (byte)OpCode.CONVERT, (byte)StackItemType.Boolean }, script.ToArray());
             }
         }
 
