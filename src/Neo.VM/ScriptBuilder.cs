@@ -117,7 +117,7 @@ namespace Neo.VM
         {
             Emit(value ? OpCode.PUSH1 : OpCode.PUSH0);
             Emit(OpCode.CONVERT);
-            return EmitRaw(new ReadOnlySpan<byte>(new [] {(byte)StackItemType.Boolean}));
+            return EmitRaw(new ReadOnlySpan<byte>(new[] { (byte)StackItemType.Boolean }));
         }
 
         /// <summary>
