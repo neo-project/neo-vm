@@ -363,13 +363,12 @@ namespace Neo.VM
                     }
                 case OpCode.ABORT:
                     {
-                        throw new Exception($"{OpCode.ABORT} is executed.");
+                        OnAbort();
+                        break;
                     }
                 case OpCode.ASSERT:
                     {
-                        var x = Pop().GetBoolean();
-                        if (!x)
-                            throw new Exception($"{OpCode.ASSERT} is executed with false result.");
+                        OnAssert(Pop().GetBoolean());
                         break;
                     }
                 case OpCode.THROW:
@@ -1374,6 +1373,17 @@ namespace Neo.VM
 
                 default: throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
             }
+        }
+
+        protected virtual void OnAssert(bool assert)
+        {
+            if (!assert)
+                throw new Exception($"{OpCode.ASSERT} is executed with false result.");
+        }
+
+        protected virtual void OnAbort()
+        {
+            throw new Exception($"{OpCode.ABORT} is executed.");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
