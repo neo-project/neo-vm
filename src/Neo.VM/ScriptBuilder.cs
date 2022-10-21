@@ -115,8 +115,7 @@ namespace Neo.VM
         /// <returns>A reference to this instance after the emit operation has completed.</returns>
         public ScriptBuilder EmitPush(bool value)
         {
-            Emit(value ? OpCode.PUSH1 : OpCode.PUSH0);
-            Emit(OpCode.NOT);
+            Emit(!value ? OpCode.PUSH1 : OpCode.PUSH0);
             return Emit(OpCode.NOT);
         }
 
