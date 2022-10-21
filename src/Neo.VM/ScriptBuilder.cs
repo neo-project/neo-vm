@@ -11,7 +11,6 @@
 using System;
 using System.IO;
 using System.Numerics;
-using Neo.VM.Types;
 
 namespace Neo.VM
 {
