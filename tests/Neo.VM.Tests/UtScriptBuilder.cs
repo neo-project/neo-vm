@@ -176,13 +176,13 @@ namespace Neo.Test
             using (ScriptBuilder script = new())
             {
                 script.EmitPush(true);
-                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.CONVERT, (byte)StackItemType.Boolean }, script.ToArray());
+                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.NOT, (byte)OpCode.NOT }, script.ToArray());
             }
 
             using (ScriptBuilder script = new())
             {
                 script.EmitPush(false);
-                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH0, (byte)OpCode.CONVERT, (byte)StackItemType.Boolean }, script.ToArray());
+                CollectionAssert.AreEqual(new byte[] { (byte)OpCode.PUSH0, (byte)OpCode.NOT, (byte)OpCode.NOT }, script.ToArray());
             }
         }
 
