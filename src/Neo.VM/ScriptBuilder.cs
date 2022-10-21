@@ -116,8 +116,8 @@ namespace Neo.VM
         public ScriptBuilder EmitPush(bool value)
         {
             Emit(value ? OpCode.PUSH1 : OpCode.PUSH0);
-            Emit(OpCode.CONVERT);
-            return EmitRaw(new ReadOnlySpan<byte>(new[] { (byte)StackItemType.Boolean }));
+            Emit(OpCode.NOT);
+            return Emit(OpCode.NOT);
         }
 
         /// <summary>
