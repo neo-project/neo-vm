@@ -162,6 +162,16 @@ namespace Neo.VM
                         Push(new BigInteger(instruction.Operand.Span));
                         break;
                     }
+                case OpCode.PUSHT:
+                    {
+                        Push(StackItem.True);
+                        break;
+                    }
+                case OpCode.PUSHF:
+                    {
+                        Push(StackItem.False);
+                        break;
+                    }
                 case OpCode.PUSHA:
                     {
                         int position = checked(CurrentContext!.InstructionPointer + instruction.TokenI32);

@@ -50,6 +50,14 @@ namespace Neo.VM
         [OperandSize(Size = 32)]
         PUSHINT256 = 0x05,
         /// <summary>
+        /// Pushes the boolean value <see langword="true"/> onto the stack.
+        /// </summary>
+        PUSHT = 0x08,
+        /// <summary>
+        /// Pushes the boolean value <see langword="false"/> onto the stack.
+        /// </summary>
+        PUSHF = 0x09,
+        /// <summary>
         /// Converts the 4-bytes offset to an <see cref="Pointer"/>, and pushes it onto the stack.
         /// </summary>
         [OperandSize(Size = 4)]
