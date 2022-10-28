@@ -5,7 +5,7 @@
     <Description>Neo virtual machine</Description>
     <VersionPrefix>3.4.0</VersionPrefix>
     <Authors>The Neo Project</Authors>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
     <PackageTags>NEO;AntShares;Blockchain;Smart Contract;VM</PackageTags>
     <PackageProjectUrl>https://github.com/neo-project/neo-vm</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
