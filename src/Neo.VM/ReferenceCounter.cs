@@ -23,8 +23,8 @@ namespace Neo.VM
     {
         private const bool TrackAllItems = false;
 
-        private readonly HashSet<StackItem> tracked_items = new(ReferenceEqualityComparer.Instance);
-        private readonly HashSet<StackItem> zero_referred = new(ReferenceEqualityComparer.Instance);
+        private readonly HashSet<StackItem> tracked_items = new HashSet<StackItem>(ReferenceEqualityComparer.Instance);
+        private readonly HashSet<StackItem> zero_referred = new HashSet<StackItem>(ReferenceEqualityComparer.Instance);
         private LinkedList<HashSet<StackItem>>? cached_components;
         private int references_count = 0;
 
@@ -49,10 +49,10 @@ namespace Neo.VM
             if (!NeedTrack(item)) return;
             cached_components = null;
             tracked_items.Add(item);
-            item.ObjectReferences ??= new(ReferenceEqualityComparer.Instance);
+            item.ObjectReferences ??= new Dictionary<CompoundType, StackItem.ObjectReferenceEntry>(ReferenceEqualityComparer.Instance);
             if (!item.ObjectReferences.TryGetValue(parent, out var pEntry))
             {
-                pEntry = new(parent);
+                pEntry = new StackItem.ObjectReferenceEntry(parent);
                 item.ObjectReferences.Add(parent, pEntry);
             }
             pEntry.References++;
@@ -84,7 +84,7 @@ namespace Neo.VM
                 if (cached_components is null)
                 {
                     //Tarjan<StackItem> tarjan = new(tracked_items.Where(p => p.StackReferences == 0));
-                    Tarjan tarjan = new(tracked_items);
+                    Tarjan tarjan = new Tarjan(tracked_items);
                     cached_components = tarjan.Invoke();
                 }
                 foreach (StackItem item in tracked_items)

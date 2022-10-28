@@ -693,7 +693,7 @@ namespace Neo.VM
                         var x1 = Pop().GetSpan();
                         int length = x1.Length + x2.Length;
                         Limits.AssertMaxItemSize(length);
-                        Buffer result = new(length, false);
+                        Buffer result = new Buffer(length, false);
                         x1.CopyTo(result.InnerBuffer.Span);
                         x2.CopyTo(result.InnerBuffer.Span[x1.Length..]);
                         Push(result);
@@ -710,7 +710,7 @@ namespace Neo.VM
                         var x = Pop().GetSpan();
                         if (index + count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new(count, false);
+                        Buffer result = new Buffer(count, false);
                         x.Slice(index, count).CopyTo(result.InnerBuffer.Span);
                         Push(result);
                         break;
@@ -723,7 +723,7 @@ namespace Neo.VM
                         var x = Pop().GetSpan();
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new(count, false);
+                        Buffer result = new Buffer(count, false);
                         x[..count].CopyTo(result.InnerBuffer.Span);
                         Push(result);
                         break;
@@ -736,7 +736,7 @@ namespace Neo.VM
                         var x = Pop().GetSpan();
                         if (count > x.Length)
                             throw new InvalidOperationException($"The value {count} is out of range.");
-                        Buffer result = new(count, false);
+                        Buffer result = new Buffer(count, false);
                         x[^count..^0].CopyTo(result.InnerBuffer.Span);
                         Push(result);
                         break;
@@ -1010,7 +1010,7 @@ namespace Neo.VM
                         int size = (int)Pop().GetInteger();
                         if (size < 0 || size * 2 > CurrentContext!.EvaluationStack.Count)
                             throw new InvalidOperationException($"The value {size} is out of range.");
-                        Map map = new(ReferenceCounter);
+                        Map map = new Map(ReferenceCounter);
                         for (int i = 0; i < size; i++)
                         {
                             PrimitiveType key = Pop<PrimitiveType>();
@@ -1025,7 +1025,7 @@ namespace Neo.VM
                         int size = (int)Pop().GetInteger();
                         if (size < 0 || size > CurrentContext!.EvaluationStack.Count)
                             throw new InvalidOperationException($"The value {size} is out of range.");
-                        Struct @struct = new(ReferenceCounter);
+                        Struct @struct = new Struct(ReferenceCounter);
                         for (int i = 0; i < size; i++)
                         {
                             StackItem item = Pop();
@@ -1039,7 +1039,7 @@ namespace Neo.VM
                         int size = (int)Pop().GetInteger();
                         if (size < 0 || size > CurrentContext!.EvaluationStack.Count)
                             throw new InvalidOperationException($"The value {size} is out of range.");
-                        VMArray array = new(ReferenceCounter);
+                        VMArray array = new VMArray(ReferenceCounter);
                         for (int i = 0; i < size; i++)
                         {
                             StackItem item = Pop();
@@ -1114,7 +1114,7 @@ namespace Neo.VM
                         int n = (int)Pop().GetInteger();
                         if (n < 0 || n > Limits.MaxStackSize)
                             throw new InvalidOperationException($"MaxStackSize exceed: {n}");
-                        Struct result = new(ReferenceCounter);
+                        Struct result = new Struct(ReferenceCounter);
                         for (var i = 0; i < n; i++)
                             result.Add(StackItem.Null);
                         Push(result);
@@ -1199,7 +1199,7 @@ namespace Neo.VM
                             Map map => map.Values,
                             _ => throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}"),
                         };
-                        VMArray newArray = new(ReferenceCounter);
+                        VMArray newArray = new VMArray(ReferenceCounter);
                         foreach (StackItem item in values)
                             if (item is Struct s)
                                 newArray.Add(s.Clone(Limits));

@@ -47,8 +47,8 @@ namespace Neo.VM.Types
         public Struct Clone(ExecutionEngineLimits limits)
         {
             int count = (int)(limits.MaxStackSize - 1);
-            Struct result = new(ReferenceCounter);
-            Queue<Struct> queue = new();
+            Struct result = new Struct(ReferenceCounter);
+            Queue<Struct> queue = new Queue<Struct>();
             queue.Enqueue(result);
             queue.Enqueue(this);
             while (queue.Count > 0)
@@ -61,7 +61,7 @@ namespace Neo.VM.Types
                     if (count < 0) throw new InvalidOperationException("Beyond clone limits!");
                     if (item is Struct sb)
                     {
-                        Struct sa = new(ReferenceCounter);
+                        Struct sa = new Struct(ReferenceCounter);
                         a.Add(sa);
                         queue.Enqueue(sa);
                         queue.Enqueue(sb);

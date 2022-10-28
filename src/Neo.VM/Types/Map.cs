@@ -27,7 +27,7 @@ namespace Neo.VM.Types
         /// </summary>
         public const int MaxKeySize = 64;
 
-        private readonly OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
+        private readonly OrderedDictionary<PrimitiveType, StackItem> dictionary = new OrderedDictionary<PrimitiveType, StackItem>();
 
         /// <summary>
         /// Gets or sets the element that has the specified key in the map.
@@ -116,7 +116,7 @@ namespace Neo.VM.Types
         internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
         {
             if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
-            Map result = new(ReferenceCounter);
+            Map result = new Map(ReferenceCounter);
             refMap.Add(this, result);
             foreach (var (k, v) in dictionary)
                 result[k] = v.DeepCopy(refMap, asImmutable);

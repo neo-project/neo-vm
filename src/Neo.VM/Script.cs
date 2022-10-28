@@ -24,7 +24,7 @@ namespace Neo.VM
     {
         private readonly ReadOnlyMemory<byte> _value;
         private readonly bool strictMode;
-        private readonly Dictionary<int, Instruction> _instructions = new();
+        private readonly Dictionary<int, Instruction> _instructions = new Dictionary<int, Instruction>();
 
         /// <summary>
         /// The length of the script.
@@ -154,7 +154,7 @@ namespace Neo.VM
         }
 
         public static implicit operator ReadOnlyMemory<byte>(Script script) => script._value;
-        public static implicit operator Script(ReadOnlyMemory<byte> script) => new(script);
-        public static implicit operator Script(byte[] script) => new(script);
+        public static implicit operator Script(ReadOnlyMemory<byte> script) => new Script(script);
+        public static implicit operator Script(byte[] script) => new Script(script);
     }
 }

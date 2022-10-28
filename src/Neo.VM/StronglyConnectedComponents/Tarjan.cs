@@ -17,8 +17,8 @@ namespace Neo.VM.StronglyConnectedComponents
     class Tarjan
     {
         private readonly IEnumerable<T> vertexs;
-        private readonly LinkedList<HashSet<T>> components = new();
-        private readonly Stack<T> stack = new();
+        private readonly LinkedList<HashSet<T>> components = new LinkedList<HashSet<T>>();
+        private readonly Stack<T> stack = new Stack<T>();
         private int index = 0;
 
         public Tarjan(IEnumerable<T> vertexs)
@@ -59,7 +59,7 @@ namespace Neo.VM.StronglyConnectedComponents
 
             if (v.LowLink == v.DFN)
             {
-                HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
+                HashSet<T> scc = new HashSet<T>(ReferenceEqualityComparer.Instance);
                 T w;
                 do
                 {
@@ -73,7 +73,7 @@ namespace Neo.VM.StronglyConnectedComponents
 
         private void StrongConnectNonRecursive(T v)
         {
-            Stack<(T, T?, IEnumerator<T>?, int)> sstack = new();
+            Stack<(T, T?, IEnumerator<T>?, int)> sstack = new Stack<(T, T?, IEnumerator<T>?, int)>();
             sstack.Push((v, null, null, 0));
             while (sstack.TryPop(out var state))
             {
@@ -106,7 +106,7 @@ namespace Neo.VM.StronglyConnectedComponents
                         }
                         if (v.LowLink == v.DFN)
                         {
-                            HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
+                            HashSet<T> scc = new HashSet<T>(ReferenceEqualityComparer.Instance);
                             do
                             {
                                 w = stack.Pop();

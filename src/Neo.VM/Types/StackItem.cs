@@ -33,7 +33,7 @@ namespace Neo.VM.Types
         {
             get
             {
-                tls_true ??= new(true);
+                tls_true ??= new Boolean(true);
                 return tls_true;
             }
         }
@@ -48,7 +48,7 @@ namespace Neo.VM.Types
         {
             get
             {
-                tls_false ??= new(false);
+                tls_false ??= new Boolean(false);
                 return tls_false;
             }
         }
@@ -63,7 +63,7 @@ namespace Neo.VM.Types
         {
             get
             {
-                tls_null ??= new();
+                tls_null ??= new Null();
                 return tls_null;
             }
         }
@@ -100,7 +100,7 @@ namespace Neo.VM.Types
         /// <returns>The copied object.</returns>
         public StackItem DeepCopy(bool asImmutable = false)
         {
-            return DeepCopy(new(ReferenceEqualityComparer.Instance), asImmutable);
+            return DeepCopy(new Dictionary<StackItem, StackItem>(ReferenceEqualityComparer.Instance), asImmutable);
         }
 
         internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
