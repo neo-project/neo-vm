@@ -1,10 +1,10 @@
 // Copyright (C) 2016-2022 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
+//
+// The neo-vm is free software distributed under the MIT software license,
 // see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// project or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -89,45 +89,53 @@ namespace Neo.VM.Types
 
         internal override bool Equals(StackItem? other, ExecutionEngineLimits limits)
         {
-            if (other is not Struct s) return false;
-            Stack<StackItem> stack1 = new();
-            Stack<StackItem> stack2 = new();
-            stack1.Push(this);
-            stack2.Push(s);
-            uint count = limits.MaxStackSize;
-            uint maxComparableSize = limits.MaxComparableSize;
-            while (stack1.Count > 0)
+            if (other is Struct s)
             {
-                if (count-- == 0)
-                    throw new InvalidOperationException("Too many struct items to compare.");
-                StackItem a = stack1.Pop();
-                StackItem b = stack2.Pop();
-                if (a is ByteString byteString)
+                Stack<StackItem> stack1 = new Stack<StackItem>();
+                Stack<StackItem> stack2 = new Stack<StackItem>();
+                stack1.Push(this);
+                stack2.Push(s);
+                uint count = limits.MaxStackSize;
+                uint maxComparableSize = limits.MaxComparableSize;
+                while (stack1.Count > 0)
                 {
-                    if (!byteString.Equals(b, ref maxComparableSize)) return false;
-                }
-                else
-                {
-                    if (maxComparableSize == 0)
-                        throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
-                    maxComparableSize -= 1;
-                    if (a is Struct sa)
+                    if (count-- == 0)
+                        throw new InvalidOperationException("Too many struct items to compare.");
+                    StackItem a = stack1.Pop();
+                    StackItem b = stack2.Pop();
+                    if (a is ByteString byteString)
                     {
-                        if (ReferenceEquals(a, b)) continue;
-                        if (b is not Struct sb) return false;
-                        if (sa.Count != sb.Count) return false;
-                        foreach (StackItem item in sa)
-                            stack1.Push(item);
-                        foreach (StackItem item in sb)
-                            stack2.Push(item);
+                        if (!byteString.Equals(b, ref maxComparableSize)) return false;
                     }
                     else
                     {
-                        if (!a.Equals(b)) return false;
+                        if (maxComparableSize == 0)
+                            throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
+                        maxComparableSize -= 1;
+                        if (a is Struct sa)
+                        {
+                            if (ReferenceEquals(a, b)) continue;
+                            if (b is Struct sb)
+                            {
+                                if (sa.Count != sb.Count) return false;
+                                foreach (StackItem item in sa)
+                                    stack1.Push(item);
+                                foreach (StackItem item in sb)
+                                    stack2.Push(item);
+                            }
+                            else
+                                return false;
+                        }
+                        else
+                        {
+                            if (!a.Equals(b)) return false;
+                        }
                     }
                 }
+                return true;
             }
-            return true;
+
+            return false;
         }
     }
 }

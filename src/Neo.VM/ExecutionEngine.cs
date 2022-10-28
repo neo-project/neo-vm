@@ -1,10 +1,10 @@
 // Copyright (C) 2016-2022 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
+//
+// The neo-vm is free software distributed under the MIT software license,
 // see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// project or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -1285,13 +1285,18 @@ namespace Neo.VM
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= buffer.Size)
                                         throw new CatchableException($"The value {index} is out of range.");
-                                    if (value is not PrimitiveType p)
+                                    if (value is PrimitiveType p)
+                                    {
+                                        int b = (int)p.GetInteger();
+                                        if (b < sbyte.MinValue || b > byte.MaxValue)
+                                            throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
+                                        buffer.InnerBuffer.Span[index] = (byte)b;
+                                        break;
+                                    }
+                                    else
+                                    {
                                         throw new InvalidOperationException($"Value must be a primitive type in {instruction.OpCode}");
-                                    int b = (int)p.GetInteger();
-                                    if (b < sbyte.MinValue || b > byte.MaxValue)
-                                        throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
-                                    buffer.InnerBuffer.Span[index] = (byte)b;
-                                    break;
+                                    }
                                 }
                             default:
                                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");

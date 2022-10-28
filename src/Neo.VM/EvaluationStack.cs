@@ -1,10 +1,10 @@
 // Copyright (C) 2016-2022 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
+//
+// The neo-vm is free software distributed under the MIT software license,
 // see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// project or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -152,11 +152,14 @@ namespace Neo.VM
                     throw new ArgumentOutOfRangeException(nameof(index));
             }
             index = innerList.Count - index - 1;
-            if (innerList[index] is not T item)
-                throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
-            innerList.RemoveAt(index);
-            referenceCounter.RemoveStackReference(item);
-            return item;
+            if (innerList[index] is T item)
+            {
+                innerList.RemoveAt(index);
+                referenceCounter.RemoveStackReference(item);
+                return item;
+            }
+
+            throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
         }
     }
 }

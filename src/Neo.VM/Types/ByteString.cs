@@ -1,10 +1,10 @@
 // Copyright (C) 2016-2022 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
+//
+// The neo-vm is free software distributed under the MIT software license,
 // see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// project or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -51,8 +51,8 @@ namespace Neo.VM.Types
         public override bool Equals(StackItem? other)
         {
             if (ReferenceEquals(this, other)) return true;
-            if (other is not ByteString b) return false;
-            return Equals(b);
+            if (other is ByteString b) return Equals(b);
+            return false;
         }
 
         internal override bool Equals(StackItem? other, ExecutionEngineLimits limits)
@@ -68,12 +68,16 @@ namespace Neo.VM.Types
             uint comparedSize = 1;
             try
             {
-                if (other is not ByteString b) return false;
-                comparedSize = Math.Max((uint)Math.Max(Size, b.Size), comparedSize);
-                if (ReferenceEquals(this, b)) return true;
-                if (b.Size > limits)
-                    throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
-                return Equals(b);
+                if (other is ByteString b)
+                {
+                    comparedSize = Math.Max((uint)Math.Max(Size, b.Size), comparedSize);
+                    if (ReferenceEquals(this, b)) return true;
+                    if (b.Size > limits)
+                        throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
+                    return Equals(b);
+                }
+
+                return false;
             }
             finally
             {
@@ -91,7 +95,7 @@ namespace Neo.VM.Types
         {
             if (_hashCode == 0)
             {
-                using Murmur32 murmur = new(s_seed);
+                using Murmur32 murmur = new Murmur32(s_seed);
                 _hashCode = BinaryPrimitives.ReadInt32LittleEndian(murmur.ComputeHash(GetSpan().ToArray()));
             }
             return _hashCode;
