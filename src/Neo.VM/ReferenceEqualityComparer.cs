@@ -21,7 +21,7 @@ namespace Neo.VM
 
         public static ReferenceEqualityComparer Instance { get; } = new ReferenceEqualityComparer();
 
-        public new bool Equals(object? x, object? y)  => ReferenceEquals(x, y);
+        public new bool Equals(object? x, object? y) => ReferenceEquals(x, y);
 
         public int GetHashCode(object? obj) => RuntimeHelpers.GetHashCode(obj!);
     }

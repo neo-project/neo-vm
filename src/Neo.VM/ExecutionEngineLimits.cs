@@ -26,7 +26,9 @@ namespace Neo.VM
         /// <summary>
         /// The maximum number of bits that <see cref="OpCode.SHL"/> and <see cref="OpCode.SHR"/> can shift.
         /// </summary>
-        public int MaxShift { get;
+        public int MaxShift
+        {
+            get;
 #if NET5_0_OR_GREATER
             init;
 #else
@@ -37,7 +39,9 @@ namespace Neo.VM
         /// <summary>
         /// The maximum number of items that can be contained in the VM's evaluation stacks and slots.
         /// </summary>
-        public uint MaxStackSize { get;
+        public uint MaxStackSize
+        {
+            get;
 #if NET5_0_OR_GREATER
             init;
 #else
@@ -48,7 +52,9 @@ namespace Neo.VM
         /// <summary>
         /// The maximum size of an item in the VM.
         /// </summary>
-        public uint MaxItemSize { get;
+        public uint MaxItemSize
+        {
+            get;
 #if NET5_0_OR_GREATER
             init;
 #else
@@ -59,7 +65,9 @@ namespace Neo.VM
         /// <summary>
         /// The largest comparable size. If a <see cref="Types.ByteString"/> or <see cref="Types.Struct"/> exceeds this size, comparison operations on it cannot be performed in the VM.
         /// </summary>
-        public uint MaxComparableSize { get;
+        public uint MaxComparableSize
+        {
+            get;
 #if NET5_0_OR_GREATER
             init;
 #else
@@ -70,7 +78,9 @@ namespace Neo.VM
         /// <summary>
         /// The maximum number of frames in the invocation stack of the VM.
         /// </summary>
-        public uint MaxInvocationStackSize { get;
+        public uint MaxInvocationStackSize
+        {
+            get;
 #if NET5_0_OR_GREATER
             init;
 #else
@@ -81,7 +91,9 @@ namespace Neo.VM
         /// <summary>
         /// The maximum nesting depth of <see langword="try"/>-<see langword="catch"/>-<see langword="finally"/> blocks.
         /// </summary>
-        public uint MaxTryNestingDepth { get;
+        public uint MaxTryNestingDepth
+        {
+            get;
 #if NET5_0_OR_GREATER
             init;
 #else
@@ -92,7 +104,9 @@ namespace Neo.VM
         /// <summary>
         /// Allow to catch the ExecutionEngine Exceptions
         /// </summary>
-        public bool CatchEngineExceptions { get;
+        public bool CatchEngineExceptions
+        {
+            get;
 #if NET5_0_OR_GREATER
             init;
 #else
