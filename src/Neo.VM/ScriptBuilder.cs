@@ -96,15 +96,13 @@ namespace Neo.VM
             Span<byte> buffer = stackalloc byte[32];
             if (!value.TryWriteBytes(buffer, out int bytesWritten, isUnsigned: false, isBigEndian: false))
                 throw new ArgumentOutOfRangeException(nameof(value));
-            return bytesWritten switch
-            {
-                1 => Emit(OpCode.PUSHINT8, PadRight(buffer, bytesWritten, 1, value.Sign < 0)),
-                2 => Emit(OpCode.PUSHINT16, PadRight(buffer, bytesWritten, 2, value.Sign < 0)),
-                <= 4 => Emit(OpCode.PUSHINT32, PadRight(buffer, bytesWritten, 4, value.Sign < 0)),
-                <= 8 => Emit(OpCode.PUSHINT64, PadRight(buffer, bytesWritten, 8, value.Sign < 0)),
-                <= 16 => Emit(OpCode.PUSHINT128, PadRight(buffer, bytesWritten, 16, value.Sign < 0)),
-                _ => Emit(OpCode.PUSHINT256, PadRight(buffer, bytesWritten, 32, value.Sign < 0)),
-            };
+
+            if (bytesWritten == 1) return Emit(OpCode.PUSHINT8, PadRight(buffer, bytesWritten, 1, value.Sign < 0));
+            if (bytesWritten == 2) return Emit(OpCode.PUSHINT16, PadRight(buffer, bytesWritten, 2, value.Sign < 0));
+            if (bytesWritten <= 4) return Emit(OpCode.PUSHINT32, PadRight(buffer, bytesWritten, 4, value.Sign < 0));
+            if (bytesWritten <= 8) return Emit(OpCode.PUSHINT64, PadRight(buffer, bytesWritten, 8, value.Sign < 0));
+            if (bytesWritten <= 16) return Emit(OpCode.PUSHINT128, PadRight(buffer, bytesWritten, 16, value.Sign < 0));
+            return Emit(OpCode.PUSHINT256, PadRight(buffer, bytesWritten, 32, value.Sign < 0));
         }
 
         /// <summary>
