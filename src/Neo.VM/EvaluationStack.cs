@@ -152,14 +152,11 @@ namespace Neo.VM
                     throw new ArgumentOutOfRangeException(nameof(index));
             }
             index = innerList.Count - index - 1;
-            if (innerList[index] is T item)
-            {
-                innerList.RemoveAt(index);
-                referenceCounter.RemoveStackReference(item);
-                return item;
-            }
-
-            throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
+            if (!(innerList[index] is T item))
+                throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
+            innerList.RemoveAt(index);
+            referenceCounter.RemoveStackReference(item);
+            return item;
         }
     }
 }

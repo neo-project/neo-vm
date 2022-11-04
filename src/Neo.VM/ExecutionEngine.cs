@@ -1295,18 +1295,13 @@ namespace Neo.VM
                                     int index = (int)key.GetInteger();
                                     if (index < 0 || index >= buffer.Size)
                                         throw new CatchableException($"The value {index} is out of range.");
-                                    if (value is PrimitiveType p)
-                                    {
-                                        int b = (int)p.GetInteger();
-                                        if (b < sbyte.MinValue || b > byte.MaxValue)
-                                            throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
-                                        buffer.InnerBuffer.Span[index] = (byte)b;
-                                        break;
-                                    }
-                                    else
-                                    {
+                                    if (!(value is PrimitiveType p))
                                         throw new InvalidOperationException($"Value must be a primitive type in {instruction.OpCode}");
-                                    }
+                                    int b = (int)p.GetInteger();
+                                    if (b < sbyte.MinValue || b > byte.MaxValue)
+                                        throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
+                                    buffer.InnerBuffer.Span[index] = (byte)b;
+                                    break;
                                 }
                             default:
                                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
