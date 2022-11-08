@@ -89,7 +89,7 @@ namespace Neo.VM.Types
 
         internal override bool Equals(StackItem? other, ExecutionEngineLimits limits)
         {
-            if (!(other is Struct s)) return  false;
+            if (!(other is Struct s)) return false;
             Stack<StackItem> stack1 = new Stack<StackItem>();
             Stack<StackItem> stack2 = new Stack<StackItem>();
             stack1.Push(this);
