@@ -73,11 +73,11 @@ namespace Neo.VM.StronglyConnectedComponents
 
         private void StrongConnectNonRecursive(T v)
         {
-            Stack<(T, T?, IEnumerator<T>?, int)> sstack = new();
+            Stack<(T node, T?, IEnumerator<T>?, int)> sstack = new();
             sstack.Push((v, null, null, 0));
             while (sstack.TryPop(out var state))
             {
-                v = state.Item1;
+                v = state.node;
                 var (_, w, s, n) = state;
                 switch (n)
                 {
