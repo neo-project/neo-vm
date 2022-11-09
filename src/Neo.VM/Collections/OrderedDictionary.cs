@@ -76,7 +76,7 @@ namespace Neo.VM.Collections
             return collection.Remove(key);
         }
 
-// supress warning of value parameter nullability mismatch
+        // supress warning of value parameter nullability mismatch
 #pragma warning disable CS8767
         public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
 #pragma warning restore CS8767
