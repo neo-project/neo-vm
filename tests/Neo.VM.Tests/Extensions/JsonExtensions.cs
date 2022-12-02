@@ -20,7 +20,7 @@ namespace Neo.Test.Extensions
                 NullValueHandling = NullValueHandling.Ignore,
             };
 
-            _settings.Converters.Add(new StringEnumConverter(true));
+            _settings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
         }
 
         /// <summary>
