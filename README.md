@@ -1,3 +1,5 @@
+# This is a fake PR to test something in the github actions infrastructure. PLEASE DO NOT MERGE!!!
+
 <p align="center">
 <a href="https://neo.org/">
       <img
@@ -22,7 +24,7 @@
   </a>
   <a href="https://github.com/neo-project/neo-vm/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License.">
-  </a>	
+  </a>
 </p>
 
 # NEO Virtual Machine
