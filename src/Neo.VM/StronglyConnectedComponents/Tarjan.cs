@@ -1,10 +1,10 @@
 // Copyright (C) 2016-2022 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
+//
+// The neo-vm is free software distributed under the MIT software license,
 // see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// project or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -73,11 +73,12 @@ namespace Neo.VM.StronglyConnectedComponents
 
         private void StrongConnectNonRecursive(T v)
         {
-            Stack<(T, T?, IEnumerator<T>?, int)> sstack = new();
+            Stack<(T node, T?, IEnumerator<T>?, int)> sstack = new();
             sstack.Push((v, null, null, 0));
             while (sstack.TryPop(out var state))
             {
-                (v, T? w, IEnumerator<T>? s, int n) = state;
+                v = state.node;
+                var (_, w, s, n) = state;
                 switch (n)
                 {
                     case 0:

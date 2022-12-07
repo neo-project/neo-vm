@@ -18,7 +18,9 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+        dotnet-version: |
+          ${{ env.DOTNET_VERSION }}
+          3.1.x
     - name: Check format
       run: |
         dotnet format --verify-no-changes --verbosity diagnostic
@@ -30,6 +32,7 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: "./coverage/lcov.net6.0.info"
 
   PublishGithub:
     # Because sometimes this action is not working as expected we will disable it until determine that it's more stable
