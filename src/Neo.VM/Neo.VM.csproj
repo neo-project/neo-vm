@@ -6,7 +6,7 @@
     <VersionPrefix>3.5.0</VersionPrefix>
     <Authors>The Neo Project</Authors>
     <TargetFrameworks>netstandard2.1;net7.0</TargetFrameworks>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <PackageTags>NEO;AntShares;Blockchain;Smart Contract;VM</PackageTags>
     <PackageProjectUrl>https://github.com/neo-project/neo-vm</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -16,5 +16,12 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PolySharp" Version="1.12.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 
 </Project>
