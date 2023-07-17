@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 The Neo Project.
+// Copyright (C) 2016-2023 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -160,6 +160,16 @@ namespace Neo.VM
                 case OpCode.PUSHINT256:
                     {
                         Push(new BigInteger(instruction.Operand.Span));
+                        break;
+                    }
+                case OpCode.PUSHT:
+                    {
+                        Push(StackItem.True);
+                        break;
+                    }
+                case OpCode.PUSHF:
+                    {
+                        Push(StackItem.False);
                         break;
                     }
                 case OpCode.PUSHA:

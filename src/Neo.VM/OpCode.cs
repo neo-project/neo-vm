@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2022 The Neo Project.
+// Copyright (C) 2016-2023 The Neo Project.
 // 
 // The neo-vm is free software distributed under the MIT software license, 
 // see the accompanying file LICENSE in the main directory of the
@@ -49,6 +49,14 @@ namespace Neo.VM
         /// </summary>
         [OperandSize(Size = 32)]
         PUSHINT256 = 0x05,
+        /// <summary>
+        /// Pushes the boolean value <see langword="true"/> onto the stack.
+        /// </summary>
+        PUSHT = 0x08,
+        /// <summary>
+        /// Pushes the boolean value <see langword="false"/> onto the stack.
+        /// </summary>
+        PUSHF = 0x09,
         /// <summary>
         /// Converts the 4-bytes offset to an <see cref="Pointer"/>, and pushes it onto the stack.
         /// </summary>
