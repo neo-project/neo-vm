@@ -887,6 +887,8 @@ namespace Neo.VM
 
         #endregion
 
+        #region Extensions
+
         /// <summary>
         /// Turns the vm state to FAULT immediately, and cannot be caught. Includes a reason
         /// </summary>
@@ -895,5 +897,7 @@ namespace Neo.VM
         /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT. Includes a reason
         /// </summary>
         ASSERTMSG = 0xE1
+
+        #endregion
     }
 }
