@@ -30,6 +30,5 @@ namespace Neo.Test.Types
             FaultException = ex;
             base.OnFault(ex);
         }
-
     }
 }
