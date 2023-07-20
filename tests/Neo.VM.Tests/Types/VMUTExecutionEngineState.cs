@@ -14,5 +14,8 @@ namespace Neo.Test.Types
 
         [JsonProperty]
         public VMUTExecutionContextState[] InvocationStack { get; set; }
+
+        [JsonProperty]
+        public string ExceptionMessage { get; set; }
     }
 }
