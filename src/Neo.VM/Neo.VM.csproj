@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Copyright>2016-2022 The Neo Project</Copyright>
+    <Copyright>2016-2023 The Neo Project</Copyright>
     <Description>Neo virtual machine</Description>
-    <VersionPrefix>3.5.0</VersionPrefix>
+    <VersionPrefix>3.6.0</VersionPrefix>
     <Authors>The Neo Project</Authors>
     <TargetFrameworks>netstandard2.1;net7.0</TargetFrameworks>
     <LangVersion>11.0</LangVersion>

@@ -886,5 +886,18 @@ namespace Neo.VM
         CONVERT = 0xDB,
 
         #endregion
+
+        #region Extensions
+
+        /// <summary>
+        /// Turns the vm state to FAULT immediately, and cannot be caught. Includes a reason
+        /// </summary>
+        ABORTMSG = 0xE0,
+        /// <summary>
+        /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT. Includes a reason
+        /// </summary>
+        ASSERTMSG = 0xE1
+
+        #endregion
     }
 }
