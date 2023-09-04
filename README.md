@@ -8,9 +8,6 @@
 
 
 <p align="center">
-  <a href="https://travis-ci.com/neo-project/neo-vm">
-    <img src="https://travis-ci.com/neo-project/neo-vm.svg?branch=master" alt="Current TravisCI build status.">
-  </a>
   <a href="https://github.com/neo-project/neo-vm/releases">
     <img src="https://badge.fury.io/gh/neo-project%2Fneo-vm.svg" alt="Current neo-vm version.">
   </a>
