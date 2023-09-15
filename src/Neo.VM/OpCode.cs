@@ -276,7 +276,7 @@ namespace Neo.VM
         /// </summary>
         ABORT = 0x38,
         /// <summary>
-        /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT.
+        /// Pop the top value of the stack. If it's false, exit vm execution and set vm state to FAULT.
         /// </summary>
         ASSERT = 0x39,
         /// <summary>
@@ -890,11 +890,13 @@ namespace Neo.VM
         #region Extensions
 
         /// <summary>
-        /// Turns the vm state to FAULT immediately, and cannot be caught. Includes a reason
+        /// Pops the top stack item. Then, turns the vm state to FAULT immediately, and cannot be caught. The top stack
+        /// value is used as reason.
         /// </summary>
         ABORTMSG = 0xE0,
         /// <summary>
-        /// Pop the top value of the stack, if it false, then exit vm execution and set vm state to FAULT. Includes a reason
+        /// Pops the top two stack items. If the second-to-top stack value is false, exits the vm execution and sets the
+        /// vm state to FAULT. In this case, the top stack value is used as reason for the exit. Otherwise, it is ignored.
         /// </summary>
         ASSERTMSG = 0xE1
 
