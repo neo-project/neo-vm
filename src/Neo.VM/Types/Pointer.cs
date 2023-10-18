@@ -17,7 +17,7 @@ namespace Neo.VM.Types
     /// Represents the instruction pointer in the VM, used as the target of jump instructions.
     /// </summary>
     [DebuggerDisplay("Type={GetType().Name}, Position={Position}")]
-    public class Pointer : StackItem
+    public class Pointer : StackItem, IMemoryItem
     {
         /// <summary>
         /// The <see cref="VM.Script"/> object containing this pointer.
@@ -29,7 +29,7 @@ namespace Neo.VM.Types
         /// </summary>
         public int Position { get; }
 
-        public override int Size => 4;
+        public int Size => 4;
 
         public override StackItemType Type => StackItemType.Pointer;
 

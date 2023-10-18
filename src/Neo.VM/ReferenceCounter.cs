@@ -82,16 +82,16 @@ namespace Neo.VM
 
         public void DecreaseMemory(StackItem item)
         {
-            if (item is CompoundType) return;
+            if (item is not IMemoryItem mem) return;
 
-            MemorySize -= item.Size;
+            MemorySize -= mem.Size;
         }
 
         public void IncreaseMemory(StackItem item)
         {
-            if (item is CompoundType) return;
+            if (item is not IMemoryItem mem) return;
 
-            MemorySize += item.Size;
+            MemorySize += mem.Size;
             if (MemorySize > Limits.MaxMemorySize)
             {
                 throw new System.InvalidOperationException($"MaxMemorySize exceed: {MemorySize}");

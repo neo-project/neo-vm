@@ -20,7 +20,7 @@ namespace Neo.VM.Types
     /// Represents a memory block that can be used for reading and writing in the VM.
     /// </summary>
     [DebuggerDisplay("Type={GetType().Name}, Value={System.Convert.ToHexString(GetSpan())}")]
-    public class Buffer : StackItem
+    public class Buffer : StackItem, IMemoryItem
     {
         /// <summary>
         /// The internal byte array used to store the actual data.
@@ -30,7 +30,7 @@ namespace Neo.VM.Types
         /// <summary>
         /// The size of the buffer.
         /// </summary>
-        public override int Size => InnerBuffer.Length;
+        public int Size => InnerBuffer.Length;
         public override StackItemType Type => StackItemType.Buffer;
 
         private readonly byte[] _buffer;

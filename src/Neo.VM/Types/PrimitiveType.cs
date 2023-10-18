@@ -18,14 +18,14 @@ namespace Neo.VM.Types
     /// <summary>
     /// The base class for primitive types in the VM.
     /// </summary>
-    public abstract class PrimitiveType : StackItem
+    public abstract class PrimitiveType : StackItem, IMemoryItem
     {
         public abstract ReadOnlyMemory<byte> Memory { get; }
 
         /// <summary>
         /// The size of the VM object in bytes.
         /// </summary>
-        public override int Size => Memory.Length;
+        public virtual int Size => Memory.Length;
 
         public override StackItem ConvertTo(StackItemType type)
         {

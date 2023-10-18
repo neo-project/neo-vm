@@ -21,11 +21,6 @@ namespace Neo.VM.Types
     /// </summary>
     public abstract partial class StackItem : IEquatable<StackItem>
     {
-        /// <summary>
-        /// The size of the VM object in bytes.
-        /// </summary>
-        public abstract int Size { get; }
-
         [ThreadStatic]
         private static Boolean? tls_true = null;
 

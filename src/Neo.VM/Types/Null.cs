@@ -16,11 +16,11 @@ namespace Neo.VM.Types
     /// <summary>
     /// Represents <see langword="null"/> in the VM.
     /// </summary>
-    public class Null : StackItem
+    public class Null : StackItem, IMemoryItem
     {
         public override StackItemType Type => StackItemType.Any;
 
-        public override int Size => 1;
+        public int Size => 1;
 
         internal Null() { }
 
