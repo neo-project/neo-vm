@@ -8,6 +8,8 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+#pragma warning disable CS0659
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -19,9 +21,7 @@ namespace Neo.VM.Types
     /// <summary>
     /// The base class for all types in the VM.
     /// </summary>
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public abstract partial class StackItem : IEquatable<StackItem>
-#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
         [ThreadStatic]
         private static Boolean? tls_true = null;
