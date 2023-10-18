@@ -39,6 +39,11 @@ namespace Neo.VM
         public uint MaxItemSize { get; init; } = 1024 * 1024;
 
         /// <summary>
+        /// The maximum size of used memory in the VM.
+        /// </summary>
+        public uint MaxMemorySize { get; init; } = 100 * 1024 * 1024;
+
+        /// <summary>
         /// The largest comparable size. If a <see cref="Types.ByteString"/> or <see cref="Types.Struct"/> exceeds this size, comparison operations on it cannot be performed in the VM.
         /// </summary>
         public uint MaxComparableSize { get; init; } = 65536;

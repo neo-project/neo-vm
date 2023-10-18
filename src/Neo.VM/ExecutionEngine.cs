@@ -1696,7 +1696,20 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Push(StackItem item)
         {
+            if (item is Buffer buff)
+            {
+                MemorySize += buff.Size;
+                if (MemorySize > Limits.MaxMemorySize)
+                {
+                    throw new InvalidOperationException($"MaxMemorySize exceed: {MemorySize}");
+                }
+            }
             CurrentContext!.EvaluationStack.Push(item);
         }
+
+        /// <summary>
+        /// Used memory size
+        /// </summary>
+        public long MemorySize { get; private set; }
     }
 }
