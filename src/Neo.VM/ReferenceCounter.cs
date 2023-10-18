@@ -82,11 +82,15 @@ namespace Neo.VM
 
         public void DecreaseMemory(StackItem item)
         {
+            if (item is CompoundType) return;
+
             MemorySize -= item.Size;
         }
 
         public void IncreaseMemory(StackItem item)
         {
+            if (item is CompoundType) return;
+
             MemorySize += item.Size;
             if (MemorySize > Limits.MaxMemorySize)
             {
