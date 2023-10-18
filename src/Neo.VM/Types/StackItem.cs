@@ -129,11 +129,12 @@ namespace Neo.VM.Types
         /// Wrap the specified <see cref="object"/> and return an <see cref="InteropInterface"/> containing the <see cref="object"/>.
         /// </summary>
         /// <param name="value">The wrapped <see cref="object"/>.</param>
+        /// <param name="size">The size of the <see cref="object"/>.</param>
         /// <returns></returns>
-        public static StackItem FromInterface(object? value)
+        public static StackItem FromInterface(object? value, int size = 0)
         {
             if (value is null) return Null;
-            return new InteropInterface(value);
+            return new InteropInterface(value, size);
         }
 
         /// <summary>
