@@ -8,8 +8,6 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-#pragma warning disable CS0659
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -23,6 +21,11 @@ namespace Neo.VM.Types
     /// </summary>
     public abstract partial class StackItem : IEquatable<StackItem>
     {
+        /// <summary>
+        /// The size of the VM object in bytes.
+        /// </summary>
+        public abstract int Size { get; }
+
         [ThreadStatic]
         private static Boolean? tls_true = null;
 

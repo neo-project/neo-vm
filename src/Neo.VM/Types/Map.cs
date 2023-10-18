@@ -29,6 +29,8 @@ namespace Neo.VM.Types
 
         private readonly OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
 
+        public override int Size => Count * 2 * 4;
+
         /// <summary>
         /// Gets or sets the element that has the specified key in the map.
         /// </summary>

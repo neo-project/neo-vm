@@ -20,6 +20,8 @@ namespace Neo.VM.Types
     {
         public override StackItemType Type => StackItemType.Any;
 
+        public override int Size => 1;
+
         internal Null() { }
 
         public override StackItem ConvertTo(StackItemType type)

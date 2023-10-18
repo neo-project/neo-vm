@@ -21,6 +21,8 @@ namespace Neo.VM.Types
     {
         private readonly object _object;
 
+        public override int Size => 4;
+
         public override StackItemType Type => StackItemType.InteropInterface;
 
         /// <summary>

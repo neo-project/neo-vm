@@ -84,7 +84,7 @@ namespace Neo.VM
         /// <summary>
         /// Initializes a new instance of the <see cref="ExecutionEngine"/> class.
         /// </summary>
-        public ExecutionEngine() : this(new ReferenceCounter(), ExecutionEngineLimits.Default)
+        public ExecutionEngine() : this(new ReferenceCounter(ExecutionEngineLimits.Default), ExecutionEngineLimits.Default)
         {
         }
 

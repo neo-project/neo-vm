@@ -29,6 +29,8 @@ namespace Neo.VM.Types
         /// </summary>
         public int Position { get; }
 
+        public override int Size => 4;
+
         public override StackItemType Type => StackItemType.Pointer;
 
         /// <summary>

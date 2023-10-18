@@ -29,6 +29,25 @@ namespace Neo.VM
         private int references_count = 0;
 
         /// <summary>
+        /// Used memory size
+        /// </summary>
+        public long MemorySize { get; private set; }
+
+        /// <summary>
+        /// Limits
+        /// </summary>
+        public ExecutionEngineLimits Limits { get; private set; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="limits">Limits</param>
+        public ReferenceCounter(ExecutionEngineLimits limits)
+        {
+            Limits = limits;
+        }
+
+        /// <summary>
         /// Indicates the number of this counter.
         /// </summary>
         public int Count => references_count;
@@ -48,7 +67,10 @@ namespace Neo.VM
             references_count++;
             if (!NeedTrack(item)) return;
             cached_components = null;
-            tracked_items.Add(item);
+            if (tracked_items.Add(item))
+            {
+                IncreaseMemory(item);
+            }
             item.ObjectReferences ??= new(ReferenceEqualityComparer.Instance);
             if (!item.ObjectReferences.TryGetValue(parent, out var pEntry))
             {
@@ -58,12 +80,29 @@ namespace Neo.VM
             pEntry.References++;
         }
 
+        public void DecreaseMemory(StackItem item)
+        {
+            MemorySize -= item.Size;
+        }
+
+        public void IncreaseMemory(StackItem item)
+        {
+            MemorySize += item.Size;
+            if (MemorySize > Limits.MaxMemorySize)
+            {
+                throw new System.InvalidOperationException($"MaxMemorySize exceed: {MemorySize}");
+            }
+        }
+
         internal void AddStackReference(StackItem item, int count = 1)
         {
             references_count += count;
             if (!NeedTrack(item)) return;
             if (tracked_items.Add(item))
+            {
                 cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
+                IncreaseMemory(item);
+            }
             item.StackReferences += count;
             zero_referred.Remove(item);
         }
@@ -73,7 +112,10 @@ namespace Neo.VM
             zero_referred.Add(item);
             if (!NeedTrack(item)) return;
             cached_components?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
-            tracked_items.Add(item);
+            if (tracked_items.Add(item))
+            {
+                IncreaseMemory(item);
+            }
         }
 
         internal int CheckZeroReferred()
@@ -111,7 +153,10 @@ namespace Neo.VM
                     {
                         foreach (StackItem item in component)
                         {
-                            tracked_items.Remove(item);
+                            if (tracked_items.Remove(item))
+                            {
+                                DecreaseMemory(item);
+                            }
                             if (item is CompoundType compound)
                             {
                                 references_count -= compound.SubItemsCount;

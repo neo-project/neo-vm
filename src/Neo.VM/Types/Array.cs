@@ -42,6 +42,7 @@ namespace Neo.VM.Types
         /// The number of items in the array.
         /// </summary>
         public override int Count => _array.Count;
+        public override int Size => _array.Count * 4;
         public override IEnumerable<StackItem> SubItems => _array;
         public override int SubItemsCount => _array.Count;
         public override StackItemType Type => StackItemType.Array;
