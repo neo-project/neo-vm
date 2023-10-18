@@ -17,9 +17,12 @@ namespace Neo.VM.Types
     /// Represents an interface used to interoperate with the outside of the the VM.
     /// </summary>
     [DebuggerDisplay("Type={GetType().Name}, Value={_object}")]
-    public class InteropInterface : StackItem
+    public class InteropInterface : StackItem, IMemoryItem
     {
         private readonly object _object;
+        private readonly int _size;
+
+        public int Size => _size;
 
         public override StackItemType Type => StackItemType.InteropInterface;
 
@@ -27,9 +30,11 @@ namespace Neo.VM.Types
         /// Create an interoperability interface that wraps the specified <see cref="object"/>.
         /// </summary>
         /// <param name="value">The wrapped <see cref="object"/>.</param>
-        public InteropInterface(object value)
+        /// <param name="size">Size of the InteropInterface object</param>
+        public InteropInterface(object value, int size = 0)
         {
             _object = value ?? throw new ArgumentNullException(nameof(value));
+            _size = size;
         }
 
         public override bool Equals(StackItem? other)
