@@ -19,7 +19,9 @@ namespace Neo.VM.Types
     /// <summary>
     /// The base class for all types in the VM.
     /// </summary>
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     public abstract partial class StackItem : IEquatable<StackItem>
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
         [ThreadStatic]
         private static Boolean? tls_true = null;
