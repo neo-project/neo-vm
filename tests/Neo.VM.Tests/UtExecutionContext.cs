@@ -8,10 +8,27 @@ namespace Neo.Test
     [TestClass]
     public class UtExecutionContext
     {
+        class TestState
+        {
+            public bool Flag = false;
+        }
+
         [TestMethod]
         public void StateTest()
         {
             var context = new ExecutionContext(Array.Empty<byte>(), -1, new ReferenceCounter());
+
+            // Test factory
+
+            var flag = context.GetState(() => new TestState() { Flag = true });
+            Assert.IsTrue(flag.Flag);
+
+            flag.Flag = false;
+
+            flag = context.GetState(() => new TestState() { Flag = true });
+            Assert.IsFalse(flag.Flag);
+
+            // Test new
 
             var stack = context.GetState<Stack<int>>();
             Assert.AreEqual(0, stack.Count);

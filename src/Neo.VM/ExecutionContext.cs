@@ -146,12 +146,13 @@ namespace Neo.VM
         /// Gets custom data of the specified type. If the data does not exist, create a new one.
         /// </summary>
         /// <typeparam name="T">The type of data to be obtained.</typeparam>
+        /// <param name="factory">A delegate used to create the entry. If factory is null, new() will be used.</param>
         /// <returns>The custom data of the specified type.</returns>
-        public T GetState<T>() where T : class, new()
+        public T GetState<T>(Func<T>? factory = null) where T : class, new()
         {
             if (!shared_states.States.TryGetValue(typeof(T), out object? value))
             {
-                value = new T();
+                value = factory is null ? new T() : factory();
                 shared_states.States[typeof(T)] = value;
             }
             return (T)value;
