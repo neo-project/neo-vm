@@ -23,6 +23,11 @@ namespace Neo.Test
             var flag = context.GetState(() => new TestState() { Flag = true });
             Assert.IsTrue(flag.Flag);
 
+            flag.Flag = false;
+
+            flag = context.GetState(() => new TestState() { Flag = true });
+            Assert.IsFalse(flag.Flag);
+
             // Test new
 
             var stack = context.GetState<Stack<int>>();
