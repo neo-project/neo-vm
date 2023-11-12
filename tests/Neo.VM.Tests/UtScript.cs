@@ -35,6 +35,15 @@ namespace Neo.Test
 
             var script = new Script(rawScript, false);
             Assert.AreEqual(2, script.Length);
+
+            rawScript = new byte[] { (byte)OpCode.PUSHDATA1 };
+            Assert.ThrowsException<BadScriptException>(() => new Script(rawScript, true));
+
+            rawScript = new byte[] { (byte)OpCode.PUSHDATA2 };
+            Assert.ThrowsException<BadScriptException>(() => new Script(rawScript, true));
+
+            rawScript = new byte[] { (byte)OpCode.PUSHDATA4 };
+            Assert.ThrowsException<BadScriptException>(() => new Script(rawScript, true));
         }
 
         [TestMethod]

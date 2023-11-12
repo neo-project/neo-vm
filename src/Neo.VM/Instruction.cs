@@ -205,14 +205,21 @@ namespace Neo.VM
                     operandSize = OperandSizeTable[(int)OpCode];
                     break;
                 case 1:
+                    if (ip >= span.Length)
+                        throw new BadScriptException($"Instruction out of bounds. InstructionPointer: {ip}");
                     operandSize = span[ip];
                     break;
                 case 2:
+                    if (ip + 1 >= span.Length)
+                        throw new BadScriptException($"Instruction out of bounds. InstructionPointer: {ip}");
                     operandSize = BinaryPrimitives.ReadUInt16LittleEndian(span[ip..]);
                     break;
                 case 4:
+                    if (ip + 3 >= span.Length)
+                        throw new BadScriptException($"Instruction out of bounds. InstructionPointer: {ip}");
                     operandSize = BinaryPrimitives.ReadInt32LittleEndian(span[ip..]);
-                    if (operandSize < 0) throw new BadScriptException();
+                    if (operandSize < 0)
+                        throw new BadScriptException($"Instruction out of bounds. InstructionPointer: {ip}, operandSize: {operandSize}");
                     break;
             }
             ip += operandSizePrefix;
