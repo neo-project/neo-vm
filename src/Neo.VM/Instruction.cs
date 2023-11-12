@@ -206,7 +206,7 @@ namespace Neo.VM
                     break;
                 case 1:
                     if (ip >= span.Length)
-                        throw new BadScriptException($"Instrucion out of bounds. InstructionPointer: {ip}");
+                        throw new BadScriptException($"Instruction out of bounds. InstructionPointer: {ip}");
                     operandSize = span[ip];
                     break;
                 case 2:
