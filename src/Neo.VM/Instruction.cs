@@ -211,7 +211,7 @@ namespace Neo.VM
                     break;
                 case 2:
                     if (ip + 1 >= span.Length)
-                        throw new BadScriptException($"Instrucion out of bounds. InstructionPointer: {ip}");
+                        throw new BadScriptException($"Instruction out of bounds. InstructionPointer: {ip}");
                     operandSize = BinaryPrimitives.ReadUInt16LittleEndian(span[ip..]);
                     break;
                 case 4:
