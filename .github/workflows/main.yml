@@ -64,7 +64,7 @@ jobs:
       id: get_version
       run: |
         sudo apt install xmlstarlet
-        find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('version=v',//VersionPrefix/text())" | xargs echo >> $GITHUB_OUTPUT
+        find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('version=v',//Version/text())" | xargs echo >> $GITHUB_OUTPUT
     - name: Check tag
       if: steps.get_version.outputs.version != 'v' && startsWith(steps.get_version.outputs.version, 'v')
       id: check_tag
