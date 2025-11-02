@@ -22,10 +22,6 @@
   </a>	
 </p>
 
-# ARCHIVED
-
-This repository was merged into https://github.com/neo-project/neo, newer (post-3.6.2) VM versions can be obtained from it.
-
 # NEO Virtual Machine
 
 This is the virtual machine of NEO: **NeoVM**.

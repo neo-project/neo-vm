@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Copyright>2016-2023 The Neo Project</Copyright>
+    <Copyright>2015-2025 The Neo Project</Copyright>
     <Description>Neo virtual machine</Description>
-    <VersionPrefix>3.6.2</VersionPrefix>
+    <VersionPrefix>3.8.2</VersionPrefix>
     <Authors>The Neo Project</Authors>
-    <TargetFrameworks>netstandard2.1;net7.0</TargetFrameworks>
-    <LangVersion>9.0</LangVersion>
+    <TargetFrameworks>netstandard2.1;net9.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
     <PackageTags>NEO;AntShares;Blockchain;Smart Contract;VM</PackageTags>
     <PackageProjectUrl>https://github.com/neo-project/neo-vm</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -16,5 +16,9 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Hashing" Version="9.0.10" />
+  </ItemGroup>
 
 </Project>

@@ -1,10 +1,11 @@
-// Copyright (C) 2016-2023 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
-// see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// Copyright (C) 2015-2025 The Neo Project.
+//
+// Debugger.cs file belongs to the neo project and is free
+// software distributed under the MIT software license, see the
+// accompanying file LICENSE in the main directory of the
+// repository or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -62,7 +63,7 @@ namespace Neo.VM
             engine.ExecuteNext();
             if (engine.State == VMState.NONE && engine.InvocationStack.Count > 0 && break_points.Count > 0)
             {
-                if (break_points.TryGetValue(engine.CurrentContext!.Script, out HashSet<uint>? hashset) && hashset.Contains((uint)engine.CurrentContext.InstructionPointer))
+                if (break_points.TryGetValue(engine.CurrentContext!.Script, out var hashset) && hashset.Contains((uint)engine.CurrentContext.InstructionPointer))
                     engine.State = VMState.BREAK;
             }
         }
@@ -78,7 +79,7 @@ namespace Neo.VM
         /// </returns>
         public bool RemoveBreakPoint(Script script, uint position)
         {
-            if (!break_points.TryGetValue(script, out HashSet<uint>? hashset)) return false;
+            if (!break_points.TryGetValue(script, out var hashset)) return false;
             if (!hashset.Remove(position)) return false;
             if (hashset.Count == 0) break_points.Remove(script);
             return true;

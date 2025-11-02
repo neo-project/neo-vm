@@ -1,10 +1,11 @@
-// Copyright (C) 2016-2023 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
-// see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// Copyright (C) 2015-2025 The Neo Project.
+//
+// CompoundType.cs file belongs to the neo project and is free
+// software distributed under the MIT software license, see the
+// accompanying file LICENSE in the main directory of the
+// repository or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -23,15 +24,15 @@ namespace Neo.VM.Types
         /// <summary>
         /// The reference counter used to count the items in the VM object.
         /// </summary>
-        protected readonly ReferenceCounter? ReferenceCounter;
+        protected internal readonly IReferenceCounter? ReferenceCounter;
 
         /// <summary>
         /// Create a new <see cref="CompoundType"/> with the specified reference counter.
         /// </summary>
         /// <param name="referenceCounter">The reference counter to be used.</param>
-        protected CompoundType(ReferenceCounter? referenceCounter)
+        protected CompoundType(IReferenceCounter? referenceCounter)
         {
-            this.ReferenceCounter = referenceCounter;
+            ReferenceCounter = referenceCounter;
             referenceCounter?.AddZeroReferred(this);
         }
 
@@ -59,12 +60,37 @@ namespace Neo.VM.Types
         }
 
         /// <summary>
-        /// The operation is not supported. Always throw <see cref="NotSupportedException"/>.
+        ///
+        /// This method provides a hash code for the <see cref="CompoundType"/> based on its item's span.
+        /// It is used for efficient storage and retrieval in hash-based collections.
+        ///
+        /// Use this method when you need a hash code for a <see cref="CompoundType"/>.
         /// </summary>
-        /// <exception cref="NotSupportedException">This method always throws the exception.</exception>
+        /// <returns>The hash code for the <see cref="CompoundType"/>.</returns>
         public override int GetHashCode()
         {
-            throw new NotSupportedException();
+            var h = new HashCode();
+            h.Add(Count);
+            h.Add(Type);
+            foreach (var item in SubItems)
+            {
+                // This isn't prefect and leaves somethings unsolved.
+                if (item is CompoundType cItem)
+                {
+                    h.Add(cItem.Count);
+                    h.Add(cItem.Type);
+                }
+                else
+                {
+                    h.Add(item.GetHashCode());
+                }
+            }
+            return h.ToHashCode();
+        }
+
+        public override string ToString()
+        {
+            return Count.ToString();
         }
     }
 }

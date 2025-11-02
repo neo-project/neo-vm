@@ -1,10 +1,21 @@
+// Copyright (C) 2015-2025 The Neo Project.
+//
+// UT_Debugger.cs file belongs to the neo project and is free
+// software distributed under the MIT software license, see the
+// accompanying file LICENSE in the main directory of the
+// repository or http://www.opensource.org/licenses/mit-license.php
+// for more details.
+//
+// Redistribution and use in source and binary forms with or without
+// modifications are permitted.
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 
 namespace Neo.Test
 {
     [TestClass]
-    public class UtDebugger
+    public class UT_Debugger
     {
         [TestMethod]
         public void TestBreakPoint()
@@ -86,10 +97,10 @@ namespace Neo.Test
         {
             using ExecutionEngine engine = new();
             using ScriptBuilder script = new();
-            /* ┌     CALL 
+            /* ┌     CALL
                │  ┌> NOT
                │  │  RET
-               └> │  PUSH0  
+               └> │  PUSH0
                 └─┘  RET */
             script.EmitCall(4);
             script.Emit(OpCode.NOT);
@@ -109,7 +120,7 @@ namespace Neo.Test
 
             debugger.Execute();
 
-            Assert.AreEqual(true, engine.ResultStack.Pop().GetBoolean());
+            Assert.IsTrue(engine.ResultStack.Pop().GetBoolean());
             Assert.AreEqual(VMState.HALT, engine.State);
 
             // Test step over again
@@ -124,7 +135,7 @@ namespace Neo.Test
             using ExecutionEngine engine = new();
             using ScriptBuilder script = new();
             /* ┌     CALL
-               │  ┌> NOT 
+               │  ┌> NOT
                │  │  RET
                └> │  PUSH0
                 └─┘  RET */
@@ -160,7 +171,7 @@ namespace Neo.Test
             Assert.AreEqual(VMState.BREAK, debugger.StepInto());
             Assert.AreEqual(VMState.HALT, debugger.StepInto());
 
-            Assert.AreEqual(true, engine.ResultStack.Pop().GetBoolean());
+            Assert.IsTrue(engine.ResultStack.Pop().GetBoolean());
             Assert.AreEqual(VMState.HALT, engine.State);
 
             // Test step into again
@@ -174,7 +185,7 @@ namespace Neo.Test
         {
             using ExecutionEngine engine = new();
             using ScriptBuilder script = new();
-            /* ┌     CALL 
+            /* ┌     CALL
                │  ┌> NOT
                │  │  RET
                └>X│  PUSH0
@@ -200,7 +211,7 @@ namespace Neo.Test
 
             debugger.Execute();
 
-            Assert.AreEqual(true, engine.ResultStack.Pop().GetBoolean());
+            Assert.IsTrue(engine.ResultStack.Pop().GetBoolean());
             Assert.AreEqual(VMState.HALT, engine.State);
         }
     }

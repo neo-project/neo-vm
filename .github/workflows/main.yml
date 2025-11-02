@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  DOTNET_VERSION: 7.0.x
+  DOTNET_VERSION: 9.0.x
 
 jobs:
 
@@ -16,11 +16,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: |
           ${{ env.DOTNET_VERSION }}
-          3.1.x
     - name: Check format
       run: |
         dotnet format --verify-no-changes --verbosity diagnostic
@@ -32,30 +31,7 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: "./coverage/lcov.net7.0.info"
-
-  PublishGithub:
-    # Because sometimes this action is not working as expected we will disable it until determine that it's more stable
-    if: false && github.ref == 'refs/heads/master' && startsWith(github.repository, 'neo-project/')
-    needs: Test
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-    - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1
-    - name: Pack with dotnet
-      run: git rev-list --count HEAD |xargs printf "CI%05d" |xargs dotnet pack -c Debug -o out --include-source --version-suffix
-    - name: Publish to Github Packages
-      run: |
-        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/neo-project/index.json" -UserName neo-project -Password ${GITHUB_TOKEN}
-        nuget push out/*.nupkg -Source "GitHub"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: "./coverage/lcov.info"
 
   PublishMyGet:
     if: github.ref == 'refs/heads/master' && startsWith(github.repository, 'neo-project/')
@@ -67,7 +43,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Pack with dotnet
@@ -88,10 +64,11 @@ jobs:
       id: get_version
       run: |
         sudo apt install xmlstarlet
-        find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('::set-output name=version::v',//VersionPrefix/text())" | xargs echo
+        find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('version=v',//Version/text())" | xargs echo >> $GITHUB_OUTPUT
     - name: Check tag
+      if: steps.get_version.outputs.version != 'v' && startsWith(steps.get_version.outputs.version, 'v')
       id: check_tag
-      run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, steps.get_version.outputs.version) }} | head -n 1 | cut -d$' ' -f2 | xargs printf "::set-output name=statusCode::%s" | xargs echo
+      run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, steps.get_version.outputs.version) }} | head -n 1 | cut -d$' ' -f2 | xargs printf "statusCode=%s" | xargs echo >> $GITHUB_OUTPUT
     - name: Create release
       if: steps.check_tag.outputs.statusCode == '404'
       id: create_release
@@ -104,7 +81,7 @@ jobs:
         prerelease: ${{ contains(steps.get_version.outputs.version, '-') }}
     - name: Setup .NET Core
       if: steps.check_tag.outputs.statusCode == '404'
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Publish to NuGet

@@ -1,10 +1,11 @@
-// Copyright (C) 2016-2023 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
-// see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// Copyright (C) 2015-2025 The Neo Project.
+//
+// Struct.cs file belongs to the neo project and is free
+// software distributed under the MIT software license, see the
+// accompanying file LICENSE in the main directory of the
+// repository or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -30,11 +31,11 @@ namespace Neo.VM.Types
         }
 
         /// <summary>
-        /// Create a structure with the specified fields. And make the structure use the specified <see cref="ReferenceCounter"/>.
+        /// Create a structure with the specified fields. And make the structure use the specified <see cref="IReferenceCounter"/>.
         /// </summary>
-        /// <param name="referenceCounter">The <see cref="ReferenceCounter"/> to be used by this structure.</param>
+        /// <param name="referenceCounter">The <see cref="IReferenceCounter"/> to be used by this structure.</param>
         /// <param name="fields">The fields to be included in the structure.</param>
-        public Struct(ReferenceCounter? referenceCounter, IEnumerable<StackItem>? fields = null)
+        public Struct(IReferenceCounter? referenceCounter, IEnumerable<StackItem>? fields = null)
             : base(referenceCounter, fields)
         {
         }
@@ -58,7 +59,7 @@ namespace Neo.VM.Types
                 foreach (StackItem item in b)
                 {
                     count--;
-                    if (count < 0) throw new InvalidOperationException("Beyond clone limits!");
+                    if (count < 0) throw new InvalidOperationException("Beyond struct subitem clone limits!");
                     if (item is Struct sb)
                     {
                         Struct sa = new(ReferenceCounter);
@@ -99,7 +100,7 @@ namespace Neo.VM.Types
             while (stack1.Count > 0)
             {
                 if (count-- == 0)
-                    throw new InvalidOperationException("Too many struct items to compare.");
+                    throw new InvalidOperationException("Too many struct items to compare in struct comparison.");
                 StackItem a = stack1.Pop();
                 StackItem b = stack2.Pop();
                 if (a is ByteString byteString)
@@ -109,7 +110,7 @@ namespace Neo.VM.Types
                 else
                 {
                     if (maxComparableSize == 0)
-                        throw new InvalidOperationException("The operand exceeds the maximum comparable size.");
+                        throw new InvalidOperationException("The operand exceeds the maximum comparable size in struct comparison.");
                     maxComparableSize -= 1;
                     if (a is Struct sa)
                     {

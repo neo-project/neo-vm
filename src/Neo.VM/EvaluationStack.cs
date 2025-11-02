@@ -1,10 +1,11 @@
-// Copyright (C) 2016-2023 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
-// see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// Copyright (C) 2015-2025 The Neo Project.
+//
+// EvaluationStack.cs file belongs to the neo project and is free
+// software distributed under the MIT software license, see the
+// accompanying file LICENSE in the main directory of the
+// repository or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -22,10 +23,12 @@ namespace Neo.VM
     /// </summary>
     public sealed class EvaluationStack : IReadOnlyList<StackItem>
     {
-        private readonly List<StackItem> innerList = new();
-        private readonly ReferenceCounter referenceCounter;
+        private readonly List<StackItem> innerList = [];
+        private readonly IReferenceCounter referenceCounter;
 
-        internal EvaluationStack(ReferenceCounter referenceCounter)
+        internal IReferenceCounter ReferenceCounter => referenceCounter;
+
+        internal EvaluationStack(IReferenceCounter referenceCounter)
         {
             this.referenceCounter = referenceCounter;
         }
@@ -66,7 +69,7 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void Insert(int index, StackItem item)
         {
-            if (index > innerList.Count) throw new InvalidOperationException($"Insert out of bounds: {index}/{innerList.Count}");
+            if (index > innerList.Count) throw new InvalidOperationException($"Insert index is out of stack bounds: {index}/{innerList.Count}");
             innerList.Insert(innerList.Count - index, item);
             referenceCounter.AddStackReference(item);
         }
@@ -89,11 +92,11 @@ namespace Neo.VM
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public StackItem Peek(int index = 0)
         {
-            if (index >= innerList.Count) throw new InvalidOperationException($"Peek out of bounds: {index}/{innerList.Count}");
+            if (index >= innerList.Count) throw new InvalidOperationException($"Peek index is out of stack bounds: {index}/{innerList.Count}");
             if (index < 0)
             {
                 index += innerList.Count;
-                if (index < 0) throw new InvalidOperationException($"Peek out of bounds: {index}/{innerList.Count}");
+                if (index < 0) throw new InvalidOperationException($"Peek index is out of stack bounds: {index}/{innerList.Count}");
             }
             return innerList[innerList.Count - index - 1];
         }
@@ -157,6 +160,11 @@ namespace Neo.VM
             innerList.RemoveAt(index);
             referenceCounter.RemoveStackReference(item);
             return item;
+        }
+
+        public override string ToString()
+        {
+            return $"[{string.Join(", ", innerList.Select(p => $"{p.Type}({p})"))}]";
         }
     }
 }
