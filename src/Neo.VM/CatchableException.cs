@@ -11,12 +11,11 @@
 
 using System;
 
-namespace Neo.VM
+namespace Neo.VM;
+
+public class CatchableException : Exception
 {
-    public class CatchableException : Exception
+    public CatchableException(string message) : base(message)
     {
-        public CatchableException(string message) : base(message)
-        {
-        }
     }
 }

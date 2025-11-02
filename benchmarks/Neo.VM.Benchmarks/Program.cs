@@ -11,7 +11,7 @@
 
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using Neo.VM.Benchmark;
+using Neo.VM.Benchmarks;
 using System.Reflection;
 
 // Define the benchmark or execute class
@@ -27,7 +27,7 @@ else
         .FirstOrDefault(m => m.GetCustomAttribute<GlobalSetupAttribute>() != null)?
         .Invoke(instance, null); // setup
 
-    var methods = benchmarkType.GetMethods(BindingFlags.Public | BindingFlags.Instance)
+    var methods = benchmarkType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
         .Where(m => m.DeclaringType == benchmarkType && !m.GetCustomAttributes<GlobalSetupAttribute>().Any());
     foreach (var method in methods)
     {

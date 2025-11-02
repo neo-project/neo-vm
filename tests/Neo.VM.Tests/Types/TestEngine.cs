@@ -13,44 +13,43 @@ using Neo.VM;
 using Neo.VM.Types;
 using System;
 
-namespace Neo.Test.Types
+namespace Neo.Test.Types;
+
+public class TestEngine : ExecutionEngine
 {
-    public class TestEngine : ExecutionEngine
+    public Exception FaultException { get; private set; }
+
+    public TestEngine() : base(ComposeJumpTable()) { }
+
+    private static JumpTable ComposeJumpTable()
     {
-        public Exception FaultException { get; private set; }
+        var jumpTable = new JumpTable();
+        jumpTable[OpCode.SYSCALL] = OnSysCall;
+        return jumpTable;
+    }
 
-        public TestEngine() : base(ComposeJumpTable()) { }
+    private static void OnSysCall(ExecutionEngine engine, Instruction instruction)
+    {
+        uint method = instruction.TokenU32;
 
-        private static JumpTable ComposeJumpTable()
+        if (method == 0x77777777)
         {
-            JumpTable jumpTable = new JumpTable();
-            jumpTable[OpCode.SYSCALL] = OnSysCall;
-            return jumpTable;
+            engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new object()));
+            return;
         }
 
-        private static void OnSysCall(ExecutionEngine engine, Instruction instruction)
+        if (method == 0xaddeadde)
         {
-            uint method = instruction.TokenU32;
-
-            if (method == 0x77777777)
-            {
-                engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new object()));
-                return;
-            }
-
-            if (method == 0xaddeadde)
-            {
-                engine.JumpTable.ExecuteThrow(engine, "error");
-                return;
-            }
-
-            throw new Exception();
+            engine.JumpTable.ExecuteThrow(engine, "error");
+            return;
         }
 
-        protected override void OnFault(Exception ex)
-        {
-            FaultException = ex;
-            base.OnFault(ex);
-        }
+        throw new Exception();
+    }
+
+    protected override void OnFault(Exception ex)
+    {
+        FaultException = ex;
+        base.OnFault(ex);
     }
 }

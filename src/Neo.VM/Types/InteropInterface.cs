@@ -12,58 +12,57 @@
 using System;
 using System.Diagnostics;
 
-namespace Neo.VM.Types
+namespace Neo.VM.Types;
+
+/// <summary>
+/// Represents an interface used to interoperate with the outside of the the VM.
+/// </summary>
+[DebuggerDisplay("Type={GetType().Name}, Value={_object}")]
+public class InteropInterface : StackItem
 {
+    private readonly object _object;
+
+    public override StackItemType Type => StackItemType.InteropInterface;
+
     /// <summary>
-    /// Represents an interface used to interoperate with the outside of the the VM.
+    /// Create an interoperability interface that wraps the specified <see cref="object"/>.
     /// </summary>
-    [DebuggerDisplay("Type={GetType().Name}, Value={_object}")]
-    public class InteropInterface : StackItem
+    /// <param name="value">The wrapped <see cref="object"/>.</param>
+    public InteropInterface(object value)
     {
-        private readonly object _object;
+        _object = value ?? throw new ArgumentNullException(nameof(value));
+    }
 
-        public override StackItemType Type => StackItemType.InteropInterface;
+    public override bool Equals(StackItem? other)
+    {
+        if (ReferenceEquals(this, other)) return true;
+        if (other is InteropInterface i) return _object.Equals(i._object);
+        return false;
+    }
 
-        /// <summary>
-        /// Create an interoperability interface that wraps the specified <see cref="object"/>.
-        /// </summary>
-        /// <param name="value">The wrapped <see cref="object"/>.</param>
-        public InteropInterface(object value)
-        {
-            _object = value ?? throw new ArgumentNullException(nameof(value));
-        }
+    public override bool GetBoolean()
+    {
+        return true;
+    }
 
-        public override bool Equals(StackItem? other)
-        {
-            if (ReferenceEquals(this, other)) return true;
-            if (other is InteropInterface i) return _object.Equals(i._object);
-            return false;
-        }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_object);
+    }
 
-        public override bool GetBoolean()
-        {
-            return true;
-        }
+    public override T GetInterface<T>()
+    {
+        if (_object is T t) return t;
+        throw new InvalidCastException($"This {nameof(InteropInterface)} can't be casted to type {typeof(T)}.");
+    }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(_object);
-        }
+    internal object GetInterface()
+    {
+        return _object;
+    }
 
-        public override T GetInterface<T>()
-        {
-            if (_object is T t) return t;
-            throw new InvalidCastException($"This {nameof(InteropInterface)} can't be casted to type {typeof(T)}.");
-        }
-
-        internal object GetInterface()
-        {
-            return _object;
-        }
-
-        public override string ToString()
-        {
-            return _object.ToString() ?? "NULL";
-        }
+    public override string ToString()
+    {
+        return _object.ToString() ?? "NULL";
     }
 }

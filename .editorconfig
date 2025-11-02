@@ -56,7 +56,7 @@ indent_size = 2
 # Dotnet code style settings:
 [*.{cs,vb}]
 # Use file-scoped namespace
-csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_style_namespace_declarations = file_scoped:warning
 
 # Member can be made 'readonly'
 csharp_style_prefer_readonly_struct_member = true
@@ -170,6 +170,9 @@ csharp_style_expression_bodied_properties = true:none
 csharp_style_expression_bodied_indexers = true:none
 csharp_style_expression_bodied_accessors = true:none
 
+# IDE0230: Use UTF-8 string literal
+csharp_style_prefer_utf8_string_literals = true:silent
+
 # Suggest more modern language features when available
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
@@ -212,9 +215,6 @@ dotnet_diagnostic.IDE0060.severity = none
 
 [src/{Analyzers,CodeStyle,Features,Workspaces,EditorFeatures,VisualStudio}/**/*.{cs,vb}]
 
-# Use collection expression for array
-dotnet_diagnostic.IDE0300.severity = warning
-
 # Avoid "this." and "Me." if not necessary
 dotnet_diagnostic.IDE0003.severity = warning
 dotnet_diagnostic.IDE0009.severity = warning
@@ -232,6 +232,9 @@ dotnet_diagnostic.IDE0052.severity = warning
 
 # IDE0059: Unnecessary assignment to a value
 dotnet_diagnostic.IDE0059.severity = warning
+
+# Use collection expression for array
+dotnet_diagnostic.IDE0300.severity = warning
 
 # CA1012: Abstract types should not have public constructors
 dotnet_diagnostic.CA1012.severity = warning

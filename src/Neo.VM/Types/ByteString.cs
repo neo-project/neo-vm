@@ -14,118 +14,117 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace Neo.VM.Types
+namespace Neo.VM.Types;
+
+/// <summary>
+/// Represents an immutable memory block in the VM.
+/// </summary>
+[DebuggerDisplay("Type={GetType().Name}, Value={System.Convert.ToHexString(GetSpan())}")]
+public class ByteString : PrimitiveType
 {
     /// <summary>
-    /// Represents an immutable memory block in the VM.
+    /// An empty <see cref="ByteString"/>.
     /// </summary>
-    [DebuggerDisplay("Type={GetType().Name}, Value={System.Convert.ToHexString(GetSpan())}")]
-    public class ByteString : PrimitiveType
+    public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
+
+    public override ReadOnlyMemory<byte> Memory { get; }
+    public override StackItemType Type => StackItemType.ByteString;
+
+    /// <summary>
+    /// Create a new <see cref="ByteString"/> with the specified data.
+    /// </summary>
+    /// <param name="data">The data to be contained in this <see cref="ByteString"/>.</param>
+    public ByteString(ReadOnlyMemory<byte> data)
     {
-        /// <summary>
-        /// An empty <see cref="ByteString"/>.
-        /// </summary>
-        public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
+        Memory = data;
+    }
 
-        public override ReadOnlyMemory<byte> Memory { get; }
-        public override StackItemType Type => StackItemType.ByteString;
+    private bool Equals(ByteString other)
+    {
+        return GetSpan().SequenceEqual(other.GetSpan());
+    }
 
-        /// <summary>
-        /// Create a new <see cref="ByteString"/> with the specified data.
-        /// </summary>
-        /// <param name="data">The data to be contained in this <see cref="ByteString"/>.</param>
-        public ByteString(ReadOnlyMemory<byte> data)
+    public override bool Equals(StackItem? other)
+    {
+        if (ReferenceEquals(this, other)) return true;
+        if (other is not ByteString b) return false;
+        return Equals(b);
+    }
+
+    internal override bool Equals(StackItem? other, ExecutionEngineLimits limits)
+    {
+        uint maxComparableSize = limits.MaxComparableSize;
+        return Equals(other, ref maxComparableSize);
+    }
+
+    internal bool Equals(StackItem? other, ref uint limits)
+    {
+        if (Size > limits || limits == 0)
+            throw new InvalidOperationException($"The operand exceeds the maximum comparable size, {Size}/{limits}.");
+        uint comparedSize = 1;
+        try
         {
-            Memory = data;
-        }
-
-        private bool Equals(ByteString other)
-        {
-            return GetSpan().SequenceEqual(other.GetSpan());
-        }
-
-        public override bool Equals(StackItem? other)
-        {
-            if (ReferenceEquals(this, other)) return true;
             if (other is not ByteString b) return false;
+            comparedSize = Math.Max((uint)Math.Max(Size, b.Size), comparedSize);
+            if (ReferenceEquals(this, b)) return true;
+            if (b.Size > limits)
+                throw new InvalidOperationException($"The operand exceeds the maximum comparable size, {b.Size}/{limits}.");
             return Equals(b);
         }
-
-        internal override bool Equals(StackItem? other, ExecutionEngineLimits limits)
+        finally
         {
-            uint maxComparableSize = limits.MaxComparableSize;
-            return Equals(other, ref maxComparableSize);
+            limits -= comparedSize;
         }
+    }
 
-        internal bool Equals(StackItem? other, ref uint limits)
-        {
-            if (Size > limits || limits == 0)
-                throw new InvalidOperationException($"The operand exceeds the maximum comparable size, {Size}/{limits}.");
-            uint comparedSize = 1;
-            try
-            {
-                if (other is not ByteString b) return false;
-                comparedSize = Math.Max((uint)Math.Max(Size, b.Size), comparedSize);
-                if (ReferenceEquals(this, b)) return true;
-                if (b.Size > limits)
-                    throw new InvalidOperationException($"The operand exceeds the maximum comparable size, {b.Size}/{limits}.");
-                return Equals(b);
-            }
-            finally
-            {
-                limits -= comparedSize;
-            }
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override bool GetBoolean()
+    {
+        if (Size > Integer.MaxSize) throw new InvalidCastException();
+        return Unsafe.NotZero(GetSpan());
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override bool GetBoolean()
-        {
-            if (Size > Integer.MaxSize) throw new InvalidCastException();
-            return Unsafe.NotZero(GetSpan());
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override BigInteger GetInteger()
+    {
+        if (Size > Integer.MaxSize) throw new InvalidCastException($"Can not convert {nameof(ByteString)} to an integer, MaxSize of {nameof(Integer)} is exceeded: {Size}/{Integer.MaxSize}.");
+        return new BigInteger(GetSpan());
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override BigInteger GetInteger()
-        {
-            if (Size > Integer.MaxSize) throw new InvalidCastException($"Can not convert {nameof(ByteString)} to an integer, MaxSize of {nameof(Integer)} is exceeded: {Size}/{Integer.MaxSize}.");
-            return new BigInteger(GetSpan());
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator ReadOnlyMemory<byte>(ByteString value)
+    {
+        return value.Memory;
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator ReadOnlyMemory<byte>(ByteString value)
-        {
-            return value.Memory;
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator ReadOnlySpan<byte>(ByteString value)
+    {
+        return value.Memory.Span;
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator ReadOnlySpan<byte>(ByteString value)
-        {
-            return value.Memory.Span;
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator ByteString(byte[] value)
+    {
+        return new ByteString(value);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator ByteString(byte[] value)
-        {
-            return new ByteString(value);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator ByteString(ReadOnlyMemory<byte> value)
+    {
+        return new ByteString(value);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator ByteString(ReadOnlyMemory<byte> value)
-        {
-            return new ByteString(value);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator ByteString(string value)
+    {
+        return new ByteString(value.ToStrictUtf8Bytes());
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator ByteString(string value)
-        {
-            return new ByteString(value.ToStrictUtf8Bytes());
-        }
-
-        public override string ToString()
-        {
-            return GetSpan().TryToStrictUtf8String(out var str)
-                ? $"\"{str}\""
-                : $"\"Base64: {Convert.ToBase64String(GetSpan())}\"";
-        }
+    public override string ToString()
+    {
+        return GetSpan().TryToStrictUtf8String(out var str)
+            ? $"\"{str}\""
+            : $"\"Base64: {Convert.ToBase64String(GetSpan())}\"";
     }
 }

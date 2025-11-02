@@ -9,41 +9,42 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-namespace Neo.VM.Benchmark.OpCode
-{
-    public class OpCode_ReverseN : OpCodeBase
-    {
-        protected override byte[] CreateScript(BenchmarkMode benchmarkMode)
-        {
-            var builder = new InstructionBuilder();
-            var initBegin = new JumpTarget();
-            builder.AddInstruction(new Instruction { _opCode = VM.OpCode.INITSLOT, _operand = [1, 0] });
-            builder.Push(ItemCount);
-            builder.AddInstruction(VM.OpCode.STLOC0);
-            initBegin._instruction = builder.AddInstruction(VM.OpCode.NOP);
-            builder.Push(0);
-            builder.AddInstruction(VM.OpCode.LDLOC0);
-            builder.AddInstruction(VM.OpCode.DEC);
-            builder.AddInstruction(VM.OpCode.STLOC0);
-            builder.AddInstruction(VM.OpCode.LDLOC0);
-            builder.Jump(VM.OpCode.JMPIF, initBegin);
-            if (benchmarkMode == BenchmarkMode.BaseLine)
-            {
-                return builder.ToArray();
-            }
-            builder.Push(ItemCount);
-            builder.AddInstruction(VM.OpCode.REVERSEN);
-            if (benchmarkMode == BenchmarkMode.OneGAS)
-            {
-                // just keep running until GAS is exhausted
-                var loopStart = new JumpTarget { _instruction = builder.AddInstruction(VM.OpCode.NOP) };
-                builder.Push(ItemCount);
-                builder.AddInstruction(VM.OpCode.REVERSEN);
-                builder.Jump(VM.OpCode.JMP, loopStart);
-            }
+using Neo.VM.Benchmarks.Builders;
 
+namespace Neo.VM.Benchmarks.OpCodes.Arrays;
+
+public class OpCode_ReverseN : OpCodeBase
+{
+    protected override byte[] CreateScript(BenchmarkMode benchmarkMode)
+    {
+        var builder = new InstructionBuilder();
+        var initBegin = new JumpTarget();
+        builder.AddInstruction(new Builders.Instruction { _opCode = OpCode.INITSLOT, _operand = [1, 0] });
+        builder.Push(ItemCount);
+        builder.AddInstruction(OpCode.STLOC0);
+        initBegin._instruction = builder.AddInstruction(OpCode.NOP);
+        builder.Push(0);
+        builder.AddInstruction(OpCode.LDLOC0);
+        builder.AddInstruction(OpCode.DEC);
+        builder.AddInstruction(OpCode.STLOC0);
+        builder.AddInstruction(OpCode.LDLOC0);
+        builder.Jump(OpCode.JMPIF, initBegin);
+        if (benchmarkMode == BenchmarkMode.BaseLine)
+        {
             return builder.ToArray();
         }
+        builder.Push(ItemCount);
+        builder.AddInstruction(OpCode.REVERSEN);
+        if (benchmarkMode == BenchmarkMode.OneGAS)
+        {
+            // just keep running until GAS is exhausted
+            var loopStart = new JumpTarget { _instruction = builder.AddInstruction(OpCode.NOP) };
+            builder.Push(ItemCount);
+            builder.AddInstruction(OpCode.REVERSEN);
+            builder.Jump(OpCode.JMP, loopStart);
+        }
+
+        return builder.ToArray();
     }
 }
 

@@ -13,56 +13,59 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace Neo.VM.Types
+namespace Neo.VM.Types;
+
+/// <summary>
+/// Represents <see langword="null"/> in the VM.
+/// </summary>
+public class Null : StackItem
 {
-    /// <summary>
-    /// Represents <see langword="null"/> in the VM.
-    /// </summary>
-    public class Null : StackItem
+    public override StackItemType Type => StackItemType.Any;
+
+    internal Null() { }
+
+    public override StackItem ConvertTo(StackItemType type)
     {
-        public override StackItemType Type => StackItemType.Any;
+#if NET5_0_OR_GREATER
+        if (type == StackItemType.Any || !Enum.IsDefined(type))
+#else
+        if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
+#endif
+            throw new InvalidCastException($"Type {nameof(Null)} can't be converted to StackItemType: {type}");
+        return this;
+    }
 
-        internal Null() { }
+    public override bool Equals(StackItem? other)
+    {
+        if (ReferenceEquals(this, other)) return true;
+        return other is Null;
+    }
 
-        public override StackItem ConvertTo(StackItemType type)
-        {
-            if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
-                throw new InvalidCastException($"Type {nameof(Null)} can't be converted to StackItemType: {type}");
-            return this;
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override bool GetBoolean()
+    {
+        return false;
+    }
 
-        public override bool Equals(StackItem? other)
-        {
-            if (ReferenceEquals(this, other)) return true;
-            return other is Null;
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override int GetHashCode()
+    {
+        return 0;
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override bool GetBoolean()
-        {
-            return false;
-        }
+    [return: MaybeNull]
+    public override T GetInterface<T>()
+    {
+        return default;
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode()
-        {
-            return 0;
-        }
+    public override string? GetString()
+    {
+        return null;
+    }
 
-        [return: MaybeNull]
-        public override T GetInterface<T>()
-        {
-            return default;
-        }
-
-        public override string? GetString()
-        {
-            return null;
-        }
-
-        public override string ToString()
-        {
-            return "NULL";
-        }
+    public override string ToString()
+    {
+        return "NULL";
     }
 }

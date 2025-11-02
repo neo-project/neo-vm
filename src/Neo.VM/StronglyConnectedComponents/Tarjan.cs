@@ -13,112 +13,111 @@ using System;
 using System.Collections.Generic;
 using T = Neo.VM.Types.StackItem;
 
-namespace Neo.VM.StronglyConnectedComponents
+namespace Neo.VM.StronglyConnectedComponents;
+
+class Tarjan
 {
-    class Tarjan
+    private readonly IEnumerable<T> vertexs;
+    private readonly LinkedList<HashSet<T>> components = new();
+    private readonly Stack<T> stack = new();
+    private int index = 0;
+
+    public Tarjan(IEnumerable<T> vertexs)
     {
-        private readonly IEnumerable<T> vertexs;
-        private readonly LinkedList<HashSet<T>> components = new();
-        private readonly Stack<T> stack = new();
-        private int index = 0;
+        this.vertexs = vertexs;
+    }
 
-        public Tarjan(IEnumerable<T> vertexs)
+    public LinkedList<HashSet<T>> Invoke()
+    {
+        foreach (var v in vertexs)
         {
-            this.vertexs = vertexs;
-        }
-
-        public LinkedList<HashSet<T>> Invoke()
-        {
-            foreach (var v in vertexs)
+            if (v.DFN < 0)
             {
-                if (v.DFN < 0)
-                {
-                    StrongConnectNonRecursive(v);
-                }
+                StrongConnectNonRecursive(v);
             }
-            return components;
         }
+        return components;
+    }
 
-        private void StrongConnect(T v)
+    private void StrongConnect(T v)
+    {
+        v.DFN = v.LowLink = ++index;
+        stack.Push(v);
+        v.OnStack = true;
+
+        foreach (T w in v.Successors)
         {
-            v.DFN = v.LowLink = ++index;
-            stack.Push(v);
-            v.OnStack = true;
-
-            foreach (T w in v.Successors)
+            if (w.DFN < 0)
             {
-                if (w.DFN < 0)
-                {
-                    StrongConnect(w);
-                    v.LowLink = Math.Min(v.LowLink, w.LowLink);
-                }
-                else if (w.OnStack)
-                {
-                    v.LowLink = Math.Min(v.LowLink, w.DFN);
-                }
+                StrongConnect(w);
+                v.LowLink = Math.Min(v.LowLink, w.LowLink);
             }
-
-            if (v.LowLink == v.DFN)
+            else if (w.OnStack)
             {
-                HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
-                T w;
-                do
-                {
-                    w = stack.Pop();
-                    w.OnStack = false;
-                    scc.Add(w);
-                } while (v != w);
-                components.AddLast(scc);
+                v.LowLink = Math.Min(v.LowLink, w.DFN);
             }
         }
 
-        private void StrongConnectNonRecursive(T v)
+        if (v.LowLink == v.DFN)
         {
-            Stack<(T node, T?, IEnumerator<T>?, int)> sstack = new();
-            sstack.Push((v, null, null, 0));
-            while (sstack.TryPop(out var state))
+            HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
+            T w;
+            do
             {
-                v = state.node;
-                var (_, w, s, n) = state;
-                switch (n)
-                {
-                    case 0:
-                        v.DFN = v.LowLink = ++index;
-                        stack.Push(v);
-                        v.OnStack = true;
-                        s = v.Successors.GetEnumerator();
-                        goto case 2;
-                    case 1:
-                        v.LowLink = Math.Min(v.LowLink, w!.LowLink);
-                        goto case 2;
-                    case 2:
-                        while (s!.MoveNext())
+                w = stack.Pop();
+                w.OnStack = false;
+                scc.Add(w);
+            } while (v != w);
+            components.AddLast(scc);
+        }
+    }
+
+    private void StrongConnectNonRecursive(T v)
+    {
+        Stack<(T node, T?, IEnumerator<T>?, int)> sstack = new();
+        sstack.Push((v, null, null, 0));
+        while (sstack.TryPop(out var state))
+        {
+            v = state.node;
+            var (_, w, s, n) = state;
+            switch (n)
+            {
+                case 0:
+                    v.DFN = v.LowLink = ++index;
+                    stack.Push(v);
+                    v.OnStack = true;
+                    s = v.Successors.GetEnumerator();
+                    goto case 2;
+                case 1:
+                    v.LowLink = Math.Min(v.LowLink, w!.LowLink);
+                    goto case 2;
+                case 2:
+                    while (s!.MoveNext())
+                    {
+                        w = s.Current;
+                        if (w.DFN < 0)
                         {
-                            w = s.Current;
-                            if (w.DFN < 0)
-                            {
-                                sstack.Push((v, w, s, 1));
-                                v = w;
-                                goto case 0;
-                            }
-                            else if (w.OnStack)
-                            {
-                                v.LowLink = Math.Min(v.LowLink, w.DFN);
-                            }
+                            sstack.Push((v, w, s, 1));
+                            v = w;
+                            goto case 0;
                         }
-                        if (v.LowLink == v.DFN)
+                        else if (w.OnStack)
                         {
-                            HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
-                            do
-                            {
-                                w = stack.Pop();
-                                w.OnStack = false;
-                                scc.Add(w);
-                            } while (v != w);
-                            components.AddLast(scc);
+                            v.LowLink = Math.Min(v.LowLink, w.DFN);
                         }
-                        break;
-                }
+                    }
+                    if (v.LowLink == v.DFN)
+                    {
+                        HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
+                        do
+                        {
+                            w = stack.Pop();
+                            w.OnStack = false;
+                            scc.Add(w);
+                        } while (v != w);
+                        components.AddLast(scc);
+                    }
+                    break;
             }
         }
     }

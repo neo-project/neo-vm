@@ -12,60 +12,63 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Neo.VM
+namespace Neo.VM;
+
+public partial class JumpTable
 {
-    public partial class JumpTable
+    /// <summary>
+    /// Default JumpTable
+    /// </summary>
+    public static readonly JumpTable Default = new();
+
+    public delegate void DelAction(ExecutionEngine engine, Instruction instruction);
+    protected readonly DelAction[] Table = new DelAction[byte.MaxValue];
+
+    public DelAction this[OpCode opCode]
     {
-        /// <summary>
-        /// Default JumpTable
-        /// </summary>
-        public static readonly JumpTable Default = new();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Table[(byte)opCode];
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set { Table[(byte)opCode] = value; }
+    }
 
-        public delegate void DelAction(ExecutionEngine engine, Instruction instruction);
-        protected readonly DelAction[] Table = new DelAction[byte.MaxValue];
+    /// <summary>
+    /// Jump table constructor
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Throw an exception if the opcode was already set</exception>
+    public JumpTable()
+    {
+        // Fill defined
 
-        public DelAction this[OpCode opCode]
+        foreach (var mi in GetType().GetMethods())
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => Table[(byte)opCode];
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set { Table[(byte)opCode] = value; }
-        }
-
-        /// <summary>
-        /// Jump table constructor
-        /// </summary>
-        /// <exception cref="InvalidOperationException">Throw an exception if the opcode was already set</exception>
-        public JumpTable()
-        {
-            // Fill defined
-
-            foreach (var mi in GetType().GetMethods())
+            if (Enum.TryParse<OpCode>(mi.Name, true, out var opCode))
             {
-                if (Enum.TryParse<OpCode>(mi.Name, true, out var opCode))
+                if (Table[(byte)opCode] is not null)
                 {
-                    if (Table[(byte)opCode] is not null)
-                    {
-                        throw new InvalidOperationException($"Opcode {opCode} is already defined.");
-                    }
-
-                    Table[(byte)opCode] = (DelAction)mi.CreateDelegate(typeof(DelAction), this);
+                    throw new InvalidOperationException($"Opcode {opCode} is already defined.");
                 }
-            }
 
-            // Fill with undefined
-
-            for (var x = 0; x < Table.Length; x++)
-            {
-                if (Table[x] is not null) continue;
-
-                Table[x] = InvalidOpcode;
+#if NET5_0_OR_GREATER
+                Table[(byte)opCode] = mi.CreateDelegate<DelAction>(this);
+#else
+                Table[(byte)opCode] = (DelAction)mi.CreateDelegate(typeof(DelAction), this);
+#endif
             }
         }
 
-        public virtual void InvalidOpcode(ExecutionEngine engine, Instruction instruction)
+        // Fill with undefined
+
+        for (var x = 0; x < Table.Length; x++)
         {
-            throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
+            if (Table[x] is not null) continue;
+
+            Table[x] = InvalidOpcode;
         }
+    }
+
+    public virtual void InvalidOpcode(ExecutionEngine engine, Instruction instruction)
+    {
+        throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
     }
 }

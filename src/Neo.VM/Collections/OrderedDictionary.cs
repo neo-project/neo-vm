@@ -15,116 +15,120 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Neo.VM.Collections
+namespace Neo.VM.Collections;
+
+internal class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+    where TKey : notnull
 {
-    internal class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
-        where TKey : notnull
+    private class TItem
     {
-        private class TItem
+        public readonly TKey Key;
+        public TValue Value;
+
+        public TItem(TKey key, TValue value)
         {
-            public readonly TKey Key;
-            public TValue Value;
-
-            public TItem(TKey key, TValue value)
-            {
-                Key = key;
-                Value = value;
-            }
+            Key = key;
+            Value = value;
         }
+    }
 
-        private class InternalCollection : KeyedCollection<TKey, TItem>
+    private class InternalCollection : KeyedCollection<TKey, TItem>
+    {
+        protected override TKey GetKeyForItem(TItem item)
         {
-            protected override TKey GetKeyForItem(TItem item)
-            {
-                return item.Key;
-            }
+            return item.Key;
         }
+    }
 
-        private readonly InternalCollection collection = new();
+    private readonly InternalCollection collection = new();
 
-        public int Count => collection.Count;
-        public bool IsReadOnly => false;
-        public ICollection<TKey> Keys => collection.Select(p => p.Key).ToArray();
-        public ICollection<TValue> Values => collection.Select(p => p.Value).ToArray();
+    public int Count => collection.Count;
+    public bool IsReadOnly => false;
+    public ICollection<TKey> Keys => collection.Select(p => p.Key).ToArray();
+    public ICollection<TValue> Values => collection.Select(p => p.Value).ToArray();
 
-        public TValue this[TKey key]
+    public TValue this[TKey key]
+    {
+        get
         {
-            get
-            {
-                return collection[key].Value;
-            }
-            set
-            {
-                if (collection.TryGetValue(key, out var entry))
-                    entry.Value = value;
-                else
-                    Add(key, value);
-            }
+            return collection[key].Value;
         }
-
-        public void Add(TKey key, TValue value)
-        {
-            collection.Add(new TItem(key, value));
-        }
-
-        public bool ContainsKey(TKey key)
-        {
-            return collection.Contains(key);
-        }
-
-        public bool Remove(TKey key)
-        {
-            return collection.Remove(key);
-        }
-
-        // supress warning of value parameter nullability mismatch
-#pragma warning disable CS8767
-        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
-#pragma warning restore CS8767
+        set
         {
             if (collection.TryGetValue(key, out var entry))
-            {
-                value = entry.Value;
-                return true;
-            }
-            value = default;
-            return false;
+                entry.Value = value;
+            else
+                Add(key, value);
         }
+    }
 
-        void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
-        {
-            Add(item.Key, item.Value);
-        }
+    public void Add(TKey key, TValue value)
+    {
+        collection.Add(new TItem(key, value));
+    }
 
-        public void Clear()
-        {
-            collection.Clear();
-        }
+    public bool ContainsKey(TKey key)
+    {
+        return collection.Contains(key);
+    }
 
-        bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item)
-        {
-            return collection.Contains(item.Key);
-        }
+    public bool Remove(TKey key)
+    {
+        return collection.Remove(key);
+    }
 
-        void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+#if NET5_0_OR_GREATER
+    public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
+#else
+    public bool TryGetValue(TKey key, out TValue value)
+#endif
+    {
+        if (collection.TryGetValue(key, out var entry))
         {
-            for (int i = 0; i < collection.Count; i++)
-                array[i + arrayIndex] = new KeyValuePair<TKey, TValue>(collection[i].Key, collection[i].Value);
+            value = entry.Value;
+            return true;
         }
+#if NET5_0_OR_GREATER
+        value = default;
+#else
+        value = default!;
+#endif
+        return false;
+    }
 
-        bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
-        {
-            return collection.Remove(item.Key);
-        }
+    void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
+    {
+        Add(item.Key, item.Value);
+    }
 
-        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
-        {
-            return collection.Select(p => new KeyValuePair<TKey, TValue>(p.Key, p.Value)).GetEnumerator();
-        }
+    public void Clear()
+    {
+        collection.Clear();
+    }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return collection.Select(p => new KeyValuePair<TKey, TValue>(p.Key, p.Value)).GetEnumerator();
-        }
+    bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item)
+    {
+        return collection.Contains(item.Key);
+    }
+
+    void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+    {
+        for (int i = 0; i < collection.Count; i++)
+            array[i + arrayIndex] = new KeyValuePair<TKey, TValue>(collection[i].Key, collection[i].Value);
+    }
+
+    bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
+    {
+        return collection.Remove(item.Key);
+    }
+
+    IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
+    {
+        return collection.Select(p => new KeyValuePair<TKey, TValue>(p.Key, p.Value)).GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return collection.Select(p => new KeyValuePair<TKey, TValue>(p.Key, p.Value)).GetEnumerator();
     }
 }
