@@ -15,10 +15,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM;
 
-/// <summary>
-/// Partial class for type operations in the execution engine within a jump table.
-/// </summary>
-public partial class JumpTable
+partial class JumpTable
 {
     /// <summary>
     /// Determines whether the item on top of the evaluation stack is null.

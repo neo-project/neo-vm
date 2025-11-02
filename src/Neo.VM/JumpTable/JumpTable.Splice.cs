@@ -15,10 +15,7 @@ using Buffer = Neo.VM.Types.Buffer;
 
 namespace Neo.VM;
 
-/// <summary>
-/// Partial class representing a jump table for executing specific operations related to string manipulation.
-/// </summary>
-public partial class JumpTable
+partial class JumpTable
 {
     /// <summary>
     /// Creates a new buffer with the specified length and pushes it onto the evaluation stack.

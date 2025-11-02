@@ -47,6 +47,7 @@ public class ScriptBuilder : IDisposable
     {
         _writer.Dispose();
         _stream.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>

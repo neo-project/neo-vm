@@ -9,6 +9,8 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+#if !NET5_0_OR_GREATER
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,8 +19,7 @@ using System.Linq;
 
 namespace Neo.VM.Collections;
 
-internal class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
-    where TKey : notnull
+class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKey : notnull
 {
     private class TItem
     {
@@ -77,22 +78,14 @@ internal class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
         return collection.Remove(key);
     }
 
-#if NET5_0_OR_GREATER
-    public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
-#else
     public bool TryGetValue(TKey key, out TValue value)
-#endif
     {
         if (collection.TryGetValue(key, out var entry))
         {
             value = entry.Value;
             return true;
         }
-#if NET5_0_OR_GREATER
-        value = default;
-#else
         value = default!;
-#endif
         return false;
     }
 
@@ -132,3 +125,5 @@ internal class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
         return collection.Select(p => new KeyValuePair<TKey, TValue>(p.Key, p.Value)).GetEnumerator();
     }
 }
+
+#endif

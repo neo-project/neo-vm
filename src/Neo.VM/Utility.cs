@@ -18,7 +18,7 @@ using System.Text;
 
 namespace Neo.VM;
 
-internal static class Utility
+static class Utility
 {
     public static Encoding StrictUTF8 { get; }
 

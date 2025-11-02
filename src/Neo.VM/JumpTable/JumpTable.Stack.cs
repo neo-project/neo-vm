@@ -15,10 +15,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM;
 
-/// <summary>
-/// Partial class for stack manipulation within a jump table in the execution engine.
-/// </summary>
-public partial class JumpTable
+partial class JumpTable
 {
     /// <summary>
     /// Pushes the number of stack items in the evaluation stack onto the stack.

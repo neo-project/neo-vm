@@ -20,10 +20,7 @@ using VMArray = Neo.VM.Types.Array;
 
 namespace Neo.VM;
 
-/// <summary>
-/// Partial class for manipulating compound types like maps, arrays, and structs within a jump table.
-/// </summary>
-public partial class JumpTable
+partial class JumpTable
 {
     /// <summary>
     /// Packs a map from the evaluation stack.
