@@ -67,5 +67,5 @@ jobs:
         find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('version=v',//VersionPrefix/text())" | xargs echo >> $GITHUB_OUTPUT
     - name: Check tag
       id: check_tag
-      if: length(steps.get_version.outputs.version) > 1
+      if: steps.get_version.outputs.version != 'v' && startsWith(steps.get_version.outputs.version, 'v')
       run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, steps.get_version.outputs.version) }} | head -n 1 | cut -d$' ' -f2 | xargs printf "::set-output name=statusCode::%s" | xargs echo
