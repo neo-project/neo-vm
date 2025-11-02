@@ -1,10 +1,11 @@
-// Copyright (C) 2016-2023 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
-// see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// Copyright (C) 2015-2025 The Neo Project.
+//
+// InteropInterface.cs file belongs to the neo project and is free
+// software distributed under the MIT software license, see the
+// accompanying file LICENSE in the main directory of the
+// repository or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -52,7 +53,17 @@ namespace Neo.VM.Types
         public override T GetInterface<T>()
         {
             if (_object is T t) return t;
-            throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
+            throw new InvalidCastException($"This {nameof(InteropInterface)} can't be casted to type {typeof(T)}.");
+        }
+
+        internal object GetInterface()
+        {
+            return _object;
+        }
+
+        public override string ToString()
+        {
+            return _object.ToString() ?? "NULL";
         }
     }
 }

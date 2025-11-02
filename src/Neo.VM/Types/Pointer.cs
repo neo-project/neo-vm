@@ -1,10 +1,11 @@
-// Copyright (C) 2016-2023 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
-// see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// Copyright (C) 2015-2025 The Neo Project.
+//
+// Pointer.cs file belongs to the neo project and is free
+// software distributed under the MIT software license, see the
+// accompanying file LICENSE in the main directory of the
+// repository or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
@@ -38,8 +39,8 @@ namespace Neo.VM.Types
         /// <param name="position">The position of the pointer in the script.</param>
         public Pointer(Script script, int position)
         {
-            this.Script = script;
-            this.Position = position;
+            Script = script;
+            Position = position;
         }
 
         public override bool Equals(StackItem? other)
@@ -56,7 +57,12 @@ namespace Neo.VM.Types
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Script, Position);
+            return HashCode.Combine(Script.GetHashCode(), Position);
+        }
+
+        public override string ToString()
+        {
+            return Position.ToString();
         }
     }
 }

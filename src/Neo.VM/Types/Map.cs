@@ -1,19 +1,20 @@
-// Copyright (C) 2016-2023 The Neo Project.
+// Copyright (C) 2015-2025 The Neo Project.
 //
-// The neo-vm is free software distributed under the MIT software license,
-// see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php
+// Map.cs file belongs to the neo project and is free
+// software distributed under the MIT software license, see the
+// accompanying file LICENSE in the main directory of the
+// repository or http://www.opensource.org/licenses/mit-license.php
 // for more details.
 //
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-using Neo.VM.Collections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types
 {
@@ -27,7 +28,7 @@ namespace Neo.VM.Types
         /// </summary>
         public const int MaxKeySize = 64;
 
-        private readonly OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
+        private readonly Collections.OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
 
         /// <summary>
         /// Gets or sets the element that has the specified key in the map.
@@ -36,23 +37,28 @@ namespace Neo.VM.Types
         /// <returns>The element that has the specified key in the map.</returns>
         public StackItem this[PrimitiveType key]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if (key.Size > MaxKeySize)
-                    throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
+                    throw new ArgumentException($"Can not get value from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
                 return dictionary[key];
             }
             set
             {
                 if (key.Size > MaxKeySize)
-                    throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
-                if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
+                    throw new ArgumentException($"Can not set value to map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
+                if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not set value.");
                 if (ReferenceCounter != null)
                 {
                     if (dictionary.TryGetValue(key, out StackItem? old_value))
                         ReferenceCounter.RemoveReference(old_value, this);
                     else
                         ReferenceCounter.AddReference(key, this);
+                    if (value is CompoundType { ReferenceCounter: null })
+                    {
+                        throw new InvalidOperationException("Can not set a Map without a ReferenceCounter.");
+                    }
                     ReferenceCounter.AddReference(value, this);
                 }
                 dictionary[key] = value;
@@ -81,14 +87,14 @@ namespace Neo.VM.Types
         /// Create a new map with the specified reference counter.
         /// </summary>
         /// <param name="referenceCounter">The reference counter to be used.</param>
-        public Map(ReferenceCounter? referenceCounter = null)
+        public Map(IReferenceCounter? referenceCounter = null)
             : base(referenceCounter)
         {
         }
 
         public override void Clear()
         {
-            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
+            if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not clear.");
             if (ReferenceCounter != null)
                 foreach (var pair in dictionary)
                 {
@@ -109,7 +115,7 @@ namespace Neo.VM.Types
         public bool ContainsKey(PrimitiveType key)
         {
             if (key.Size > MaxKeySize)
-                throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
+                throw new ArgumentException($"Can not check if map contains key, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
             return dictionary.ContainsKey(key);
         }
 
@@ -146,8 +152,8 @@ namespace Neo.VM.Types
         public bool Remove(PrimitiveType key)
         {
             if (key.Size > MaxKeySize)
-                throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
-            if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
+                throw new ArgumentException($"Can not remove key from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
+            if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not remove key.");
             if (!dictionary.Remove(key, out StackItem? old_value))
                 return false;
             ReferenceCounter?.RemoveReference(key, this);
@@ -173,7 +179,7 @@ namespace Neo.VM.Types
 #pragma warning restore CS8767
         {
             if (key.Size > MaxKeySize)
-                throw new ArgumentException($"MaxKeySize exceed: {key.Size}");
+                throw new ArgumentException($"Can not get value from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
             return dictionary.TryGetValue(key, out value);
         }
     }

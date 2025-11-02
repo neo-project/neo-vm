@@ -1,16 +1,18 @@
-// Copyright (C) 2016-2023 The Neo Project.
-// 
-// The neo-vm is free software distributed under the MIT software license, 
-// see the accompanying file LICENSE in the main directory of the
-// project or http://www.opensource.org/licenses/mit-license.php 
+// Copyright (C) 2015-2025 The Neo Project.
+//
+// Slot.cs file belongs to the neo project and is free
+// software distributed under the MIT software license, see the
+// accompanying file LICENSE in the main directory of the
+// repository or http://www.opensource.org/licenses/mit-license.php
 // for more details.
-// 
+//
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
 using Neo.VM.Types;
 using System.Collections;
 using System.Collections.Generic;
+using Array = System.Array;
 
 namespace Neo.VM
 {
@@ -19,7 +21,7 @@ namespace Neo.VM
     /// </summary>
     public class Slot : IReadOnlyList<StackItem>
     {
-        private readonly ReferenceCounter referenceCounter;
+        private readonly IReferenceCounter referenceCounter;
         private readonly StackItem[] items;
 
         /// <summary>
@@ -52,7 +54,7 @@ namespace Neo.VM
         /// </summary>
         /// <param name="items">The items to be contained.</param>
         /// <param name="referenceCounter">The reference counter to be used.</param>
-        public Slot(StackItem[] items, ReferenceCounter referenceCounter)
+        public Slot(StackItem[] items, IReferenceCounter referenceCounter)
         {
             this.referenceCounter = referenceCounter;
             this.items = items;
@@ -65,11 +67,11 @@ namespace Neo.VM
         /// </summary>
         /// <param name="count">Indicates the number of items contained in the slot.</param>
         /// <param name="referenceCounter">The reference counter to be used.</param>
-        public Slot(int count, ReferenceCounter referenceCounter)
+        public Slot(int count, IReferenceCounter referenceCounter)
         {
             this.referenceCounter = referenceCounter;
-            this.items = new StackItem[count];
-            System.Array.Fill(items, StackItem.Null);
+            items = new StackItem[count];
+            Array.Fill(items, StackItem.Null);
             referenceCounter.AddStackReference(StackItem.Null, count);
         }
 
