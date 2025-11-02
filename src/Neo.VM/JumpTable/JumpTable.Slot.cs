@@ -15,10 +15,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM;
 
-/// <summary>
-/// Partial class representing a jump table for executing specific operations related to slot manipulation.
-/// </summary>
-public partial class JumpTable
+partial class JumpTable
 {
     /// <summary>
     /// Initializes the static field slot in the current execution context.

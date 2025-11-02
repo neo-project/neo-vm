@@ -14,14 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM;
 
-/// <summary>
-/// Partial class for mathematical operations within a jump table.
-/// </summary>
-/// <remarks>
-/// For binary operations x1 and x2, x1 is the first pushed onto the evaluation stack (the second popped from the stack),
-/// x2 is the second pushed onto the evaluation stack (the first popped from the stack)
-/// </remarks>
-public partial class JumpTable
+partial class JumpTable
 {
     /// <summary>
     /// Computes the sign of the specified integer.

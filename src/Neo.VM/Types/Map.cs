@@ -28,7 +28,11 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// </summary>
     public const int MaxKeySize = 64;
 
+#if NET5_0_OR_GREATER
+    private readonly OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
+#else
     private readonly Collections.OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
+#endif
 
     /// <summary>
     /// Gets or sets the element that has the specified key in the map.

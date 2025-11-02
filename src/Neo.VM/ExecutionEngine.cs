@@ -102,9 +102,23 @@ public class ExecutionEngine : IDisposable
         ResultStack = new EvaluationStack(referenceCounter);
     }
 
-    public virtual void Dispose()
+    ~ExecutionEngine()
     {
-        InvocationStack.Clear();
+        Dispose(disposing: false);
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            InvocationStack.Clear();
+        }
     }
 
     /// <summary>

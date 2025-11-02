@@ -13,10 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM;
 
-/// <summary>
-/// Partial class for performing bitwise and logical operations on integers within a jump table.
-/// </summary>
-public partial class JumpTable
+partial class JumpTable
 {
     /// <summary>
     /// Flips all of the bits of an integer.

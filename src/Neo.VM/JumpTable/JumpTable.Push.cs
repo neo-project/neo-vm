@@ -16,11 +16,7 @@ using System.Runtime.CompilerServices;
 
 namespace Neo.VM;
 
-/// <summary>
-/// Partial class for providing methods to push various data types onto the evaluation stack within a jump table.
-/// </summary>
-/// <remarks>Pop 0, Push 1</remarks>
-public partial class JumpTable
+partial class JumpTable
 {
     /// <summary>
     /// Pushes an 8-bit signed integer onto the evaluation stack.
