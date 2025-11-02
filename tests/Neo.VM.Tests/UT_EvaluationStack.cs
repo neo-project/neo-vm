@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2025 The Neo Project.
 //
-// UtEvaluationStack.cs file belongs to the neo project and is free
+// UT_EvaluationStack.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
 // accompanying file LICENSE in the main directory of the
 // repository or http://www.opensource.org/licenses/mit-license.php
@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Neo.Test.Extensions;
 using Neo.VM;
 using Neo.VM.Types;
 using System;
@@ -19,7 +20,7 @@ using System.Linq;
 namespace Neo.Test
 {
     [TestClass]
-    public class UtEvaluationStack
+    public class UT_EvaluationStack
     {
         private static EvaluationStack CreateOrderedStack(int count)
         {
@@ -57,8 +58,8 @@ namespace Neo.Test
             var stack = CreateOrderedStack(3);
             var copy = new EvaluationStack(new ReferenceCounter());
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.CopyTo(copy, -2));
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.CopyTo(copy, 4));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => stack.CopyTo(copy, -2));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => stack.CopyTo(copy, 4));
 
             stack.CopyTo(copy, 0);
 
@@ -131,7 +132,7 @@ namespace Neo.Test
             stack.Insert(1, 1);
             stack.Insert(1, 2);
 
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Insert(4, 2));
+            Assert.ThrowsExactly<InvalidOperationException>(() => stack.Insert(4, 2));
 
             Assert.AreEqual(3, stack.Count);
             CollectionAssert.AreEqual(new Integer[] { 1, 2, 3 }, stack.ToArray());
@@ -140,7 +141,7 @@ namespace Neo.Test
             Assert.AreEqual(2, stack.Peek(1));
             Assert.AreEqual(1, stack.Peek(-1));
 
-            Assert.ThrowsException<InvalidOperationException>(() => stack.Peek(-4));
+            Assert.ThrowsExactly<InvalidOperationException>(() => _ = stack.Peek(-4));
         }
 
         [TestMethod]
@@ -152,7 +153,7 @@ namespace Neo.Test
             Assert.AreEqual(2, stack.Pop());
             Assert.AreEqual(1, stack.Pop());
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop());
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => _ = stack.Pop());
 
             stack = CreateOrderedStack(3);
 
@@ -160,7 +161,7 @@ namespace Neo.Test
             Assert.IsTrue(stack.Pop<Integer>().Equals(2));
             Assert.IsTrue(stack.Pop<Integer>().Equals(1));
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop<Integer>());
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => _ = stack.Pop<Integer>());
         }
 
         [TestMethod]
@@ -172,8 +173,8 @@ namespace Neo.Test
             Assert.IsTrue(stack.Remove<Integer>(0).Equals(2));
             Assert.IsTrue(stack.Remove<Integer>(-1).Equals(1));
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Remove<Integer>(0));
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Remove<Integer>(-1));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => _ = stack.Remove<Integer>(0));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => _ = stack.Remove<Integer>(-1));
         }
 
         [TestMethod]
@@ -185,18 +186,39 @@ namespace Neo.Test
             Assert.IsTrue(stack.Pop<Integer>().Equals(1));
             Assert.IsTrue(stack.Pop<Integer>().Equals(2));
             Assert.IsTrue(stack.Pop<Integer>().Equals(3));
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop<Integer>().Equals(0));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => _ = stack.Pop<Integer>().Equals(0));
 
             stack = CreateOrderedStack(3);
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Reverse(-1));
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Reverse(4));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => stack.Reverse(-1));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => stack.Reverse(4));
 
             stack.Reverse(1);
             Assert.IsTrue(stack.Pop<Integer>().Equals(3));
             Assert.IsTrue(stack.Pop<Integer>().Equals(2));
             Assert.IsTrue(stack.Pop<Integer>().Equals(1));
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => stack.Pop<Integer>().Equals(0));
+            Assert.ThrowsExactly<ArgumentOutOfRangeException>(() => _ = stack.Pop<Integer>().Equals(0));
+        }
+
+        [TestMethod]
+        public void TestEvaluationStackPrint()
+        {
+            var stack = new EvaluationStack(new ReferenceCounter());
+
+            stack.Insert(0, 3);
+            stack.Insert(1, 1);
+            stack.Insert(2, "test");
+            stack.Insert(3, true);
+
+            Assert.AreEqual("[Boolean(True), ByteString(\"test\"), Integer(1), Integer(3)]", stack.ToString());
+        }
+
+        [TestMethod]
+        public void TestPrintInvalidUTF8()
+        {
+            var stack = new EvaluationStack(new ReferenceCounter());
+            stack.Insert(0, "4CC95219999D421243C8161E3FC0F4290C067845".FromHexString());
+            Assert.AreEqual("[ByteString(\"Base64: TMlSGZmdQhJDyBYeP8D0KQwGeEU=\")]", stack.ToString());
         }
     }
 }

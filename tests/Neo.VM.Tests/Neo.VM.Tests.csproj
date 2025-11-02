@@ -15,4 +15,10 @@
     <ProjectReference Include="..\..\src\Neo.VM\Neo.VM.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Tests\**\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2025 The Neo Project.
 //
-// UtSlot.cs file belongs to the neo project and is free
+// UT_Slot.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
 // accompanying file LICENSE in the main directory of the
 // repository or http://www.opensource.org/licenses/mit-license.php
@@ -16,11 +16,12 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Numerics;
+using Array = System.Array;
 
 namespace Neo.Test
 {
     [TestClass]
-    public class UtSlot
+    public class UT_Slot
     {
         private static Slot CreateOrderedSlot(int count)
         {
@@ -52,7 +53,7 @@ namespace Neo.Test
             Assert.IsTrue(slot[0] is Integer item0 && item0.Equals(1));
             Assert.IsTrue(slot[1] is Integer item1 && item1.Equals(2));
             Assert.IsTrue(slot[2] is Integer item2 && item2.Equals(3));
-            Assert.ThrowsException<IndexOutOfRangeException>(() => slot[3] is Integer item3);
+            Assert.ThrowsExactly<IndexOutOfRangeException>(() => _ = slot[3] is Integer item3);
         }
 
         [TestMethod]
@@ -84,18 +85,18 @@ namespace Neo.Test
 
             slot = CreateOrderedSlot(0);
 
-            CollectionAssert.AreEqual(System.Array.Empty<Integer>(), slot.ToArray());
+            CollectionAssert.AreEqual(Array.Empty<Integer>(), slot.ToArray());
 
             // Test IEnumerable
 
-            enumerable = (IEnumerable)slot;
+            enumerable = slot;
             enumerator = enumerable.GetEnumerator();
 
-            CollectionAssert.AreEqual(System.Array.Empty<Integer>(), GetEnumerable(enumerator).Cast<Integer>().ToArray());
+            CollectionAssert.AreEqual(Array.Empty<Integer>(), GetEnumerable(enumerator).Cast<Integer>().ToArray());
 
             Assert.AreEqual(0, slot.Count);
 
-            CollectionAssert.AreEqual(System.Array.Empty<Integer>(), slot.ToArray());
+            CollectionAssert.AreEqual(Array.Empty<Integer>(), slot.ToArray());
         }
     }
 }

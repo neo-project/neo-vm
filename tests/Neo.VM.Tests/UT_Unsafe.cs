@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2025 The Neo Project.
 //
-// UtUnsafe.cs file belongs to the neo project and is free
+// UT_Unsafe.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
 // accompanying file LICENSE in the main directory of the
 // repository or http://www.opensource.org/licenses/mit-license.php
@@ -15,7 +15,7 @@ using Neo.VM;
 namespace Neo.Test
 {
     [TestClass]
-    public class UtUnsafe
+    public class UT_Unsafe
     {
         [TestMethod]
         public void NotZero()
