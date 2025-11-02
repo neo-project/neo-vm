@@ -55,8 +55,8 @@ indent_size = 2
 
 # Dotnet code style settings:
 [*.{cs,vb}]
-# Use block-scoped namespace
-csharp_style_namespace_declarations = file_scoped:warning
+# Use file-scoped namespace
+csharp_style_namespace_declarations = file_scoped:suggestion
 
 # Member can be made 'readonly'
 csharp_style_prefer_readonly_struct_member = true
