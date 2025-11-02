@@ -12,23 +12,22 @@
 using System;
 using System.Collections.Generic;
 
-namespace Neo.VM
-{
-    partial class ExecutionContext
-    {
-        private class SharedStates
-        {
-            public readonly Script Script;
-            public readonly EvaluationStack EvaluationStack;
-            public Slot? StaticFields;
-            public readonly Dictionary<Type, object> States;
+namespace Neo.VM;
 
-            public SharedStates(Script script, IReferenceCounter referenceCounter)
-            {
-                Script = script;
-                EvaluationStack = new EvaluationStack(referenceCounter);
-                States = new Dictionary<Type, object>();
-            }
+partial class ExecutionContext
+{
+    private class SharedStates
+    {
+        public readonly Script Script;
+        public readonly EvaluationStack EvaluationStack;
+        public Slot? StaticFields;
+        public readonly Dictionary<Type, object> States;
+
+        public SharedStates(Script script, IReferenceCounter referenceCounter)
+        {
+            Script = script;
+            EvaluationStack = new EvaluationStack(referenceCounter);
+            States = new Dictionary<Type, object>();
         }
     }
 }

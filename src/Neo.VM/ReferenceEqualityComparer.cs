@@ -12,19 +12,18 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Neo.VM
-{
+namespace Neo.VM;
+
 #if !NET5_0_OR_GREATER
-    // https://github.dev/dotnet/runtime/blob/main/src/libraries/System.Private.CoreLib/src/System/Collections/Generic/ReferenceEqualityComparer.cs
-    public sealed class ReferenceEqualityComparer : IEqualityComparer<object?>, System.Collections.IEqualityComparer
-    {
-        private ReferenceEqualityComparer() { }
+// https://github.dev/dotnet/runtime/blob/main/src/libraries/System.Private.CoreLib/src/System/Collections/Generic/ReferenceEqualityComparer.cs
+public sealed class ReferenceEqualityComparer : IEqualityComparer<object?>, System.Collections.IEqualityComparer
+{
+    private ReferenceEqualityComparer() { }
 
-        public static ReferenceEqualityComparer Instance { get; } = new ReferenceEqualityComparer();
+    public static ReferenceEqualityComparer Instance { get; } = new ReferenceEqualityComparer();
 
-        public new bool Equals(object? x, object? y) => ReferenceEquals(x, y);
+    public new bool Equals(object? x, object? y) => ReferenceEquals(x, y);
 
-        public int GetHashCode(object? obj) => RuntimeHelpers.GetHashCode(obj!);
-    }
-#endif
+    public int GetHashCode(object? obj) => RuntimeHelpers.GetHashCode(obj!);
 }
+#endif

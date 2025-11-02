@@ -13,30 +13,29 @@ using Neo.Test.Converters;
 using Neo.VM;
 using Newtonsoft.Json;
 
-namespace Neo.Test.Types
+namespace Neo.Test.Types;
+
+public class VMUTExecutionContextState
 {
-    public class VMUTExecutionContextState
-    {
-        [JsonProperty]
-        public int InstructionPointer { get; set; }
+    [JsonProperty]
+    public int InstructionPointer { get; set; }
 
-        [JsonProperty, JsonConverter(typeof(UppercaseEnum))]
-        public OpCode NextInstruction { get; set; }
+    [JsonProperty, JsonConverter(typeof(UppercaseEnum))]
+    public OpCode NextInstruction { get; set; }
 
-        // Stacks
+    // Stacks
 
-        [JsonProperty]
-        public VMUTStackItem[] EvaluationStack { get; set; }
+    [JsonProperty]
+    public VMUTStackItem[] EvaluationStack { get; set; }
 
-        // Slots
+    // Slots
 
-        [JsonProperty]
-        public VMUTStackItem[] StaticFields { get; set; }
+    [JsonProperty]
+    public VMUTStackItem[] StaticFields { get; set; }
 
-        [JsonProperty]
-        public VMUTStackItem[] Arguments { get; set; }
+    [JsonProperty]
+    public VMUTStackItem[] Arguments { get; set; }
 
-        [JsonProperty]
-        public VMUTStackItem[] LocalVariables { get; set; }
-    }
+    [JsonProperty]
+    public VMUTStackItem[] LocalVariables { get; set; }
 }

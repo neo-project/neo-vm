@@ -9,63 +9,62 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-namespace Neo.Test.Types
+namespace Neo.Test.Types;
+
+public enum VMUTStackItemType
 {
-    public enum VMUTStackItemType
-    {
-        /// <summary>
-        /// Null
-        /// </summary>
-        Null,
+    /// <summary>
+    /// Null
+    /// </summary>
+    Null,
 
-        /// <summary>
-        /// An address of function
-        /// </summary>
-        Pointer,
+    /// <summary>
+    /// An address of function
+    /// </summary>
+    Pointer,
 
-        /// <summary>
-        /// Boolean (true,false)
-        /// </summary>
-        Boolean,
+    /// <summary>
+    /// Boolean (true,false)
+    /// </summary>
+    Boolean,
 
-        /// <summary>
-        /// ByteString
-        /// </summary>
-        ByteString,
+    /// <summary>
+    /// ByteString
+    /// </summary>
+    ByteString,
 
-        /// <summary>	
-        /// ByteString as UTF8 string	
-        /// </summary>
-        String,
+    /// <summary>	
+    /// ByteString as UTF8 string	
+    /// </summary>
+    String,
 
-        /// <summary>
-        /// Mutable byte array
-        /// </summary>
-        Buffer,
+    /// <summary>
+    /// Mutable byte array
+    /// </summary>
+    Buffer,
 
-        /// <summary>
-        /// InteropInterface
-        /// </summary>
-        Interop,
+    /// <summary>
+    /// InteropInterface
+    /// </summary>
+    Interop,
 
-        /// <summary>
-        /// BigInteger
-        /// </summary>
-        Integer,
+    /// <summary>
+    /// BigInteger
+    /// </summary>
+    Integer,
 
-        /// <summary>
-        /// Array
-        /// </summary>
-        Array,
+    /// <summary>
+    /// Array
+    /// </summary>
+    Array,
 
-        /// <summary>
-        /// Struct
-        /// </summary>
-        Struct,
+    /// <summary>
+    /// Struct
+    /// </summary>
+    Struct,
 
-        /// <summary>
-        /// Map
-        /// </summary>
-        Map
-    }
+    /// <summary>
+    /// Map
+    /// </summary>
+    Map
 }

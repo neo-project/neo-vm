@@ -9,16 +9,15 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-namespace Neo.Test.Types
+namespace Neo.Test.Types;
+
+public enum VMUTActionType
 {
-    public enum VMUTActionType
-    {
-        Execute,
+    Execute,
 
-        // Steps
+    // Steps
 
-        StepInto,
-        StepOut,
-        StepOver,
-    }
+    StepInto,
+    StepOut,
+    StepOver,
 }

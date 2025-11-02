@@ -9,12 +9,11 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-namespace Neo.VM.Benchmark.OpCode
+namespace Neo.VM.Benchmarks.OpCodes;
+
+public enum BenchmarkMode
 {
-    public enum BenchmarkMode
-    {
-        SimpleOpCode,
-        OneGAS,
-        BaseLine
-    }
+    SimpleOpCode,
+    OneGAS,
+    BaseLine
 }

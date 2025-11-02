@@ -14,65 +14,64 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace Neo.VM.Types
+namespace Neo.VM.Types;
+
+/// <summary>
+/// Represents a boolean (<see langword="true" /> or <see langword="false" />) value in the VM.
+/// </summary>
+[DebuggerDisplay("Type={GetType().Name}, Value={value}")]
+public class Boolean : PrimitiveType
 {
+    private static readonly ReadOnlyMemory<byte> TRUE = new byte[] { 1 };
+    private static readonly ReadOnlyMemory<byte> FALSE = new byte[] { 0 };
+
+    private readonly bool value;
+
+    public override ReadOnlyMemory<byte> Memory => value ? TRUE : FALSE;
+    public override int Size => sizeof(bool);
+    public override StackItemType Type => StackItemType.Boolean;
+
     /// <summary>
-    /// Represents a boolean (<see langword="true" /> or <see langword="false" />) value in the VM.
+    /// Create a new VM object representing the boolean type.
     /// </summary>
-    [DebuggerDisplay("Type={GetType().Name}, Value={value}")]
-    public class Boolean : PrimitiveType
+    /// <param name="value">The initial value of the object.</param>
+    internal Boolean(bool value)
     {
-        private static readonly ReadOnlyMemory<byte> TRUE = new byte[] { 1 };
-        private static readonly ReadOnlyMemory<byte> FALSE = new byte[] { 0 };
+        this.value = value;
+    }
 
-        private readonly bool value;
+    public override bool Equals(StackItem? other)
+    {
+        if (ReferenceEquals(this, other)) return true;
+        if (other is Boolean b) return value == b.value;
+        return false;
+    }
 
-        public override ReadOnlyMemory<byte> Memory => value ? TRUE : FALSE;
-        public override int Size => sizeof(bool);
-        public override StackItemType Type => StackItemType.Boolean;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override bool GetBoolean()
+    {
+        return value;
+    }
 
-        /// <summary>
-        /// Create a new VM object representing the boolean type.
-        /// </summary>
-        /// <param name="value">The initial value of the object.</param>
-        internal Boolean(bool value)
-        {
-            this.value = value;
-        }
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(value);
+    }
 
-        public override bool Equals(StackItem? other)
-        {
-            if (ReferenceEquals(this, other)) return true;
-            if (other is Boolean b) return value == b.value;
-            return false;
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override BigInteger GetInteger()
+    {
+        return value ? BigInteger.One : BigInteger.Zero;
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override bool GetBoolean()
-        {
-            return value;
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator Boolean(bool value)
+    {
+        return value ? True : False;
+    }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(value);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override BigInteger GetInteger()
-        {
-            return value ? BigInteger.One : BigInteger.Zero;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static implicit operator Boolean(bool value)
-        {
-            return value ? True : False;
-        }
-
-        public override string ToString()
-        {
-            return value.ToString();
-        }
+    public override string ToString()
+    {
+        return value.ToString();
     }
 }

@@ -11,17 +11,16 @@
 
 using Newtonsoft.Json;
 
-namespace Neo.Test.Types
+namespace Neo.Test.Types;
+
+public class VMUT
 {
-    public class VMUT
-    {
-        [JsonProperty]
-        public string Category { get; set; }
+    [JsonProperty]
+    public string Category { get; set; }
 
-        [JsonProperty]
-        public string Name { get; set; }
+    [JsonProperty]
+    public string Name { get; set; }
 
-        [JsonProperty]
-        public VMUTEntry[] Tests { get; set; }
-    }
+    [JsonProperty]
+    public VMUTEntry[] Tests { get; set; }
 }

@@ -13,86 +13,89 @@ using Neo.VM.Types;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Neo.VM
+namespace Neo.VM;
+
+/// <summary>
+/// Partial class for type operations in the execution engine within a jump table.
+/// </summary>
+public partial class JumpTable
 {
     /// <summary>
-    /// Partial class for type operations in the execution engine within a jump table.
+    /// Determines whether the item on top of the evaluation stack is null.
+    /// <see cref="OpCode.ISNULL"/>
     /// </summary>
-    public partial class JumpTable
+    /// <param name="engine">The execution engine.</param>
+    /// <param name="instruction">The instruction being executed.</param>
+    /// <remarks>Pop 1, Push 1</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void IsNull(ExecutionEngine engine, Instruction instruction)
     {
-        /// <summary>
-        /// Determines whether the item on top of the evaluation stack is null.
-        /// <see cref="OpCode.ISNULL"/>
-        /// </summary>
-        /// <param name="engine">The execution engine.</param>
-        /// <param name="instruction">The instruction being executed.</param>
-        /// <remarks>Pop 1, Push 1</remarks>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void IsNull(ExecutionEngine engine, Instruction instruction)
-        {
-            var x = engine.Pop();
-            engine.Push(x.IsNull);
-        }
+        var x = engine.Pop();
+        engine.Push(x.IsNull);
+    }
 
-        /// <summary>
-        /// Determines whether the item on top of the evaluation stack has a specified type.
-        /// <see cref="OpCode.ISTYPE"/>
-        /// </summary>
-        /// <param name="engine">The execution engine.</param>
-        /// <param name="instruction">The instruction being executed.</param>
-        /// <remarks>Pop 1, Push 1</remarks>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void IsType(ExecutionEngine engine, Instruction instruction)
-        {
-            var x = engine.Pop();
-            var type = (StackItemType)instruction.TokenU8;
-            if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
-                throw new InvalidOperationException($"Invalid type: {type}");
-            engine.Push(x.Type == type);
-        }
+    /// <summary>
+    /// Determines whether the item on top of the evaluation stack has a specified type.
+    /// <see cref="OpCode.ISTYPE"/>
+    /// </summary>
+    /// <param name="engine">The execution engine.</param>
+    /// <param name="instruction">The instruction being executed.</param>
+    /// <remarks>Pop 1, Push 1</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void IsType(ExecutionEngine engine, Instruction instruction)
+    {
+        var x = engine.Pop();
+        var type = (StackItemType)instruction.TokenU8;
+#if NET5_0_OR_GREATER
+        if (type == StackItemType.Any || !Enum.IsDefined(type))
+#else
+        if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
+#endif
+            throw new InvalidOperationException($"Invalid type: {type}");
+        engine.Push(x.Type == type);
+    }
 
-        /// <summary>
-        /// Converts the item on top of the evaluation stack to a specified type.
-        /// <see cref="OpCode.CONVERT"/>
-        /// </summary>
-        /// <param name="engine">The execution engine.</param>
-        /// <param name="instruction">The instruction being executed.</param>
-        /// <remarks>Pop 1, Push 1</remarks>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Convert(ExecutionEngine engine, Instruction instruction)
-        {
-            var x = engine.Pop();
-            engine.Push(x.ConvertTo((StackItemType)instruction.TokenU8));
-        }
+    /// <summary>
+    /// Converts the item on top of the evaluation stack to a specified type.
+    /// <see cref="OpCode.CONVERT"/>
+    /// </summary>
+    /// <param name="engine">The execution engine.</param>
+    /// <param name="instruction">The instruction being executed.</param>
+    /// <remarks>Pop 1, Push 1</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Convert(ExecutionEngine engine, Instruction instruction)
+    {
+        var x = engine.Pop();
+        engine.Push(x.ConvertTo((StackItemType)instruction.TokenU8));
+    }
 
-        /// <summary>
-        /// Aborts execution with a specified message.
-        /// <see cref="OpCode.ABORTMSG"/>
-        /// </summary>
-        /// <param name="engine">The execution engine.</param>
-        /// <param name="instruction">The instruction being executed.</param>
-        /// <remarks>Pop 1, Push 0</remarks>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void AbortMsg(ExecutionEngine engine, Instruction instruction)
-        {
-            var msg = engine.Pop().GetString();
-            throw new Exception($"{OpCode.ABORTMSG} is executed. Reason: {msg}");
-        }
+    /// <summary>
+    /// Aborts execution with a specified message.
+    /// <see cref="OpCode.ABORTMSG"/>
+    /// </summary>
+    /// <param name="engine">The execution engine.</param>
+    /// <param name="instruction">The instruction being executed.</param>
+    /// <remarks>Pop 1, Push 0</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void AbortMsg(ExecutionEngine engine, Instruction instruction)
+    {
+        var msg = engine.Pop().GetString();
+        throw new Exception($"{OpCode.ABORTMSG} is executed. Reason: {msg}");
+    }
 
-        /// <summary>
-        /// Asserts a condition with a specified message, throwing an exception if the condition is false.
-        /// <see cref="OpCode.ASSERTMSG"/>
-        /// </summary>
-        /// <param name="engine">The execution engine.</param>
-        /// <param name="instruction">The instruction being executed.</param>
-        /// <remarks>Pop 2, Push 0</remarks>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void AssertMsg(ExecutionEngine engine, Instruction instruction)
-        {
-            var msg = engine.Pop().GetString();
-            var x = engine.Pop().GetBoolean();
-            if (!x)
-                throw new Exception($"{OpCode.ASSERTMSG} is executed with false result. Reason: {msg}");
-        }
+    /// <summary>
+    /// Asserts a condition with a specified message, throwing an exception if the condition is false.
+    /// <see cref="OpCode.ASSERTMSG"/>
+    /// </summary>
+    /// <param name="engine">The execution engine.</param>
+    /// <param name="instruction">The instruction being executed.</param>
+    /// <remarks>Pop 2, Push 0</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void AssertMsg(ExecutionEngine engine, Instruction instruction)
+    {
+        var msg = engine.Pop().GetString();
+        var x = engine.Pop().GetBoolean();
+        if (!x)
+            throw new Exception($"{OpCode.ASSERTMSG} is executed with false result. Reason: {msg}");
     }
 }

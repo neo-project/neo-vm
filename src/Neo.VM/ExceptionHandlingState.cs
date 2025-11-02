@@ -9,26 +9,25 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-namespace Neo.VM
+namespace Neo.VM;
+
+/// <summary>
+/// Indicates the state of the <see cref="ExceptionHandlingContext"/>.
+/// </summary>
+public enum ExceptionHandlingState : byte
 {
     /// <summary>
-    /// Indicates the state of the <see cref="ExceptionHandlingContext"/>.
+    /// Indicates that the <see langword="try"/> block is being executed.
     /// </summary>
-    public enum ExceptionHandlingState : byte
-    {
-        /// <summary>
-        /// Indicates that the <see langword="try"/> block is being executed.
-        /// </summary>
-        Try,
+    Try,
 
-        /// <summary>
-        /// Indicates that the <see langword="catch"/> block is being executed.
-        /// </summary>
-        Catch,
+    /// <summary>
+    /// Indicates that the <see langword="catch"/> block is being executed.
+    /// </summary>
+    Catch,
 
-        /// <summary>
-        /// Indicates that the <see langword="finally"/> block is being executed.
-        /// </summary>
-        Finally
-    }
+    /// <summary>
+    /// Indicates that the <see langword="finally"/> block is being executed.
+    /// </summary>
+    Finally
 }
