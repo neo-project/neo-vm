@@ -34,7 +34,7 @@ internal class ScriptConverter : JsonConverter
                 {
                     if (reader.Value is string str)
                     {
-                        Assert.IsTrue(str.StartsWith("0x"), $"'0x' prefix required for value: '{str}'");
+                        Assert.StartsWith("0x", str, $"'0x' prefix required for value: '{str}'");
                         return str.FromHexString();
                     }
                     break;
@@ -64,7 +64,7 @@ internal class ScriptConverter : JsonConverter
                         {
                             for (int x = 0; x < mul; x++)
                             {
-                                Assert.IsTrue(value.StartsWith("0x"), $"'0x' prefix required for value: '{value}'");
+                                Assert.StartsWith("0x", value, $"'0x' prefix required for value: '{value}'");
                                 script.EmitRaw(value.FromHexString());
                             }
                         }
