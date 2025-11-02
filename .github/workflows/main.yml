@@ -71,4 +71,4 @@ jobs:
       run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, steps.get_version.outputs.version) }} | head -n 1 | cut -d$' ' -f2 | xargs printf "statusCode=%s" | xargs echo >> $GITHUB_OUTPUT
     - name: Print Status Code
       if: steps.check_tag.outputs.statusCode == '404'
-      run: echo "steps.check_tag.outputs.statusCode"
+      run: echo "${{ steps.check_tag.outputs.statusCode }}"
