@@ -67,4 +67,4 @@ jobs:
         find src -name *.csproj | xargs xmlstarlet sel -t -v "concat('PACKAGE_VERSION=v',//VersionPrefix/text())" | xargs echo >> $GITHUB_ENV
     - name: Check tag
       id: check_tag
-      run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, $PACKAGE_VERSION) }} | head -n 1 | cut -d$' ' -f2 | xargs printf "::set-output name=statusCode::%s" | xargs echo
+      run: curl -s -I ${{ format('https://github.com/{0}/releases/tag/{1}', github.repository, "$PACKAGE_VERSION") }} | head -n 1 | cut -d$' ' -f2 | xargs printf "::set-output name=statusCode::%s" | xargs echo
