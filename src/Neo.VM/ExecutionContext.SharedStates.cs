@@ -26,8 +26,8 @@ partial class ExecutionContext
         public SharedStates(Script script, IReferenceCounter referenceCounter)
         {
             Script = script;
-            EvaluationStack = new EvaluationStack(referenceCounter);
-            States = new Dictionary<Type, object>();
+            EvaluationStack = new(referenceCounter);
+            States = new();
         }
     }
 }
