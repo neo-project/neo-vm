@@ -541,7 +541,7 @@ partial class JumpTable
         }
         if (engine.InvocationStack.Count == 0)
             engine.State = VMState.HALT;
-        engine.UnloadContext(context_pop);
+        engine.ContextUnloaded(context_pop);
         engine.isJumping = true;
     }
 
@@ -668,7 +668,7 @@ partial class JumpTable
                     }
                     for (var i = 0; i < pop; i++)
                     {
-                        engine.UnloadContext(engine.InvocationStack.Pop());
+                        engine.ContextUnloaded(engine.InvocationStack.Pop());
                     }
                     if (tryContext.State == ExceptionHandlingState.Try && tryContext.HasCatch)
                     {

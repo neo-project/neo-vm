@@ -194,7 +194,7 @@ public class ExecutionEngine : IDisposable
     /// Called when a context is unloaded.
     /// </summary>
     /// <param name="context">The context being unloaded.</param>
-    internal virtual void UnloadContext(ExecutionContext context)
+    internal protected virtual void ContextUnloaded(ExecutionContext context)
     {
         if (InvocationStack.Count == 0)
         {
