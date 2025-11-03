@@ -25,8 +25,13 @@ public class Script
 {
     private int _hashCode = 0;
     private readonly ReadOnlyMemory<byte> _value;
-    private readonly bool strictMode;
-    private readonly Dictionary<int, Instruction> _instructions = new();
+    private readonly bool _strictMode;
+    private readonly Dictionary<int, Instruction> _instructions = [];
+
+    /// <summary>
+    /// Empty script
+    /// </summary>
+    public static Script Empty { get; } = new Script(ReadOnlyMemory<byte>.Empty);
 
     /// <summary>
     /// The length of the script.
@@ -70,7 +75,7 @@ public class Script
         Length = _value.Length;
         if (strictMode)
         {
-            for (int ip = 0; ip < script.Length; ip += GetInstruction(ip).Size) { }
+            for (var ip = 0; ip < script.Length; ip += GetInstruction(ip).Size) { }
             foreach (var (ip, instruction) in _instructions)
             {
                 switch (instruction.OpCode)
@@ -119,7 +124,7 @@ public class Script
                     case OpCode.NEWARRAY_T:
                     case OpCode.ISTYPE:
                     case OpCode.CONVERT:
-                        StackItemType type = (StackItemType)instruction.TokenU8;
+                        var type = (StackItemType)instruction.TokenU8;
 #if NET5_0_OR_GREATER
                         if (!Enum.IsDefined(type))
 #else
@@ -132,7 +137,7 @@ public class Script
                 }
             }
         }
-        this.strictMode = strictMode;
+        _strictMode = strictMode;
     }
 
     /// <summary>
@@ -144,14 +149,14 @@ public class Script
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Instruction GetInstruction(int ip)
     {
-        if (!_instructions.TryGetValue(ip, out Instruction? instruction))
+        if (!_instructions.TryGetValue(ip, out var instruction))
         {
 #if NET5_0_OR_GREATER
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(ip, Length);
 #else
             if (ip >= Length) throw new ArgumentOutOfRangeException(nameof(ip));
 #endif
-            if (strictMode) throw new ArgumentException($"ip not found with strict mode", nameof(ip));
+            if (_strictMode) throw new ArgumentException($"Instruction not found at position {ip} in strict mode.", nameof(ip));
             instruction = new Instruction(_value, ip);
             _instructions.Add(ip, instruction);
         }
