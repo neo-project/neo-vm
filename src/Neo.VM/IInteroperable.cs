@@ -9,8 +9,8 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-using System;
 using Neo.VM.Types;
+using System;
 
 namespace Neo.VM;
 
