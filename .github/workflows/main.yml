@@ -31,7 +31,7 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: "${GITHUB_WORKSPACE}/coverage/lcov.info"
+        path-to-lcov: "${{ github.workspace }}/coverage/lcov.info"
 
   PublishMyGet:
     if: github.ref == 'refs/heads/master' && startsWith(github.repository, 'neo-project/')
