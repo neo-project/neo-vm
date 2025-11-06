@@ -1,3 +1,5 @@
+<a href="https://neo.org/"><img src="https://neo3.azureedge.net/images/logo%20files-dark.svg" width="250px" alt="neo-logo"></a>
+
 # NeoVM — The NEO Virtual Machine
 
 [![NuGet](https://img.shields.io/nuget/v/Neo.VM.svg)](https://www.nuget.org/packages/Neo.VM/)
