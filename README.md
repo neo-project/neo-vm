@@ -8,7 +8,7 @@ NeoVM is the lightweight, deterministic, stack-based virtual machine that execut
 
 ---
 
-## ✨ Features
+## Features
 
 * **Deterministic & Turing-complete** execution for smart contracts.
 * **Small, embeddable runtime** suitable for host applications beyond the Neo blockchain.
@@ -17,7 +17,7 @@ NeoVM is the lightweight, deterministic, stack-based virtual machine that execut
 
 ---
 
-## 📦 Packages
+## Packages
 
 The VM is published as a NuGet package:
 
@@ -31,7 +31,7 @@ Targets **.NET 9.0** and **.NET Standard 2.1** (compatible with a wide range of 
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Typical flow:
 
@@ -42,7 +42,7 @@ Contributions are welcome! Typical flow:
 
 ---
 
-## 🔗 See also
+## See also
 
 * **neo (core library)** — base classes, ledger, P2P, IO. ([Github](https://github.com/neo-project/neo))
 * **neo-devpack-dotnet** — C# → NeoVM compiler and developer toolkit. ([Github](https://github.com/neo-project/neo-devpack-dotnet))
