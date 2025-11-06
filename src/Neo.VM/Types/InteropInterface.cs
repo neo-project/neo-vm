@@ -56,7 +56,7 @@ public class InteropInterface : StackItem
         throw new InvalidCastException($"This {nameof(InteropInterface)} can't be casted to type {typeof(T)}.");
     }
 
-    internal object GetInterface()
+    public object GetInterface()
     {
         return _object;
     }
