@@ -14,9 +14,6 @@
   <a href='https://coveralls.io/github/neo-project/neo-vm'>
     <img src='https://coveralls.io/repos/github/neo-project/neo-vm/badge.svg' alt='Coverage Status' />
   </a>
-  <a href="https://github.com/neo-project/neo-vm">
-    <img src="https://tokei.rs/b1/github/neo-project/neo-vm?category=lines" alt="total lines.">
-  </a>
   <a href="https://github.com/neo-project/neo-vm/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License.">
   </a>	
