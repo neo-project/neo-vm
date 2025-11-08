@@ -45,13 +45,13 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
         get
         {
             if (key.Size > MaxKeySize)
-                throw new ArgumentException($"Can not get value from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
+                throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
             return dictionary[key];
         }
         set
         {
             if (key.Size > MaxKeySize)
-                throw new ArgumentException($"Can not set value to map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
+                throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
             if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not set value.");
             if (ReferenceCounter != null)
             {
@@ -96,6 +96,20 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     {
     }
 
+    /// <summary>
+    /// Create a new map with the specified dictionary and reference counter.
+    /// </summary>
+    /// <param name="dictionary">Dictionary</param>
+    /// <param name="referenceCounter">Reference Counter</param>
+    public Map(IEnumerable<KeyValuePair<PrimitiveType, StackItem>> dictionary, IReferenceCounter? referenceCounter = null)
+        : this(referenceCounter)
+    {
+        foreach (var (k, v) in dictionary)
+        {
+            this[k] = v;
+        }
+    }
+
     public override void Clear()
     {
         if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not clear.");
@@ -119,7 +133,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     public bool ContainsKey(PrimitiveType key)
     {
         if (key.Size > MaxKeySize)
-            throw new ArgumentException($"Can not check if map contains key, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
+            throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
         return dictionary.ContainsKey(key);
     }
 
@@ -156,7 +170,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     public bool Remove(PrimitiveType key)
     {
         if (key.Size > MaxKeySize)
-            throw new ArgumentException($"Can not remove key from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
+            throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
         if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not remove key.");
         if (!dictionary.Remove(key, out StackItem? old_value))
             return false;
@@ -184,7 +198,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
 #endif
     {
         if (key.Size > MaxKeySize)
-            throw new ArgumentException($"Can not get value from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.");
+            throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
         return dictionary.TryGetValue(key, out value);
     }
 }

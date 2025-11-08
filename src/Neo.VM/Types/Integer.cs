@@ -50,7 +50,7 @@ public class Integer : PrimitiveType
         else
         {
             Size = value.GetByteCount();
-            if (Size > MaxSize) throw new ArgumentException($"Can not create {nameof(Integer)}, MaxSize of {nameof(Integer)} is exceeded: {Size}/{MaxSize}.");
+            if (Size > MaxSize) throw new ArgumentException($"Integer size {Size} bytes exceeds maximum allowed size of {MaxSize} bytes.", nameof(value));
         }
         this.value = value;
     }
