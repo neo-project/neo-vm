@@ -11,6 +11,7 @@
 
 using Neo.VM.Types;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM;
 
@@ -33,8 +34,7 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
     /// <inheritdoc/>
     public void AddZeroReferred(StackItem item)
     {
-        zeroReferred.Add(item);
-        if (NeedTrack(item))
+        if (zeroReferred.Add(item) && NeedTrack(item))
             trackedItems.Add(item);
     }
 
@@ -97,6 +97,10 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
             zeroReferred.Add(item);
     }
 
+    /// <summary>
+    /// Only compound types and buffers require tracking because they own other items or pooled memory.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool NeedTrack(StackItem item) => item is CompoundType or Buffer;
 
     private void Track(StackItem item)
