@@ -48,10 +48,9 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
             if (start > end)
                 throw new ArgumentOutOfRangeException(nameof(range), "Range start must be less than or equal to end.");
 
-            StackItem[] copyList = [.. _innerList];
-            List<StackItem> reverseList = [.. copyList.Reverse()];
-
-            return reverseList.GetRange(start, end - start);
+            List<StackItem> copyList = new(_innerList);
+            copyList.Reverse();
+            return copyList.GetRange(start, end - start);
         }
     }
 
