@@ -144,7 +144,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
         refMap.Add(this, result);
         foreach (var (k, v) in dictionary)
             result[k] = v.DeepCopy(refMap, asImmutable);
-        result.IsReadOnly = true;
+        result.IsReadOnly = IsReadOnly || asImmutable;
         return result;
     }
 
