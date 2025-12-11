@@ -132,7 +132,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
         refMap.Add(this, result);
         foreach (StackItem item in InnerList)
             result.Add(item.DeepCopy(refMap, asImmutable));
-        result.IsReadOnly = true;
+        result.IsReadOnly = IsReadOnly || asImmutable;
         return result;
     }
 
