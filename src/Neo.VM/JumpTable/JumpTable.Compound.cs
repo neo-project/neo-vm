@@ -308,8 +308,7 @@ partial class JumpTable
                         engine.Push(false);
                         break;
                     }
-                    var index = (int)indexBI;
-                    engine.Push(index < buffer.Size);
+                    engine.Push(indexBI < buffer.Size);
                     break;
                 }
             // For byte strings, check if the index is within bounds and push the result onto the stack.
