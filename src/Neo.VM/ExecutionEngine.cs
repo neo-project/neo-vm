@@ -86,7 +86,7 @@ public class ExecutionEngine : IDisposable
     /// </summary>
     /// <param name="jumpTable">The jump table to be used.</param>
     public ExecutionEngine(JumpTable? jumpTable = null)
-        : this(jumpTable, new ReferenceCounter(), ExecutionEngineLimits.Default) { }
+        : this(jumpTable, new MarkSweepReferenceCounter(), ExecutionEngineLimits.Default) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ExecutionEngine"/> class
