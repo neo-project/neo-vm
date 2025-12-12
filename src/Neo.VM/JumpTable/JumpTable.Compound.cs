@@ -283,11 +283,6 @@ partial class JumpTable
                     var indexBI = key.GetInteger();
                     if (indexBI.Sign < 0)
                         throw new InvalidOperationException($"The negative index {indexBI} is invalid for OpCode.{instruction.OpCode}.");
-                    if (indexBI > int.MaxValue)
-                    {
-                        engine.Push(false);
-                        break;
-                    }
                     engine.Push(indexBI < array.Count);
                     break;
                 }
@@ -303,11 +298,6 @@ partial class JumpTable
                     var indexBI = key.GetInteger();
                     if (indexBI.Sign < 0)
                         throw new InvalidOperationException($"The negative index {indexBI} is invalid for OpCode.{instruction.OpCode}.");
-                    if (indexBI > int.MaxValue)
-                    {
-                        engine.Push(false);
-                        break;
-                    }
                     engine.Push(indexBI < buffer.Size);
                     break;
                 }
@@ -317,11 +307,6 @@ partial class JumpTable
                     var indexBI = key.GetInteger();
                     if (indexBI.Sign < 0)
                         throw new InvalidOperationException($"The negative index {indexBI} is invalid for OpCode.{instruction.OpCode}.");
-                    if (indexBI > int.MaxValue)
-                    {
-                        engine.Push(false);
-                        break;
-                    }
                     engine.Push(indexBI < array.Size);
                     break;
                 }
