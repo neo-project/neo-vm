@@ -322,8 +322,7 @@ partial class JumpTable
                         engine.Push(false);
                         break;
                     }
-                    var index = (int)indexBI;
-                    engine.Push(index < array.Size);
+                    engine.Push(indexBI < array.Size);
                     break;
                 }
             default:
