@@ -105,8 +105,7 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
 
     private void Track(StackItem item)
     {
-        if (trackedItems.Add(item))
-            zeroReferred.Add(item);
+        trackedItems.Add(item);
     }
 
     private void Collect()
@@ -120,31 +119,37 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
                 Mark(item);
         }
 
+        // Legacy Tarjan RC clears zero-referred up-front and then removes every
+        // unmarked tracked item. To preserve identical semantics (and avoid
+        // keeping unreachable descendants that were never re-added to zeroReferred),
+        // we do the same here.
+        zeroReferred.Clear();
+
         foreach (var item in trackedItems)
         {
-            if (!marked.Contains(item) && zeroReferred.Contains(item))
+            if (!marked.Contains(item))
                 unreachable.Add(item);
         }
 
         foreach (var item in unreachable)
             RemoveTracked(item);
-
-        zeroReferred.RemoveWhere(marked.Contains);
     }
 
     private void Mark(StackItem root)
     {
         if (!marked.Add(root)) return;
         pending.Push(root);
+
         while (pending.Count > 0)
         {
             var current = pending.Pop();
-            if (current.ObjectReferences is null) continue;
-            foreach (var entry in current.ObjectReferences.Values)
+            if (current is not CompoundType compound) continue;
+
+            foreach (var child in compound.SubItems)
             {
-                if (entry.References <= 0) continue;
-                if (marked.Add(entry.Item))
-                    pending.Push(entry.Item);
+                if (!NeedTrack(child)) continue;
+                if (marked.Add(child))
+                    pending.Push(child);
             }
         }
     }
