@@ -288,8 +288,7 @@ partial class JumpTable
                         engine.Push(false);
                         break;
                     }
-                    var index = (int)indexBI;
-                    engine.Push(index < array.Count);
+                    engine.Push(indexBI < array.Count);
                     break;
                 }
             // For maps, check if the key exists and push the result onto the stack.
