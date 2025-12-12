@@ -280,10 +280,15 @@ partial class JumpTable
             // For arrays, check if the index is within bounds and push the result onto the stack.
             case VMArray array:
                 {
-                    // TODO: Overflow and underflow checking needs to be done.
-                    var index = (int)key.GetInteger();
-                    if (index < 0)
-                        throw new InvalidOperationException($"The negative index {index} is invalid for OpCode.{instruction.OpCode}.");
+                    var indexBI = key.GetInteger();
+                    if (indexBI.Sign < 0)
+                        throw new InvalidOperationException($"The negative index {indexBI} is invalid for OpCode.{instruction.OpCode}.");
+                    if (indexBI > int.MaxValue)
+                    {
+                        engine.Push(false);
+                        break;
+                    }
+                    var index = (int)indexBI;
                     engine.Push(index < array.Count);
                     break;
                 }
@@ -296,20 +301,30 @@ partial class JumpTable
             // For buffers, check if the index is within bounds and push the result onto the stack.
             case Buffer buffer:
                 {
-                    // TODO: Overflow and underflow checking needs to be done.
-                    var index = (int)key.GetInteger();
-                    if (index < 0)
-                        throw new InvalidOperationException($"The negative index {index} is invalid for OpCode.{instruction.OpCode}.");
+                    var indexBI = key.GetInteger();
+                    if (indexBI.Sign < 0)
+                        throw new InvalidOperationException($"The negative index {indexBI} is invalid for OpCode.{instruction.OpCode}.");
+                    if (indexBI > int.MaxValue)
+                    {
+                        engine.Push(false);
+                        break;
+                    }
+                    var index = (int)indexBI;
                     engine.Push(index < buffer.Size);
                     break;
                 }
             // For byte strings, check if the index is within bounds and push the result onto the stack.
             case ByteString array:
                 {
-                    // TODO: Overflow and underflow checking needs to be done.
-                    var index = (int)key.GetInteger();
-                    if (index < 0)
-                        throw new InvalidOperationException($"The negative index {index} is invalid for OpCode.{instruction.OpCode}.");
+                    var indexBI = key.GetInteger();
+                    if (indexBI.Sign < 0)
+                        throw new InvalidOperationException($"The negative index {indexBI} is invalid for OpCode.{instruction.OpCode}.");
+                    if (indexBI > int.MaxValue)
+                    {
+                        engine.Push(false);
+                        break;
+                    }
+                    var index = (int)indexBI;
                     engine.Push(index < array.Size);
                     break;
                 }
