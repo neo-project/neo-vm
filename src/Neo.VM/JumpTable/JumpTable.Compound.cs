@@ -280,10 +280,10 @@ partial class JumpTable
             // For arrays, check if the index is within bounds and push the result onto the stack.
             case VMArray array:
                 {
-                    var indexBI = key.GetInteger();
-                    if (indexBI.Sign < 0)
-                        throw new InvalidOperationException($"The negative index {indexBI} is invalid for OpCode.{instruction.OpCode}.");
-                    engine.Push(indexBI < array.Count);
+                    var index = key.GetInteger();
+                    if (index < 0 || index >= engine.Limits.MaxStackSize)
+                        throw new InvalidOperationException($"The index {index} is invalid for OpCode.{instruction.OpCode}.");
+                    engine.Push(index < array.Count);
                     break;
                 }
             // For maps, check if the key exists and push the result onto the stack.
@@ -295,19 +295,19 @@ partial class JumpTable
             // For buffers, check if the index is within bounds and push the result onto the stack.
             case Buffer buffer:
                 {
-                    var indexBI = key.GetInteger();
-                    if (indexBI.Sign < 0)
-                        throw new InvalidOperationException($"The negative index {indexBI} is invalid for OpCode.{instruction.OpCode}.");
-                    engine.Push(indexBI < buffer.Size);
+                    var index = key.GetInteger();
+                    if (index < 0 || index >= engine.Limits.MaxItemSize)
+                        throw new InvalidOperationException($"The index {index} is invalid for OpCode.{instruction.OpCode}.");
+                    engine.Push(index < buffer.Size);
                     break;
                 }
             // For byte strings, check if the index is within bounds and push the result onto the stack.
             case ByteString array:
                 {
-                    var indexBI = key.GetInteger();
-                    if (indexBI.Sign < 0)
-                        throw new InvalidOperationException($"The negative index {indexBI} is invalid for OpCode.{instruction.OpCode}.");
-                    engine.Push(indexBI < array.Size);
+                    var index = key.GetInteger();
+                    if (index < 0 || index >= engine.Limits.MaxItemSize)
+                        throw new InvalidOperationException($"The index {index} is invalid for OpCode.{instruction.OpCode}.");
+                    engine.Push(index < array.Size);
                     break;
                 }
             default:
