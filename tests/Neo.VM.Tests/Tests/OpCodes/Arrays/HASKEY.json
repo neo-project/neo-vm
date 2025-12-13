@@ -222,13 +222,7 @@
             "execute"
           ],
           "result": {
-            "state": "HALT",
-            "resultStack": [
-              {
-                "type": "Boolean",
-                "value": false
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]
