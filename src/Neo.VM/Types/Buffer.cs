@@ -120,7 +120,7 @@ public class Buffer : StackItem
     /// Invalidate HashCode
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal void InvalidateHashCode()
+    public void InvalidateHashCode()
     {
         _hashCode = 0;
     }
