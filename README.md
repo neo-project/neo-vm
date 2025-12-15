@@ -3,7 +3,7 @@
 # NeoVM — The NEO Virtual Machine
 
 [![NuGet](https://img.shields.io/nuget/v/Neo.VM.svg)](https://www.nuget.org/packages/Neo.VM/)
-[![Coverage Status](https://coveralls.io/repos/github/neo-project/neo/badge.svg)](https://coveralls.io/github/neo-project/neo-vm)
+[![Coverage Status](https://coveralls.io/repos/github/neo-project/neo-vm/badge.svg)](https://coveralls.io/github/neo-project/neo-vm)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 NeoVM is the lightweight, deterministic, stack-based virtual machine that executes Neo smart contracts. It’s designed to be embeddable, predictable, and portable across platforms. For an overview and deep dives (architecture, stacks, instruction set), see the official developer docs. ([NEO Developer Resource](https://developers.neo.org/docs/n3/foundation/neovm))
@@ -29,7 +29,7 @@ dotnet add package Neo.VM
 
 This adds the VM to your project; you can then embed and drive it from your host application.
 
-Targets **.NET 9.0** and **.NET Standard 2.1** (compatible with a wide range of runtimes).
+Targets **.NET 10.0** and **.NET Standard 2.1** (compatible with a wide range of runtimes).
 
 ---
 
