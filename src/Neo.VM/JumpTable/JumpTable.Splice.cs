@@ -57,9 +57,8 @@ partial class JumpTable
         Buffer dst = engine.Pop<Buffer>();
         if (checked(di + count) > dst.Size)
             throw new InvalidOperationException($"The destination index + count is out of range for {nameof(OpCode.MEMCPY)}, index: {di}, count: {count}, {di}/[0, {dst.Size}].");
-        // TODO: check if we can optimize the memcpy by using peek instead of  dup then pop
+        // TODO: check if we can optimize the memcpy by using peek instead of dup then pop
         src.Slice(si, count).CopyTo(dst.InnerBuffer.Span[di..]);
-        dst.InvalidateHashCode();
     }
 
     /// <summary>
