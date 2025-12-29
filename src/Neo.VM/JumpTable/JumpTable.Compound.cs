@@ -282,7 +282,7 @@ partial class JumpTable
                 {
                     var index = key.GetInteger();
                     if (index < 0 || index >= engine.Limits.MaxStackSize)
-                        throw new InvalidOperationException($"The index {index} is invalid for OpCode.{instruction.OpCode}.");
+                        throw new InvalidOperationException($"The index {index} is invalid for OpCode {instruction.OpCode}.");
                     engine.Push(index < array.Count);
                     break;
                 }
@@ -297,7 +297,7 @@ partial class JumpTable
                 {
                     var index = key.GetInteger();
                     if (index < 0 || index >= engine.Limits.MaxItemSize)
-                        throw new InvalidOperationException($"The index {index} is invalid for OpCode.{instruction.OpCode}.");
+                        throw new InvalidOperationException($"The index {index} is invalid for OpCode {instruction.OpCode}.");
                     engine.Push(index < buffer.Size);
                     break;
                 }
@@ -306,7 +306,7 @@ partial class JumpTable
                 {
                     var index = key.GetInteger();
                     if (index < 0 || index >= engine.Limits.MaxItemSize)
-                        throw new InvalidOperationException($"The index {index} is invalid for OpCode.{instruction.OpCode}.");
+                        throw new InvalidOperationException($"The index {index} is invalid for OpCode {instruction.OpCode}.");
                     engine.Push(index < array.Size);
                     break;
                 }
