@@ -466,7 +466,6 @@ partial class JumpTable
                     if (b < sbyte.MinValue || b > byte.MaxValue)
                         throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
                     buffer.InnerBuffer.Span[index] = (byte)b;
-                    buffer.InvalidateHashCode();
                     break;
                 }
             default:
@@ -492,7 +491,6 @@ partial class JumpTable
                 break;
             case Buffer buffer:
                 buffer.InnerBuffer.Span.Reverse();
-                buffer.InvalidateHashCode();
                 break;
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
