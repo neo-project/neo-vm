@@ -232,7 +232,7 @@ public class UT_ReferenceCounter
 
     private static void AssertReferenceCountersProduceSameResult(byte[] script, int expectedCount)
     {
-        using (ExecutionEngine engine = new())
+        using (CounterEngine engine = new(new ReferenceCounter()))
         {
             engine.LoadScript(script);
             Assert.AreEqual(VMState.HALT, engine.Execute());
