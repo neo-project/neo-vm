@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 The Neo Project.
+// Copyright (C) 2015-2026 The Neo Project.
 //
 // UT_ReferenceCounterComprehensive.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
@@ -12,7 +12,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 using Neo.VM.Types;
-using System;
 using Array = Neo.VM.Types.Array;
 using Buffer = Neo.VM.Types.Buffer;
 
