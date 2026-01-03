@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 using Neo.VM.Types;
 using System;
+using System.Collections.Generic;
 using Array = Neo.VM.Types.Array;
 
 namespace Neo.Test;
@@ -23,41 +24,10 @@ public class UT_ReferenceCounter
     [TestMethod]
     public void TestCircularReferences()
     {
-        using ScriptBuilder sb = new();
-        sb.Emit(OpCode.INITSSLOT, new byte[] { 1 }); //{}|{null}:1
-        sb.EmitPush(0); //{0}|{null}:2
-        sb.Emit(OpCode.NEWARRAY); //{A[]}|{null}:2
-        sb.Emit(OpCode.DUP); //{A[],A[]}|{null}:3
-        sb.Emit(OpCode.DUP); //{A[],A[],A[]}|{null}:4
-        sb.Emit(OpCode.APPEND); //{A[A]}|{null}:3
-        sb.Emit(OpCode.DUP); //{A[A],A[A]}|{null}:4
-        sb.EmitPush(0); //{A[A],A[A],0}|{null}:5
-        sb.Emit(OpCode.NEWARRAY); //{A[A],A[A],B[]}|{null}:5
-        sb.Emit(OpCode.STSFLD0); //{A[A],A[A]}|{B[]}:4
-        sb.Emit(OpCode.LDSFLD0); //{A[A],A[A],B[]}|{B[]}:5
-        sb.Emit(OpCode.APPEND); //{A[A,B]}|{B[]}:4
-        sb.Emit(OpCode.LDSFLD0); //{A[A,B],B[]}|{B[]}:5
-        sb.EmitPush(0); //{A[A,B],B[],0}|{B[]}:6
-        sb.Emit(OpCode.NEWARRAY); //{A[A,B],B[],C[]}|{B[]}:6
-        sb.Emit(OpCode.TUCK); //{A[A,B],C[],B[],C[]}|{B[]}:7
-        sb.Emit(OpCode.APPEND); //{A[A,B],C[]}|{B[C]}:6
-        sb.EmitPush(0); //{A[A,B],C[],0}|{B[C]}:7
-        sb.Emit(OpCode.NEWARRAY); //{A[A,B],C[],D[]}|{B[C]}:7
-        sb.Emit(OpCode.TUCK); //{A[A,B],D[],C[],D[]}|{B[C]}:8
-        sb.Emit(OpCode.APPEND); //{A[A,B],D[]}|{B[C[D]]}:7
-        sb.Emit(OpCode.LDSFLD0); //{A[A,B],D[],B[C]}|{B[C[D]]}:8
-        sb.Emit(OpCode.APPEND); //{A[A,B]}|{B[C[D[B]]]}:7
-        sb.Emit(OpCode.PUSHNULL); //{A[A,B],null}|{B[C[D[B]]]}:8
-        sb.Emit(OpCode.STSFLD0); //{A[A,B[C[D[B]]]]}|{null}:7
-        sb.Emit(OpCode.DUP); //{A[A,B[C[D[B]]]],A[A,B]}|{null}:8
-        sb.EmitPush(1); //{A[A,B[C[D[B]]]],A[A,B],1}|{null}:9
-        sb.Emit(OpCode.REMOVE); //{A[A]}|{null}:3
-        sb.Emit(OpCode.STSFLD0); //{}|{A[A]}:2
-        sb.Emit(OpCode.RET); //{}:0
-
+        byte[] script = BuildCircularReferencesScript();
         using ExecutionEngine engine = new();
         Debugger debugger = new(engine);
-        engine.LoadScript(sb.ToArray());
+        engine.LoadScript(script);
         Assert.AreEqual(VMState.BREAK, debugger.StepInto());
         Assert.AreEqual(1, engine.ReferenceCounter.Count);
         Assert.AreEqual(VMState.BREAK, debugger.StepInto());
@@ -123,22 +93,10 @@ public class UT_ReferenceCounter
     [TestMethod]
     public void TestRemoveReferrer()
     {
-        using ScriptBuilder sb = new();
-        sb.Emit(OpCode.INITSSLOT, new byte[] { 1 }); //{}|{null}:1
-        sb.EmitPush(0); //{0}|{null}:2
-        sb.Emit(OpCode.NEWARRAY); //{A[]}|{null}:2
-        sb.Emit(OpCode.DUP); //{A[],A[]}|{null}:3
-        sb.EmitPush(0); //{A[],A[],0}|{null}:4
-        sb.Emit(OpCode.NEWARRAY); //{A[],A[],B[]}|{null}:4
-        sb.Emit(OpCode.STSFLD0); //{A[],A[]}|{B[]}:3
-        sb.Emit(OpCode.LDSFLD0); //{A[],A[],B[]}|{B[]}:4
-        sb.Emit(OpCode.APPEND); //{A[B]}|{B[]}:3
-        sb.Emit(OpCode.DROP); //{}|{B[]}:1
-        sb.Emit(OpCode.RET); //{}:0
-
+        byte[] script = BuildRemoveReferrerScript();
         using ExecutionEngine engine = new();
         Debugger debugger = new(engine);
-        engine.LoadScript(sb.ToArray());
+        engine.LoadScript(script);
         Assert.AreEqual(VMState.BREAK, debugger.StepInto());
         Assert.AreEqual(1, engine.ReferenceCounter.Count);
         Assert.AreEqual(VMState.BREAK, debugger.StepInto());
@@ -256,5 +214,95 @@ public class UT_ReferenceCounter
         }
 
         Assert.ThrowsExactly<InvalidOperationException>(() => arr.Add(arr2));
+    }
+
+    [TestMethod]
+    public void TestMarkSweepMatchesReferenceCounterOnCircularScript()
+    {
+        var script = BuildCircularReferencesScript();
+        AssertReferenceCountersProduceSameResult(script, 4);
+    }
+
+    [TestMethod]
+    public void TestMarkSweepMatchesReferenceCounterOnRemoveReferrerScript()
+    {
+        var script = BuildRemoveReferrerScript();
+        AssertReferenceCountersProduceSameResult(script, 1);
+    }
+
+    private static void AssertReferenceCountersProduceSameResult(byte[] script, int expectedCount)
+    {
+        using (CounterEngine engine = new(new ReferenceCounter()))
+        {
+            engine.LoadScript(script);
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(expectedCount, engine.ReferenceCounter.Count);
+        }
+
+        using CounterEngine markSweepEngine = new(new MarkSweepReferenceCounter());
+        markSweepEngine.LoadScript(script);
+        Assert.AreEqual(VMState.HALT, markSweepEngine.Execute());
+        Assert.AreEqual(expectedCount, markSweepEngine.ReferenceCounter.Count);
+    }
+
+    private static byte[] BuildCircularReferencesScript()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.INITSSLOT, new byte[] { 1 });
+        sb.EmitPush(0);
+        sb.Emit(OpCode.NEWARRAY);
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.APPEND);
+        sb.Emit(OpCode.DUP);
+        sb.EmitPush(0);
+        sb.Emit(OpCode.NEWARRAY);
+        sb.Emit(OpCode.STSFLD0);
+        sb.Emit(OpCode.LDSFLD0);
+        sb.Emit(OpCode.APPEND);
+        sb.Emit(OpCode.LDSFLD0);
+        sb.EmitPush(0);
+        sb.Emit(OpCode.NEWARRAY);
+        sb.Emit(OpCode.TUCK);
+        sb.Emit(OpCode.APPEND);
+        sb.EmitPush(0);
+        sb.Emit(OpCode.NEWARRAY);
+        sb.Emit(OpCode.TUCK);
+        sb.Emit(OpCode.APPEND);
+        sb.Emit(OpCode.LDSFLD0);
+        sb.Emit(OpCode.APPEND);
+        sb.Emit(OpCode.PUSHNULL);
+        sb.Emit(OpCode.STSFLD0);
+        sb.Emit(OpCode.DUP);
+        sb.EmitPush(1);
+        sb.Emit(OpCode.REMOVE);
+        sb.Emit(OpCode.STSFLD0);
+        sb.Emit(OpCode.RET);
+        return sb.ToArray();
+    }
+
+    private static byte[] BuildRemoveReferrerScript()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.INITSSLOT, new byte[] { 1 });
+        sb.EmitPush(0);
+        sb.Emit(OpCode.NEWARRAY);
+        sb.Emit(OpCode.DUP);
+        sb.EmitPush(0);
+        sb.Emit(OpCode.NEWARRAY);
+        sb.Emit(OpCode.STSFLD0);
+        sb.Emit(OpCode.LDSFLD0);
+        sb.Emit(OpCode.APPEND);
+        sb.Emit(OpCode.DROP);
+        sb.Emit(OpCode.RET);
+        return sb.ToArray();
+    }
+
+    private sealed class CounterEngine : ExecutionEngine
+    {
+        public CounterEngine(IReferenceCounter counter)
+            : base(null, counter, ExecutionEngineLimits.Default)
+        {
+        }
     }
 }
