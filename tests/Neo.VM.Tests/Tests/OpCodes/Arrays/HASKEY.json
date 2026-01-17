@@ -208,6 +208,46 @@
       ]
     },
     {
+      "name": "Overflow index [Array]",
+      "script": [
+        "PUSH1",
+        "NEWARRAY",
+        "PUSHINT64",
+        "0x0000008000000000",
+        "HASKEY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Underflow index [Array]",
+      "script": [
+        "PUSH1",
+        "NEWARRAY",
+        "PUSHINT64",
+        "0xffffff7fffffffff",
+        "HASKEY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "Check key size [Map]",
       "script": [
         "NEWMAP",
