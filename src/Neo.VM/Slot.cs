@@ -38,6 +38,7 @@ public class Slot : IReadOnlyList<StackItem>
         internal set
         {
             ref var oldValue = ref _items[index];
+            if (ReferenceEquals(oldValue, value)) return;
             _referenceCounter.RemoveStackReference(oldValue);
             oldValue = value;
             _referenceCounter.AddStackReference(value);

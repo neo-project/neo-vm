@@ -35,7 +35,9 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
         set
         {
             if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
-            ReferenceCounter?.RemoveReference(InnerList[index], this);
+            var oldItem = InnerList[index];
+            if (ReferenceEquals(oldItem, value)) return;
+            ReferenceCounter?.RemoveReference(oldItem, this);
             InnerList[index] = value;
             if (ReferenceCounter != null && value is CompoundType { ReferenceCounter: null })
             {

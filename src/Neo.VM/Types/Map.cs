@@ -13,7 +13,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types;
@@ -53,10 +52,12 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
             if (key.Size > MaxKeySize)
                 throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
             if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not set value.");
+            bool hasOldValue = dictionary.TryGetValue(key, out StackItem? oldValue);
+            if (hasOldValue && ReferenceEquals(oldValue, value)) return;
             if (ReferenceCounter != null)
             {
-                if (dictionary.TryGetValue(key, out StackItem? old_value))
-                    ReferenceCounter.RemoveReference(old_value, this);
+                if (hasOldValue)
+                    ReferenceCounter.RemoveReference(oldValue!, this);
                 else
                     ReferenceCounter.AddReference(key, this);
                 if (value is CompoundType { ReferenceCounter: null })
@@ -76,7 +77,16 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// </summary>
     public IEnumerable<PrimitiveType> Keys => dictionary.Keys;
 
-    public override IEnumerable<StackItem> SubItems => Keys.Concat(Values);
+    public override IEnumerable<StackItem> SubItems
+    {
+        get
+        {
+            foreach (var key in dictionary.Keys)
+                yield return key;
+            foreach (var value in dictionary.Values)
+                yield return value;
+        }
+    }
 
     public override int SubItemsCount => dictionary.Count * 2;
 

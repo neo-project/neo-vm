@@ -72,9 +72,15 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
             throw new ArgumentOutOfRangeException(nameof(count), $"Out of stack bounds: {count}/{_innerList.Count}");
         if (count == 0) return;
         if (count == -1 || count == _innerList.Count)
+        {
             stack._innerList.AddRange(_innerList);
+        }
         else
-            stack._innerList.AddRange(_innerList.Skip(_innerList.Count - count));
+        {
+            int start = _innerList.Count - count;
+            for (int i = start; i < _innerList.Count; i++)
+                stack._innerList.Add(_innerList[i]);
+        }
     }
 
     public IEnumerator<StackItem> GetEnumerator()
