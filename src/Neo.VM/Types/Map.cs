@@ -58,7 +58,9 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
                 if (dictionary.TryGetValue(key, out StackItem? old_value))
                     ReferenceCounter.RemoveReference(old_value, this);
                 else
+                {
                     ReferenceCounter.AddReference(key, this);
+                }
                 if (value is CompoundType { ReferenceCounter: null })
                 {
                     throw new InvalidOperationException("Can not set a Map without a ReferenceCounter.");
@@ -86,6 +88,12 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// Gets an enumerable collection that contains the values in the map.
     /// </summary>
     public IEnumerable<StackItem> Values => dictionary.Values;
+
+#if NET5_0_OR_GREATER
+    internal OrderedDictionary<PrimitiveType, StackItem> InternalDictionary => dictionary;
+#else
+    internal Collections.OrderedDictionary<PrimitiveType, StackItem> InternalDictionary => dictionary;
+#endif
 
     /// <summary>
     /// Create a new map with the specified reference counter.

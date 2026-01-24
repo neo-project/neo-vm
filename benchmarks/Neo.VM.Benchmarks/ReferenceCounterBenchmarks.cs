@@ -25,13 +25,14 @@ public class ReferenceCounterBenchmarks
     {
         NestedArrays,
         DenseCycles,
-        StackChurn
+        StackChurn,
+        MapHeavy
     }
 
     [Params(nameof(ReferenceCounter), nameof(MarkSweepReferenceCounter))]
     public string Strategy { get; set; } = nameof(ReferenceCounter);
 
-    [Params(Workload.NestedArrays, Workload.DenseCycles, Workload.StackChurn)]
+    [Params(Workload.NestedArrays, Workload.DenseCycles, Workload.StackChurn, Workload.MapHeavy)]
     public Workload Scenario { get; set; }
 
     [Params(32)]
@@ -54,6 +55,7 @@ public class ReferenceCounterBenchmarks
             Workload.NestedArrays => CollectNestedArrays(),
             Workload.DenseCycles => CollectDenseCycles(),
             Workload.StackChurn => CollectStackChurn(),
+            Workload.MapHeavy => CollectMapHeavy(),
             _ => throw new ArgumentOutOfRangeException(nameof(Scenario))
         };
     }
@@ -148,6 +150,62 @@ public class ReferenceCounterBenchmarks
             counter.RemoveStackReference(node);
 
         return counter.CheckZeroReferred();
+    }
+
+    private int CollectMapHeavy()
+    {
+        var counter = CreateCounter();
+        var roots = new Map[RootCount];
+
+        for (int i = 0; i < RootCount; i++)
+        {
+            var root = new Map(counter);
+            counter.AddStackReference(root);
+            roots[i] = root;
+        }
+
+        for (int i = 0; i < RootCount; i++)
+            BuildMapHeavy(roots[i], Depth, counter, roots, (i + 1) * 1_000_000);
+
+        foreach (var root in roots)
+            counter.RemoveStackReference(root);
+
+        return counter.CheckZeroReferred();
+    }
+
+    private void BuildMapHeavy(Map parent, int depth, IReferenceCounter counter, Map[] roots, int seed)
+    {
+        if (depth == 0) return;
+
+        int keyBase = seed + depth * 1_000;
+        for (int i = 0; i < FanOut; i++)
+        {
+            int key = keyBase + i;
+            if ((i & 1) == 0)
+            {
+                var childMap = new Map(counter);
+                parent[key] = childMap;
+                childMap[key + 100_000] = parent;
+                childMap[key + 200_000] = roots[(key + i) % roots.Length];
+
+                var array = new Array(counter)
+                {
+                    childMap
+                };
+                childMap[key + 300_000] = array;
+
+                BuildMapHeavy(childMap, depth - 1, counter, roots, keyBase + (i + 1) * 10_000);
+            }
+            else
+            {
+                var childArray = new Array(counter)
+                {
+                    parent,
+                    roots[(key + i) % roots.Length]
+                };
+                parent[key] = childArray;
+            }
+        }
     }
 
     private IReferenceCounter CreateCounter() => Strategy switch
