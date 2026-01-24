@@ -59,49 +59,6 @@ public sealed class ReferenceCounter : IReferenceCounter
         return false;
     }
 
-    private static bool HasParentOnStack(StackItem item)
-    {
-        var single = item.SingleObjectReference;
-        if (single != null && single.References > 0 && single.Item.OnStack)
-            return true;
-
-        var references = item.ObjectReferences;
-        if (references == null) return false;
-        foreach (var entry in references.Values)
-        {
-            if (entry.References > 0 && entry.Item.OnStack)
-                return true;
-        }
-        return false;
-    }
-
-    private static void RemoveParentReference(StackItem item, CompoundType parent)
-    {
-        var references = item.ObjectReferences;
-        if (references != null)
-        {
-            references.Remove(parent);
-            if (references.Count == 1)
-            {
-                foreach (var entry in references.Values)
-                {
-                    item.SingleObjectReference = entry;
-                    break;
-                }
-                item.ObjectReferences = null;
-            }
-            else if (references.Count == 0)
-            {
-                item.ObjectReferences = null;
-            }
-            return;
-        }
-
-        var single = item.SingleObjectReference;
-        if (single != null && ReferenceEquals(single.Item, parent))
-            item.SingleObjectReference = null;
-    }
-
     /// <inheritdoc/>
     public void AddReference(StackItem item, CompoundType parent)
     {
@@ -118,29 +75,8 @@ public sealed class ReferenceCounter : IReferenceCounter
         // Add the item to the set of tracked items.
         _trackedItems.Add(item);
 
-        if (item.ObjectReferences is null)
-        {
-            var single = item.SingleObjectReference;
-            if (single is null)
-            {
-                single = new StackItem.ObjectReferenceEntry(parent);
-                item.SingleObjectReference = single;
-                single.References++;
-                return;
-            }
-
-            if (ReferenceEquals(single.Item, parent))
-            {
-                single.References++;
-                return;
-            }
-
-            item.ObjectReferences = new Dictionary<CompoundType, StackItem.ObjectReferenceEntry>(2, ReferenceEqualityComparer.Instance)
-            {
-                { (CompoundType)single.Item, single }
-            };
-            item.SingleObjectReference = null;
-        }
+        // Initialize the ObjectReferences dictionary if it is null.
+        item.ObjectReferences ??= new Dictionary<CompoundType, StackItem.ObjectReferenceEntry>(ReferenceEqualityComparer.Instance);
 
         // Add the parent to the item's ObjectReferences dictionary and increment its reference count.
         if (!item.ObjectReferences.TryGetValue(parent, out var pEntry))
@@ -224,7 +160,7 @@ public sealed class ReferenceCounter : IReferenceCounter
                 foreach (StackItem item in component)
                 {
                     // An item is considered 'on stack' if it has stack references or if its parent items are still on stack.
-                    if (item.StackReferences > 0 || HasParentOnStack(item))
+                    if (item.StackReferences > 0 || item.ObjectReferences?.Values.Any(p => p.References > 0 && p.Item.OnStack) == true)
                     {
                         onStack = true;
                         break;
@@ -257,7 +193,7 @@ public sealed class ReferenceCounter : IReferenceCounter
                                 if (!NeedTrack(subitem)) continue;
 
                                 // Remove the parent reference from the sub-item.
-                                RemoveParentReference(subitem, compound);
+                                subitem.ObjectReferences!.Remove(compound);
                             }
                         }
 
@@ -289,36 +225,8 @@ public sealed class ReferenceCounter : IReferenceCounter
         // Invalidate the cached components since the tracked items are changing.
         _cachedComponents = null;
 
-        if (item.ObjectReferences is null)
-        {
-            var single = item.SingleObjectReference ?? throw new KeyNotFoundException();
-            if (!ReferenceEquals(single.Item, parent))
-                throw new KeyNotFoundException();
-            if (--single.References == 0)
-                item.SingleObjectReference = null;
-        }
-        else
-        {
-            // Decrement the reference count for the parent in the item's ObjectReferences dictionary.
-            var entry = item.ObjectReferences[parent];
-            if (--entry.References == 0)
-            {
-                item.ObjectReferences.Remove(parent);
-                if (item.ObjectReferences.Count == 1)
-                {
-                    foreach (var remaining in item.ObjectReferences.Values)
-                    {
-                        item.SingleObjectReference = remaining;
-                        break;
-                    }
-                    item.ObjectReferences = null;
-                }
-                else if (item.ObjectReferences.Count == 0)
-                {
-                    item.ObjectReferences = null;
-                }
-            }
-        }
+        // Decrement the reference count for the parent in the item's ObjectReferences dictionary.
+        item.ObjectReferences![parent].References--;
 
         // If the item has no stack references, add it to the zero_referred set.
         if (item.StackReferences == 0)
