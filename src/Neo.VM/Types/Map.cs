@@ -53,12 +53,10 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
             if (key.Size > MaxKeySize)
                 throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
             if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not set value.");
-            bool hasOldValue = dictionary.TryGetValue(key, out StackItem? oldValue);
-            if (hasOldValue && ReferenceEquals(oldValue, value)) return;
             if (ReferenceCounter != null)
             {
-                if (hasOldValue)
-                    ReferenceCounter.RemoveReference(oldValue!, this);
+                if (dictionary.TryGetValue(key, out StackItem? old_value))
+                    ReferenceCounter.RemoveReference(old_value, this);
                 else
                     ReferenceCounter.AddReference(key, this);
                 if (value is CompoundType { ReferenceCounter: null })
