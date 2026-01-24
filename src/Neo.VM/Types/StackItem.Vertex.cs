@@ -42,11 +42,6 @@ partial class StackItem
         public int References;
 
         /// <summary>
-        /// Index of this item in the parent's children list, or -1 if absent.
-        /// </summary>
-        public int ParentIndex = -1;
-
-        /// <summary>
         /// Initializes a new instance of the ObjectReferenceEntry class with the specified StackItem.
         /// </summary>
         /// <param name="item">The referenced StackItem.</param>
@@ -76,11 +71,6 @@ partial class StackItem
     internal Dictionary<CompoundType, ObjectReferenceEntry>? ObjectReferences;
 
     /// <summary>
-    /// Stores a single object reference entry to avoid dictionary allocations for the common one-parent case.
-    /// </summary>
-    internal ObjectReferenceEntry? SingleObjectReference;
-
-    /// <summary>
     /// Depth-First Number for Tarjan's algorithm.
     /// </summary>
     internal int DFN = -1;
@@ -107,27 +97,6 @@ partial class StackItem
     internal bool OnStack = false;
 
     /// <summary>
-    /// Marks the generation for the mark-sweep reference counter.
-    /// </summary>
-    internal int MarkGeneration = 0;
-
-    /// <summary>
-    /// Marks the generation for zero-referred tracking in mark-sweep.
-    /// </summary>
-    internal int ZeroReferredGeneration = 0;
-
-    /// <summary>
-    /// Tracks the index of this item in the mark-sweep tracked list, or -1 if untracked.
-    /// </summary>
-    internal int MarkSweepIndex = -1;
-
-    /// <summary>
-    /// Tracks the index of this item in the mark-sweep stack roots list, or -1 if not present.
-    /// </summary>
-    internal int MarkSweepRootIndex = -1;
-
-
-    /// <summary>
     /// Returns the successors of the current item based on object references.
     ///
     /// This property provides an enumerable of StackItems that are referenced by this item.
@@ -135,23 +104,7 @@ partial class StackItem
     ///
     /// Use this property when you need to iterate over the successors of a StackItem.
     /// </summary>
-    internal IEnumerable<StackItem> Successors
-    {
-        get
-        {
-            var single = SingleObjectReference;
-            if (single != null && single.References > 0)
-                yield return single.Item;
-
-            var references = ObjectReferences;
-            if (references == null) yield break;
-            foreach (var entry in references.Values)
-            {
-                if (entry.References > 0)
-                    yield return entry.Item;
-            }
-        }
-    }
+    internal IEnumerable<StackItem> Successors => ObjectReferences?.Values.Where(p => p.References > 0).Select(p => p.Item) ?? System.Array.Empty<StackItem>();
 
     /// <summary>
     /// Resets the strongly connected components-related fields.
