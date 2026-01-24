@@ -33,9 +33,14 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
     private const int StackRootsTrackingRatioDivisor = 2;
 
     private readonly List<StackItem> trackedItems = new();
+    private readonly List<int> trackedMarkGenerations = new();
+    private readonly List<int> trackedZeroReferredGenerations = new();
+    private readonly Dictionary<StackItem, int> trackedIndices = new(ReferenceEqualityComparer.Instance);
     private readonly List<StackItem> stackRoots = new();
+    private readonly Dictionary<StackItem, int> stackRootIndices = new(ReferenceEqualityComparer.Instance);
     private readonly Stack<CompoundType> pending = new();
     private readonly Dictionary<CompoundType, List<StackItem>> childrenByParent = new(ReferenceEqualityComparer.Instance);
+    private readonly Dictionary<EdgeKey, int> childrenByParentIndex = new(EdgeKeyComparer.Instance);
     private readonly Stack<List<StackItem>> childrenByParentPool = new();
 
     private int referencesCount;
@@ -55,11 +60,11 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
     /// <inheritdoc/>
     public void AddZeroReferred(StackItem item)
     {
-        if (item.ZeroReferredGeneration == zeroReferredGeneration) return;
-        item.ZeroReferredGeneration = zeroReferredGeneration;
+        if (!NeedTrack(item)) return;
+        int index = Track(item);
+        if (trackedZeroReferredGenerations[index] == zeroReferredGeneration) return;
+        trackedZeroReferredGenerations[index] = zeroReferredGeneration;
         zeroReferredCount++;
-        if (NeedTrack(item))
-            Track(item);
     }
 
     /// <inheritdoc/>
@@ -70,36 +75,7 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
 
         Track(item);
 
-        if (item.ObjectReferences is null)
-        {
-            var single = item.SingleObjectReference;
-            if (single is null)
-            {
-                single = new StackItem.ObjectReferenceEntry(parent);
-                item.SingleObjectReference = single;
-                if (single.References++ == 0)
-                {
-                    if (ShouldDeferChildrenByParentUpdate())
-                        single.ParentIndex = -1;
-                    else
-                        AddChildToParentList(parent, item, single);
-                }
-                return;
-            }
-
-            if (ReferenceEquals(single.Item, parent))
-            {
-                single.References++;
-                return;
-            }
-
-            item.ObjectReferences = new Dictionary<CompoundType, StackItem.ObjectReferenceEntry>(2, ReferenceEqualityComparer.Instance)
-            {
-                { (CompoundType)single.Item, single }
-            };
-            item.SingleObjectReference = null;
-        }
-
+        item.ObjectReferences ??= new Dictionary<CompoundType, StackItem.ObjectReferenceEntry>(ReferenceEqualityComparer.Instance);
 #if NET10_0_OR_GREATER
         ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(item.ObjectReferences, parent, out bool exists);
         if (!exists || entry is null)
@@ -107,9 +83,8 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         if (entry.References++ == 0)
         {
             if (ShouldDeferChildrenByParentUpdate())
-                entry.ParentIndex = -1;
-            else
-                AddChildToParentList(parent, item, entry);
+                return;
+            AddChildToParentList(parent, item);
         }
 #else
         if (!item.ObjectReferences.TryGetValue(parent, out var entry))
@@ -120,9 +95,8 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         if (entry.References++ == 0)
         {
             if (ShouldDeferChildrenByParentUpdate())
-                entry.ParentIndex = -1;
-            else
-                AddChildToParentList(parent, item, entry);
+                return;
+            AddChildToParentList(parent, item);
         }
 #endif
     }
@@ -157,54 +131,22 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         referencesCount--;
         if (!NeedTrack(item)) return;
 
-        if (item.ObjectReferences is null)
-        {
-            var single = item.SingleObjectReference ?? throw new System.NullReferenceException();
-            if (!ReferenceEquals(single.Item, parent))
-                throw new KeyNotFoundException();
-            single.References--;
-            if (single.References == 0)
-            {
-                if (ShouldDeferChildrenByParentUpdate())
-                    single.ParentIndex = -1;
-                else
-                    RemoveChildFromParentList(parent, item, single);
-                item.SingleObjectReference = null;
-            }
-        }
-        else
-        {
+        var references = item.ObjectReferences ?? throw new System.NullReferenceException();
 #if NET10_0_OR_GREATER
-            var references = item.ObjectReferences;
-            ref var entry = ref CollectionsMarshal.GetValueRefOrNullRef(references, parent);
-            if (RuntimeUnsafe.IsNullRef(ref entry))
-                throw new KeyNotFoundException();
+        ref var entry = ref CollectionsMarshal.GetValueRefOrNullRef(references, parent);
+        if (RuntimeUnsafe.IsNullRef(ref entry))
+            throw new KeyNotFoundException();
 #else
-            var references = item.ObjectReferences;
-            var entry = references[parent];
+        var entry = references[parent];
 #endif
-            entry.References--;
-            if (entry.References == 0)
-            {
-                if (ShouldDeferChildrenByParentUpdate())
-                    entry.ParentIndex = -1;
-                else
-                    RemoveChildFromParentList(parent, item, entry);
-                references.Remove(parent);
-                if (references.Count == 1)
-                {
-                    foreach (var remaining in references.Values)
-                    {
-                        item.SingleObjectReference = remaining;
-                        break;
-                    }
-                    item.ObjectReferences = null;
-                }
-                else if (references.Count == 0)
-                {
-                    item.ObjectReferences = null;
-                }
-            }
+        entry.References--;
+        if (entry.References == 0)
+        {
+            if (!ShouldDeferChildrenByParentUpdate())
+                RemoveChildFromParentList(parent, item);
+            references.Remove(parent);
+            if (references.Count == 0)
+                item.ObjectReferences = null;
         }
         if (item.StackReferences == 0)
             MarkZeroReferred(item);
@@ -231,51 +173,57 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool NeedTrack(StackItem item) => item is CompoundType or Buffer;
 
-    private void Track(StackItem item)
+    private int Track(StackItem item)
     {
-        if (item.MarkSweepIndex >= 0) return;
-        item.MarkSweepIndex = trackedItems.Count;
+        if (trackedIndices.TryGetValue(item, out int index))
+            return index;
+
+        index = trackedItems.Count;
+        trackedIndices[item] = index;
         trackedItems.Add(item);
-        item.MarkGeneration = 0;
+        trackedMarkGenerations.Add(0);
+        trackedZeroReferredGenerations.Add(0);
         if (useStackRoots && item.StackReferences > 0)
             AddStackRoot(item);
+        return index;
     }
 
     private void AddStackRoot(StackItem item)
     {
-        if (item.MarkSweepRootIndex >= 0) return;
-        item.MarkSweepRootIndex = stackRoots.Count;
+        if (stackRootIndices.ContainsKey(item)) return;
+        stackRootIndices[item] = stackRoots.Count;
         stackRoots.Add(item);
     }
 
     private void RemoveStackRoot(StackItem item)
     {
-        int index = item.MarkSweepRootIndex;
-        if (index < 0) return;
+        if (!stackRootIndices.TryGetValue(item, out int index)) return;
         int lastIndex = stackRoots.Count - 1;
         if (index != lastIndex)
         {
             var lastItem = stackRoots[lastIndex];
             stackRoots[index] = lastItem;
-            lastItem.MarkSweepRootIndex = index;
+            stackRootIndices[lastItem] = index;
         }
         stackRoots.RemoveAt(lastIndex);
-        item.MarkSweepRootIndex = -1;
+        stackRootIndices.Remove(item);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void MarkZeroReferred(StackItem item)
     {
-        if (item.ZeroReferredGeneration == zeroReferredGeneration) return;
-        item.ZeroReferredGeneration = zeroReferredGeneration;
+        if (!trackedIndices.TryGetValue(item, out int index)) return;
+        if (trackedZeroReferredGenerations[index] == zeroReferredGeneration) return;
+        trackedZeroReferredGenerations[index] = zeroReferredGeneration;
         zeroReferredCount++;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void UnmarkZeroReferred(StackItem item)
     {
-        if (item.ZeroReferredGeneration != zeroReferredGeneration) return;
-        item.ZeroReferredGeneration = 0;
+        if (!trackedIndices.TryGetValue(item, out int index)) return;
+        if (trackedZeroReferredGenerations[index] != zeroReferredGeneration) return;
+        trackedZeroReferredGenerations[index] = 0;
         zeroReferredCount--;
     }
 
@@ -285,8 +233,8 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         zeroReferredCount = 0;
         if (zeroReferredGeneration == int.MaxValue)
         {
-            foreach (var item in trackedItems)
-                item.ZeroReferredGeneration = 0;
+            for (int i = 0; i < trackedZeroReferredGenerations.Count; i++)
+                trackedZeroReferredGenerations[i] = 0;
             zeroReferredGeneration = 1;
         }
         else
@@ -326,7 +274,7 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         foreach (var item in trackedItems)
         {
             if (item.StackReferences == 0) continue;
-            item.MarkSweepRootIndex = stackRoots.Count;
+            stackRootIndices[item] = stackRoots.Count;
             stackRoots.Add(item);
         }
         return stackRoots.Count;
@@ -334,9 +282,8 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
 
     private void ClearStackRoots()
     {
-        foreach (var item in stackRoots)
-            item.MarkSweepRootIndex = -1;
         stackRoots.Clear();
+        stackRootIndices.Clear();
     }
 
     private void Collect()
@@ -385,9 +332,8 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
 
         for (int i = trackedItems.Count - 1; i >= 0; i--)
         {
-            var item = trackedItems[i];
-            if (item.MarkGeneration != markGeneration)
-                RemoveTracked(item, skipChildrenCleanup: false);
+            if (trackedMarkGenerations[i] != markGeneration)
+                RemoveTracked(trackedItems[i], skipChildrenCleanup: false);
         }
     }
 
@@ -395,8 +341,8 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
     {
         if (markGeneration == int.MaxValue)
         {
-            foreach (var item in trackedItems)
-                item.MarkGeneration = 0;
+            for (int i = 0; i < trackedMarkGenerations.Count; i++)
+                trackedMarkGenerations[i] = 0;
             markGeneration = 1;
             return;
         }
@@ -404,7 +350,7 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         markGeneration++;
     }
 
-    private void AddChildToParentList(CompoundType parent, StackItem child, StackItem.ObjectReferenceEntry entry)
+    private void AddChildToParentList(CompoundType parent, StackItem child)
     {
 #if NET10_0_OR_GREATER
         ref var children = ref CollectionsMarshal.GetValueRefOrAddDefault(childrenByParent, parent, out bool exists);
@@ -418,7 +364,7 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         }
 #endif
 
-        entry.ParentIndex = children.Count;
+        childrenByParentIndex[new EdgeKey(parent, child)] = children.Count;
         children.Add(child);
         activeChildrenByParentEdges++;
     }
@@ -427,36 +373,19 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
     {
         int edgeCount = 0;
 
+        childrenByParentIndex.Clear();
         foreach (var children in childrenByParent.Values)
             children.Clear();
 
         foreach (var child in trackedItems)
         {
-            var single = child.SingleObjectReference;
-            if (single != null)
-            {
-                var parent = (CompoundType)single.Item;
-#if NET10_0_OR_GREATER
-                ref var children = ref CollectionsMarshal.GetValueRefOrAddDefault(childrenByParent, parent, out bool exists);
-                if (!exists || children is null)
-                    children = GetChildrenList();
-#else
-                if (!childrenByParent.TryGetValue(parent, out var children))
-                {
-                    children = GetChildrenList();
-                    childrenByParent.Add(parent, children);
-                }
-#endif
-                single.ParentIndex = children.Count;
-                children.Add(child);
-                edgeCount++;
-            }
+            var references = child.ObjectReferences;
+            if (references is null) continue;
 
-            if (child.ObjectReferences is null) continue;
-
-            foreach (var pair in child.ObjectReferences)
+            foreach (var pair in references)
             {
                 var entry = pair.Value;
+                if (entry.References == 0) continue;
                 var parent = pair.Key;
 
 #if NET10_0_OR_GREATER
@@ -471,7 +400,7 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
                 }
 #endif
 
-                entry.ParentIndex = children.Count;
+                childrenByParentIndex[new EdgeKey(parent, child)] = children.Count;
                 children.Add(child);
                 edgeCount++;
             }
@@ -487,6 +416,7 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         foreach (var children in childrenByParent.Values)
             ReturnChildrenList(children);
         childrenByParent.Clear();
+        childrenByParentIndex.Clear();
         childrenByParentDirty = false;
         activeChildrenByParentEdges = 0;
         ResetChildrenByParentMutations();
@@ -512,27 +442,24 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         childrenByParentMutationsLimit = System.Math.Max(MinChildrenByParentMutationsLimit, scaledLimit);
     }
 
-    private void RemoveChildFromParentList(CompoundType parent, StackItem child, StackItem.ObjectReferenceEntry entry)
+    private void RemoveChildFromParentList(CompoundType parent, StackItem child)
     {
         if (!childrenByParent.TryGetValue(parent, out var children))
-        {
-            entry.ParentIndex = -1;
             return;
-        }
 
-        int index = entry.ParentIndex;
-        if ((uint)index < (uint)children.Count && ReferenceEquals(children[index], child))
+        var key = new EdgeKey(parent, child);
+        if (childrenByParentIndex.TryGetValue(key, out int index) &&
+            (uint)index < (uint)children.Count &&
+            ReferenceEquals(children[index], child))
         {
-            RemoveChildAt(children, index, parent);
+            RemoveChildAt(children, index, parent, child);
         }
         else
         {
             int fallbackIndex = children.IndexOf(child);
             if (fallbackIndex >= 0)
-                RemoveChildAt(children, fallbackIndex, parent);
+                RemoveChildAt(children, fallbackIndex, parent, child);
         }
-
-        entry.ParentIndex = -1;
 
         if (children.Count == 0)
         {
@@ -541,27 +468,17 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         }
     }
 
-    private void RemoveChildAt(List<StackItem> children, int index, CompoundType parent)
+    private void RemoveChildAt(List<StackItem> children, int index, CompoundType parent, StackItem child)
     {
         int lastIndex = children.Count - 1;
         if (index != lastIndex)
         {
             var moved = children[lastIndex];
             children[index] = moved;
-            var movedReferences = moved.ObjectReferences;
-            if (movedReferences != null)
-            {
-                if (movedReferences.TryGetValue(parent, out var movedEntry))
-                    movedEntry.ParentIndex = index;
-            }
-            else
-            {
-                var single = moved.SingleObjectReference;
-                if (single != null && ReferenceEquals(single.Item, parent))
-                    single.ParentIndex = index;
-            }
+            childrenByParentIndex[new EdgeKey(parent, moved)] = index;
         }
         children.RemoveAt(lastIndex);
+        childrenByParentIndex.Remove(new EdgeKey(parent, child));
         activeChildrenByParentEdges--;
     }
 
@@ -569,37 +486,20 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
     private static void RemoveParentReference(StackItem item, CompoundType parent)
     {
         var references = item.ObjectReferences;
-        if (references != null)
-        {
-            if (!references.Remove(parent))
-                return;
-            if (references.Count == 1)
-            {
-                foreach (var remaining in references.Values)
-                {
-                    item.SingleObjectReference = remaining;
-                    break;
-                }
-                item.ObjectReferences = null;
-            }
-            else if (references.Count == 0)
-            {
-                item.ObjectReferences = null;
-            }
+        if (references == null) return;
+        if (!references.Remove(parent))
             return;
-        }
-
-        var single = item.SingleObjectReference;
-        if (single != null && ReferenceEquals(single.Item, parent))
-            item.SingleObjectReference = null;
+        if (references.Count == 0)
+            item.ObjectReferences = null;
     }
 
 
     private void MarkUsingChildrenByParent(StackItem root)
     {
         int currentGeneration = markGeneration;
-        if (root.MarkGeneration == currentGeneration) return;
-        root.MarkGeneration = currentGeneration;
+        if (!trackedIndices.TryGetValue(root, out int rootIndex)) return;
+        if (trackedMarkGenerations[rootIndex] == currentGeneration) return;
+        trackedMarkGenerations[rootIndex] = currentGeneration;
         if (root is not CompoundType compoundRoot) return;
         pending.Push(compoundRoot);
 
@@ -618,8 +518,9 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
             for (int i = 0; i < count; i++)
             {
                 var child = children[i];
-                if (child.MarkGeneration == currentGeneration) continue;
-                child.MarkGeneration = currentGeneration;
+                if (!trackedIndices.TryGetValue(child, out int childIndex)) continue;
+                if (trackedMarkGenerations[childIndex] == currentGeneration) continue;
+                trackedMarkGenerations[childIndex] = currentGeneration;
                 if (child is CompoundType compoundChild)
                     pending.Push(compoundChild);
             }
@@ -628,9 +529,10 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
 
     private void MarkUsingSubItems(StackItem root)
     {
-        if (root.MarkGeneration == markGeneration) return;
         int currentGeneration = markGeneration;
-        root.MarkGeneration = currentGeneration;
+        if (!trackedIndices.TryGetValue(root, out int rootIndex)) return;
+        if (trackedMarkGenerations[rootIndex] == currentGeneration) return;
+        trackedMarkGenerations[rootIndex] = currentGeneration;
         if (root is not CompoundType compoundRoot) return;
         pending.Push(compoundRoot);
 
@@ -645,41 +547,38 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
                     var child = array[i];
                     if (child is CompoundType compoundChild)
                     {
-                        if (compoundChild.MarkGeneration == currentGeneration) continue;
-                        compoundChild.MarkGeneration = currentGeneration;
+                        if (!trackedIndices.TryGetValue(compoundChild, out int childIndex)) continue;
+                        if (trackedMarkGenerations[childIndex] == currentGeneration) continue;
+                        trackedMarkGenerations[childIndex] = currentGeneration;
                         pending.Push(compoundChild);
                         continue;
                     }
                     if (child is Buffer buffer)
                     {
-                        if (buffer.MarkGeneration == currentGeneration) continue;
-                        buffer.MarkGeneration = currentGeneration;
+                        if (!trackedIndices.TryGetValue(buffer, out int bufferIndex)) continue;
+                        if (trackedMarkGenerations[bufferIndex] == currentGeneration) continue;
+                        trackedMarkGenerations[bufferIndex] = currentGeneration;
                     }
                 }
                 continue;
             }
             if (parent is Map map)
             {
-#if NET5_0_OR_GREATER
-                foreach (var child in map.InternalDictionary.Values)
-#else
-                foreach (var pair in map.InternalDictionary)
-#endif
+                foreach (var child in map.Values)
                 {
-#if !NET5_0_OR_GREATER
-                    var child = pair.Value;
-#endif
                     if (child is CompoundType compoundChild)
                     {
-                        if (compoundChild.MarkGeneration == currentGeneration) continue;
-                        compoundChild.MarkGeneration = currentGeneration;
+                        if (!trackedIndices.TryGetValue(compoundChild, out int childIndex)) continue;
+                        if (trackedMarkGenerations[childIndex] == currentGeneration) continue;
+                        trackedMarkGenerations[childIndex] = currentGeneration;
                         pending.Push(compoundChild);
                         continue;
                     }
                     if (child is Buffer buffer)
                     {
-                        if (buffer.MarkGeneration == currentGeneration) continue;
-                        buffer.MarkGeneration = currentGeneration;
+                        if (!trackedIndices.TryGetValue(buffer, out int bufferIndex)) continue;
+                        if (trackedMarkGenerations[bufferIndex] == currentGeneration) continue;
+                        trackedMarkGenerations[bufferIndex] = currentGeneration;
                     }
                 }
                 continue;
@@ -689,15 +588,17 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
             {
                 if (child is CompoundType compoundChild)
                 {
-                    if (compoundChild.MarkGeneration == currentGeneration) continue;
-                    compoundChild.MarkGeneration = currentGeneration;
+                    if (!trackedIndices.TryGetValue(compoundChild, out int childIndex)) continue;
+                    if (trackedMarkGenerations[childIndex] == currentGeneration) continue;
+                    trackedMarkGenerations[childIndex] = currentGeneration;
                     pending.Push(compoundChild);
                     continue;
                 }
                 if (child is Buffer buffer)
                 {
-                    if (buffer.MarkGeneration == currentGeneration) continue;
-                    buffer.MarkGeneration = currentGeneration;
+                    if (!trackedIndices.TryGetValue(buffer, out int bufferIndex)) continue;
+                    if (trackedMarkGenerations[bufferIndex] == currentGeneration) continue;
+                    trackedMarkGenerations[bufferIndex] = currentGeneration;
                 }
             }
         }
@@ -705,25 +606,28 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
 
     private void RemoveTracked(StackItem item, bool skipChildrenCleanup)
     {
-        int index = item.MarkSweepIndex;
-        if (index >= 0)
+        UnmarkZeroReferred(item);
+        if (useStackRoots)
+            RemoveStackRoot(item);
+        if (item.StackReferences > 0)
+            trackedStackReferences -= item.StackReferences;
+        item.StackReferences = 0;
+        if (trackedIndices.TryGetValue(item, out int index))
         {
             int lastIndex = trackedItems.Count - 1;
             if (index != lastIndex)
             {
                 var lastItem = trackedItems[lastIndex];
                 trackedItems[index] = lastItem;
-                lastItem.MarkSweepIndex = index;
+                trackedIndices[lastItem] = index;
+                trackedMarkGenerations[index] = trackedMarkGenerations[lastIndex];
+                trackedZeroReferredGenerations[index] = trackedZeroReferredGenerations[lastIndex];
             }
             trackedItems.RemoveAt(lastIndex);
-            item.MarkSweepIndex = -1;
+            trackedMarkGenerations.RemoveAt(lastIndex);
+            trackedZeroReferredGenerations.RemoveAt(lastIndex);
+            trackedIndices.Remove(item);
         }
-        UnmarkZeroReferred(item);
-        if (useStackRoots && item.MarkSweepRootIndex >= 0)
-            RemoveStackRoot(item);
-        if (item.StackReferences > 0)
-            trackedStackReferences -= item.StackReferences;
-        item.StackReferences = 0;
 
         if (item is CompoundType compound)
         {
@@ -747,8 +651,14 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
             {
                 if (useChildrenByParent && children != null)
                 {
+                    int currentGeneration = markGeneration;
                     foreach (var child in children)
+                    {
+                        childrenByParentIndex.Remove(new EdgeKey(compound, child));
+                        if (!trackedIndices.TryGetValue(child, out int childIndex)) continue;
+                        if (trackedMarkGenerations[childIndex] != currentGeneration) continue;
                         RemoveParentReference(child, compound);
+                    }
                     ReturnChildrenList(children);
                 }
                 else
@@ -756,16 +666,10 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
                     int currentGeneration = markGeneration;
                     if (compound is Map map)
                     {
-#if NET5_0_OR_GREATER
-                        foreach (var child in map.InternalDictionary.Values)
-#else
-                        foreach (var pair in map.InternalDictionary)
-#endif
+                        foreach (var child in map.Values)
                         {
-#if !NET5_0_OR_GREATER
-                            var child = pair.Value;
-#endif
-                            if (child.MarkGeneration != currentGeneration) continue;
+                            if (!trackedIndices.TryGetValue(child, out int childIndex)) continue;
+                            if (trackedMarkGenerations[childIndex] != currentGeneration) continue;
                             RemoveParentReference(child, compound);
                         }
                     }
@@ -775,7 +679,8 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
                         for (int i = 0; i < count; i++)
                         {
                             var child = array[i];
-                            if (child.MarkGeneration != currentGeneration) continue;
+                            if (!trackedIndices.TryGetValue(child, out int childIndex)) continue;
+                            if (trackedMarkGenerations[childIndex] != currentGeneration) continue;
                             RemoveParentReference(child, compound);
                         }
                     }
@@ -783,7 +688,8 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
                     {
                         foreach (var child in compound.SubItems)
                         {
-                            if (child.MarkGeneration != currentGeneration) continue;
+                            if (!trackedIndices.TryGetValue(child, out int childIndex)) continue;
+                            if (trackedMarkGenerations[childIndex] != currentGeneration) continue;
                             RemoveParentReference(child, compound);
                         }
                     }
@@ -807,5 +713,34 @@ public sealed class MarkSweepReferenceCounter : IReferenceCounter
         if (children.Capacity > MaxPooledChildrenCapacity) return;
         if (childrenByParentPool.Count < MaxPooledChildrenLists)
             childrenByParentPool.Push(children);
+    }
+
+    private readonly struct EdgeKey
+    {
+        public readonly CompoundType Parent;
+        public readonly StackItem Child;
+
+        public EdgeKey(CompoundType parent, StackItem child)
+        {
+            Parent = parent;
+            Child = child;
+        }
+    }
+
+    private sealed class EdgeKeyComparer : IEqualityComparer<EdgeKey>
+    {
+        public static readonly EdgeKeyComparer Instance = new();
+
+        public bool Equals(EdgeKey x, EdgeKey y)
+            => ReferenceEquals(x.Parent, y.Parent) && ReferenceEquals(x.Child, y.Child);
+
+        public int GetHashCode(EdgeKey obj)
+        {
+            unchecked
+            {
+                int hash = RuntimeHelpers.GetHashCode(obj.Parent);
+                return (hash * 397) ^ RuntimeHelpers.GetHashCode(obj.Child);
+            }
+        }
     }
 }
