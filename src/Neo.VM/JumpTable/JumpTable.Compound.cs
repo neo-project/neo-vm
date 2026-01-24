@@ -11,10 +11,10 @@
 
 using Neo.VM.Types;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Array = System.Array;
 using Buffer = Neo.VM.Types.Buffer;
 using VMArray = Neo.VM.Types.Array;
 
@@ -150,10 +150,9 @@ partial class JumpTable
         var n = (int)engine.Pop().GetInteger();
         if (n < 0 || n > engine.Limits.MaxStackSize)
             throw new InvalidOperationException($"The array size is out of valid range, {n}/[0, {engine.Limits.MaxStackSize}].");
-        var items = new List<StackItem>(n);
-        for (int i = 0; i < n; i++)
-            items.Add(StackItem.Null);
-        engine.Push(new VMArray(engine.ReferenceCounter, items));
+        var nullArray = new StackItem[n];
+        Array.Fill(nullArray, StackItem.Null);
+        engine.Push(new VMArray(engine.ReferenceCounter, nullArray));
     }
 
     /// <summary>
@@ -185,10 +184,9 @@ partial class JumpTable
             (byte)StackItemType.ByteString => ByteString.Empty,
             _ => StackItem.Null
         };
-        var items = new List<StackItem>(n);
-        for (int i = 0; i < n; i++)
-            items.Add(item);
-        engine.Push(new VMArray(engine.ReferenceCounter, items));
+        var itemArray = new StackItem[n];
+        Array.Fill(itemArray, item);
+        engine.Push(new VMArray(engine.ReferenceCounter, itemArray));
     }
 
     /// <summary>
@@ -218,10 +216,9 @@ partial class JumpTable
         if (n < 0 || n > engine.Limits.MaxStackSize)
             throw new InvalidOperationException($"The struct size is out of valid range, {n}/[0, {engine.Limits.MaxStackSize}].");
 
-        var items = new List<StackItem>(n);
-        for (int i = 0; i < n; i++)
-            items.Add(StackItem.Null);
-        engine.Push(new Struct(engine.ReferenceCounter, items));
+        var nullArray = new StackItem[n];
+        Array.Fill(nullArray, StackItem.Null);
+        engine.Push(new Struct(engine.ReferenceCounter, nullArray));
     }
 
     /// <summary>

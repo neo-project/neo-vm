@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types;
@@ -77,16 +78,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// </summary>
     public IEnumerable<PrimitiveType> Keys => dictionary.Keys;
 
-    public override IEnumerable<StackItem> SubItems
-    {
-        get
-        {
-            foreach (var key in dictionary.Keys)
-                yield return key;
-            foreach (var value in dictionary.Values)
-                yield return value;
-        }
-    }
+    public override IEnumerable<StackItem> SubItems => Keys.Concat(Values);
 
     public override int SubItemsCount => dictionary.Count * 2;
 
