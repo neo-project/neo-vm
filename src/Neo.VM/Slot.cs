@@ -34,14 +34,10 @@ public class Slot : IReadOnlyList<StackItem>
     {
         get
         {
-            if (index < 0 || index >= _items.Length)
-                throw new ArgumentOutOfRangeException(nameof(index));
             return _items[index];
         }
         internal set
         {
-            if (index < 0 || index >= _items.Length)
-                throw new ArgumentOutOfRangeException(nameof(index));
             ref var oldValue = ref _items[index];
             _referenceCounter.RemoveStackReference(oldValue);
             oldValue = value;
