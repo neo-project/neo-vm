@@ -108,10 +108,8 @@ public class UT_Optimizations
     public void Array_HasTrackableSubItems_WithBuffer_ReturnsTrue()
     {
         var rc = new ReferenceCounter();
-        var arr = new VMArray(rc)
-        {
-            new VMBuffer(16)
-        };
+        var arr = new VMArray(rc);
+        arr.Add(new VMBuffer(16));
 
         Assert.IsTrue(arr.HasTrackableSubItems);
     }
@@ -120,10 +118,8 @@ public class UT_Optimizations
     public void Array_HasTrackableSubItems_WithNestedArray_ReturnsTrue()
     {
         var rc = new ReferenceCounter();
-        var arr = new VMArray(rc)
-        {
-            new VMArray(rc)
-        };
+        var arr = new VMArray(rc);
+        arr.Add(new VMArray(rc));
 
         Assert.IsTrue(arr.HasTrackableSubItems);
     }
@@ -132,11 +128,10 @@ public class UT_Optimizations
     public void Array_HasTrackableSubItems_AfterRemovingTrackableItem_ReturnsFalse()
     {
         var rc = new ReferenceCounter();
-        var arr = new VMArray(rc)
-        {
-            Integer.Zero,
-            new VMBuffer(16)
-        };
+        var arr = new VMArray(rc);
+
+        arr.Add(Integer.Zero);
+        arr.Add(new VMBuffer(16));
 
         Assert.IsTrue(arr.HasTrackableSubItems);
 
@@ -149,10 +144,9 @@ public class UT_Optimizations
     public void Array_HasTrackableSubItems_AfterAddingTrackableItem_ReturnsTrue()
     {
         var rc = new ReferenceCounter();
-        var arr = new VMArray(rc)
-        {
-            Integer.Zero
-        };
+        var arr = new VMArray(rc);
+
+        arr.Add(Integer.Zero);
         Assert.IsFalse(arr.HasTrackableSubItems);
 
         arr.Add(new VMBuffer(16));
@@ -269,7 +263,7 @@ public class UT_Optimizations
         var rc = new ReferenceCounter();
         var slot = new Slot(3, rc);
 
-        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+        Assert.ThrowsExactly<IndexOutOfRangeException>(() =>
         {
             _ = slot[-1];
         });
@@ -281,7 +275,7 @@ public class UT_Optimizations
         var rc = new ReferenceCounter();
         var slot = new Slot(3, rc);
 
-        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+        Assert.ThrowsExactly<IndexOutOfRangeException>(() =>
         {
             _ = slot[3];
         });
