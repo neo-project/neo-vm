@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -55,6 +56,22 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
     public override StackItemType Type => StackItemType.Array;
 
     /// <summary>
+    /// Gets a value indicating whether this array has trackable sub-items.
+    /// </summary>
+    public override bool HasTrackableSubItems
+    {
+        get
+        {
+            foreach (var item in InnerList)
+            {
+                if (item is CompoundType or Buffer)
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Create an array containing the specified items.
     /// </summary>
     /// <param name="items">The items to be included in the array.</param>
@@ -88,6 +105,35 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
             }
 
             referenceCounter.AddReference(item, this);
+        }
+    }
+
+    /// <summary>
+    /// Create an array with the specified number of elements, all initialized to the same item.
+    /// Uses ArrayPool for efficient memory allocation when skipReferenceCounting is true.
+    /// </summary>
+    /// <param name="referenceCounter">The <see cref="IReferenceCounter"/> to be used by this array.</param>
+    /// <param name="item">The item to fill the array with.</param>
+    /// <param name="count">The number of elements to create.</param>
+    /// <param name="skipReferenceCounting">If true, skip reference counting for optimized bulk operations.</param>
+    public Array(IReferenceCounter? referenceCounter, StackItem item, int count, bool skipReferenceCounting)
+        : base(referenceCounter)
+    {
+        if (count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
+        if (referenceCounter != null && item is CompoundType { ReferenceCounter: null })
+            throw new InvalidOperationException("Can not set a CompoundType without a ReferenceCounter.");
+
+        // Use List for compatibility with existing code
+        InnerList = new List<StackItem>(count);
+        for (int i = 0; i < count; i++)
+        {
+            InnerList.Add(item);
+        }
+
+        if (!skipReferenceCounting && referenceCounter != null)
+        {
+            referenceCounter.AddReference(item, this, count);
         }
     }
 
