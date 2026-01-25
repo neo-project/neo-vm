@@ -41,6 +41,15 @@ public abstract class CompoundType : StackItem
     /// </summary>
     public abstract int Count { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether this compound type has trackable sub-items.
+    /// Trackable items are CompoundType and Buffer instances that require reference counting.
+    /// </summary>
+    /// <remarks>
+    /// Derived types can override this to provide a faster check than iterating through all sub-items.
+    /// </remarks>
+    public virtual bool HasTrackableSubItems => false;
+
     public abstract IEnumerable<StackItem> SubItems { get; }
 
     public abstract int SubItemsCount { get; }

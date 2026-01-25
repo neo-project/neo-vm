@@ -10,7 +10,6 @@
 // modifications are permitted.
 
 using System;
-using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -110,7 +109,6 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
 
     /// <summary>
     /// Create an array with the specified number of elements, all initialized to the same item.
-    /// Uses ArrayPool for efficient memory allocation when skipReferenceCounting is true.
     /// </summary>
     /// <param name="referenceCounter">The <see cref="IReferenceCounter"/> to be used by this array.</param>
     /// <param name="item">The item to fill the array with.</param>
