@@ -62,7 +62,7 @@ public class UT_Optimizations
     }
 
     [TestMethod]
-    public void Array_OptimizedConstructor_NegativeCount_ThrowsException()
+    public void Array_OptimizedConstructor_NegativeCount_ThrowsArgumentOutOfRangeException()
     {
         var rc = new ReferenceCounter();
 
@@ -258,24 +258,24 @@ public class UT_Optimizations
     }
 
     [TestMethod]
-    public void Slot_Indexer_InvalidLowerBound_ThrowsArgumentOutOfRangeException()
+    public void Slot_Indexer_InvalidLowerBound_ThrowsIndexOutOfRangeException()
     {
         var rc = new ReferenceCounter();
         var slot = new Slot(3, rc);
 
-        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+        Assert.ThrowsExactly<IndexOutOfRangeException>(() =>
         {
             _ = slot[-1];
         });
     }
 
     [TestMethod]
-    public void Slot_Indexer_InvalidUpperBound_ThrowsArgumentOutOfRangeException()
+    public void Slot_Indexer_InvalidUpperBound_ThrowsIndexOutOfRangeException()
     {
         var rc = new ReferenceCounter();
         var slot = new Slot(3, rc);
 
-        Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
+        Assert.ThrowsExactly<IndexOutOfRangeException>(() =>
         {
             _ = slot[3];
         });

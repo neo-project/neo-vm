@@ -62,8 +62,16 @@ public sealed class ReferenceCounter : IReferenceCounter
     /// <inheritdoc/>
     public void AddReference(StackItem item, CompoundType parent)
     {
+        AddReference(item, parent, 1);
+    }
+
+    /// <inheritdoc/>
+    public void AddReference(StackItem item, CompoundType parent, int count)
+    {
+        if (count <= 0) return;
+
         // Increment the reference count.
-        _referencesCount++;
+        _referencesCount += count;
 
         // If the item doesn't need to be tracked, return early.
         // Only track CompoundType and Buffer items.
@@ -84,7 +92,7 @@ public sealed class ReferenceCounter : IReferenceCounter
             pEntry = new StackItem.ObjectReferenceEntry(parent);
             item.ObjectReferences.Add(parent, pEntry);
         }
-        pEntry.References++;
+        pEntry.References += count;
     }
 
     /// <inheritdoc/>
