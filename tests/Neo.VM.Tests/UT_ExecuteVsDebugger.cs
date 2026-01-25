@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.Test.Helpers;
 using Neo.Test.Types;
 using Neo.VM;
+using System.Collections.Generic;
 
 namespace Neo.Test;
 
@@ -38,5 +39,47 @@ public class UT_ExecuteVsDebugger
         var debugSnapshot = ExecutionTestHelpers.RunToCompletion(engineDebug, useDebugger: true);
 
         ExecutionTestHelpers.AssertSnapshotsEqual(executeSnapshot, debugSnapshot);
+    }
+
+    [TestMethod]
+    public void ExecuteVsDebugger_CuratedScripts_Match()
+    {
+        foreach (var bytes in CuratedScripts())
+        {
+            using var engineExecute = new TestEngine();
+            using var engineDebug = new TestEngine();
+            engineExecute.LoadScript(bytes);
+            engineDebug.LoadScript(bytes);
+
+            var executeSnapshot = ExecutionTestHelpers.RunToCompletion(engineExecute, useDebugger: false);
+            var debugSnapshot = ExecutionTestHelpers.RunToCompletion(engineDebug, useDebugger: true);
+            ExecutionTestHelpers.AssertSnapshotsEqual(executeSnapshot, debugSnapshot);
+        }
+    }
+
+    private static IEnumerable<byte[]> CuratedScripts()
+    {
+        using var script = new ScriptBuilder();
+        script.Emit(OpCode.PUSH0);
+        script.Emit(OpCode.PUSH1);
+        script.Emit(OpCode.ADD);
+        script.Emit(OpCode.RET);
+        yield return script.ToArray();
+
+        using var script2 = new ScriptBuilder();
+        script2.Emit(OpCode.PUSH1);
+        script2.Emit(OpCode.DUP);
+        script2.Emit(OpCode.SWAP);
+        script2.Emit(OpCode.DROP);
+        script2.Emit(OpCode.RET);
+        yield return script2.ToArray();
+
+        using var script3 = new ScriptBuilder();
+        script3.Emit(OpCode.NEWARRAY0);
+        script3.Emit(OpCode.PUSH1);
+        script3.Emit(OpCode.APPEND);
+        script3.Emit(OpCode.SIZE);
+        script3.Emit(OpCode.RET);
+        yield return script3.ToArray();
     }
 }
