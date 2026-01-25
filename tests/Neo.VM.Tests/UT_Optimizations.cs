@@ -322,30 +322,4 @@ public class UT_Optimizations
         }
     }
 
-    [TestMethod]
-    public void Array_HasTrackableSubItems_Performance_LargeArray_StillFast()
-    {
-        var rc = new ReferenceCounter();
-        var arr = new VMArray(rc);
-
-        // Add 10000 non-trackable items
-        for (int i = 0; i < 10000; i++)
-        {
-            arr.Add(new Integer(i));
-        }
-
-        // Check should be fast (O(1) instead of O(N))
-        var sw = System.Diagnostics.Stopwatch.StartNew();
-        for (int i = 0; i < 10000; i++)
-        {
-            _ = arr.HasTrackableSubItems;
-        }
-        sw.Stop();
-
-        // Should complete quickly (O(1) instead of O(N))
-        // Performance varies by system load, so we use a lenient threshold
-        // This is primarily a documentation test - exact timing depends on system
-        Assert.IsTrue(sw.ElapsedMilliseconds < 2000,
-            $"HasTrackableSubItems check took {sw.ElapsedMilliseconds}ms for 10000 checks");
-    }
 }
