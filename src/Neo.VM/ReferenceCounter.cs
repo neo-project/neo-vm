@@ -87,6 +87,42 @@ public sealed class ReferenceCounter : IReferenceCounter
         pEntry.References++;
     }
 
+    /// <summary>
+    /// Adds multiple references from a parent to an item in a single operation.
+    /// This is optimized for scenarios like array initialization where the same item
+    /// is referenced multiple times by the same parent.
+    /// </summary>
+    /// <param name="item">The item being referenced.</param>
+    /// <param name="parent">The parent compound type that holds the references.</param>
+    /// <param name="count">The number of references to add.</param>
+    public void AddReference(StackItem item, CompoundType parent, int count)
+    {
+        if (count <= 0) return;
+
+        // Increment the reference count by the specified count.
+        _referencesCount += count;
+
+        // If the item doesn't need to be tracked, return early.
+        if (!NeedTrack(item)) return;
+
+        // Invalidate the cached components since the tracked items are changing.
+        _cachedComponents = null;
+
+        // Add the item to the set of tracked items.
+        _trackedItems.Add(item);
+
+        // Initialize the ObjectReferences dictionary if it is null.
+        item.ObjectReferences ??= new Dictionary<CompoundType, StackItem.ObjectReferenceEntry>(ReferenceEqualityComparer.Instance);
+
+        // Add the parent to the item's ObjectReferences dictionary and increment its reference count by count.
+        if (!item.ObjectReferences.TryGetValue(parent, out var pEntry))
+        {
+            pEntry = new StackItem.ObjectReferenceEntry(parent);
+            item.ObjectReferences.Add(parent, pEntry);
+        }
+        pEntry.References += count;
+    }
+
     /// <inheritdoc/>
     public void AddStackReference(StackItem item, int count = 1)
     {

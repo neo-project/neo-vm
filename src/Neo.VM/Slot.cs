@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using Neo.VM.Types;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array = System.Array;
@@ -33,10 +34,14 @@ public class Slot : IReadOnlyList<StackItem>
     {
         get
         {
+            if (index < 0 || index >= _items.Length)
+                throw new ArgumentOutOfRangeException(nameof(index));
             return _items[index];
         }
         internal set
         {
+            if (index < 0 || index >= _items.Length)
+                throw new ArgumentOutOfRangeException(nameof(index));
             ref var oldValue = ref _items[index];
             _referenceCounter.RemoveStackReference(oldValue);
             oldValue = value;
@@ -73,6 +78,36 @@ public class Slot : IReadOnlyList<StackItem>
         _items = new StackItem[count];
         Array.Fill(_items, StackItem.Null);
         referenceCounter.AddStackReference(StackItem.Null, count);
+    }
+
+    /// <summary>
+    /// Create a slot by popping items directly from the evaluation stack.
+    /// This eliminates temporary array allocation for arguments.
+    /// </summary>
+    /// <param name="count">Indicates the number of items to pop from the stack.</param>
+    /// <param name="engine">The execution engine to pop items from.</param>
+    /// <param name="referenceCounter">The reference counter to be used.</param>
+    internal Slot(int count, ExecutionEngine engine, IReferenceCounter referenceCounter)
+    {
+        if (count < 0)
+            throw new ArgumentOutOfRangeException(nameof(count));
+        if (engine == null)
+            throw new ArgumentNullException(nameof(engine));
+
+        _referenceCounter = referenceCounter;
+        _items = new StackItem[count];
+
+        // Pop items from the stack in forward order (first item is at index 0)
+        for (var i = 0; i < count; i++)
+        {
+            _items[i] = engine.Pop();
+        }
+
+        // Add stack references for all popped items
+        for (var i = 0; i < count; i++)
+        {
+            referenceCounter.AddStackReference(_items[i]);
+        }
     }
 
     internal void ClearReferences()

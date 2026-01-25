@@ -47,6 +47,17 @@ public interface IReferenceCounter
     void AddReference(StackItem item, CompoundType parent);
 
     /// <summary>
+    /// Adds multiple references from a parent to an item in a single operation.
+    ///
+    /// This is optimized for scenarios like array initialization where the same item
+    /// is referenced multiple times by the same parent.
+    /// </summary>
+    /// <param name="item">The item to add references to.</param>
+    /// <param name="parent">The parent compound type.</param>
+    /// <param name="count">The number of references to add.</param>
+    void AddReference(StackItem item, CompoundType parent, int count);
+
+    /// <summary>
     /// Adds a stack reference to a specified item with a count.
     ///
     /// This method is used when an item gains a new stack reference, usually due to being pushed onto the evaluation stack.
