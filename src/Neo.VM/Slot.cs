@@ -87,21 +87,14 @@ public class Slot : IReadOnlyList<StackItem>
     {
         if (count < 0)
             throw new ArgumentOutOfRangeException(nameof(count));
-        if (engine == null)
-            throw new ArgumentNullException(nameof(engine));
 
         _referenceCounter = referenceCounter;
         _items = new StackItem[count];
 
-        // Pop items from the stack in forward order (first item is at index 0)
+        // Pop items and add stack references in a single iteration
         for (var i = 0; i < count; i++)
         {
             _items[i] = engine.Pop();
-        }
-
-        // Add stack references for all popped items
-        for (var i = 0; i < count; i++)
-        {
             referenceCounter.AddStackReference(_items[i]);
         }
     }
