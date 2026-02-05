@@ -16,6 +16,8 @@ namespace Neo.Test.Helpers;
 public class RandomHelper
 {
     private const string _randchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    [ThreadStatic]
     private static readonly Random _rand = new();
 
     /// <summary>
