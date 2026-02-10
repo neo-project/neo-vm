@@ -26,12 +26,12 @@ public class Buffer : StackItem
     /// <summary>
     /// The internal byte array used to store the actual data.
     /// </summary>
-    public readonly Memory<byte> InnerBuffer;
+    private readonly Memory<byte> _innerBuffer;
 
     /// <summary>
     /// The size of the buffer.
     /// </summary>
-    public int Size => InnerBuffer.Length;
+    public int Size => _innerBuffer.Length;
     public override StackItemType Type => StackItemType.Buffer;
 
     private readonly byte[] _buffer;
@@ -45,8 +45,8 @@ public class Buffer : StackItem
     public Buffer(int size, bool zeroInitialize = true)
     {
         _buffer = ArrayPool<byte>.Shared.Rent(size);
-        InnerBuffer = new Memory<byte>(_buffer, 0, size);
-        if (zeroInitialize) InnerBuffer.Span.Clear();
+        _innerBuffer = new Memory<byte>(_buffer, 0, size);
+        if (zeroInitialize) _innerBuffer.Span.Clear();
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ public class Buffer : StackItem
     /// <param name="data">The data to be contained in this buffer.</param>
     public Buffer(ReadOnlySpan<byte> data) : this(data.Length, false)
     {
-        data.CopyTo(InnerBuffer.Span);
+        data.CopyTo(_innerBuffer.Span);
     }
 
     internal override void Cleanup()
@@ -74,16 +74,16 @@ public class Buffer : StackItem
         switch (type)
         {
             case StackItemType.Integer:
-                if (InnerBuffer.Length > Integer.MaxSize)
+                if (_innerBuffer.Length > Integer.MaxSize)
                     throw new InvalidCastException();
-                return new BigInteger(InnerBuffer.Span);
+                return new BigInteger(_innerBuffer.Span);
             case StackItemType.ByteString:
 #if NET5_0_OR_GREATER
-                byte[] clone = GC.AllocateUninitializedArray<byte>(InnerBuffer.Length);
+                byte[] clone = GC.AllocateUninitializedArray<byte>(_innerBuffer.Length);
 #else
-                byte[] clone = new byte[InnerBuffer.Length];
+                byte[] clone = new byte[_innerBuffer.Length];
 #endif
-                InnerBuffer.CopyTo(clone);
+                _innerBuffer.CopyTo(clone);
                 return clone;
             default:
                 return base.ConvertTo(type);
@@ -93,7 +93,7 @@ public class Buffer : StackItem
     internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
     {
         if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
-        StackItem result = asImmutable ? new ByteString(InnerBuffer.ToArray()) : new Buffer(InnerBuffer.Span);
+        StackItem result = asImmutable ? new ByteString(_innerBuffer.ToArray()) : new Buffer(_innerBuffer.Span);
         refMap.Add(this, result);
         return result;
     }
@@ -105,7 +105,7 @@ public class Buffer : StackItem
 
     public override ReadOnlySpan<byte> GetSpan()
     {
-        return InnerBuffer.Span;
+        return _innerBuffer.Span;
     }
 
     public override string ToString()
@@ -115,10 +115,31 @@ public class Buffer : StackItem
             : $"(\"Base64: {Convert.ToBase64String(GetSpan())}\")";
     }
 
-    public override int GetHashCode()
+    #region Write operations
+
+    public void Set(int index, byte b)
     {
-        // Hash code can't be cached because the buffer is mutable
+        _innerBuffer.Span[index] = b;
         _hashCode = 0;
-        return base.GetHashCode();
     }
+
+    public void Reverse()
+    {
+        _innerBuffer.Span.Reverse();
+        _hashCode = 0;
+    }
+
+    public void CopyInto(ReadOnlySpan<byte> span)
+    {
+        span.CopyTo(_innerBuffer.Span);
+        _hashCode = 0;
+    }
+
+    public void CopyInto(ReadOnlySpan<byte> span, int index)
+    {
+        span.CopyTo(_innerBuffer.Span[index..]);
+        _hashCode = 0;
+    }
+
+    #endregion
 }

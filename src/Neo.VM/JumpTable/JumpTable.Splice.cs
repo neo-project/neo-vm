@@ -58,7 +58,7 @@ partial class JumpTable
         if (checked(di + count) > dst.Size)
             throw new InvalidOperationException($"The destination index + count is out of range for {nameof(OpCode.MEMCPY)}, index: {di}, count: {count}, {di}/[0, {dst.Size}].");
         // TODO: check if we can optimize the memcpy by using peek instead of dup then pop
-        src.Slice(si, count).CopyTo(dst.InnerBuffer.Span[di..]);
+        dst.CopyInto(src.Slice(si, count), di);
     }
 
     /// <summary>
@@ -76,8 +76,8 @@ partial class JumpTable
         int length = x1.Length + x2.Length;
         engine.Limits.AssertMaxItemSize(length);
         Buffer result = new(length, false);
-        x1.CopyTo(result.InnerBuffer.Span);
-        x2.CopyTo(result.InnerBuffer.Span[x1.Length..]);
+        result.CopyInto(x1);
+        result.CopyInto(x2, x1.Length);
         engine.Push(result);
     }
 
@@ -101,7 +101,7 @@ partial class JumpTable
         if (checked(index + count) > x.Length)
             throw new InvalidOperationException($"The index + count is out of range for {nameof(OpCode.SUBSTR)}, index: {index}, count: {count}, {index + count}/[0, {x.Length}].");
         Buffer result = new(count, false);
-        x.Slice(index, count).CopyTo(result.InnerBuffer.Span);
+        result.CopyInto(x.Slice(index, count));
         engine.Push(result);
     }
 
@@ -122,7 +122,7 @@ partial class JumpTable
         if (count > x.Length)
             throw new InvalidOperationException($"The count is out of range for {nameof(OpCode.LEFT)}, {count}/[0, {x.Length}].");
         Buffer result = new(count, false);
-        x[..count].CopyTo(result.InnerBuffer.Span);
+        result.CopyInto(x[..count]);
         engine.Push(result);
     }
 
@@ -143,7 +143,7 @@ partial class JumpTable
         if (count > x.Length)
             throw new InvalidOperationException($"The count is out of range for {nameof(OpCode.RIGHT)}, {count}/[0, {x.Length}].");
         Buffer result = new(count, false);
-        x[^count..^0].CopyTo(result.InnerBuffer.Span);
+        result.CopyInto(x[^count..^0]);
         engine.Push(result);
     }
 }

@@ -402,7 +402,7 @@ partial class JumpTable
                     var index = (int)key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
-                    engine.Push((BigInteger)buffer.InnerBuffer.Span[index]);
+                    engine.Push((BigInteger)buffer.GetSpan()[index]);
                     break;
                 }
             default:
@@ -465,7 +465,7 @@ partial class JumpTable
                     var b = (int)p.GetInteger();
                     if (b < sbyte.MinValue || b > byte.MaxValue)
                         throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
-                    buffer.InnerBuffer.Span[index] = (byte)b;
+                    buffer.Set(index, (byte)b);
                     break;
                 }
             default:
@@ -490,7 +490,7 @@ partial class JumpTable
                 array.Reverse();
                 break;
             case Buffer buffer:
-                buffer.InnerBuffer.Span.Reverse();
+                buffer.Reverse();
                 break;
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");

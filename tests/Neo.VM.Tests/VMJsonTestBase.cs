@@ -261,7 +261,7 @@ public abstract class VMJsonTestBase
             case Boolean v: value = new JValue(v.GetBoolean()); break;
             case Integer v: value = new JValue(v.GetInteger().ToString()); break;
             case ByteString v: value = new JValue(v.GetSpan().ToArray()); break;
-            case Buffer v: value = new JValue(v.InnerBuffer.ToArray()); break;
+            case Buffer v: value = new JValue(v.GetSpan().ToArray()); break;
             //case VM.Types.Struct v:
             case Array v:
                 {
