@@ -117,9 +117,9 @@ public class Buffer : StackItem
 
     #region Write operations
 
-    public void Set(int index, byte b)
+    public void Set(int index, byte value)
     {
-        _innerBuffer.Span[index] = b;
+        _innerBuffer.Span[index] = value;
         _hashCode = 0;
     }
 
