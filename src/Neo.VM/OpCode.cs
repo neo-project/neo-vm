@@ -1459,7 +1459,7 @@ public enum OpCode : byte
     XOR = 0x93,
 
     /// <summary>
-    /// Returns 1 if the inputs are exactly equal, 0 otherwise.
+    /// Returns true if the inputs are exactly equal, false otherwise.
     ///
     /// <example> a.Equals(b) </example>
     ///
@@ -1679,7 +1679,7 @@ public enum OpCode : byte
     SHR = 0xA9,
 
     /// <summary>
-    /// If the input is 0 or 1, it is flipped. Otherwise, the output will be 0.
+    /// If the input is false (or null, zero), the output is true, false otherwise.
     ///
     /// <example> !a </example>
     ///
@@ -1691,7 +1691,7 @@ public enum OpCode : byte
     NOT = 0xAA,
 
     /// <summary>
-    /// If both a and b are not 0, the output is 1. Otherwise, 0.
+    /// If both a and b are not false (or null, zero), the output is true, false otherwise.
     ///
     /// <example> b &amp;&amp; a </example>
     ///
@@ -1703,7 +1703,7 @@ public enum OpCode : byte
     BOOLAND = 0xAB,
 
     /// <summary>
-    /// If a or b is not 0, the output is 1. Otherwise, 0.
+    /// If a or b is not false (or null, zero), the output is true, false otherwise.
     ///
     /// <example> b || a </example>
     ///
@@ -1715,7 +1715,7 @@ public enum OpCode : byte
     BOOLOR = 0xAC,
 
     /// <summary>
-    /// Returns 0 if the input is 0. 1 otherwise.
+    /// Returns true if the input is 0, false otherwise.
     ///
     /// <example> a != 0 </example>
     ///
@@ -1727,7 +1727,7 @@ public enum OpCode : byte
     NZ = 0xB1,
 
     /// <summary>
-    /// Returns 1 if the numbers are equal, 0 otherwise.
+    /// Returns true if the items are equal, false otherwise.
     ///
     /// <example> b == a </example>
     ///
@@ -1739,7 +1739,7 @@ public enum OpCode : byte
     NUMEQUAL = 0xB3,
 
     /// <summary>
-    /// Returns 1 if the numbers are not equal, 0 otherwise.
+    /// Returns true if the items are not equal, false otherwise.
     ///
     /// <example> b != a </example>
     ///
@@ -1751,7 +1751,7 @@ public enum OpCode : byte
     NUMNOTEQUAL = 0xB4,
 
     /// <summary>
-    /// Returns 1 if a is less than b, 0 otherwise.
+    /// Returns true if a is less than b, false otherwise.
     ///
     /// <example> b>a </example>
     ///
@@ -1763,7 +1763,7 @@ public enum OpCode : byte
     LT = 0xB5,
 
     /// <summary>
-    /// Returns 1 if a is less than or equal to b, 0 otherwise.
+    /// Returns true if a is less than or equal to b, otherwise false.
     ///
     /// <example> b>=a </example>
     ///
@@ -1775,7 +1775,7 @@ public enum OpCode : byte
     LE = 0xB6,
 
     /// <summary>
-    /// Returns 1 if a is greater than b, 0 otherwise.
+    /// Returns true if a is greater than b, otherwise false.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1785,7 +1785,7 @@ public enum OpCode : byte
     GT = 0xB7,
 
     /// <summary>
-    /// Returns 1 if a is greater than or equal to b, 0 otherwise.
+    /// Returns true if a is greater than or equal to b, otherwise false.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1815,7 +1815,7 @@ public enum OpCode : byte
     MAX = 0xBA,
 
     /// <summary>
-    /// Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
+    /// Returns true if x is within the specified range (left-inclusive), otherwise false.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1889,7 +1889,8 @@ public enum OpCode : byte
     NEWARRAY = 0xC3,
 
     /// <summary>
-    /// A value n is taken from top of main stack. An array of type T with size n is put on top of the main stack.
+    /// A value n is taken from top of main stack.
+    /// An default-value-filled(null, false, 0, or empty string) array of type T with size n is put on top of the main stack.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1910,7 +1911,7 @@ public enum OpCode : byte
     NEWSTRUCT0 = 0xC5,
 
     /// <summary>
-    /// A value n is taken from top of main stack. A zero-filled struct with size n is put on top of the main stack.
+    /// A value n is taken from top of main stack. A null-filled struct with size n is put on top of the main stack.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1940,7 +1941,8 @@ public enum OpCode : byte
     SIZE = 0xCA,
 
     /// <summary>
-    /// An input index n (or key) and an array (or map) are removed from the top of the main stack. Puts True on top of main stack if array[n] (or map[n]) exist, and False otherwise.
+    /// An input index n (or key) and an array (or buffer, string, map) are removed from the top of the main stack.
+    /// Puts true on top of main stack if array[n] (or buffer[n], string[n], map[n]) exists, and false otherwise.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1960,7 +1962,7 @@ public enum OpCode : byte
     KEYS = 0xCC,
 
     /// <summary>
-    /// A map is taken from top of the main stack. The values of this map are put on top of the main stack.
+    /// An array or map is taken from top of the main stack. The values of this array or map are put on top of the main stack.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1970,7 +1972,8 @@ public enum OpCode : byte
     VALUES = 0xCD,
 
     /// <summary>
-    /// An input index n (or key) and an array (or map) are taken from main stack. Element array[n] (or map[n]) is put on top of the main stack.
+    /// An input index n (or key) and an array (or primitive type, buffer, map) are taken from main stack.
+    /// Element array[n] (or the converted bytes[n] of primitive type, buffer[n], map[n]) is put on top of the main stack.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1993,7 +1996,8 @@ public enum OpCode : byte
     APPEND = 0xCF,
 
     /// <summary>
-    /// A value v, index n (or key) and an array (or map) are taken from main stack. Attribution array[n]=v (or map[n]=v) is performed.
+    /// A value, index n (or key) and an array (or buffer, map) are taken from main stack.
+    /// Attribution array[n] = value (or buffer[n] = value, map[n] = value) is performed.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -2003,7 +2007,7 @@ public enum OpCode : byte
     SETITEM = 0xD0,
 
     /// <summary>
-    /// An array is removed from the top of the main stack and its elements are reversed.
+    /// An array or buffer is removed from the top of the main stack and its elements are reversed.
     ///
     /// <remarks>
     ///     Push: 0 item(s)
@@ -2100,7 +2104,7 @@ public enum OpCode : byte
     ABORTMSG = 0xE0,
 
     /// <summary>
-    /// Pops the top two stack items. If the second-to-top stack value is false, exits the vm execution and sets the
+    /// Pops the top two stack items. If the second-to-top stack value is false (or null, zero), exits the vm execution and sets the
     /// vm state to FAULT. In this case, the top stack value is used as reason for the exit. Otherwise, it is ignored.
     ///
     /// <remarks>
