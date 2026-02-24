@@ -78,7 +78,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
             _ => new List<StackItem>(items)
         };
 
-        if (referenceCounter == null) return;
+        if (referenceCounter?.Version != RCVersion.V1) return;
 
         foreach (var item in InnerList)
         {

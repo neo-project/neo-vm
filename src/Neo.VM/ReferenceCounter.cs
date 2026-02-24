@@ -11,6 +11,7 @@
 
 using Neo.VM.StronglyConnectedComponents;
 using Neo.VM.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -22,6 +23,7 @@ namespace Neo.VM;
 /// </summary>
 public sealed class ReferenceCounter : IReferenceCounter
 {
+    private readonly ExecutionEngineLimits _limits;
     // If set to true, all items will be tracked regardless of their type.
     private const bool TrackAllItems = false;
 
@@ -38,8 +40,15 @@ public sealed class ReferenceCounter : IReferenceCounter
     // Keeps the total count of references.
     private int _referencesCount = 0;
 
+    public RCVersion Version { get; } = RCVersion.V1;
+
     /// <inheritdoc/>
     public int Count => _referencesCount;
+
+    public ReferenceCounter(ExecutionEngineLimits? limits = null)
+    {
+        _limits = limits ?? ExecutionEngineLimits.Default;
+    }
 
     /// <summary>
     /// Determines if an item needs to be tracked based on its type.
@@ -55,7 +64,7 @@ public sealed class ReferenceCounter : IReferenceCounter
 #pragma warning restore CS0162
 
         // Track the item if it is a CompoundType or Buffer.
-        if (item is CompoundType or Buffer) return true;
+        if (item is CompoundType or Types.Buffer) return true;
         return false;
     }
 
@@ -121,6 +130,14 @@ public sealed class ReferenceCounter : IReferenceCounter
         _trackedItems.Add(item);
     }
 
+    /// <inheritdoc/>
+    public void CheckPostExecution()
+    {
+        if (Count < _limits.MaxStackSize) return;
+        if (CheckZeroReferred() > _limits.MaxStackSize)
+            throw new System.InvalidOperationException($"MaxStackSize exceed: {Count}/{_limits.MaxStackSize}");
+    }
+
     /// <summary>
     /// Checks and processes items that have zero references.
     ///
@@ -130,7 +147,7 @@ public sealed class ReferenceCounter : IReferenceCounter
     /// Use this method periodically to clean up items with zero references and free up memory.
     /// </summary>
     /// <returns>The current reference count.</returns>
-    public int CheckZeroReferred()
+    private int CheckZeroReferred()
     {
         // If there are items with zero references, process them.
         if (_zeroReferred.Count > 0)

@@ -57,7 +57,6 @@ class Tarjan
                 v.LowLink = Math.Min(v.LowLink, w.DFN);
             }
         }
-
         if (v.LowLink == v.DFN)
         {
             HashSet<T> scc = new(ReferenceEqualityComparer.Instance);
