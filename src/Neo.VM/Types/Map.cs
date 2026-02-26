@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 The Neo Project.
+// Copyright (C) 2015-2026 The Neo Project.
 //
 // Map.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
@@ -144,7 +144,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
         refMap.Add(this, result);
         foreach (var (k, v) in dictionary)
             result[k] = v.DeepCopy(refMap, asImmutable);
-        result.IsReadOnly = true;
+        result.IsReadOnly = IsReadOnly || asImmutable;
         return result;
     }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 The Neo Project.
+// Copyright (C) 2015-2026 The Neo Project.
 //
 // JumpTable.Control.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
@@ -635,7 +635,7 @@ partial class JumpTable
     public virtual void ExecuteTry(ExecutionEngine engine, int catchOffset, int finallyOffset)
     {
         if (catchOffset == 0 && finallyOffset == 0)
-            throw new InvalidOperationException($"catchOffset and finallyOffset can't be 0 in a TRY block");
+            throw new InvalidOperationException($"catchOffset and finallyOffset can't both be 0 in a TRY block.");
         if (engine.CurrentContext!.TryStack is null)
             engine.CurrentContext.TryStack = new Stack<ExceptionHandlingContext>();
         else if (engine.CurrentContext.TryStack.Count >= engine.Limits.MaxTryNestingDepth)

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 The Neo Project.
+// Copyright (C) 2015-2026 The Neo Project.
 //
 // Buffer.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
@@ -14,7 +14,6 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
-using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types;
 
@@ -116,12 +115,10 @@ public class Buffer : StackItem
             : $"(\"Base64: {Convert.ToBase64String(GetSpan())}\")";
     }
 
-    /// <summary>
-    /// Invalidate HashCode
-    /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal void InvalidateHashCode()
+    public override int GetHashCode()
     {
+        // Hash code can't be cached because the buffer is mutable
         _hashCode = 0;
+        return base.GetHashCode();
     }
 }
