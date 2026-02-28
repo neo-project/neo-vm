@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 The Neo Project.
+// Copyright (C) 2015-2026 The Neo Project.
 //
 // JumpTable.Compound.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
@@ -466,7 +466,6 @@ partial class JumpTable
                     if (b < sbyte.MinValue || b > byte.MaxValue)
                         throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
                     buffer.InnerBuffer.Span[index] = (byte)b;
-                    buffer.InvalidateHashCode();
                     break;
                 }
             default:
@@ -492,7 +491,6 @@ partial class JumpTable
                 break;
             case Buffer buffer:
                 buffer.InnerBuffer.Span.Reverse();
-                buffer.InvalidateHashCode();
                 break;
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");

@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 The Neo Project.
+// Copyright (C) 2015-2026 The Neo Project.
 //
 // JumpTable.Splice.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
@@ -57,13 +57,13 @@ partial class JumpTable
         Buffer dst = engine.Pop<Buffer>();
         if (checked(di + count) > dst.Size)
             throw new InvalidOperationException($"The destination index + count is out of range for {nameof(OpCode.MEMCPY)}, index: {di}, count: {count}, {di}/[0, {dst.Size}].");
-        // TODO: check if we can optimize the memcpy by using peek instead of  dup then pop
+        // TODO: check if we can optimize the memcpy by using peek instead of dup then pop
         src.Slice(si, count).CopyTo(dst.InnerBuffer.Span[di..]);
-        dst.InvalidateHashCode();
     }
 
     /// <summary>
     /// Concatenates two buffers and pushes the result onto the evaluation stack.
+    /// The result is the first pushed item concatenated with the second pushed item.
     /// <see cref="OpCode.CAT"/>
     /// </summary>
     /// <param name="engine">The execution engine.</param>
@@ -83,7 +83,7 @@ partial class JumpTable
     }
 
     /// <summary>
-    /// Extracts a substring from the specified buffer and pushes it onto the evaluation stack.
+    /// Extracts a sub-buffer from the specified buffer and pushes it onto the evaluation stack.
     /// <see cref="OpCode.SUBSTR"/>
     /// </summary>
     /// <param name="engine">The execution engine.</param>

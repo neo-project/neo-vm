@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 The Neo Project.
+// Copyright (C) 2015-2026 The Neo Project.
 //
 // ExecutionEngine.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
@@ -103,10 +103,18 @@ public class ExecutionEngine : IDisposable
         ResultStack = new(referenceCounter);
     }
 
-    public virtual void Dispose()
+    public void Dispose()
     {
-        InvocationStack.Clear();
+        Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            InvocationStack.Clear();
+        }
     }
 
     /// <summary>
@@ -136,7 +144,8 @@ public class ExecutionEngine : IDisposable
             try
             {
                 ExecutionContext context = CurrentContext!;
-                Instruction instruction = context.CurrentInstruction ?? Instruction.RET;
+                Instruction? currentInstruction = context.CurrentInstruction;
+                Instruction instruction = currentInstruction ?? Instruction.RET;
                 PreExecuteInstruction(instruction);
 #if VMPERF
                 Console.WriteLine("op:["
@@ -155,7 +164,8 @@ public class ExecutionEngine : IDisposable
                     JumpTable.ExecuteThrow(this, ex.Message);
                 }
                 PostExecuteInstruction(instruction);
-                if (!isJumping) context.MoveNext();
+                if (!isJumping && currentInstruction != null)
+                    context.InstructionPointer += instruction.Size;
                 isJumping = false;
             }
             catch (Exception e)

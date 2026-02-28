@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2025 The Neo Project.
+// Copyright (C) 2015-2026 The Neo Project.
 //
 // Array.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
@@ -132,7 +132,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
         refMap.Add(this, result);
         foreach (StackItem item in InnerList)
             result.Add(item.DeepCopy(refMap, asImmutable));
-        result.IsReadOnly = true;
+        result.IsReadOnly = IsReadOnly || asImmutable;
         return result;
     }
 
