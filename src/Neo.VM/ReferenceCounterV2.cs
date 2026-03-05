@@ -38,7 +38,7 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
     /// <inheritdoc/>
     public void AddReference(StackItem item, CompoundType parent)
     {
-        // This call should not be made
+        throw new InvalidOperationException("ReferenceCounterV2.AddReference must not be called.");
     }
 
     /// <inheritdoc/>
@@ -67,7 +67,7 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
     /// <inheritdoc/>
     public void AddZeroReferred(StackItem item)
     {
-        // This call should not be made
+        throw new InvalidOperationException("ReferenceCounterV2.AddZeroReferred must not be called.");
     }
 
     /// <inheritdoc/>
@@ -80,7 +80,7 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
     /// <inheritdoc/>
     public void RemoveReference(StackItem item, CompoundType parent)
     {
-        // This call should not be made
+        throw new InvalidOperationException("ReferenceCounterV2.RemoveReference must not be called.");
     }
 
     /// <inheritdoc/>
