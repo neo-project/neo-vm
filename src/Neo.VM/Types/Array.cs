@@ -112,7 +112,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
     public override void Clear()
     {
         if (IsReadOnly) throw new InvalidOperationException("The array is readonly, can not clear.");
-        if (ReferenceCounter != null)
+        if (ReferenceCounter != null && ReferenceCounter.Version != RCVersion.V2)
             foreach (StackItem item in InnerList)
                 ReferenceCounter.RemoveReference(item, this);
         InnerList.Clear();

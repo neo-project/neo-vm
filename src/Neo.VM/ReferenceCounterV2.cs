@@ -78,6 +78,12 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
     }
 
     /// <inheritdoc/>
+    public int CheckZeroReferred()
+    {
+        throw new InvalidOperationException("ReferenceCounterV2.CheckZeroReferred must not be called.");
+    }
+
+    /// <inheritdoc/>
     public void RemoveReference(StackItem item, CompoundType parent)
     {
         throw new InvalidOperationException("ReferenceCounterV2.RemoveReference must not be called.");

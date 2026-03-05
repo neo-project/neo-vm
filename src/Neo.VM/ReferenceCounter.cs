@@ -147,7 +147,7 @@ public sealed class ReferenceCounter : IReferenceCounter
     /// Use this method periodically to clean up items with zero references and free up memory.
     /// </summary>
     /// <returns>The current reference count.</returns>
-    private int CheckZeroReferred()
+    public int CheckZeroReferred()
     {
         // If there are items with zero references, process them.
         if (_zeroReferred.Count > 0)

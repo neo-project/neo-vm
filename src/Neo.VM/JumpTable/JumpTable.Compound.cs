@@ -571,6 +571,7 @@ partial class JumpTable
                 engine.ReferenceCounter.RemoveStackReference(xSubItem);
             }
         }
+        x.Clear();
     }
 
     /// <summary>

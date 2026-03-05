@@ -87,5 +87,6 @@ public interface IReferenceCounter
     /// This method is used to check items in the zero-referred list and clean up those that are no longer needed.
     /// </summary>
     /// <returns>The current reference count.</returns>
+    int CheckZeroReferred();
     void CheckPostExecution();
 }
