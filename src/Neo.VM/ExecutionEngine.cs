@@ -95,7 +95,7 @@ public class ExecutionEngine : IDisposable
     /// <param name="jumpTable">The jump table to be used.</param>
     /// <param name="referenceCounter">The reference counter to be used.</param>
     /// <param name="limits">Restrictions on the VM.</param>
-    protected ExecutionEngine(JumpTable? jumpTable, IReferenceCounter? referenceCounter, ExecutionEngineLimits limits)
+    internal ExecutionEngine(JumpTable? jumpTable, IReferenceCounter? referenceCounter, ExecutionEngineLimits limits)
     {
         JumpTable = jumpTable ?? JumpTable.Default;
         Limits = limits;

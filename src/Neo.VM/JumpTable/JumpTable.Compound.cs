@@ -450,16 +450,16 @@ partial class JumpTable
                     var index = (int)key.GetInteger();
                     if (index < 0 || index >= array.Count)
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
-                    if (isRC2)
+                    if (isRC2 && array.IsReferenced())
                         engine.ReferenceCounter.RemoveStackReference(array[index]);
                     array[index] = value;
-                    if (isRC2)
+                    if (isRC2 && array.IsReferenced())
                         engine.ReferenceCounter.AddStackReference(value);
                     break;
                 }
             case Map map:
                 {
-                    if (isRC2)
+                    if (isRC2 && map.IsReferenced())
                     {
                         if (!map.TryGetValue(key, out var value1))
                         {
@@ -469,10 +469,9 @@ partial class JumpTable
                         {
                             engine.ReferenceCounter.RemoveStackReference(value1);
                         }
+                        engine.ReferenceCounter.AddStackReference(value);
                     }
                     map[key] = value;
-                    if (isRC2)
-                        engine.ReferenceCounter.AddStackReference(value);
                     break;
                 }
             case Buffer buffer:

@@ -35,14 +35,15 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
         set
         {
             if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
-            ReferenceCounter?.RemoveReference(InnerList[index], this);
+            if (ReferenceCounter?.Version == RCVersion.V1)
+                ReferenceCounter?.RemoveReference(InnerList[index], this);
             InnerList[index] = value;
             if (ReferenceCounter != null && value is CompoundType { ReferenceCounter: null })
             {
                 throw new InvalidOperationException("Can not set a CompoundType without a ReferenceCounter.");
             }
-
-            ReferenceCounter?.AddReference(value, this);
+            if (ReferenceCounter?.Version == RCVersion.V1)
+                ReferenceCounter?.AddReference(value, this);
         }
     }
 
@@ -153,7 +154,8 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
     public void RemoveAt(int index)
     {
         if (IsReadOnly) throw new InvalidOperationException("The array is readonly, can not remove item.");
-        ReferenceCounter?.RemoveReference(InnerList[index], this);
+        if (ReferenceCounter?.Version != RCVersion.V2)
+            ReferenceCounter?.RemoveReference(InnerList[index], this);
         InnerList.RemoveAt(index);
     }
 
