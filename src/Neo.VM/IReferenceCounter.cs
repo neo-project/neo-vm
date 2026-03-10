@@ -88,5 +88,9 @@ public interface IReferenceCounter
     /// </summary>
     /// <returns>The current reference count.</returns>
     int CheckZeroReferred();
+
+    /// <summary>
+    /// Validate reference counters after execution and throw if limits are violated.
+    /// </summary>
     void CheckPostExecution();
 }
