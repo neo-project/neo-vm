@@ -142,15 +142,6 @@ public abstract partial class StackItem : IEquatable<StackItem>
     public abstract bool GetBoolean();
 
     /// <summary>
-    /// Indicates whether this <see cref="StackItem"/> is on the stack or not.
-    /// </summary>
-    /// <returns>The boolean value represented whether this <see cref="StackItem"/> is on the stack or not.</returns>
-    public bool IsReferenced()
-    {
-        return StackReferences != 0;
-    }
-
-    /// <summary>
     /// Get the integer value represented by the VM object.
     /// </summary>
     /// <returns>The integer value represented by the VM object.</returns>
