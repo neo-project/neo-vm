@@ -83,6 +83,8 @@ public abstract class VMJsonTestBase
     private static void AssertResult(VMUTExecutionEngineState result, TestEngine engine, string message)
     {
         AssertAreEqual(result.State.ToString().ToLowerInvariant(), engine.State.ToString().ToLowerInvariant(), message + "State is different");
+        if (result.Refs != null)
+            AssertAreEqual(result.Refs, engine.ReferenceCounter.Count, message + "Refs are different");
         if (engine.State == VMState.FAULT)
         {
             if (result.ExceptionMessage != null)
