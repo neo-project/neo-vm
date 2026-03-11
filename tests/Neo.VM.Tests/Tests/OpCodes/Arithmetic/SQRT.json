@@ -20,7 +20,8 @@
                 "nextInstruction": "SQRT",
                 "evaluationStack": []
               }
-            ]
+            ],
+            "refs": 0
           }
         }
       ]
@@ -50,7 +51,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -65,7 +67,8 @@
                 "type": "Integer",
                 "value": 1
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
@@ -96,7 +99,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -111,7 +115,8 @@
                 "type": "Integer",
                 "value": 9
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
@@ -142,7 +147,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -157,7 +163,8 @@
                 "type": "Integer",
                 "value": 125
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
@@ -182,7 +189,8 @@
                 "type": "Integer",
                 "value": 2
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
@@ -207,7 +215,8 @@
                 "type": "Integer",
                 "value": 1
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
