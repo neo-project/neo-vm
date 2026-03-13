@@ -22,7 +22,8 @@
                 "instructionPointer": 0,
                 "nextInstruction": "PUSH1"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -42,7 +43,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -72,7 +74,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -110,7 +113,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -134,7 +138,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -162,7 +167,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 3
           }
         },
         {
@@ -184,7 +190,8 @@
                 "type": "integer",
                 "value": 1
               }
-            ]
+            ],
+            "refs": 3
           }
         }
       ]
@@ -209,7 +216,8 @@
                 "instructionPointer": 0,
                 "nextInstruction": "PUSH1"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -229,7 +237,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -251,7 +260,8 @@
                 "type": "integer",
                 "value": 1
               }
-            ]
+            ],
+            "refs": 3
           }
         }
       ]
@@ -276,7 +286,8 @@
                 "instructionPointer": 0,
                 "nextInstruction": "PUSH1"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -296,7 +307,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -320,7 +332,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -348,7 +361,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 3
           }
         },
         {
@@ -370,7 +384,8 @@
                 "type": "integer",
                 "value": 1
               }
-            ]
+            ],
+            "refs": 3
           }
         }
       ]
@@ -395,7 +410,8 @@
                 "instructionPointer": 0,
                 "nextInstruction": "PUSH1"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -417,7 +433,8 @@
                 "type": "integer",
                 "value": 1
               }
-            ]
+            ],
+            "refs": 3
           }
         }
       ]

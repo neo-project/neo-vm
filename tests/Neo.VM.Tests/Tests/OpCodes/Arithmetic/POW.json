@@ -20,8 +20,7 @@
                 "nextInstruction": "POW",
                 "evaluationStack": []
               }
-            ],
-            "refs": 0
+            ]
           }
         }
       ]
@@ -46,8 +45,7 @@
                 "nextInstruction": "POW",
                 "evaluationStack": []
               }
-            ],
-            "refs": 0
+            ]
           }
         }
       ]

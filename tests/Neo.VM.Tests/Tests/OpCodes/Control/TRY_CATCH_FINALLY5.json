@@ -26,7 +26,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT"            
+            "state": "FAULT"
           }
         }
       ]

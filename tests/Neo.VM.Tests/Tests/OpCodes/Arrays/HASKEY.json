@@ -54,7 +54,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 3
           }
         },
         {
@@ -87,7 +88,8 @@
                 "type": "Boolean",
                 "value": true
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
@@ -157,7 +159,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 5
           }
         },
         {
@@ -188,7 +191,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 4
           }
         },
         {
@@ -202,7 +206,8 @@
                 "type": "Boolean",
                 "value": true
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
@@ -243,7 +248,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -251,23 +257,7 @@
             "stepinto"
           ],
           "result": {
-            "state": "FAULT",
-            "invocationStack": [
-              {
-                "instructionPointer": 6,
-                "nextInstruction": "HASKEY",
-                "evaluationStack": [
-                  {
-                    "type": "ByteString",
-                    "value": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-                  },
-                  {
-                    "type": "map",
-                    "value": {}
-                  }
-                ]
-              }
-            ]
+            "state": "FAULT"
           }
         }
       ]

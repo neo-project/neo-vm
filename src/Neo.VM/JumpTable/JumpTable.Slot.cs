@@ -653,11 +653,12 @@ partial class JumpTable
     /// <param name="index">The index within the slot.</param>
     public virtual void ExecuteStoreToSlot(ExecutionEngine engine, Slot? slot, int index)
     {
+        StackItem item = engine.Pop();
         if (slot is null)
             throw new InvalidOperationException("Slot has not been initialized.");
         if (index < 0 || index >= slot.Count)
             throw new InvalidOperationException($"Index out of range when storing to slot: {index}, {index}/[0, {slot.Count}).");
-        slot[index] = engine.Pop();
+        slot[index] = item;
     }
 
     /// <summary>

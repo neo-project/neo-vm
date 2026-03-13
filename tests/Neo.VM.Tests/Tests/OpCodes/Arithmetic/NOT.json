@@ -13,8 +13,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 0
+            "state": "FAULT"
           }
         }
       ]

@@ -13,8 +13,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 0
+            "state": "FAULT"
           }
         }
       ]
@@ -452,8 +451,7 @@
                 "type": "boolean",
                 "value": false
               }
-            ],
-            "refs": 0
+            ]
           }
         }
       ]

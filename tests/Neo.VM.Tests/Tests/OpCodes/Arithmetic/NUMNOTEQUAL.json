@@ -13,8 +13,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 0
+            "state": "FAULT"
           }
         }
       ]
@@ -388,8 +387,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 1
+            "state": "FAULT"
           }
         }
       ]
@@ -437,8 +435,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 1
+            "state": "FAULT"
           }
         }
       ]
@@ -484,8 +481,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 1
+            "state": "FAULT"
           }
         }
       ]
@@ -533,8 +529,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 1
+            "state": "FAULT"
           }
         }
       ]
@@ -586,8 +581,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 1
+            "state": "FAULT"
           }
         }
       ]
@@ -631,8 +625,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 1
+            "state": "FAULT"
           }
         }
       ]
@@ -676,8 +669,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 1
+            "state": "FAULT"
           }
         }
       ]
@@ -1046,8 +1038,7 @@
             "stepInto"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 1
+            "state": "FAULT"
           }
         }
       ]
@@ -1093,8 +1084,7 @@
             "execute"
           ],
           "result": {
-            "state": "FAULT",
-            "refs": 1
+            "state": "FAULT"
           }
         }
       ]

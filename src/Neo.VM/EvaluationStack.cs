@@ -175,12 +175,12 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
             if (index < 0)
                 throw new ArgumentOutOfRangeException(nameof(index), $"Out of stack bounds: {index}/{_innerList.Count}");
         }
-        index = _innerList.Count - index - 1;
-        if (_innerList[index] is not T item)
-            throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
+        StackItem item = _innerList[index = _innerList.Count - index - 1];
         _innerList.RemoveAt(index);
         _referenceCounter.RemoveStackReference(item);
-        return item;
+        if (item is not T typedItem)
+            throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
+        return typedItem;
     }
 
     public override string ToString()
