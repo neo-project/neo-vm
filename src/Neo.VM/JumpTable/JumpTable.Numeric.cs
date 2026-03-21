@@ -238,7 +238,6 @@ partial class JumpTable
     {
         var shift = (int)engine.Pop().GetInteger();
         engine.Limits.AssertShift(shift);
-        if (shift == 0) return;
         var x = engine.Pop().GetInteger();
         engine.Push(x << shift);
     }
@@ -255,7 +254,6 @@ partial class JumpTable
     {
         var shift = (int)engine.Pop().GetInteger();
         engine.Limits.AssertShift(shift);
-        if (shift == 0) return;
         var x = engine.Pop().GetInteger();
         engine.Push(x >> shift);
     }
