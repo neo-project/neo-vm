@@ -63,6 +63,7 @@ partial class JumpTable
 
     /// <summary>
     /// Concatenates two buffers and pushes the result onto the evaluation stack.
+    /// The result is the first pushed item concatenated with the second pushed item.
     /// <see cref="OpCode.CAT"/>
     /// </summary>
     /// <param name="engine">The execution engine.</param>
@@ -82,7 +83,7 @@ partial class JumpTable
     }
 
     /// <summary>
-    /// Extracts a substring from the specified buffer and pushes it onto the evaluation stack.
+    /// Extracts a sub-buffer from the specified buffer and pushes it onto the evaluation stack.
     /// <see cref="OpCode.SUBSTR"/>
     /// </summary>
     /// <param name="engine">The execution engine.</param>

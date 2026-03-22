@@ -635,7 +635,7 @@ partial class JumpTable
     public virtual void ExecuteTry(ExecutionEngine engine, int catchOffset, int finallyOffset)
     {
         if (catchOffset == 0 && finallyOffset == 0)
-            throw new InvalidOperationException($"catchOffset and finallyOffset can't be 0 in a TRY block");
+            throw new InvalidOperationException($"catchOffset and finallyOffset can't both be 0 in a TRY block.");
         if (engine.CurrentContext!.TryStack is null)
             engine.CurrentContext.TryStack = new Stack<ExceptionHandlingContext>();
         else if (engine.CurrentContext.TryStack.Count >= engine.Limits.MaxTryNestingDepth)

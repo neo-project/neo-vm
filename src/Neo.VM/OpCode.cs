@@ -108,7 +108,9 @@ public enum OpCode : byte
 
     /// <summary>
     /// Converts the 4-bytes offset to an <see cref="Pointer"/>, and pushes it onto the stack.
-    ///
+    /// <para>
+    /// The execution will be faulted if the current position + offset is out of script range[0, script.Length).
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 0 item(s)
@@ -129,7 +131,7 @@ public enum OpCode : byte
 
     /// <summary>
     /// The next byte contains the number of bytes to be pushed onto the stack.
-    ///
+    /// The data format: <c>|1-byte unsigned size|data|</c>.
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 0 item(s)
@@ -140,7 +142,7 @@ public enum OpCode : byte
 
     /// <summary>
     /// The next two bytes contain the number of bytes to be pushed onto the stack.
-    ///
+    /// The data format: <c>|2-byte little-endian unsigned size|data|</c>.
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 0 item(s)
@@ -151,7 +153,10 @@ public enum OpCode : byte
 
     /// <summary>
     /// The next four bytes contain the number of bytes to be pushed onto the stack.
-    ///
+    /// The data format: <c>|4-byte little-endian unsigned size|data|</c>.
+    /// <para>
+    /// The execution will be faulted if the datasize is out of MaxItemSize.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 0 item(s)
@@ -355,8 +360,11 @@ public enum OpCode : byte
     NOP = 0x21,
 
     /// <summary>
-    /// Unconditionally transfers control to a target instruction. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
-    ///
+    /// Unconditionally transfers control to a target instruction.
+    /// The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// <para>
+    /// The execution will be faulted if the target offset is out of script range[0, script.Length).
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 0 item(s)
@@ -366,8 +374,11 @@ public enum OpCode : byte
     JMP = 0x22,
 
     /// <summary>
-    /// Unconditionally transfers control to a target instruction. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
-    ///
+    /// Unconditionally transfers control to a target instruction.
+    /// The target instruction is represented as a 4-bytes little-endian signed offset from the beginning of the current instruction.
+    /// <para>
+    /// The execution will be faulted if the target offset is out of script range[0, script.Length).
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 0 item(s)
@@ -377,8 +388,11 @@ public enum OpCode : byte
     JMP_L = 0x23,
 
     /// <summary>
-    /// Transfers control to a target instruction if the value is <see langword="true"/>, not <see langword="null"/>, or non-zero. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if the value is true value (true, non-null, non-zero).
+    /// The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// <para>
+    /// The execution will be faulted if the target offset is out of script range[0, script.Length).
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 1 item(s)
@@ -388,8 +402,11 @@ public enum OpCode : byte
     JMPIF = 0x24,
 
     /// <summary>
-    /// Transfers control to a target instruction if the value is <see langword="true"/>, not <see langword="null"/>, or non-zero. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if the value is true value (true, non-null, non-zero).
+    /// The target instruction is represented as a 4-bytes little-endian signed offset from the beginning of the current instruction.
+    /// <para>
+    /// The execution will be faulted if the target offset is out of script range[0, script.Length).
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 1 item(s)
@@ -399,8 +416,11 @@ public enum OpCode : byte
     JMPIF_L = 0x25,
 
     /// <summary>
-    /// Transfers control to a target instruction if the value is <see langword="false"/>, a <see langword="null"/> reference, or zero. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if the value is false value (false, null, zero).
+    /// The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// <para>
+    /// If the target offset is out of script range[0, script.Length), the execution will be faulted.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 1 item(s)
@@ -410,8 +430,11 @@ public enum OpCode : byte
     JMPIFNOT = 0x26,
 
     /// <summary>
-    /// Transfers control to a target instruction if the value is <see langword="false"/>, a <see langword="null"/> reference, or zero. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if the value is false value (false, null, zero).
+    /// The target instruction is represented as a 4-bytes little-endian signed offset from the beginning of the current instruction.
+    /// <para>
+    /// The execution will be faulted if the target offset is out of script range[0, script.Length).
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 1 item(s)
@@ -421,8 +444,15 @@ public enum OpCode : byte
     JMPIFNOT_L = 0x27,
 
     /// <summary>
-    /// Transfers control to a target instruction if two values are equal. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if the top two items are equal.
+    /// The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot convert to integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -432,8 +462,15 @@ public enum OpCode : byte
     JMPEQ = 0x28,
 
     /// <summary>
-    /// Transfers control to a target instruction if two values are equal. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if the top two items are equal.
+    /// The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot convert to an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -443,8 +480,15 @@ public enum OpCode : byte
     JMPEQ_L = 0x29,
 
     /// <summary>
-    /// Transfers control to a target instruction when two values are not equal. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction when the top two items are not equal.
+    /// The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot convert to an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -454,8 +498,15 @@ public enum OpCode : byte
     JMPNE = 0x2A,
 
     /// <summary>
-    /// Transfers control to a target instruction when two values are not equal. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction when the top two items are not equal.
+    /// The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot convert to an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -465,8 +516,15 @@ public enum OpCode : byte
     JMPNE_L = 0x2B,
 
     /// <summary>
-    /// Transfers control to a target instruction if the first value is greater than the second value. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if first pushed item(the second in the stack) is greater than the second pushed item.
+    /// The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot represent as an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -476,8 +534,15 @@ public enum OpCode : byte
     JMPGT = 0x2C,
 
     /// <summary>
-    /// Transfers control to a target instruction if the first value is greater than the second value. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if first pushed item(the second in the stack) is greater than the second pushed item.
+    /// The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot represent as an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -487,8 +552,15 @@ public enum OpCode : byte
     JMPGT_L = 0x2D,
 
     /// <summary>
-    /// Transfers control to a target instruction if the first value is greater than or equal to the second value. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if first pushed item(the second in the stack) is greater than or equal to the second pushed item.
+    /// The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot represent as an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -498,8 +570,15 @@ public enum OpCode : byte
     JMPGE = 0x2E,
 
     /// <summary>
-    /// Transfers control to a target instruction if the first value is greater than or equal to the second value. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if first pushed item(the second in the stack) is greater than or equal to the second pushed item.
+    /// The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot represent as an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -509,8 +588,15 @@ public enum OpCode : byte
     JMPGE_L = 0x2F,
 
     /// <summary>
-    /// Transfers control to a target instruction if the first value is less than the second value. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if first pushed item(the second in the stack) is less than the second pushed item.
+    /// The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot represent as an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -520,8 +606,15 @@ public enum OpCode : byte
     JMPLT = 0x30,
 
     /// <summary>
-    /// Transfers control to a target instruction if the first value is less than the second value. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if first pushed item(the second in the stack) is less than the second pushed item.
+    /// The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot represent as an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -531,8 +624,15 @@ public enum OpCode : byte
     JMPLT_L = 0x31,
 
     /// <summary>
-    /// Transfers control to a target instruction if the first value is less than or equal to the second value. The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if first pushed item(the second in the stack) is less than or equal to the second pushed item.
+    /// The target instruction is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot represent as an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -542,8 +642,15 @@ public enum OpCode : byte
     JMPLE = 0x32,
 
     /// <summary>
-    /// Transfers control to a target instruction if the first value is less than or equal to the second value. The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
-    ///
+    /// Transfers control to a target instruction if first pushed item(the second in the stack) is less than or equal to the second pushed item.
+    /// The target instruction is represented as a 4-bytes signed offset from the beginning of the current instruction.
+    /// 
+    /// If any item is not an integer, it will be converted to an integer then compared.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the target offset is out of script range[0, script.Length).
+    ///  2. One or both of items cannot represent as an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -554,18 +661,30 @@ public enum OpCode : byte
 
     /// <summary>
     /// Calls the function at the target address which is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// 
+    /// <para>
+    /// The execution will be faulted if the target address is out of script range[0, script.Length).
+    /// </para>
     /// </summary>
     [OperandSize(Size = 1)]
     CALL = 0x34,
 
     /// <summary>
-    /// Calls the function at the target address which is represented as a 4-bytes signed offset from the beginning of the current instruction.
+    /// Calls the function at the target address which is represented as a 4-bytes little-endian signed offset from the beginning of the current instruction.
+    /// 
+    /// <para>
+    /// The execution will be faulted if the target address is out of script range[0, script.Length).
+    /// </para>
     /// </summary>
     [OperandSize(Size = 4)]
     CALL_L = 0x35,
 
     /// <summary>
-    /// Pop the address of a function from the stack, and call the function.
+    /// Pop the pointer of a function from the stack, and call the function.
+    /// 
+    /// <para>
+    /// The execution will be faulted if the pointer is not from the current script or not a valid pointer.
+    /// </para>
     /// </summary>
     CALLA = 0x36,
 
@@ -577,7 +696,7 @@ public enum OpCode : byte
 
     /// <summary>
     /// It turns the vm state to FAULT immediately, and cannot be caught.
-    ///
+    /// 
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 0 item(s)
@@ -586,7 +705,7 @@ public enum OpCode : byte
     ABORT = 0x38,
 
     /// <summary>
-    /// Pop the top value of the stack. If it's false, exit vm execution and set vm state to FAULT.
+    /// Pop the top value of the stack. If it's false value (false, null, zero), exit vm execution and set vm state to FAULT.
     ///
     /// <remarks>
     ///     Push: 0 item(s)
@@ -607,30 +726,60 @@ public enum OpCode : byte
 
     /// <summary>
     /// TRY CatchOffset(sbyte) FinallyOffset(sbyte). If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. `catch` and `finally` are not provided both.
+    ///  2. the `try` can not be nested more than `MaxTryNestingDepth`.
+    ///  3. the `catch` or `finally` offset is out of script range[0, script.Length).
+    /// </para>
     /// </summary>
     [OperandSize(Size = 2)]
     TRY = 0x3B,
 
     /// <summary>
     /// TRY_L CatchOffset(int) FinallyOffset(int). If there's no catch body, set CatchOffset 0. If there's no finally body, set FinallyOffset 0.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. `catch` and `finally` are not provided both.
+    ///  2. the `try` can not be nested more than `MaxTryNestingDepth`.
+    ///  3. the `catch` or `finally` offset is out of script range[0, script.Length).
+    /// </para>
     /// </summary>
     [OperandSize(Size = 8)]
     TRY_L = 0x3C,
 
     /// <summary>
-    /// Ensures that the appropriate surrounding finally blocks are executed. And then unconditionally transfers control to the specific target instruction, represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// Ensures that the appropriate surrounding finally blocks are executed.
+    /// And then unconditionally transfers control to the specific target instruction,
+    /// which is represented as a 1-byte signed offset from the beginning of the current instruction.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the corresponding `try` is not provided.
+    ///  2. the end offset is out of script range[0, script.Length).
+    /// </para>
     /// </summary>
     [OperandSize(Size = 1)]
     ENDTRY = 0x3D,
 
     /// <summary>
-    /// Ensures that the appropriate surrounding finally blocks are executed. And then unconditionally transfers control to the specific target instruction, represented as a 4-byte signed offset from the beginning of the current instruction.
+    /// Ensures that the appropriate surrounding finally blocks are executed.
+    /// And then unconditionally transfers control to the specific target instruction,
+    /// which is represented as a 4-byte little-endian signed offset from the beginning of the current instruction.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the corresponding `try` is not provided.
+    ///  2. the end offset is out of script range[0, script.Length).
+    /// </para>
     /// </summary>
     [OperandSize(Size = 4)]
     ENDTRY_L = 0x3E,
 
     /// <summary>
-    /// End finally, If no exception happen or be catched, vm will jump to the target instruction of ENDTRY/ENDTRY_L. Otherwise, vm will rethrow the exception to upper layer.
+    /// End finally, If no exception happen or be catched, vm will jump to the target instruction of ENDTRY/ENDTRY_L.
+    /// Otherwise, vm will rethrow the exception to upper layer.
+    /// <para>
+    /// The execution will be faulted if the corresponding `try` is not provided.
+    /// </para>
     /// </summary>
     ENDFINALLY = 0x3F,
 
@@ -650,7 +799,7 @@ public enum OpCode : byte
     #region Stack
 
     /// <summary>
-    /// Puts the number of stack items onto the stack.
+    /// Pushes the number of stack items onto the stack.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -663,7 +812,9 @@ public enum OpCode : byte
     /// Removes the top stack item.
     ///
     /// <example> a b c -> a b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the stack is empty.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 1 item(s)
@@ -675,7 +826,9 @@ public enum OpCode : byte
     /// Removes the second-to-top stack item.
     ///
     /// <example> a b c -> a c </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the stack has less than 2 items.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 1 item(s)
@@ -684,8 +837,14 @@ public enum OpCode : byte
     NIP = 0x46,
 
     /// <summary>
-    /// The item n back in the main stack is removed.
-    ///
+    /// The item n back in the main stack is removed. The top item indicates the number of items to be removed.
+    /// If the top item is not an integer, it will be converted to an integer.
+    /// 
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The top item cannot convert to an integer.
+    ///  2. The stack has less than n+1 items.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: n+1 item(s)
@@ -702,7 +861,9 @@ public enum OpCode : byte
     /// Duplicates the top stack item.
     ///
     /// <example> a b c -> a b c c </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the stack is empty.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 0 item(s)
@@ -714,7 +875,9 @@ public enum OpCode : byte
     /// Copies the second-to-top stack item to the top.
     ///
     /// <example> a b c -> a b c b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the stack has less than 2 items.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 0 item(s)
@@ -723,12 +886,17 @@ public enum OpCode : byte
     OVER = 0x4B,
 
     /// <summary>
-    /// The item n back in the stack is copied to the top.
+    /// The item n back in the stack is copied to the top. The top item indicates the index of the item to be copied.
+    /// If the top item is not an integer, it will be converted to an integer.
     ///
     /// <example> a b c d 2 -> a b c d b
     ///  index => 3[2]1 0
     /// </example>
-    /// 
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The top item cannot convert to an integer.
+    ///  2. The stack has less than n+1 items.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 0 item(s)
@@ -740,7 +908,9 @@ public enum OpCode : byte
     /// The item at the top of the stack is copied and inserted before the second-to-top item.
     ///
     /// <example> a b c -> a c b c </example>
-    /// 
+    /// <para>
+    /// The execution will be faulted if the stack has less than 2 items.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 0 item(s)
@@ -752,7 +922,9 @@ public enum OpCode : byte
     /// The top two items on the stack are swapped.
     ///
     /// <example> a b -> b a</example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the stack has less than 2 items.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 0 item(s)
@@ -764,7 +936,9 @@ public enum OpCode : byte
     /// The top three items on the stack are rotated to the left.
     ///
     /// <example> a b c -> b c a</example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the stack has less than 3 items.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 0 item(s)
@@ -773,12 +947,17 @@ public enum OpCode : byte
     ROT = 0x51,
 
     /// <summary>
-    /// The item n back in the stack is moved to the top.
+    /// The item n back in the stack is moved to the top. The top item indicates the index of the item to be moved.
+    /// If the top item is not an integer, it will be converted to an integer.
     ///
     /// <example>a b c d 2 -> a c d b
     /// index => 3[2]1 0
     /// </example>
-    /// 
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The top item cannot convert to an integer.
+    ///  2. The stack has less than n+1 items.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 1 item(s)
@@ -790,7 +969,9 @@ public enum OpCode : byte
     /// Reverse the order of the top 3 items on the stack.
     ///
     /// <example> a b c -> c b a</example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the stack has less than 3 items.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 0 item(s)
@@ -802,7 +983,9 @@ public enum OpCode : byte
     /// Reverse the order of the top 4 items on the stack.
     ///
     /// <example> a b c d -> d c b a</example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the stack has less than 4 items.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 0 item(s)
@@ -812,9 +995,14 @@ public enum OpCode : byte
 
     /// <summary>
     /// Pop the number N on the stack, and reverse the order of the top N items on the stack.
-    ///
-    /// <example> a b c d 3 -> a d c b </example>
+    /// If the top item is not an integer, it will be converted to an integer.
     /// 
+    /// <example> a b c d 3 -> a d c b </example>
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The top item cannot convert to an integer.
+    ///  2. The stack has less than n+1 items.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 1 item(s)
@@ -828,7 +1016,12 @@ public enum OpCode : byte
 
     /// <summary>
     /// Initialize the static field list for the current execution context.
-    ///
+    /// 
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The static field list for the current execution context has been initialized.
+    ///  2. The operand is 0.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 0 item(s)
@@ -838,7 +1031,15 @@ public enum OpCode : byte
     INITSSLOT = 0x56,
 
     /// <summary>
-    /// Initialize the argument slot and the local variable list for the current execution context.
+    /// Initialize the argument slot and/or the local variable list for the current execution context.
+    /// It has two uint8 operands: The first is the number of local variables, and the second is the number of arguments.
+    /// Two operands cannot both be 0.
+    /// 
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The argument slot and/or the local variable list for the current execution context has been initialized.
+    ///  2. Two operands are both 0.
+    /// </para>
     /// </summary>
     [OperandSize(Size = 2)]
     INITSLOT = 0x57,
@@ -914,7 +1115,8 @@ public enum OpCode : byte
     LDSFLD6 = 0x5E,
 
     /// <summary>
-    /// Loads the static field at a specified index onto the evaluation stack. The index is represented as a 1-byte unsigned integer.
+    /// Loads the static field at a specified index onto the evaluation stack.
+    /// The index is represented as a 1-byte unsigned integer.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -995,7 +1197,8 @@ public enum OpCode : byte
     STSFLD6 = 0x66,
 
     /// <summary>
-    /// Stores the value on top of the evaluation stack in the static field list at a specified index. The index is represented as a 1-byte unsigned integer.
+    /// Stores the value on top of the evaluation stack in the static field list at a specified index.
+    /// The index is represented as a 1-byte unsigned integer.
     ///
     /// <remarks>
     ///     Push: 0 item(s)
@@ -1076,7 +1279,8 @@ public enum OpCode : byte
     LDLOC6 = 0x6E,
 
     /// <summary>
-    /// Loads the local variable at a specified index onto the evaluation stack. The index is represented as a 1-byte unsigned integer.
+    /// Loads the local variable at a specified index onto the evaluation stack.
+    /// The index is represented as a 1-byte unsigned integer.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1157,7 +1361,8 @@ public enum OpCode : byte
     STLOC6 = 0x76,
 
     /// <summary>
-    /// Stores the value on top of the evaluation stack in the local variable list at a specified index. The index is represented as a 1-byte unsigned integer.
+    /// Stores the value on top of the evaluation stack in the local variable list at a specified index.
+    /// The index is represented as a 1-byte unsigned integer.
     ///
     /// <remarks>
     ///     Push: 0 item(s)
@@ -1238,7 +1443,8 @@ public enum OpCode : byte
     LDARG6 = 0x7E,
 
     /// <summary>
-    /// Loads the argument at a specified index onto the evaluation stack. The index is represented as a 1-byte unsigned integer.
+    /// Loads the argument at a specified index onto the evaluation stack.
+    /// The index is represented as a 1-byte unsigned integer.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1319,7 +1525,8 @@ public enum OpCode : byte
     STARG6 = 0x86,
 
     /// <summary>
-    /// Stores the value on top of the evaluation stack in the argument slot at a specified index. The index is represented as a 1-byte unsigned integer.
+    /// Stores the value on top of the evaluation stack in the argument slot at a specified index.
+    /// The index is represented as a 1-byte unsigned integer.
     ///
     /// <remarks>
     ///     Push: 0 item(s)
@@ -1334,10 +1541,15 @@ public enum OpCode : byte
     #region Splice
 
     /// <summary>
-    /// Creates a new <see cref="Buffer"/> and pushes it onto the stack.
+    /// Creates a new <see cref="Buffer"/> and pushes it onto the stack, and the top item is the length of the buffer.
+    /// If the top item is not an integer, it will be converted to an integer.
     ///
     /// <example> new Buffer(a) </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The top item cannot be converted to an integer.
+    ///  2. The length is negative or exceeds the maximum item size.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1348,9 +1560,21 @@ public enum OpCode : byte
     /// <summary>
     /// Copies a range of bytes from one <see cref="Buffer"/> to another.
     /// Using this opcode will require to dup the destination buffer.
+    /// If the destination start index, source start index or count is not an integer, it will be converted to an integer.
     ///
-    /// <example> c.Slice(d, e).CopyTo(a.InnerBuffer.Span[b..]); </example>
+    /// <example> c[d..e].CopyTo(a[b..]); </example>
     ///
+    /// <para>
+    /// The top 5 items in the stack are(The `count` item is the top item):
+    /// <c> | destination buffer | destination start index | source buffer | source start index | count </c>.
+    /// </para>
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the destination start index, source start index or count cannot be converted to integer.
+    ///  2. The destination start index, source start index or count is negative(or converted value is negative).
+    ///  3. The destination start index + count is out of the destination buffer range.
+    ///  4. The source start index + count is out of the source buffer range.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 5 item(s)
@@ -1359,10 +1583,16 @@ public enum OpCode : byte
     MEMCPY = 0x89,
 
     /// <summary>
-    /// Concatenates two strings.
+    /// Concatenates two items as a buffer. The result is the first pushed item concatenated with the second pushed item(the top item).
+    /// If item is not a buffer, it will be converted to a buffer(bytes) and then concatenated.
     ///
     /// <example> a.concat(b) </example>
     ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the total length exceeds the maximum item size.
+    ///  2. One or both items cannot be converted to a buffer.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1371,10 +1601,19 @@ public enum OpCode : byte
     CAT = 0x8B,
 
     /// <summary>
-    /// Returns a section of a string.
+    /// Pushes a sub-buffer from the source buffer onto the evaluation stack.
+    /// The first pushed item is the source buffer, the second pushed item is the start index, the third pushed item is the count(the top item).
+    /// If the start index or count is not an integer, it will be converted to an integer.
+    /// If the source buffer is not a buffer, it will be converted to a buffer(bytes).
     ///
-    /// <example> a.Slice(b, c) </example>
-    ///
+    /// <example> a[b..c] </example>
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The start index or count cannot be converted to integer.
+    ///  2. The source buffer cannot be converted to buffer(bytes).
+    ///  3. The start index or count is negative(or converted value is negative).
+    ///  4. The start index + count is out of the source buffer range.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 3 item(s)
@@ -1383,10 +1622,18 @@ public enum OpCode : byte
     SUBSTR = 0x8C,
 
     /// <summary>
-    /// Keeps only characters left of the specified point in a string.
+    /// Keeps only characters left of the specified point in a buffer.
+    /// The first pushed item is the source buffer, the second pushed item is the count(the top item).
+    /// If the count is not an integer, it will be converted to an integer.
+    /// If the source buffer is not a buffer, it will be converted to a buffer(bytes).
     ///
     /// <example> a[..b] </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The count cannot be converted to integer.
+    ///  2. The source buffer cannot be converted to buffer(bytes).
+    ///  3. The count is negative(or converted value is negative) or out of the source buffer range.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1395,10 +1642,18 @@ public enum OpCode : byte
     LEFT = 0x8D,
 
     /// <summary>
-    /// Keeps only characters right of the specified point in a string.
+    /// Keeps only characters right of the specified point in a buffer.
+    /// The first pushed item is the source buffer, the second pushed item is the count(the top item).
+    /// If the count is not an integer, it will be converted to an integer.
+    /// If the source buffer is not a buffer, it will be converted to a buffer(bytes).
     ///
     /// <example> a[^b..^0] </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The count cannot be converted to integer.
+    ///  2. The source buffer cannot be converted to buffer(bytes).
+    ///  3. The count is negative(or converted value is negative) or out of the source buffer range.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1411,10 +1666,13 @@ public enum OpCode : byte
     #region Bitwise logic
 
     /// <summary>
-    /// Flips all the bits in the input.
+    /// Pops the top stack item and pushes the result of flipping all the bits in the item.
+    /// If the item is not an integer, it will be converted to an integer.
     ///
     /// <example> ~a </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the item cannot be converted to integer.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1423,10 +1681,13 @@ public enum OpCode : byte
     INVERT = 0x90,
 
     /// <summary>
-    /// Boolean and between each bit in the inputs.
+    /// Pops the top two stack items and pushes the result of the boolean and between each bit in the items.
+    /// If the items are not integers, they will be converted to integers.
     ///
     /// <example> a&amp;b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the items cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1435,10 +1696,13 @@ public enum OpCode : byte
     AND = 0x91,
 
     /// <summary>
-    /// Boolean or between each bit in the inputs.
+    /// Pops the top two stack items and pushes the result of the boolean or between each bit in the items.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a|b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the items cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1447,10 +1711,13 @@ public enum OpCode : byte
     OR = 0x92,
 
     /// <summary>
-    /// Boolean exclusive or between each bit in the inputs.
+    /// Pops the top two stack items and pushes the result of the boolean exclusive or between each bit in the items.
+    /// If the items are not integers, they will be converted to integers.
     ///
     /// <example> a^b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the items cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1459,10 +1726,9 @@ public enum OpCode : byte
     XOR = 0x93,
 
     /// <summary>
-    /// Returns true if the inputs are exactly equal, false otherwise.
+    /// Pops the top two stack items and pushes true if the items are exactly equal, false otherwise.
     ///
     /// <example> a.Equals(b) </example>
-    ///
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1471,10 +1737,9 @@ public enum OpCode : byte
     EQUAL = 0x97,
 
     /// <summary>
-    /// Returns 1 if the inputs are not equal, 0 otherwise.
+    /// Pops the top two stack items and pushes true if the items are not equal, false otherwise.
     ///
     /// <example> !a.Equals(b) </example>
-    ///
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1487,10 +1752,14 @@ public enum OpCode : byte
     #region Arithmetic
 
     /// <summary>
-    /// Puts the sign of top stack item on top of the main stack. If value is negative, put -1; if positive, put 1; if value is zero, put 0.
-    ///
+    /// Pops the top stack item and pushes the sign of the item.
+    /// If the item is negative, push -1; if positive, push 1; if zero, push 0.
+    /// If the item is not an integer, it will be converted to an integer.
+    /// 
     /// <example> a.Sign </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the item cannot be converted to an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1499,10 +1768,15 @@ public enum OpCode : byte
     SIGN = 0x99,
 
     /// <summary>
-    /// The input is made positive.
+    /// Pops the top stack item and pushes the absolute value of the item.
+    /// If the item is not an integer, it will be converted to an integer.
     ///
     /// <example> abs(a) </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the item cannot be converted to an integer.
+    ///  2. the item is the minimum integer value.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1511,10 +1785,13 @@ public enum OpCode : byte
     ABS = 0x9A,
 
     /// <summary>
-    /// The sign of the input is flipped.
+    /// Pops the top stack item and pushes the negation of the item.
+    /// If the input is not an integer, it will be converted to an integer.
     ///
     /// <example> -a </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the item cannot be converted to an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1523,10 +1800,13 @@ public enum OpCode : byte
     NEGATE = 0x9B,
 
     /// <summary>
-    /// 1 is added to the input.
+    /// Pops the top stack item and pushes the result of adding 1 to the item.
+    /// If the input is not an integer, it will be converted to an integer.
     ///
     /// <example> a+1 </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the item cannot be converted to an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1535,10 +1815,13 @@ public enum OpCode : byte
     INC = 0x9C,
 
     /// <summary>
-    /// 1 is subtracted from the input.
+    /// Pops the top stack item and pushes the result of subtracting 1 from the item.
+    /// If the input is not an integer, it will be converted to an integer.
     ///
     /// <example> a-1 </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the item cannot be converted to an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1547,10 +1830,13 @@ public enum OpCode : byte
     DEC = 0x9D,
 
     /// <summary>
-    /// a is added to b.
+    /// Pops the top two stack items and pushes the result of adding the first pushed item to the second pushed item(the top item).
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a+b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1559,10 +1845,13 @@ public enum OpCode : byte
     ADD = 0x9E,
 
     /// <summary>
-    /// b is subtracted from a.
+    /// Pops the top two stack items and pushes the result of subtracting the second pushed item(the top item) from the first pushed item.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a-b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1571,10 +1860,13 @@ public enum OpCode : byte
     SUB = 0x9F,
 
     /// <summary>
-    /// a is multiplied by b.
+    /// Pops the top two stack items and pushes the result of multiplying the first pushed item by the second pushed item(the top item).
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a*b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1583,10 +1875,16 @@ public enum OpCode : byte
     MUL = 0xA0,
 
     /// <summary>
-    /// a is divided by b.
+    /// Pops the top two stack items and pushes the result of dividing the first pushed item by the second pushed item(the top item).
+    /// The first pushed item is the dividend, the second pushed item is the divisor(the top item).
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a/b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the inputs cannot be converted to integers.
+    ///  2. the divisor is zero.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1595,10 +1893,16 @@ public enum OpCode : byte
     DIV = 0xA1,
 
     /// <summary>
-    /// Returns the remainder after dividing a by b.
+    /// Pops the top two stack items and pushes the remainder after dividing a by b.
+    /// The first pushed item is the dividend, the second pushed item is the divisor(the top item).
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a%b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the inputs cannot be converted to integers.
+    ///  2. the divisor is zero.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1607,10 +1911,14 @@ public enum OpCode : byte
     MOD = 0xA2,
 
     /// <summary>
-    /// The result of raising value to the exponent power.
+    /// Pops the top two stack items and pushes the result of raising value to the exponent power.
+    /// The first pushed item is the exponent, the second pushed item is the value(the top item).
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a^b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1619,10 +1927,15 @@ public enum OpCode : byte
     POW = 0xA3,
 
     /// <summary>
-    /// Returns the square root of a specified number.
+    /// Pops the top stack item and pushes the square root of the item.
+    /// If the input is not an integer, it will be converted to an integer.
     ///
     /// <example> sqrt(a) </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the input cannot be converted to an integer.
+    ///  2. the input is negative.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1632,9 +1945,15 @@ public enum OpCode : byte
 
     /// <summary>
     /// Performs modulus division on a number multiplied by another number.
+    /// The third pushed item is the modulus.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a*b%c </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the inputs cannot be converted to integers.
+    ///  2. the modulus is zero.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 3 item(s)
@@ -1643,10 +1962,19 @@ public enum OpCode : byte
     MODMUL = 0xA5,
 
     /// <summary>
-    /// Performs modulus division on a number raised to the power of another number. If the exponent is -1, it will have the calculation of the modular inverse.
+    /// Performs modulus division on a number raised to the power of another number.
+    /// If the exponent is -1, it will have the calculation of the modular inverse.
+    ///
+    /// The third pushed item is the modulus, the second pushed item is the exponent, the first pushed item is the value(the top item).
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> modpow(a, b, c) </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the inputs cannot be converted to integers.
+    ///  2. the modulus is zero.
+    ///  3. the exponent is negative and not -1.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 3 item(s)
@@ -1655,10 +1983,15 @@ public enum OpCode : byte
     MODPOW = 0xA6,
 
     /// <summary>
-    /// Shifts a left b bits, preserving sign.
+    /// Pops the top two stack items and shifts the first pushed item left by the second pushed item(the top item) bits, preserving sign.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a&lt;&lt;b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the inputs cannot be converted to integers.
+    ///  2. the shift amount is negative or out of the limit.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1667,10 +2000,15 @@ public enum OpCode : byte
     SHL = 0xA8,
 
     /// <summary>
-    /// Shifts a right b bits, preserving sign.
+    /// Pops the top two stack items and shifts the first pushed item right by the second pushed item(the top item) bits, preserving sign.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> a>>b </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the inputs cannot be converted to integers.
+    ///  2. the shift amount is negative or out of the limit.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1679,7 +2017,7 @@ public enum OpCode : byte
     SHR = 0xA9,
 
     /// <summary>
-    /// If the input is false (or null, zero), the output is true, false otherwise.
+    /// Pushes true if the input is false value (false, null, zero), false otherwise.
     ///
     /// <example> !a </example>
     ///
@@ -1691,7 +2029,7 @@ public enum OpCode : byte
     NOT = 0xAA,
 
     /// <summary>
-    /// If both a and b are not false (or null, zero), the output is true, false otherwise.
+    /// Pops the top two stack items and pushes true if both items are true value (true, not null, not zero), false otherwise.
     ///
     /// <example> b &amp;&amp; a </example>
     ///
@@ -1703,7 +2041,7 @@ public enum OpCode : byte
     BOOLAND = 0xAB,
 
     /// <summary>
-    /// If a or b is not false (or null, zero), the output is true, false otherwise.
+    /// Pops the top two stack items and pushes true if either item is true value (true, not null, not zero), false otherwise.
     ///
     /// <example> b || a </example>
     ///
@@ -1715,10 +2053,13 @@ public enum OpCode : byte
     BOOLOR = 0xAC,
 
     /// <summary>
-    /// Returns true if the input is 0, false otherwise.
+    /// Pops the top stack item and pushes true if the item is not 0, false otherwise.
+    /// If the input is not an integer, it will be converted to an integer.
     ///
     /// <example> a != 0 </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the input cannot be converted to an integer.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1727,10 +2068,13 @@ public enum OpCode : byte
     NZ = 0xB1,
 
     /// <summary>
-    /// Returns true if the items are equal, false otherwise.
+    /// Pops the top two stack items and pushes true if the items are equal in number, false otherwise.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> b == a </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1739,10 +2083,13 @@ public enum OpCode : byte
     NUMEQUAL = 0xB3,
 
     /// <summary>
-    /// Returns true if the items are not equal, false otherwise.
+    /// Pops the top two stack items and pushes true if the items are not equal in number, false otherwise.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> b != a </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1751,10 +2098,13 @@ public enum OpCode : byte
     NUMNOTEQUAL = 0xB4,
 
     /// <summary>
-    /// Returns true if a is less than b, false otherwise.
+    /// Pops the top two stack items and pushes true if the first pushed item is less than the second pushed item(the top item), false otherwise.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> b>a </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1763,10 +2113,13 @@ public enum OpCode : byte
     LT = 0xB5,
 
     /// <summary>
-    /// Returns true if a is less than or equal to b, otherwise false.
+    /// Pops the top two stack items and pushes true if the first pushed item is less than or equal to the second pushed item(the top item), false otherwise.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
     /// <example> b>=a </example>
-    ///
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1775,8 +2128,13 @@ public enum OpCode : byte
     LE = 0xB6,
 
     /// <summary>
-    /// Returns true if a is greater than b, otherwise false.
+    /// Pops the top two stack items and pushes true if the first pushed item is greater than the second pushed item(the top item), false otherwise.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
+    /// <example> b>a </example>
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1785,8 +2143,13 @@ public enum OpCode : byte
     GT = 0xB7,
 
     /// <summary>
-    /// Returns true if a is greater than or equal to b, otherwise false.
+    /// Pops the top two stack items and pushes true if the first pushed item is greater than or equal to the second pushed item(the top item), false otherwise.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
+    /// <example> b>=a </example>
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1795,8 +2158,13 @@ public enum OpCode : byte
     GE = 0xB8,
 
     /// <summary>
-    /// Returns the smallest of a and b.
+    /// Pops the top two stack items and pushes the minimum of the two items.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
+    /// <example> min(a, b) </example>
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1805,8 +2173,13 @@ public enum OpCode : byte
     MIN = 0xB9,
 
     /// <summary>
-    /// Returns the largest of a and b.
+    /// Pops the top two stack items and pushes the maximum of the two items.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
+    /// <example> max(a, b) </example>
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1815,8 +2188,13 @@ public enum OpCode : byte
     MAX = 0xBA,
 
     /// <summary>
-    /// Returns true if x is within the specified range (left-inclusive), otherwise false.
+    /// Pops the top three stack items and pushes true if the first pushed item is within the specified range [left, right), false otherwise.
+    /// If the inputs are not integers, they will be converted to integers.
     ///
+    /// <example> x within [left, right) </example>
+    /// <para>
+    /// The execution will be faulted if the inputs cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 3 item(s)
@@ -1829,8 +2207,17 @@ public enum OpCode : byte
     #region Compound-type
 
     /// <summary>
-    /// A value n is taken from top of main stack. The next n*2 items on main stack are removed, put inside n-sized map and this map is put on top of the main stack.
+    /// A value n is taken from top of main stack.
+    /// The next n*2 items on main stack are removed, put inside n-sized map and this map is put on top of the main stack.
+    /// If the top item is not an integer, it will be converted to an integer.
     ///
+    /// <example> | value2 | key2 | value1 | key1 | 2 | -> | map{key1 = value1, key2 = value2} | </example>
+    /// The key should be primitive type and if there are the same key, the last one will be used.
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the top item cannot be converted to integers.
+    ///  2. Any key is not a primitive type.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2n+1 item(s)
@@ -1839,8 +2226,13 @@ public enum OpCode : byte
     PACKMAP = 0xBE,
 
     /// <summary>
-    /// A value n is taken from top of main stack. The next n items on main stack are removed, put inside n-sized struct and this struct is put on top of the main stack.
+    /// A value n is taken from top of main stack.
+    /// The next n items on main stack are removed, put inside n-sized struct and this struct is put on top of the main stack.
+    /// If the top item is not an integer, it will be converted to an integer.
     ///
+    /// <para>
+    /// The execution will be faulted if the top item cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: n+1 item(s)
@@ -1849,8 +2241,13 @@ public enum OpCode : byte
     PACKSTRUCT = 0xBF,
 
     /// <summary>
-    /// A value n is taken from top of main stack. The next n items on main stack are removed, put inside n-sized array and this array is put on top of the main stack.
+    /// A value n is taken from top of main stack.
+    /// The next n items on main stack are removed, put inside n-sized array and this array is put on top of the main stack.
+    /// If the top item is not an integer, it will be converted to an integer.
     ///
+    /// <para>
+    /// The execution will be faulted if the top item cannot be converted to integers.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: n+1 item(s)
@@ -1859,7 +2256,8 @@ public enum OpCode : byte
     PACK = 0xC0,
 
     /// <summary>
-    /// A collection is removed from top of the main stack. Its elements are put on top of the main stack (in reverse order) and the collection size is also put on main stack.
+    /// A collection is removed from top of the main stack.
+    /// Its elements are put on top of the main stack (in reverse order) and the collection size is also put on the main stack.
     ///
     /// <remarks>
     ///     Push: 2n+1 or n+1 item(s)
@@ -1889,9 +2287,14 @@ public enum OpCode : byte
     NEWARRAY = 0xC3,
 
     /// <summary>
-    /// A value n is taken from top of main stack.
-    /// An default-value-filled(null, false, 0, or empty string) array of type T with size n is put on top of the main stack.
+    /// An array of type T with size n filled with the default value of type T(false, 0, empty string or null) is put on top of the main stack.
+    /// If the top item is not an integer, it will be converted to an integer.
     ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. the top item cannot be converted to integer.
+    ///  2. the type operand is not a valid stack item type.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1912,7 +2315,11 @@ public enum OpCode : byte
 
     /// <summary>
     /// A value n is taken from top of main stack. A null-filled struct with size n is put on top of the main stack.
+    /// If the top item is not an integer, it will be converted to an integer.
     ///
+    /// <para>
+    /// The execution will be faulted if the top item cannot be converted to integer.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -1921,7 +2328,7 @@ public enum OpCode : byte
     NEWSTRUCT = 0xC6,
 
     /// <summary>
-    /// A Map is created and put on top of the main stack.
+    /// A empty map is created and put on top of the main stack.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1931,7 +2338,9 @@ public enum OpCode : byte
     NEWMAP = 0xC8,
 
     /// <summary>
-    /// An array is removed from top of the main stack. Its size is put on top of the main stack.
+    /// Pop the top item and push its size. The top item should be an array, map, buffer or primitive type.
+    /// If the top item is an array or map, push its count.
+    /// If the top item is a buffer or primitive type, push its size(in bytes).
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -1941,9 +2350,17 @@ public enum OpCode : byte
     SIZE = 0xCA,
 
     /// <summary>
-    /// An input index n (or key) and an array (or buffer, string, map) are removed from the top of the main stack.
-    /// Puts true on top of main stack if array[n] (or buffer[n], string[n], map[n]) exists, and false otherwise.
+    /// An input index n (or key) and an array (map, buffer or string) are removed from the top of the main stack.
+    /// Pushes true to the stack if array[n](map[key], or the n-th byte of buffer/string) exist, and false otherwise.
     ///
+    /// If the target is an array, buffer or string, the index will be converted to an integer.
+    /// The index is the second pushed item(the top item), and the tartget is the first pushed item.
+    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The target is an array, buffer or string and the index cannot be converted to integer or is out of range.
+    ///  2. The target is a map and the key is not a primitive type.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1972,9 +2389,17 @@ public enum OpCode : byte
     VALUES = 0xCD,
 
     /// <summary>
-    /// An input index n (or key) and an array (or primitive type, buffer, map) are taken from main stack.
-    /// Element array[n] (or the converted bytes[n] of primitive type, buffer[n], map[n]) is put on top of the main stack.
+    /// An input index n (or key) and an array (map, buffer or primitive type) are taken from main stack.
+    /// Element array[n], or map[n], or buffer[n], or the n-th byte of primitive type(converted to integer) is put on top of the main stack.
     ///
+    /// If the target is an array, buffer or primitive type, the index will be converted to an integer.
+    /// The index is the second pushed item(the top item), and the tartget is the first pushed item.
+    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The target is an array, buffer or primitive type and the index cannot be converted to integer or is out of range.
+    ///  2. The target is a map and the key is not a primitive type.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 2 item(s)
@@ -1997,8 +2422,12 @@ public enum OpCode : byte
 
     /// <summary>
     /// A value, index n (or key) and an array (or buffer, map) are taken from main stack.
-    /// Attribution array[n] = value (or buffer[n] = value, map[n] = value) is performed.
-    ///
+    /// Attribution array[n] = value (or buffer[n] = value, map[key] = value) is performed.
+    /// 
+    /// The `value` is the third pushed item(the top item), the `n` or `key` is the second pushed item, and target is the first pushed item.
+    /// If the target is an array or buffer, the index will be converted to an integer.
+    /// If the tartget is a buffer, the value should within [-128, 255].
+    /// 
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 3 item(s)
@@ -2017,8 +2446,17 @@ public enum OpCode : byte
     REVERSEITEMS = 0xD1,
 
     /// <summary>
-    /// An input index n (or key) and an array (or map) are removed from the top of the main stack. Element array[n] (or map[n]) is removed.
+    /// An input index n (or key) and an array (or map)are removed from the top of the main stack.
+    /// Element array[n] (or map[key]) is removed.
     ///
+    /// The index or key is the second pushed item(the top item), and the array or map is the first pushed item.
+    /// If the target is an array, the index will be converted to an integer.
+    ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The target is an array and the index cannot be converted to integer or is out of range.
+    ///  2. The target is a map and the key is not a primitive type.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
@@ -2053,8 +2491,7 @@ public enum OpCode : byte
     #region Types
 
     /// <summary>
-    /// Returns <see langword="true"/> if the input is <see langword="null"/>;
-    /// <see langword="false"/> otherwise.
+    /// Pop the top item and push a bool value indicating whether the item is null.
     ///
     /// <remarks>
     ///     Push: 1 item(s)
@@ -2064,9 +2501,11 @@ public enum OpCode : byte
     ISNULL = 0xD8,
 
     /// <summary>
-    /// Returns <see langword="true"/> if the top item of the stack is of the specified type;
-    /// <see langword="false"/> otherwise.
+    /// Pop the top item and push a bool value indicating whether the item is of the specified type.
     ///
+    /// <para>
+    /// The execution will be faulted if the type operand(uint8) is invalid.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -2076,8 +2515,13 @@ public enum OpCode : byte
     ISTYPE = 0xD9,
 
     /// <summary>
-    /// Converts the top item of the stack to the specified type.
+    /// Pop the top item and convert it to the specified type, then push the converted item.
     ///
+    /// <para>
+    /// The execution will be faulted if:
+    ///  1. The top item cannot convert to the specified type.
+    ///  2. The type operand(uint8) is invalid.
+    /// </para>
     /// <remarks>
     ///     Push: 1 item(s)
     ///     Pop: 1 item(s)
@@ -2091,8 +2535,8 @@ public enum OpCode : byte
     #region Extensions
 
     /// <summary>
-    /// Pops the top stack item. Then, turns the vm state to FAULT immediately, and cannot be caught. The top stack
-    /// value is used as reason.
+    /// Pops the top stack item. Then, turns the vm state to FAULT immediately, and cannot be caught.
+    /// The top stack value is used as reason. The top item should be string or can be converted to string.
     ///
     /// <example>new Exception(a)</example>
     ///
@@ -2104,9 +2548,15 @@ public enum OpCode : byte
     ABORTMSG = 0xE0,
 
     /// <summary>
-    /// Pops the top two stack items. If the second-to-top stack value is false (or null, zero), exits the vm execution and sets the
-    /// vm state to FAULT. In this case, the top stack value is used as reason for the exit. Otherwise, it is ignored.
+    /// Pops the top two stack items.
+    /// If the second-to-top stack value is false value (false, null, zero), exits the vm execution and sets the vm state to FAULT.
+    /// In this case, the top stack value is used as reason for the exit. Otherwise, it is ignored.
     ///
+    /// The top item should be string or can be converted to string.
+    ///
+    /// <para>
+    /// The execution will be faulted if the top item is not string or cannot be converted to string.
+    /// </para>
     /// <remarks>
     ///     Push: 0 item(s)
     ///     Pop: 2 item(s)
