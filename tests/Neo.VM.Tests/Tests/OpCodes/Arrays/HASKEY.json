@@ -257,7 +257,6 @@
             "stepinto"
           ],
           "result": {
-            
             "state": "FAULT",
             "invocationStack": [
               {
