@@ -617,7 +617,7 @@ public class UT_ReferenceCounterComprehensive
     }
 
     [TestMethod]
-    public void TestMap_Remove_RemovesReferences()
+    public void TestMap_RemoveKey_RemovesReferences()
     {
         var rc = new ReferenceCounter();
         var map = new Map(rc);
@@ -627,7 +627,7 @@ public class UT_ReferenceCounterComprehensive
 
         Assert.AreEqual(3, rc.Count); // map + key + value
 
-        map.Remove((ByteString)"key");
+        map.RemoveKey((ByteString)"key");
         Assert.AreEqual(1, rc.Count); // only map
     }
 
@@ -1547,7 +1547,7 @@ public class UT_ReferenceCounterComprehensive
 
         Assert.AreEqual(3, rc.Count);
 
-        map.Remove(key);
+        map.RemoveKey(key);
         rc.RemoveStackReference(map);
 
         int count = rc.CheckZeroReferred();

@@ -100,7 +100,7 @@ public class ExecutionEngine : IDisposable
         JumpTable = jumpTable ?? JumpTable.Default;
         Limits = limits;
         ReferenceCounter = referenceCounter ?? new ReferenceCounterV2();
-        ResultStack = new EvaluationStack(ReferenceCounter);
+        ResultStack = new(ReferenceCounter);
     }
 
     public void Dispose()

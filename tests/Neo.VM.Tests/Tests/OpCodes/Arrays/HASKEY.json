@@ -257,7 +257,24 @@
             "stepinto"
           ],
           "result": {
-            "state": "FAULT"
+            
+            "state": "FAULT",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "HASKEY",
+                "evaluationStack": [
+                  {
+                    "type": "ByteString",
+                    "value": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                  },
+                  {
+                    "type": "map",
+                    "value": {}
+                  }
+                ]
+              }
+            ]
           }
         }
       ]

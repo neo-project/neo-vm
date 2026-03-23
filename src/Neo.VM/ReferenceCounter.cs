@@ -11,7 +11,6 @@
 
 using Neo.VM.StronglyConnectedComponents;
 using Neo.VM.Types;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -64,7 +63,7 @@ public sealed class ReferenceCounter : IReferenceCounter
 #pragma warning restore CS0162
 
         // Track the item if it is a CompoundType or Buffer.
-        if (item is CompoundType or Types.Buffer) return true;
+        if (item is CompoundType or Buffer) return true;
         return false;
     }
 

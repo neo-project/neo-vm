@@ -42,6 +42,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
             {
                 throw new InvalidOperationException("Can not set a CompoundType without a ReferenceCounter.");
             }
+
             if (ReferenceCounter?.Version == RCVersion.V1)
                 ReferenceCounter?.AddReference(value, this);
         }
