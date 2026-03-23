@@ -166,7 +166,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// <see cref="StackItem"/> if the element is successfully removed;
     /// otherwise, <see langword="null"/>.
     /// </returns>
-    public StackItem? RemoveKey(PrimitiveType key)
+    public StackItem? Remove(PrimitiveType key)
     {
         if (key.Size > MaxKeySize)
             throw new ArgumentException($"Can not remove key from map, MaxKeySize of {nameof(Types.Map)} is exceeded: {key.Size}/{MaxKeySize}.");
