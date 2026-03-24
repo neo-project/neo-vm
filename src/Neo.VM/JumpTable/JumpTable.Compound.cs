@@ -585,7 +585,10 @@ partial class JumpTable
     {
         var x = engine.Pop<VMArray>();
         var index = x.Count - 1;
-        engine.Push(x[index]);
+        var item = x[index];
+        engine.Push(item);
         x.RemoveAt(index);
+        if (engine.ReferenceCounter.Version == RCVersion.V2 && x.IsStackReferenced)
+            engine.ReferenceCounter.RemoveStackReference(item);
     }
 }
