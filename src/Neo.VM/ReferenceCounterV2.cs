@@ -12,7 +12,6 @@
 using Neo.VM.Types;
 using System;
 
-
 namespace Neo.VM;
 
 /// <summary>
