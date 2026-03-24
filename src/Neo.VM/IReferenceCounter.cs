@@ -18,7 +18,11 @@ namespace Neo.VM;
 /// </summary>
 public interface IReferenceCounter
 {
+    /// <summary>
+    /// Reference Counter version
+    /// </summary>
     RCVersion Version { get; }
+
     /// <summary>
     /// Gets the count of references.
     /// </summary>
