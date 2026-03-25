@@ -35,7 +35,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
         set
         {
             if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
-            if (ReferenceCounter?.Version == RCVersion.V1)
+            if (ReferenceCounter is not null)
                 ReferenceCounter?.RemoveReference(InnerList[index], this);
             InnerList[index] = value;
             if (ReferenceCounter != null && value is CompoundType { ReferenceCounter: null })
@@ -43,7 +43,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
                 throw new InvalidOperationException("Can not set a CompoundType without a ReferenceCounter.");
             }
 
-            if (ReferenceCounter?.Version == RCVersion.V1)
+            if (ReferenceCounter is not null)
                 ReferenceCounter?.AddReference(value, this);
         }
     }
@@ -114,7 +114,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
     public override void Clear()
     {
         if (IsReadOnly) throw new InvalidOperationException("The array is readonly, can not clear.");
-        if (ReferenceCounter != null && ReferenceCounter.Version != RCVersion.V2)
+        if (ReferenceCounter is not null)
             foreach (StackItem item in InnerList)
                 ReferenceCounter.RemoveReference(item, this);
         InnerList.Clear();
@@ -155,7 +155,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
     public void RemoveAt(int index)
     {
         if (IsReadOnly) throw new InvalidOperationException("The array is readonly, can not remove item.");
-        if (ReferenceCounter?.Version != RCVersion.V2)
+        if (ReferenceCounter is not null)
             ReferenceCounter?.RemoveReference(InnerList[index], this);
         InnerList.RemoveAt(index);
     }
