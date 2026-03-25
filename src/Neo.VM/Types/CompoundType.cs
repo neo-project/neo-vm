@@ -59,34 +59,7 @@ public abstract class CompoundType : StackItem
         return true;
     }
 
-    /// <summary>
-    ///
-    /// This method provides a hash code for the <see cref="CompoundType"/> based on its item's span.
-    /// It is used for efficient storage and retrieval in hash-based collections.
-    ///
-    /// Use this method when you need a hash code for a <see cref="CompoundType"/>.
-    /// </summary>
-    /// <returns>The hash code for the <see cref="CompoundType"/>.</returns>
-    public override int GetHashCode()
-    {
-        var h = new HashCode();
-        h.Add(Count);
-        h.Add(Type);
-        foreach (var item in SubItems)
-        {
-            // This isn't prefect and leaves somethings unsolved.
-            if (item is CompoundType cItem)
-            {
-                h.Add(cItem.Count);
-                h.Add(cItem.Type);
-            }
-            else
-            {
-                h.Add(item.GetHashCode());
-            }
-        }
-        return h.ToHashCode();
-    }
+    public override int GetHashCode() => throw new NotImplementedException("Mutable compound type does not support GetHashCode.");
 
     public override string ToString()
     {

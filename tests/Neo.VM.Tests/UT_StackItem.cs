@@ -30,8 +30,8 @@ public class UT_StackItem
         itemB[1] = itemB;
         itemC[1] = itemC;
 
-        Assert.AreEqual(itemA.GetHashCode(), itemB.GetHashCode());
-        Assert.AreNotEqual(itemA.GetHashCode(), itemC.GetHashCode());
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => itemA.Equals(itemB, ExecutionEngineLimits.Default));
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => itemA.Equals(itemC, ExecutionEngineLimits.Default));
     }
 
     [TestMethod]
@@ -48,8 +48,9 @@ public class UT_StackItem
         itemB = new Buffer(1);
         itemC = new Buffer(2);
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemC.GetHashCode());
 
         itemA = new byte[] { 1, 2, 3 };
         itemB = new byte[] { 1, 2, 3 };
@@ -81,22 +82,25 @@ public class UT_StackItem
         itemB = new Array { true, false, 0 };
         itemC = new Array { true, false, 1 };
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemC.GetHashCode());
 
         itemA = new Struct { true, false, 0 };
         itemB = new Struct { true, false, 0 };
         itemC = new Struct { true, false, 1 };
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemC.GetHashCode());
 
         itemA = new Map { [true] = false, [0] = 1 };
         itemB = new Map { [true] = false, [0] = 1 };
         itemC = new Map { [true] = false, [0] = 2 };
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemC.GetHashCode());
 
         // Test CompoundType GetHashCode for subitems
         var junk = new Array { true, false, 0 };
@@ -104,8 +108,9 @@ public class UT_StackItem
         itemB = new Map { [true] = junk, [0] = junk };
         itemC = new Map { [true] = junk, [0] = 2 };
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemC.GetHashCode());
 
         itemA = new InteropInterface(123);
         itemB = new InteropInterface(123);
