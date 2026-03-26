@@ -48,9 +48,9 @@ public class UT_StackItem
         itemB = new Buffer(1);
         itemC = new Buffer(2);
 
-        Assert.ThrowsExactly<NotSupportedException>(() => itemA.GetHashCode());
-        Assert.ThrowsExactly<NotSupportedException>(() => itemB.GetHashCode());
-        Assert.ThrowsExactly<NotSupportedException>(() => itemC.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemC.GetHashCode());
 
         itemA = new byte[] { 1, 2, 3 };
         itemB = new byte[] { 1, 2, 3 };
