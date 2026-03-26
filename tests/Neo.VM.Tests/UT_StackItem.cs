@@ -12,6 +12,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 using Neo.VM.Types;
+using System;
 using System.Numerics;
 
 namespace Neo.Test;
@@ -30,8 +31,8 @@ public class UT_StackItem
         itemB[1] = itemB;
         itemC[1] = itemC;
 
-        Assert.ThrowsExactly<System.InvalidOperationException>(() => itemA.Equals(itemB, ExecutionEngineLimits.Default));
-        Assert.ThrowsExactly<System.InvalidOperationException>(() => itemA.Equals(itemC, ExecutionEngineLimits.Default));
+        Assert.ThrowsExactly<InvalidOperationException>(() => itemA.Equals(itemB, ExecutionEngineLimits.Default));
+        Assert.ThrowsExactly<InvalidOperationException>(() => itemA.Equals(itemC, ExecutionEngineLimits.Default));
     }
 
     [TestMethod]
