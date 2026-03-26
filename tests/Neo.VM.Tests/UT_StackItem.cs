@@ -82,9 +82,9 @@ public class UT_StackItem
         itemB = new Array { true, false, 0 };
         itemC = new Array { true, false, 1 };
 
-        Assert.ThrowsExactly<NotSupportedException>(() => itemA.GetHashCode());
-        Assert.ThrowsExactly<NotSupportedException>(() => itemB.GetHashCode());
-        Assert.ThrowsExactly<NotSupportedException>(() => itemC.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotImplementedException>(() => itemC.GetHashCode());
 
         itemA = new Struct { true, false, 0 };
         itemB = new Struct { true, false, 0 };
