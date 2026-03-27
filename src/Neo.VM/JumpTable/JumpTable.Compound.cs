@@ -541,7 +541,7 @@ partial class JumpTable
                 break;
             case Map map:
                 var old = map.Remove(key);
-                if (old != null && engine.ReferenceCounter.Version == RCVersion.V2 && map.IsStackReferenced)
+                if (old is not null && engine.ReferenceCounter.Version == RCVersion.V2 && map.IsStackReferenced)
                 {
                     engine.ReferenceCounter.RemoveStackReference(key);
                     engine.ReferenceCounter.RemoveStackReference(old);
