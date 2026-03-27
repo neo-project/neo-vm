@@ -13,6 +13,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 using Neo.VM.Types;
 using System;
+using System.Collections.Generic;
+using System.Numerics;
 using Array = Neo.VM.Types.Array;
 
 namespace Neo.Test;
@@ -226,6 +228,462 @@ public class UT_ReferenceCounter
 
             Assert.AreEqual(VMState.FAULT, engine.Execute());
             Assert.AreEqual((int)ExecutionEngineLimits.Default.MaxStackSize + 1, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_PopItemArray()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.POPITEM);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count);
+
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+
+
+            engine.ResultStack.Pop(); // pop Array from stack.
+
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_Append()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.APPEND);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { }));
+            engine.Push(new Integer(42));
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(0, engine.ResultStack.Count);
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupAppend()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.PUSH0);
+        sb.Emit(OpCode.APPEND);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { }));
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count);
+
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+            engine.ResultStack.Pop(); // pop Array from stack.
+
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_SetItemMap()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.SETITEM);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Map(engine.ReferenceCounter));
+            engine.Push(new Integer(0));
+            engine.Push(new Integer(100500));
+            Assert.AreEqual(3, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(0, engine.ResultStack.Count);
+
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupSetItemMap()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.PUSH0);
+        sb.Emit(OpCode.PUSH1);
+        sb.Emit(OpCode.SETITEM);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Map(engine.ReferenceCounter));
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count);
+
+            Assert.AreEqual(3, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(3, engine.ReferenceCounter.Count);
+
+
+            engine.ResultStack.Pop(); // pop Map from stack.
+
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_SetItemArray()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.SETITEM);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Integer(0));
+            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            Assert.AreEqual(5, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(0, engine.ResultStack.Count);
+
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_RemoveArray()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.REMOVE);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Integer(0));
+            Assert.AreEqual(3, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(0, engine.ResultStack.Count);
+
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_RemoveStruct()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.REMOVE);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Struct(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Integer(0));
+            Assert.AreEqual(3, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(0, engine.ResultStack.Count);
+
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_RemoveMap()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.REMOVE);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Map(engine.ReferenceCounter) { [new Integer(0)] = StackItem.True });
+            engine.Push(new Integer(0));
+            Assert.AreEqual(4, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(0, engine.ResultStack.Count);
+
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupRemoveArray()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.PUSH0);
+        sb.Emit(OpCode.REMOVE);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count);
+
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+        }
+    }
+
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupRemoveStruct()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.PUSH0);
+        sb.Emit(OpCode.REMOVE);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Struct(engine.ReferenceCounter, new StackItem[] { 42 }));
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count);
+
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+        }
+    }
+
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupRemoveMap()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.PUSH0);
+        sb.Emit(OpCode.REMOVE);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Map(engine.ReferenceCounter) { [new Integer(0)] = StackItem.True });
+            Assert.AreEqual(3, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count);
+
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_ClearItemsArray()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.CLEARITEMS);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(0, engine.ResultStack.Count);
+
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_ClearItemsStruct()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.CLEARITEMS);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Struct(engine.ReferenceCounter, new StackItem[] { 42 }));
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(0, engine.ResultStack.Count);
+
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_ClearItemsMap()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.CLEARITEMS);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Map(engine.ReferenceCounter) { [new Integer(0)] = StackItem.True });
+            Assert.AreEqual(3, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(0, engine.ResultStack.Count);
+
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupClearItemsArray()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.CLEARITEMS);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count);
+
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupClearItemsStruct()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.CLEARITEMS);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Struct(engine.ReferenceCounter, new StackItem[] { 42 }));
+            Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count);
+
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupClearItemsMap()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.CLEARITEMS);
+
+        using (ExecutionEngine engine = new())
+        {
+            engine.LoadScript(sb.ToArray());
+            Assert.AreEqual(0, engine.ReferenceCounter.Count);
+
+            engine.Push(new Map(engine.ReferenceCounter) { [new Integer(0)] = StackItem.True });
+            Assert.AreEqual(3, engine.ReferenceCounter.Count);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count);
+
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
+            engine.ReferenceCounter.CheckZeroReferred();
+            Assert.AreEqual(1, engine.ReferenceCounter.Count);
         }
     }
 
