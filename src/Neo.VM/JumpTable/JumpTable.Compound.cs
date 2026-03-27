@@ -281,7 +281,7 @@ partial class JumpTable
             case VMArray array:
                 {
                     var index = key.GetInteger();
-                    if (index < 0 || index >= array.Count)
+                    if (index < 0 || index >= engine.Limits.MaxItemSize)
                         throw new InvalidOperationException($"The index {index} is invalid for OpCode {instruction.OpCode}.");
                     engine.Push(index < array.Count);
                     break;
