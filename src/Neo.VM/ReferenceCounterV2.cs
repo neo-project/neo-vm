@@ -46,8 +46,6 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
         // Increment the reference count by the specified count.
         _referencesCount += count;
 
-        if (_referencesCount > _limits.MaxStackSize)
-            throw new IndexOutOfRangeException("Circular reference or too many VM StackItems.");
         if (item is CompoundType compoundType)
         {
             // Increment the item's stack references by the specified count.
@@ -93,16 +91,12 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
     {
         // Decrease the reference count.
         _referencesCount--;
-        if (_referencesCount < 0)
-            throw new IndexOutOfRangeException("Circular reference detected, execution stopped.");
 
         if (item is CompoundType compoundType)
         {
             // Decrease the item's stack references.
             compoundType.StackReferences--;
 
-            if (compoundType.StackReferences < 0)
-                throw new IndexOutOfRangeException("Circular reference detected, execution stopped.");
             if (compoundType.StackReferences == 0)
             {
                 foreach (var subItem in compoundType.SubItems)

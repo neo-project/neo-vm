@@ -12,6 +12,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 using Neo.VM.Types;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace Neo.Test;
@@ -254,5 +255,29 @@ public class UT_StackItem
         Assert.AreSame(aa, aa[^1]);
         Assert.IsTrue(a[^2].Equals(aa[^2], ExecutionEngineLimits.Default));
         Assert.AreNotSame(a[^2], aa[^2]);
+    }
+
+    [TestMethod]
+    public void TestMapRemove()
+    {
+        var key = 1;
+        var value = "test";
+        Map map = new()
+        {
+            [key] = value,
+        };
+
+        var removed = map.Remove(key);
+        Assert.AreEqual(value, removed);
+        Assert.IsFalse(map.ContainsKey(key));
+
+        removed = map.Remove(key);
+        Assert.IsNull(removed);
+
+        var bigKey = new ByteString(new byte[65]);
+        Assert.ThrowsExactly<System.ArgumentException>(() => map.Remove(bigKey));
+
+        var readonlyMap = (Map)map.DeepCopy(true);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => readonlyMap.Remove(key));
     }
 }

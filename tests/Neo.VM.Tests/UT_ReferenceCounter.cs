@@ -671,4 +671,19 @@ public class UT_ReferenceCounter
 
         Assert.ThrowsExactly<InvalidOperationException>(() => arr.Add(arr2));
     }
+
+    [TestMethod]
+    public void TestCheckPostExecution()
+    {
+        foreach (var refCounter in new IReferenceCounter[] { new ReferenceCounter(), new ReferenceCounterV2() })
+        {
+            for (int i = 0; i < ExecutionEngineLimits.Default.MaxStackSize; i++)
+            {
+                refCounter.AddStackReference(StackItem.Null);
+            }
+            refCounter.CheckPostExecution();
+            refCounter.AddStackReference(StackItem.Null);
+            Assert.ThrowsExactly<InvalidOperationException>(() => refCounter.CheckPostExecution());
+        }
+    }
 }

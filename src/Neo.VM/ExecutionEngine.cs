@@ -95,12 +95,12 @@ public class ExecutionEngine : IDisposable
     /// <param name="jumpTable">The jump table to be used.</param>
     /// <param name="referenceCounter">The reference counter to be used.</param>
     /// <param name="limits">Restrictions on the VM.</param>
-    internal ExecutionEngine(JumpTable? jumpTable, IReferenceCounter? referenceCounter, ExecutionEngineLimits limits)
+    internal ExecutionEngine(JumpTable? jumpTable, IReferenceCounter referenceCounter, ExecutionEngineLimits limits)
     {
         JumpTable = jumpTable ?? JumpTable.Default;
         Limits = limits;
-        ReferenceCounter = referenceCounter ?? new ReferenceCounterV2();
-        ResultStack = new(ReferenceCounter);
+        ReferenceCounter = referenceCounter;
+        ResultStack = new(referenceCounter);
     }
 
     public void Dispose()
