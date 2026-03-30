@@ -66,7 +66,7 @@ public abstract class CompoundType : StackItem
         return true;
     }
 
-    public override int GetHashCode() => throw new NotImplementedException("Mutable compound type does not support GetHashCode.");
+    public override int GetHashCode() => throw new NotSupportedException("Mutable compound type does not support GetHashCode.");
 
     public override string ToString()
     {
