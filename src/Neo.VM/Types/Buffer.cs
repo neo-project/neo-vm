@@ -115,5 +115,5 @@ public class Buffer : StackItem
             : $"(\"Base64: {Convert.ToBase64String(GetSpan())}\")";
     }
 
-    public override int GetHashCode() => throw new NotImplementedException("Mutable buffer does not support GetHashCode.");
+    public override int GetHashCode() => throw new NotSupportedException("Mutable buffer does not support GetHashCode.");
 }
