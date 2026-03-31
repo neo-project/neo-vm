@@ -444,12 +444,13 @@ partial class JumpTable
         {
             case VMArray array:
                 {
-                    var index = (int)key.GetInteger();
+                    var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
+                    var i = (int)index;
                     if (isRC2 && array.IsStackReferenced)
-                        engine.ReferenceCounter.RemoveStackReference(array[index]);
-                    array[index] = value;
+                        engine.ReferenceCounter.RemoveStackReference(array[i]);
+                    array[i] = value;
                     if (isRC2 && array.IsStackReferenced)
                         engine.ReferenceCounter.AddStackReference(value);
                     break;
@@ -528,11 +529,14 @@ partial class JumpTable
         switch (x)
         {
             case VMArray array:
-                var index = (int)key.GetInteger();
+                var index = key.GetInteger();
                 if (index < 0 || index >= array.Count)
                     throw new InvalidOperationException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
-                var item = array[index];
-                array.RemoveAt(index);
+
+                var i = (int)index;
+                var item = array[i];
+                array.RemoveAt(i);
+
                 if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
                     engine.ReferenceCounter.RemoveStackReference(item);
                 break;
