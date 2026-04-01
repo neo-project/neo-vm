@@ -59,7 +59,7 @@ partial class StackItem
     internal int StackReferences = 0;
 
     /// <summary>
-    /// Indicates whether this <see cref="StackItem"/> is referenced from the evaluation stack.
+    /// Indicates whether this <see cref="StackItem"/> is referenced from any VM stack roots.
     /// </summary>
     internal bool IsStackReferenced => StackReferences != 0;
 

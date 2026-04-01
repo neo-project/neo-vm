@@ -169,7 +169,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     public StackItem? Remove(PrimitiveType key)
     {
         if (key.Size > MaxKeySize)
-            throw new ArgumentException($"Can not remove key from map, MaxKeySize of {nameof(Types.Map)} is exceeded: {key.Size}/{MaxKeySize}.");
+            throw new ArgumentException($"Can not remove key from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.", nameof(key));
         if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not remove key.");
         if (!dictionary.Remove(key, out StackItem? oldValue))
             return null;

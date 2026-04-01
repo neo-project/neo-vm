@@ -12,7 +12,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
 using Neo.VM.Types;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace Neo.Test;
