@@ -80,7 +80,8 @@
                 "type": "Integer",
                 "value": 0
               }
-            ]
+            ],
+            "refs": 0
           }
         }
       ]

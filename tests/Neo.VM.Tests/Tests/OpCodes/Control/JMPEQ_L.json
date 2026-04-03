@@ -66,7 +66,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -90,7 +91,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -104,7 +106,8 @@
                 "instructionPointer": 7,
                 "nextInstruction": "NOP"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -118,7 +121,8 @@
                 "instructionPointer": 8,
                 "nextInstruction": "RET"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -126,7 +130,8 @@
             "stepInto"
           ],
           "result": {
-            "state": "HALT"
+            "state": "HALT",
+            "refs": 0
           }
         }
       ]
@@ -159,7 +164,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -183,7 +189,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -197,7 +204,8 @@
                 "instructionPointer": 8,
                 "nextInstruction": "RET"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -205,7 +213,8 @@
             "stepInto"
           ],
           "result": {
-            "state": "HALT"
+            "state": "HALT",
+            "refs": 0
           }
         }
       ]
@@ -238,7 +247,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -262,7 +272,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -276,7 +287,8 @@
                 "instructionPointer": 7,
                 "nextInstruction": "NOP"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -290,7 +302,8 @@
                 "instructionPointer": 8,
                 "nextInstruction": "RET"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -298,7 +311,8 @@
             "stepInto"
           ],
           "result": {
-            "state": "HALT"
+            "state": "HALT",
+            "refs": 0
           }
         }
       ]

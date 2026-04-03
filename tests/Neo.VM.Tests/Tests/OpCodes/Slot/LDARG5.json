@@ -62,7 +62,8 @@
                 "type": "Integer",
                 "value": 1
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]

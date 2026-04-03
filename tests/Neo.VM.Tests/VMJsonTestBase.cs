@@ -37,38 +37,41 @@ public abstract class VMJsonTestBase
         {
             Assert.IsFalse(string.IsNullOrEmpty(test.Name), "Name is required");
 
-            using TestEngine engine = new();
-            Debugger debugger = new(engine);
-
-            if (test.Script.Length > 0)
+            foreach (var refCounter in new IReferenceCounter[] { new ReferenceCounter(), new ReferenceCounterV2() })
             {
-                engine.LoadScript(test.Script);
-            }
+                using TestEngine engine = new TestEngine(refCounter, ExecutionEngineLimits.Default);
+                Debugger debugger = new(engine);
 
-            // Execute Steps
-
-            if (test.Steps != null)
-            {
-                foreach (var step in test.Steps)
+                if (test.Script.Length > 0)
                 {
-                    // Actions
+                    engine.LoadScript(test.Script);
+                }
 
-                    if (step.Actions != null) foreach (var run in step.Actions)
+                // Execute Steps
+
+                if (test.Steps != null)
+                {
+                    foreach (var step in test.Steps)
                     {
-                        switch (run)
+                        // Actions
+
+                        if (step.Actions != null) foreach (var run in step.Actions)
                         {
-                            case VMUTActionType.Execute: debugger.Execute(); break;
-                            case VMUTActionType.StepInto: debugger.StepInto(); break;
-                            case VMUTActionType.StepOut: debugger.StepOut(); break;
-                            case VMUTActionType.StepOver: debugger.StepOver(); break;
+                            switch (run)
+                            {
+                                case VMUTActionType.Execute: debugger.Execute(); break;
+                                case VMUTActionType.StepInto: debugger.StepInto(); break;
+                                case VMUTActionType.StepOut: debugger.StepOut(); break;
+                                case VMUTActionType.StepOver: debugger.StepOver(); break;
+                            }
                         }
+
+                        // Review results
+
+                        var add = string.IsNullOrEmpty(step.Name) ? "" : "-" + step.Name;
+
+                        AssertResult(step.Result, engine, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
                     }
-
-                    // Review results
-
-                    var add = string.IsNullOrEmpty(step.Name) ? "" : "-" + step.Name;
-
-                    AssertResult(step.Result, engine, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
                 }
             }
         }
@@ -83,6 +86,8 @@ public abstract class VMJsonTestBase
     private static void AssertResult(VMUTExecutionEngineState result, TestEngine engine, string message)
     {
         AssertAreEqual(result.State.ToString().ToLowerInvariant(), engine.State.ToString().ToLowerInvariant(), message + "State is different");
+        if (result.Refs != null && engine.ReferenceCounter.Version == RCVersion.V2)
+            AssertAreEqual(result.Refs, engine.ReferenceCounter.Count, message + "Refs are different");
         if (engine.State == VMState.FAULT)
         {
             if (result.ExceptionMessage != null)

@@ -59,6 +59,11 @@ partial class StackItem
     internal int StackReferences = 0;
 
     /// <summary>
+    /// Indicates whether this <see cref="StackItem"/> is referenced from any VM stack roots.
+    /// </summary>
+    internal bool IsStackReferenced => StackReferences != 0;
+
+    /// <summary>
     /// A dictionary mapping compound types to their object reference entries.
     ///
     /// This dictionary is used to track references from compound types to their child items.

@@ -16,7 +16,8 @@
                 "instructionPointer": 0,
                 "nextInstruction": "RET"
               }
-            ]
+            ],
+            "refs": 0
           }
         }
       ]
@@ -32,7 +33,8 @@
             "stepInto"
           ],
           "result": {
-            "state": "HALT"
+            "state": "HALT",
+            "refs": 0
           }
         }
       ]

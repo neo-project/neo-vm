@@ -61,7 +61,8 @@
                 "instructionPointer": 2,
                 "nextInstruction": "RET"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -91,7 +92,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -111,7 +113,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -125,7 +128,8 @@
                 "type": "integer",
                 "value": 0
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]

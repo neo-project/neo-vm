@@ -163,20 +163,19 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// </summary>
     /// <param name="key">The key of the element to remove.</param>
     /// <returns>
-    /// <see langword="true" /> if the element is successfully removed;
-    /// otherwise, <see langword="false"/>.
-    /// This method also returns <see langword="false"/> if <paramref name="key"/> was not found in the original map.
+    /// <see cref="StackItem"/> if the element is successfully removed;
+    /// otherwise, <see langword="null"/>.
     /// </returns>
-    public bool Remove(PrimitiveType key)
+    public StackItem? Remove(PrimitiveType key)
     {
         if (key.Size > MaxKeySize)
-            throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
+            throw new ArgumentException($"Can not remove key from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.", nameof(key));
         if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not remove key.");
-        if (!dictionary.Remove(key, out StackItem? old_value))
-            return false;
+        if (!dictionary.Remove(key, out StackItem? oldValue))
+            return null;
         ReferenceCounter?.RemoveReference(key, this);
-        ReferenceCounter?.RemoveReference(old_value, this);
-        return true;
+        ReferenceCounter?.RemoveReference(oldValue, this);
+        return oldValue;
     }
 
     /// <summary>

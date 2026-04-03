@@ -617,7 +617,7 @@ public class UT_ReferenceCounterComprehensive
     }
 
     [TestMethod]
-    public void TestMap_Remove_RemovesReferences()
+    public void TestMap_RemoveKey_RemovesReferences()
     {
         var rc = new ReferenceCounter();
         var map = new Map(rc);
