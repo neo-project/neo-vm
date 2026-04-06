@@ -69,6 +69,66 @@
       ]
     },
     {
+      "name": "Real test [Struct]",
+      "script": [
+        "PUSH1",
+        "PUSH1",
+        "PACKSTRUCT",
+        "PUSH0",
+        "HASKEY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "HASKEY",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Struct",
+                    "value": [
+                      {
+                        "type": "integer",
+                        "value": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": true
+              }
+            ],
+            "refs": 1
+          }
+        }
+      ]
+    },
+    {
       "name": "Real test [Buffer]",
       "script": [
         "PUSH2",
