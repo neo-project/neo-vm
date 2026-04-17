@@ -29,6 +29,7 @@ partial class JumpTable
     {
         int length = (int)engine.Pop().GetInteger();
         engine.Limits.AssertMaxItemSize(length);
+        engine.PriceArgs = new OpcodePriceArgs { Length = length };
         engine.Push(new Buffer(length));
     }
 
@@ -59,6 +60,7 @@ partial class JumpTable
             throw new InvalidOperationException($"The destination index + count is out of range for {nameof(OpCode.MEMCPY)}, index: {di}, count: {count}, {di}/[0, {dst.Size}].");
         // TODO: check if we can optimize the memcpy by using peek instead of dup then pop
         src.Slice(si, count).CopyTo(dst.InnerBuffer.Span[di..]);
+        engine.PriceArgs = new OpcodePriceArgs { Length = count };
     }
 
     /// <summary>
@@ -80,6 +82,7 @@ partial class JumpTable
         x1.CopyTo(result.InnerBuffer.Span);
         x2.CopyTo(result.InnerBuffer.Span[x1.Length..]);
         engine.Push(result);
+        engine.PriceArgs = new OpcodePriceArgs { Length = length };
     }
 
     /// <summary>
@@ -104,6 +107,7 @@ partial class JumpTable
         Buffer result = new(count, false);
         x.Slice(index, count).CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
+        engine.PriceArgs = new OpcodePriceArgs { Length = count };
     }
 
     /// <summary>
@@ -125,6 +129,7 @@ partial class JumpTable
         Buffer result = new(count, false);
         x[..count].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
+        engine.PriceArgs = new OpcodePriceArgs { Length = count };
     }
 
     /// <summary>
@@ -146,5 +151,6 @@ partial class JumpTable
         Buffer result = new(count, false);
         x[^count..^0].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
+        engine.PriceArgs = new OpcodePriceArgs { Length = count };
     }
 }

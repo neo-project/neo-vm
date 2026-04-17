@@ -58,6 +58,11 @@ public class ExecutionEngine : IDisposable
     public EvaluationStack ResultStack { get; }
 
     /// <summary>
+    /// Dynamic opcode pricing arguments emitted by the currently executing opcode.
+    /// </summary>
+    public OpcodePriceArgs? PriceArgs { get; protected internal set; }
+
+    /// <summary>
     /// The VM object representing the uncaught exception.
     /// </summary>
     public StackItem? UncaughtException { get; internal set; }
@@ -143,6 +148,7 @@ public class ExecutionEngine : IDisposable
         {
             try
             {
+                PriceArgs = null;
                 ExecutionContext context = CurrentContext!;
                 Instruction? currentInstruction = context.CurrentInstruction;
                 Instruction instruction = currentInstruction ?? Instruction.RET;

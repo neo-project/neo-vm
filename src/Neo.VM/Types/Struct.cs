@@ -45,7 +45,7 @@ public class Struct : Array
     /// </summary>
     /// <param name="limits">Execution engine limits</param>
     /// <returns>The copied structure.</returns>
-    public Struct Clone(ExecutionEngineLimits limits)
+    public (Struct, int) Clone(ExecutionEngineLimits limits)
     {
         int count = (int)(limits.MaxStackSize - 1);
         Struct result = new(ReferenceCounter);
@@ -73,7 +73,7 @@ public class Struct : Array
                 }
             }
         }
-        return result;
+        return (result, (int)limits.MaxStackSize - count);
     }
 
     public override StackItem ConvertTo(StackItemType type)

@@ -32,7 +32,7 @@ public class UT_Struct
     public void TestClone()
     {
         Struct s1 = new() { 1, new Struct { 2 } };
-        Struct s2 = s1.Clone(ExecutionEngineLimits.Default);
+        var (s2, _) = s1.Clone(ExecutionEngineLimits.Default);
         s1[0] = 3;
         Assert.AreEqual(1, s2[0]);
         ((Struct)s1[1])[0] = 3;
@@ -48,7 +48,7 @@ public class UT_Struct
         Assert.IsTrue(s1.Equals(s2, ExecutionEngineLimits.Default));
         Struct s3 = new() { 1, new Struct { 3 } };
         Assert.IsFalse(s1.Equals(s3, ExecutionEngineLimits.Default));
-        Assert.ThrowsExactly<InvalidOperationException>(() => _ = @struct.Equals(@struct.Clone(ExecutionEngineLimits.Default), ExecutionEngineLimits.Default));
+        Assert.ThrowsExactly<InvalidOperationException>(() => _ = @struct.Equals(@struct.Clone(ExecutionEngineLimits.Default).Item1, ExecutionEngineLimits.Default));
     }
 
     [TestMethod]

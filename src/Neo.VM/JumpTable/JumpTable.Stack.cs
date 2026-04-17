@@ -40,7 +40,9 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Drop(ExecutionEngine engine, Instruction instruction)
     {
+        var r = engine.ReferenceCounter.Count;
         engine.Pop();
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -52,7 +54,9 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Nip(ExecutionEngine engine, Instruction instruction)
     {
+        var r = engine.ReferenceCounter.Count;
         engine.CurrentContext!.EvaluationStack.Remove<StackItem>(1);
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -68,7 +72,9 @@ partial class JumpTable
         var n = (int)engine.Pop().GetInteger();
         if (n < 0)
             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
+        var r = engine.ReferenceCounter.Count;
         engine.CurrentContext!.EvaluationStack.Remove<StackItem>(n);
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -80,7 +86,10 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Clear(ExecutionEngine engine, Instruction instruction)
     {
+        var r = engine.ReferenceCounter.Count;
+        var l = engine.CurrentContext!.EvaluationStack.Count;
         engine.CurrentContext!.EvaluationStack.Clear();
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
     }
 
     /// <summary>
@@ -93,7 +102,12 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Dup(ExecutionEngine engine, Instruction instruction)
     {
-        engine.Push(engine.Peek());
+        var item = engine.Peek();
+        engine.Push(item);
+        if (item.Type == StackItemType.ByteString)
+        {
+            engine.PriceArgs = new OpcodePriceArgs { Length = item.GetSpan().Length };
+        }
     }
 
     /// <summary>
@@ -106,7 +120,12 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Over(ExecutionEngine engine, Instruction instruction)
     {
-        engine.Push(engine.Peek(1));
+        var item = engine.Peek(1);
+        engine.Push(item);
+        if (item.Type == StackItemType.ByteString)
+        {
+            engine.PriceArgs = new OpcodePriceArgs { Length = item.GetSpan().Length };
+        }
     }
 
     /// <summary>
@@ -122,7 +141,12 @@ partial class JumpTable
         var n = (int)engine.Pop().GetInteger();
         if (n < 0)
             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
-        engine.Push(engine.Peek(n));
+        var item = engine.Peek(n);
+        engine.Push(item);
+        if (item.Type == StackItemType.ByteString)
+        {
+            engine.PriceArgs = new OpcodePriceArgs { Length = item.GetSpan().Length };
+        }
     }
 
     /// <summary>
@@ -134,7 +158,12 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Tuck(ExecutionEngine engine, Instruction instruction)
     {
-        engine.CurrentContext!.EvaluationStack.Insert(2, engine.Peek());
+        var item = engine.Peek();
+        engine.CurrentContext!.EvaluationStack.Insert(2, item);
+        if (item.Type == StackItemType.ByteString)
+        {
+            engine.PriceArgs = new OpcodePriceArgs { Length = item.GetSpan().Length };
+        }
     }
 
     /// <summary>
@@ -163,6 +192,7 @@ partial class JumpTable
     {
         var x = engine.CurrentContext!.EvaluationStack.Remove<StackItem>(2);
         engine.Push(x);
+        engine.PriceArgs = new OpcodePriceArgs { Length = 2 };
     }
 
     /// <summary>
@@ -181,6 +211,7 @@ partial class JumpTable
         if (n == 0) return;
         var x = engine.CurrentContext!.EvaluationStack.Remove<StackItem>(n);
         engine.Push(x);
+        engine.PriceArgs = new OpcodePriceArgs { Length = n };
     }
 
     /// <summary>
@@ -193,6 +224,7 @@ partial class JumpTable
     public virtual void Reverse3(ExecutionEngine engine, Instruction instruction)
     {
         engine.CurrentContext!.EvaluationStack.Reverse(3);
+        engine.PriceArgs = new OpcodePriceArgs { Length = 3 };
     }
 
     /// <summary>
@@ -205,6 +237,7 @@ partial class JumpTable
     public virtual void Reverse4(ExecutionEngine engine, Instruction instruction)
     {
         engine.CurrentContext!.EvaluationStack.Reverse(4);
+        engine.PriceArgs = new OpcodePriceArgs { Length = 4 };
     }
 
     /// <summary>
@@ -219,5 +252,6 @@ partial class JumpTable
     {
         var n = (int)engine.Pop().GetInteger();
         engine.CurrentContext!.EvaluationStack.Reverse(n);
+        engine.PriceArgs = new OpcodePriceArgs { Length = n };
     }
 }

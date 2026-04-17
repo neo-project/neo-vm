@@ -63,7 +63,23 @@ partial class JumpTable
     public virtual void Convert(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop();
-        engine.Push(x.ConvertTo((StackItemType)instruction.TokenU8));
+        var fromType = x.Type;
+        var toType = (StackItemType)instruction.TokenU8;
+        engine.Push(x.ConvertTo(toType));
+        if (fromType == StackItemType.Array && toType == StackItemType.Struct || fromType == StackItemType.Struct && toType == StackItemType.Array)
+        {
+            if (fromType == StackItemType.Array)
+                engine.PriceArgs = new OpcodePriceArgs { Type = StackItemType.Array, Length = ((Types.Array)x).Count };
+            else
+                engine.PriceArgs = new OpcodePriceArgs { Type = StackItemType.Struct, Length = ((Struct)x).Count };
+        }
+        else if (fromType == StackItemType.ByteString && toType == StackItemType.Buffer || fromType == StackItemType.Buffer && toType == StackItemType.ByteString)
+        {
+            if (fromType == StackItemType.ByteString)
+                engine.PriceArgs = new OpcodePriceArgs { Type = StackItemType.ByteString, Length = ((ByteString)x).GetSpan().Length };
+            else
+                engine.PriceArgs = new OpcodePriceArgs { Type = StackItemType.ByteString, Length = ((Types.Buffer)x).GetSpan().Length };
+        }
     }
 
     /// <summary>

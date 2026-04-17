@@ -58,6 +58,7 @@ partial class JumpTable
                 items[i] = engine.Pop();
             }
             engine.CurrentContext.Arguments = new Slot(items, engine.ReferenceCounter);
+            engine.PriceArgs = new OpcodePriceArgs { Length = instruction.TokenU8_1 };
         }
     }
 
@@ -657,7 +658,9 @@ partial class JumpTable
             throw new InvalidOperationException("Slot has not been initialized.");
         if (index < 0 || index >= slot.Count)
             throw new InvalidOperationException($"Index out of range when storing to slot: {index}, {index}/[0, {slot.Count}).");
+        var r = engine.ReferenceCounter.Count;
         slot[index] = engine.Pop();
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>

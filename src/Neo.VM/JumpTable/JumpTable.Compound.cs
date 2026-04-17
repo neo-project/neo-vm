@@ -36,6 +36,7 @@ partial class JumpTable
         if (size < 0 || size * 2 > engine.CurrentContext!.EvaluationStack.Count)
             throw new InvalidOperationException($"The map size is out of valid range, 2*{size}/[0, {engine.CurrentContext!.EvaluationStack.Count}].");
         Map map = new(engine.ReferenceCounter);
+        var r = engine.ReferenceCounter.Count;
         for (var i = 0; i < size; i++)
         {
             var key = engine.Pop<PrimitiveType>();
@@ -43,6 +44,7 @@ partial class JumpTable
             map[key] = value;
         }
         engine.Push(map);
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = engine.ReferenceCounter.Count - r };
     }
 
     /// <summary>
@@ -65,6 +67,7 @@ partial class JumpTable
             @struct.Add(item);
         }
         engine.Push(@struct);
+        engine.PriceArgs = new OpcodePriceArgs { Length = size };
     }
 
     /// <summary>
@@ -87,6 +90,7 @@ partial class JumpTable
             array.Add(item);
         }
         engine.Push(array);
+        engine.PriceArgs = new OpcodePriceArgs { Length = size };
     }
 
     /// <summary>
@@ -119,6 +123,7 @@ partial class JumpTable
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {compound.Type}");
         }
         engine.Push(compound.Count);
+        engine.PriceArgs = new OpcodePriceArgs { Type = compound.Type, Length = compound.Count };
     }
 
     /// <summary>
@@ -187,6 +192,7 @@ partial class JumpTable
         var itemArray = new StackItem[n];
         Array.Fill(itemArray, item);
         engine.Push(new VMArray(engine.ReferenceCounter, itemArray));
+        engine.PriceArgs = new OpcodePriceArgs { Type = type, Length = n };
     }
 
     /// <summary>
@@ -273,6 +279,7 @@ partial class JumpTable
     public virtual void HasKey(ExecutionEngine engine, Instruction instruction)
     {
         var key = engine.Pop<PrimitiveType>();
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         // Check the type of the top item and perform the corresponding action.
         switch (x)
@@ -313,6 +320,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -327,6 +335,7 @@ partial class JumpTable
     {
         var map = engine.Pop<Map>();
         engine.Push(new VMArray(engine.ReferenceCounter, map.Keys));
+        engine.PriceArgs = new OpcodePriceArgs { Length = map.Count };
     }
 
     /// <summary>
@@ -340,6 +349,7 @@ partial class JumpTable
     public virtual void Values(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop();
+        int nClonedItems = 0;
         var values = x switch
         {
             VMArray array => array,
@@ -349,10 +359,15 @@ partial class JumpTable
         VMArray newArray = new(engine.ReferenceCounter);
         foreach (var item in values)
             if (item is Struct s)
-                newArray.Add(s.Clone(engine.Limits));
+            {
+                var (cloned, n) = s.Clone(engine.Limits);
+                nClonedItems += n;
+                newArray.Add(cloned);
+            }
             else
                 newArray.Add(item);
         engine.Push(newArray);
+        engine.PriceArgs = new OpcodePriceArgs { Length = newArray.Count, NClonedItems = nClonedItems };
     }
 
     /// <summary>
@@ -367,7 +382,10 @@ partial class JumpTable
     public virtual void PickItem(ExecutionEngine engine, Instruction instruction)
     {
         var key = engine.Pop<PrimitiveType>();
+        var r1 = engine.ReferenceCounter.Count;
         var x = engine.Pop();
+        var r2 = engine.ReferenceCounter.Count;
+        StackItem item;
         switch (x)
         {
             case VMArray array:
@@ -375,14 +393,14 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
-                    engine.Push(array[(int)index]);
+                    item = array[(int)index];
                     break;
                 }
             case Map map:
                 {
                     if (!map.TryGetValue(key, out var value))
                         throw new CatchableException($"Key {key} not found in {nameof(Map)}.");
-                    engine.Push(value);
+                    item = value;
                     break;
                 }
             case PrimitiveType primitive:
@@ -391,7 +409,7 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= byteArray.Length)
                         throw new CatchableException($"The index of {nameof(PrimitiveType)} is out of range, {index}/[0, {byteArray.Length}).");
-                    engine.Push((BigInteger)byteArray[(int)index]);
+                    item = (BigInteger)byteArray[(int)index];
                     break;
                 }
             case Buffer buffer:
@@ -399,12 +417,19 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
-                    engine.Push((BigInteger)buffer.InnerBuffer.Span[(int)index]);
+                    item = (BigInteger)buffer.InnerBuffer.Span[(int)index];
                     break;
                 }
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        engine.Push(item);
+        var n = engine.ReferenceCounter.Count - r2;
+        if (item.Type == StackItemType.ByteString)
+        {
+            n = ((ByteString)item).GetSpan().Length;
+        }
+        engine.PriceArgs = new OpcodePriceArgs { Type = item.Type, Length = n, RefsDelta = r1 - r2 };
     }
 
     /// <summary>
@@ -417,12 +442,16 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Append(ExecutionEngine engine, Instruction instruction)
     {
+        var r1 = engine.ReferenceCounter.Count;
         var newItem = engine.Pop();
         var array = engine.Pop<VMArray>();
-        if (newItem is Struct s) newItem = s.Clone(engine.Limits);
+        var nClonedItems = 0;
+        if (newItem is Struct s) (newItem, nClonedItems) = s.Clone(engine.Limits);
         array.Add(newItem);
+        var r2 = engine.ReferenceCounter.Count;
         if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
             engine.ReferenceCounter.AddStackReference(newItem);
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2, NClonedItems = nClonedItems };
     }
 
     /// <summary>
@@ -436,8 +465,10 @@ partial class JumpTable
     public virtual void SetItem(ExecutionEngine engine, Instruction instruction)
     {
         var value = engine.Pop();
-        if (value is Struct s) value = s.Clone(engine.Limits);
+        var nClonedItems = 0;
+        if (value is Struct s) (value, nClonedItems) = s.Clone(engine.Limits);
         var key = engine.Pop<PrimitiveType>();
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         var isRC2 = engine.ReferenceCounter.Version == RCVersion.V2;
         switch (x)
@@ -488,6 +519,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count, NClonedItems = nClonedItems };
     }
 
     /// <summary>
@@ -500,18 +532,23 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void ReverseItems(ExecutionEngine engine, Instruction instruction)
     {
+        var r = engine.ReferenceCounter.Count;
+        int l;
         var x = engine.Pop();
         switch (x)
         {
             case VMArray array:
                 array.Reverse();
+                l = array.Count;
                 break;
             case Buffer buffer:
                 buffer.InnerBuffer.Span.Reverse();
+                l = buffer.Size;
                 break;
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
     }
 
     /// <summary>
@@ -525,6 +562,7 @@ partial class JumpTable
     public virtual void Remove(ExecutionEngine engine, Instruction instruction)
     {
         var key = engine.Pop<PrimitiveType>();
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         switch (x)
         {
@@ -551,6 +589,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -563,6 +602,7 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void ClearItems(ExecutionEngine engine, Instruction instruction)
     {
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop<CompoundType>();
         if (engine.ReferenceCounter.Version == RCVersion.V2 && x.IsStackReferenced)
         {
@@ -572,6 +612,7 @@ partial class JumpTable
             }
         }
         x.Clear();
+        engine.PriceArgs = new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -589,7 +630,12 @@ partial class JumpTable
         var item = x[index];
         engine.Push(item);
         x.RemoveAt(index);
-        if (engine.ReferenceCounter.Version == RCVersion.V2 && x.IsStackReferenced)
-            engine.ReferenceCounter.RemoveStackReference(item);
+        if (engine.ReferenceCounter.Version == RCVersion.V2)
+        {
+            if (x.IsStackReferenced)
+                engine.ReferenceCounter.RemoveStackReference(item);
+            else
+                engine.PriceArgs = new OpcodePriceArgs { RefsDelta = -engine.ReferenceCounter.Count, Length = 1 };
+        }
     }
 }
