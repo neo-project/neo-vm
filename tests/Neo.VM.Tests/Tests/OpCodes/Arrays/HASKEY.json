@@ -54,7 +54,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 3
           }
         },
         {
@@ -63,6 +64,66 @@
           ],
           "result": {
             "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Real test [Struct]",
+      "script": [
+        "PUSH1",
+        "PUSH1",
+        "PACKSTRUCT",
+        "PUSH0",
+        "HASKEY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "HASKEY",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Struct",
+                    "value": [
+                      {
+                        "type": "integer",
+                        "value": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                "type": "Boolean",
+                "value": true
+              }
+            ],
+            "refs": 1
           }
         }
       ]
@@ -87,7 +148,8 @@
                 "type": "Boolean",
                 "value": true
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
@@ -157,7 +219,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 5
           }
         },
         {
@@ -188,7 +251,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 4
           }
         },
         {
@@ -202,7 +266,48 @@
                 "type": "Boolean",
                 "value": true
               }
-            ]
+            ],
+            "refs": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Overflow index [Array]",
+      "script": [
+        "PUSH1",
+        "NEWARRAY",
+        "PUSHINT64",
+        "0x0000008000000000",
+        "HASKEY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Underflow index [Array]",
+      "script": [
+        "PUSH1",
+        "NEWARRAY",
+        "PUSHINT64",
+        "0xffffff7fffffffff",
+        "HASKEY"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "FAULT"
           }
         }
       ]
@@ -243,7 +348,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {

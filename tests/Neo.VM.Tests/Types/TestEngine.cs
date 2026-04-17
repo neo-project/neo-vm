@@ -21,6 +21,8 @@ public class TestEngine : ExecutionEngine
 
     public TestEngine() : base(ComposeJumpTable()) { }
 
+    public TestEngine(IReferenceCounter referenceCounter, ExecutionEngineLimits limits) : base(ComposeJumpTable(), referenceCounter, limits) { }
+
     private static JumpTable ComposeJumpTable()
     {
         var jumpTable = new JumpTable();

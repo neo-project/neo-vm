@@ -19,6 +19,11 @@ namespace Neo.VM;
 public interface IReferenceCounter
 {
     /// <summary>
+    /// Reference Counter version
+    /// </summary>
+    RCVersion Version { get; }
+
+    /// <summary>
     /// Gets the count of references.
     /// </summary>
     int Count { get; }
@@ -87,4 +92,9 @@ public interface IReferenceCounter
     /// </summary>
     /// <returns>The current reference count.</returns>
     int CheckZeroReferred();
+
+    /// <summary>
+    /// Validate reference counters after execution and throw if limits are violated.
+    /// </summary>
+    void CheckPostExecution();
 }

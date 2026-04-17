@@ -70,7 +70,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 3
           }
         },
         {
@@ -78,7 +79,8 @@
             "Execute"
           ],
           "result": {
-            "state": "HALT"
+            "state": "HALT",
+            "refs": 0
           }
         }
       ]

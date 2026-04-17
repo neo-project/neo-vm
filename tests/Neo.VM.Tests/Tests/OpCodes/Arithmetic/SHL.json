@@ -34,7 +34,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -76,6 +77,50 @@
                   {
                     "type": "integer",
                     "value": 0
+                  }
+                ]
+              }
+            ],
+            "refs": 2
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Exception - Operand can't be converted to Integer",
+      "script": [
+        "NEWARRAY0",
+        "PUSH0",
+        "SHL"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 2,
+                "nextInstruction": "SHL",
+                "evaluationStack": [
+                  {
+                    "type": "integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Array",
+                    "value": []
                   }
                 ]
               }
@@ -124,7 +169,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -138,7 +184,8 @@
                 "type": "integer",
                 "value": 0
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
@@ -173,7 +220,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -187,7 +235,8 @@
                 "type": "integer",
                 "value": 256
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]
@@ -222,7 +271,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 2
           }
         },
         {
@@ -236,7 +286,8 @@
                 "type": "integer",
                 "value": 16
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]

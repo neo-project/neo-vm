@@ -30,8 +30,8 @@ public class UT_StackItem
         itemB[1] = itemB;
         itemC[1] = itemC;
 
-        Assert.AreEqual(itemA.GetHashCode(), itemB.GetHashCode());
-        Assert.AreNotEqual(itemA.GetHashCode(), itemC.GetHashCode());
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => itemA.Equals(itemB, ExecutionEngineLimits.Default));
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => itemA.Equals(itemC, ExecutionEngineLimits.Default));
     }
 
     [TestMethod]
@@ -48,8 +48,9 @@ public class UT_StackItem
         itemB = new Buffer(1);
         itemC = new Buffer(2);
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemC.GetHashCode());
 
         itemA = new byte[] { 1, 2, 3 };
         itemB = new byte[] { 1, 2, 3 };
@@ -81,22 +82,25 @@ public class UT_StackItem
         itemB = new Array { true, false, 0 };
         itemC = new Array { true, false, 1 };
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemC.GetHashCode());
 
         itemA = new Struct { true, false, 0 };
         itemB = new Struct { true, false, 0 };
         itemC = new Struct { true, false, 1 };
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemC.GetHashCode());
 
         itemA = new Map { [true] = false, [0] = 1 };
         itemB = new Map { [true] = false, [0] = 1 };
         itemC = new Map { [true] = false, [0] = 2 };
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemC.GetHashCode());
 
         // Test CompoundType GetHashCode for subitems
         var junk = new Array { true, false, 0 };
@@ -104,8 +108,9 @@ public class UT_StackItem
         itemB = new Map { [true] = junk, [0] = junk };
         itemC = new Map { [true] = junk, [0] = 2 };
 
-        Assert.AreEqual(itemB.GetHashCode(), itemA.GetHashCode());
-        Assert.AreNotEqual(itemC.GetHashCode(), itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemA.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemB.GetHashCode());
+        Assert.ThrowsExactly<System.NotSupportedException>(() => itemC.GetHashCode());
 
         itemA = new InteropInterface(123);
         itemB = new InteropInterface(123);
@@ -249,5 +254,29 @@ public class UT_StackItem
         Assert.AreSame(aa, aa[^1]);
         Assert.IsTrue(a[^2].Equals(aa[^2], ExecutionEngineLimits.Default));
         Assert.AreNotSame(a[^2], aa[^2]);
+    }
+
+    [TestMethod]
+    public void TestMapRemove()
+    {
+        var key = 1;
+        var value = "test";
+        Map map = new()
+        {
+            [key] = value,
+        };
+
+        var removed = map.Remove(key);
+        Assert.AreEqual(value, removed);
+        Assert.IsFalse(map.ContainsKey(key));
+
+        removed = map.Remove(key);
+        Assert.IsNull(removed);
+
+        var bigKey = new ByteString(new byte[65]);
+        Assert.ThrowsExactly<System.ArgumentException>(() => map.Remove(bigKey));
+
+        var readonlyMap = (Map)map.DeepCopy(true);
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => readonlyMap.Remove(key));
     }
 }

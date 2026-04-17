@@ -22,6 +22,7 @@ namespace Neo.VM;
 /// </summary>
 public sealed class ReferenceCounter : IReferenceCounter
 {
+    private readonly ExecutionEngineLimits _limits;
     // If set to true, all items will be tracked regardless of their type.
     private const bool TrackAllItems = false;
 
@@ -38,8 +39,15 @@ public sealed class ReferenceCounter : IReferenceCounter
     // Keeps the total count of references.
     private int _referencesCount = 0;
 
+    public RCVersion Version { get; } = RCVersion.V1;
+
     /// <inheritdoc/>
     public int Count => _referencesCount;
+
+    public ReferenceCounter(ExecutionEngineLimits? limits = null)
+    {
+        _limits = limits ?? ExecutionEngineLimits.Default;
+    }
 
     /// <summary>
     /// Determines if an item needs to be tracked based on its type.
@@ -119,6 +127,14 @@ public sealed class ReferenceCounter : IReferenceCounter
         // Add the item to the cached components and the set of tracked items.
         _cachedComponents?.AddLast(new HashSet<StackItem>(ReferenceEqualityComparer.Instance) { item });
         _trackedItems.Add(item);
+    }
+
+    /// <inheritdoc/>
+    public void CheckPostExecution()
+    {
+        if (Count < _limits.MaxStackSize) return;
+        if (CheckZeroReferred() > _limits.MaxStackSize)
+            throw new System.InvalidOperationException($"MaxStackSize exceed: {Count}/{_limits.MaxStackSize}");
     }
 
     /// <summary>

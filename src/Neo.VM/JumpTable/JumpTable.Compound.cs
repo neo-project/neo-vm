@@ -280,10 +280,9 @@ partial class JumpTable
             // For arrays, check if the index is within bounds and push the result onto the stack.
             case VMArray array:
                 {
-                    // TODO: Overflow and underflow checking needs to be done.
-                    var index = (int)key.GetInteger();
-                    if (index < 0)
-                        throw new InvalidOperationException($"The negative index {index} is invalid for OpCode.{instruction.OpCode}.");
+                    var index = key.GetInteger();
+                    if (index < 0 || index >= engine.Limits.MaxItemSize)
+                        throw new InvalidOperationException($"The index {index} is invalid for OpCode {instruction.OpCode}.");
                     engine.Push(index < array.Count);
                     break;
                 }
@@ -296,20 +295,18 @@ partial class JumpTable
             // For buffers, check if the index is within bounds and push the result onto the stack.
             case Buffer buffer:
                 {
-                    // TODO: Overflow and underflow checking needs to be done.
-                    var index = (int)key.GetInteger();
-                    if (index < 0)
-                        throw new InvalidOperationException($"The negative index {index} is invalid for OpCode.{instruction.OpCode}.");
+                    var index = key.GetInteger();
+                    if (index < 0 || index >= engine.Limits.MaxItemSize)
+                        throw new InvalidOperationException($"The index {index} is invalid for OpCode {instruction.OpCode}.");
                     engine.Push(index < buffer.Size);
                     break;
                 }
             // For byte strings, check if the index is within bounds and push the result onto the stack.
             case ByteString array:
                 {
-                    // TODO: Overflow and underflow checking needs to be done.
-                    var index = (int)key.GetInteger();
-                    if (index < 0)
-                        throw new InvalidOperationException($"The negative index {index} is invalid for OpCode.{instruction.OpCode}.");
+                    var index = key.GetInteger();
+                    if (index < 0 || index >= engine.Limits.MaxItemSize)
+                        throw new InvalidOperationException($"The index {index} is invalid for OpCode {instruction.OpCode}.");
                     engine.Push(index < array.Size);
                     break;
                 }
@@ -375,10 +372,10 @@ partial class JumpTable
         {
             case VMArray array:
                 {
-                    var index = (int)key.GetInteger();
+                    var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
-                    engine.Push(array[index]);
+                    engine.Push(array[(int)index]);
                     break;
                 }
             case Map map:
@@ -391,18 +388,18 @@ partial class JumpTable
             case PrimitiveType primitive:
                 {
                     var byteArray = primitive.GetSpan();
-                    var index = (int)key.GetInteger();
+                    var index = key.GetInteger();
                     if (index < 0 || index >= byteArray.Length)
                         throw new CatchableException($"The index of {nameof(PrimitiveType)} is out of range, {index}/[0, {byteArray.Length}).");
-                    engine.Push((BigInteger)byteArray[index]);
+                    engine.Push((BigInteger)byteArray[(int)index]);
                     break;
                 }
             case Buffer buffer:
                 {
-                    var index = (int)key.GetInteger();
+                    var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
-                    engine.Push((BigInteger)buffer.InnerBuffer.Span[index]);
+                    engine.Push((BigInteger)buffer.InnerBuffer.Span[(int)index]);
                     break;
                 }
             default:
@@ -424,6 +421,8 @@ partial class JumpTable
         var array = engine.Pop<VMArray>();
         if (newItem is Struct s) newItem = s.Clone(engine.Limits);
         array.Add(newItem);
+        if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
+            engine.ReferenceCounter.AddStackReference(newItem);
     }
 
     /// <summary>
@@ -440,32 +439,50 @@ partial class JumpTable
         if (value is Struct s) value = s.Clone(engine.Limits);
         var key = engine.Pop<PrimitiveType>();
         var x = engine.Pop();
+        var isRC2 = engine.ReferenceCounter.Version == RCVersion.V2;
         switch (x)
         {
             case VMArray array:
                 {
-                    var index = (int)key.GetInteger();
+                    var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
-                    array[index] = value;
+                    var i = (int)index;
+                    if (isRC2 && array.IsStackReferenced)
+                        engine.ReferenceCounter.RemoveStackReference(array[i]);
+                    array[i] = value;
+                    if (isRC2 && array.IsStackReferenced)
+                        engine.ReferenceCounter.AddStackReference(value);
                     break;
                 }
             case Map map:
                 {
+                    if (isRC2 && map.IsStackReferenced)
+                    {
+                        if (!map.TryGetValue(key, out var value1))
+                        {
+                            engine.ReferenceCounter.AddStackReference(key);
+                        }
+                        else
+                        {
+                            engine.ReferenceCounter.RemoveStackReference(value1);
+                        }
+                        engine.ReferenceCounter.AddStackReference(value);
+                    }
                     map[key] = value;
                     break;
                 }
             case Buffer buffer:
                 {
-                    var index = (int)key.GetInteger();
+                    var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
                     if (value is not PrimitiveType p)
                         throw new InvalidOperationException($"Only primitive type values can be set in {nameof(Buffer)} in {instruction.OpCode}.");
-                    var b = (int)p.GetInteger();
+                    var b = p.GetInteger();
                     if (b < sbyte.MinValue || b > byte.MaxValue)
                         throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
-                    buffer.InnerBuffer.Span[index] = (byte)b;
+                    buffer.InnerBuffer.Span[(int)index] = (byte)b;
                     break;
                 }
             default:
@@ -512,13 +529,24 @@ partial class JumpTable
         switch (x)
         {
             case VMArray array:
-                var index = (int)key.GetInteger();
+                var index = key.GetInteger();
                 if (index < 0 || index >= array.Count)
                     throw new InvalidOperationException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
-                array.RemoveAt(index);
+
+                var i = (int)index;
+                var item = array[i];
+                array.RemoveAt(i);
+
+                if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
+                    engine.ReferenceCounter.RemoveStackReference(item);
                 break;
             case Map map:
-                map.Remove(key);
+                var old = map.Remove(key);
+                if (old is not null && engine.ReferenceCounter.Version == RCVersion.V2 && map.IsStackReferenced)
+                {
+                    engine.ReferenceCounter.RemoveStackReference(key);
+                    engine.ReferenceCounter.RemoveStackReference(old);
+                }
                 break;
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
@@ -536,6 +564,13 @@ partial class JumpTable
     public virtual void ClearItems(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop<CompoundType>();
+        if (engine.ReferenceCounter.Version == RCVersion.V2 && x.IsStackReferenced)
+        {
+            foreach (var xSubItem in x.SubItems)
+            {
+                engine.ReferenceCounter.RemoveStackReference(xSubItem);
+            }
+        }
         x.Clear();
     }
 
@@ -551,7 +586,10 @@ partial class JumpTable
     {
         var x = engine.Pop<VMArray>();
         var index = x.Count - 1;
-        engine.Push(x[index]);
+        var item = x[index];
+        engine.Push(item);
         x.RemoveAt(index);
+        if (engine.ReferenceCounter.Version == RCVersion.V2 && x.IsStackReferenced)
+            engine.ReferenceCounter.RemoveStackReference(item);
     }
 }

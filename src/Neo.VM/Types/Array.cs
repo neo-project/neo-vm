@@ -78,7 +78,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
             _ => new List<StackItem>(items)
         };
 
-        if (referenceCounter == null) return;
+        if (referenceCounter?.Version != RCVersion.V1) return;
 
         foreach (var item in InnerList)
         {
@@ -112,7 +112,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
     public override void Clear()
     {
         if (IsReadOnly) throw new InvalidOperationException("The array is readonly, can not clear.");
-        if (ReferenceCounter != null)
+        if (ReferenceCounter is not null)
             foreach (StackItem item in InnerList)
                 ReferenceCounter.RemoveReference(item, this);
         InnerList.Clear();

@@ -160,9 +160,9 @@ public class UT_ReferenceCounter
         Assert.AreEqual(VMState.BREAK, debugger.StepInto());
         Assert.AreEqual(3, engine.ReferenceCounter.Count);
         Assert.AreEqual(VMState.BREAK, debugger.StepInto());
-        Assert.AreEqual(2, engine.ReferenceCounter.Count);
-        Assert.AreEqual(VMState.HALT, debugger.Execute());
         Assert.AreEqual(1, engine.ReferenceCounter.Count);
+        Assert.AreEqual(VMState.HALT, debugger.Execute());
+        Assert.AreEqual(0, engine.ReferenceCounter.Count);
     }
 
     [TestMethod]
@@ -249,14 +249,9 @@ public class UT_ReferenceCounter
             Assert.AreEqual(1, engine.ResultStack.Count);
 
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
-
 
             engine.ResultStack.Pop(); // pop Array from stack.
 
-            Assert.AreEqual(0, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
@@ -278,8 +273,6 @@ public class UT_ReferenceCounter
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(0, engine.ResultStack.Count);
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
@@ -303,13 +296,9 @@ public class UT_ReferenceCounter
             Assert.AreEqual(1, engine.ResultStack.Count);
 
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(2, engine.ReferenceCounter.Count);
 
             engine.ResultStack.Pop(); // pop Array from stack.
 
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
@@ -333,8 +322,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(0, engine.ResultStack.Count);
 
-            Assert.AreEqual(2, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
@@ -360,14 +347,9 @@ public class UT_ReferenceCounter
             Assert.AreEqual(1, engine.ResultStack.Count);
 
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(3, engine.ReferenceCounter.Count);
-
 
             engine.ResultStack.Pop(); // pop Map from stack.
 
-            Assert.AreEqual(2, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
@@ -391,8 +373,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(0, engine.ResultStack.Count);
 
-            Assert.AreEqual(2, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
@@ -416,8 +396,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(0, engine.ResultStack.Count);
 
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
 
@@ -439,8 +417,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(0, engine.ResultStack.Count);
 
-            Assert.AreEqual(0, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
@@ -464,8 +440,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(0, engine.ResultStack.Count);
 
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
 
@@ -488,8 +462,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(1, engine.ResultStack.Count);
 
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
         }
     }
@@ -515,8 +487,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(1, engine.ResultStack.Count);
 
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
         }
     }
 
@@ -541,8 +511,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(1, engine.ResultStack.Count);
 
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
         }
     }
 
@@ -563,8 +531,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(0, engine.ResultStack.Count);
 
-            Assert.AreEqual(0, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
@@ -587,8 +553,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(0, engine.ResultStack.Count);
 
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
 
@@ -609,8 +573,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(0, engine.ResultStack.Count);
 
-            Assert.AreEqual(0, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
         }
     }
@@ -634,8 +596,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(1, engine.ResultStack.Count);
 
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
         }
     }
 
@@ -657,8 +617,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(1, engine.ResultStack.Count);
 
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
         }
     }
@@ -682,8 +640,6 @@ public class UT_ReferenceCounter
             Assert.AreEqual(1, engine.ResultStack.Count);
 
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
-            engine.ReferenceCounter.CheckZeroReferred();
-            Assert.AreEqual(1, engine.ReferenceCounter.Count);
         }
     }
 
@@ -692,7 +648,7 @@ public class UT_ReferenceCounter
     {
         using ScriptBuilder sb = new();
         sb.Emit(OpCode.RET);
-        using ExecutionEngine engine = new();
+        using ExecutionEngine engine = new(null, new ReferenceCounter(), ExecutionEngineLimits.Default);
         engine.LoadScript(sb.ToArray());
         Assert.AreEqual(0, engine.ReferenceCounter.Count);
         Array array = new(engine.ReferenceCounter, new StackItem[] { 1, 2, 3, 4 });
@@ -714,5 +670,20 @@ public class UT_ReferenceCounter
         }
 
         Assert.ThrowsExactly<InvalidOperationException>(() => arr.Add(arr2));
+    }
+
+    [TestMethod]
+    public void TestCheckPostExecution()
+    {
+        foreach (var refCounter in new IReferenceCounter[] { new ReferenceCounter(), new ReferenceCounterV2() })
+        {
+            for (int i = 0; i < ExecutionEngineLimits.Default.MaxStackSize; i++)
+            {
+                refCounter.AddStackReference(StackItem.Null);
+            }
+            refCounter.CheckPostExecution();
+            refCounter.AddStackReference(StackItem.Null);
+            Assert.ThrowsExactly<InvalidOperationException>(() => refCounter.CheckPostExecution());
+        }
     }
 }

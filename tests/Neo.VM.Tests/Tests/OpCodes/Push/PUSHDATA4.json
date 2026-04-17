@@ -55,7 +55,8 @@
                 "type": "ByteString",
                 "value": "0x01020304"
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]

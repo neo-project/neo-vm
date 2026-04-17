@@ -86,7 +86,7 @@ public class ExecutionEngine : IDisposable
     /// </summary>
     /// <param name="jumpTable">The jump table to be used.</param>
     public ExecutionEngine(JumpTable? jumpTable = null)
-        : this(jumpTable, new ReferenceCounter(), ExecutionEngineLimits.Default) { }
+        : this(jumpTable, new ReferenceCounterV2(), ExecutionEngineLimits.Default) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ExecutionEngine"/> class
@@ -95,7 +95,7 @@ public class ExecutionEngine : IDisposable
     /// <param name="jumpTable">The jump table to be used.</param>
     /// <param name="referenceCounter">The reference counter to be used.</param>
     /// <param name="limits">Restrictions on the VM.</param>
-    protected ExecutionEngine(JumpTable? jumpTable, IReferenceCounter referenceCounter, ExecutionEngineLimits limits)
+    internal ExecutionEngine(JumpTable? jumpTable, IReferenceCounter referenceCounter, ExecutionEngineLimits limits)
     {
         JumpTable = jumpTable ?? JumpTable.Default;
         Limits = limits;
@@ -301,9 +301,7 @@ public class ExecutionEngine : IDisposable
     /// </summary>
     protected virtual void PostExecuteInstruction(Instruction instruction)
     {
-        if (ReferenceCounter.Count < Limits.MaxStackSize) return;
-        if (ReferenceCounter.CheckZeroReferred() > Limits.MaxStackSize)
-            throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}/{Limits.MaxStackSize}");
+        ReferenceCounter.CheckPostExecution();
     }
 
     /// <summary>
