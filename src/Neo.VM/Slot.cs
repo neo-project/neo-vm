@@ -10,7 +10,6 @@
 // modifications are permitted.
 
 using Neo.VM.Types;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array = System.Array;
@@ -74,29 +73,6 @@ public class Slot : IReadOnlyList<StackItem>
         _items = new StackItem[count];
         Array.Fill(_items, StackItem.Null);
         referenceCounter.AddStackReference(StackItem.Null, count);
-    }
-
-    /// <summary>
-    /// Create a slot by popping items directly from the evaluation stack.
-    /// This eliminates temporary array allocation for arguments.
-    /// </summary>
-    /// <param name="count">Indicates the number of items to pop from the stack.</param>
-    /// <param name="engine">The execution engine to pop items from.</param>
-    /// <param name="referenceCounter">The reference counter to be used.</param>
-    internal Slot(int count, ExecutionEngine engine, IReferenceCounter referenceCounter)
-    {
-        if (count < 0)
-            throw new ArgumentOutOfRangeException(nameof(count));
-
-        _referenceCounter = referenceCounter;
-        _items = new StackItem[count];
-
-        // Pop items and add stack references in a single iteration
-        for (var i = 0; i < count; i++)
-        {
-            _items[i] = engine.Pop();
-            referenceCounter.AddStackReference(_items[i]);
-        }
     }
 
     internal void ClearReferences()
