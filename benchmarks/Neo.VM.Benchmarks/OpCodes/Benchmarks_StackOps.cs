@@ -92,7 +92,7 @@ public class Benchmarks_StackOps
 
     private static byte[] BuildScript(Action<ScriptBuilder> build)
     {
-        var sb = new ScriptBuilder();
+        using var sb = new ScriptBuilder();
         build(sb);
         return sb.ToArray();
     }
