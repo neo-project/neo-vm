@@ -153,9 +153,9 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void Swap(int index1, int index2)
     {
-        if (index1 >= _innerList.Count)
+        if (index1 < 0 || index1 >= _innerList.Count)
             throw new ArgumentOutOfRangeException(nameof(index1), $"Out of stack bounds: {index1}/{_innerList.Count}");
-        if (index2 >= _innerList.Count)
+        if (index2 < 0 || index2 >= _innerList.Count)
             throw new ArgumentOutOfRangeException(nameof(index2), $"Out of stack bounds: {index2}/{_innerList.Count}");
         if (index1 == index2) return;
 
