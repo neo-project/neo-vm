@@ -143,12 +143,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <remarks>Pop 0, Push 1</remarks>
+    /// <remarks>Pop 0, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Swap(ExecutionEngine engine, Instruction instruction)
     {
-        var x = engine.CurrentContext!.EvaluationStack.Remove<StackItem>(1);
-        engine.Push(x);
+        var stack = engine.CurrentContext!.EvaluationStack;
+        if (stack.Count < 2)
+            throw new ArgumentOutOfRangeException($"Swap index is out of stack bounds: 1/{stack.Count}");
+        stack.Swap(0, 1);
     }
 
     /// <summary>
@@ -157,12 +159,17 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <remarks>Pop 0, Push 1</remarks>
+    /// <remarks>Pop 0, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Rot(ExecutionEngine engine, Instruction instruction)
     {
-        var x = engine.CurrentContext!.EvaluationStack.Remove<StackItem>(2);
-        engine.Push(x);
+        // ROT: [a, b, c] -> [b, c, a] (c is top)
+        // Equivalent to: swap(1,2), swap(0,1)
+        var stack = engine.CurrentContext!.EvaluationStack;
+        if (stack.Count < 3)
+            throw new ArgumentOutOfRangeException($"Swap index is out of stack bounds: 2/{stack.Count}");
+        stack.Swap(1, 2);
+        stack.Swap(0, 1);
     }
 
     /// <summary>
