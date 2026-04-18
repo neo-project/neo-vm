@@ -149,7 +149,7 @@ partial class JumpTable
     {
         var stack = engine.CurrentContext!.EvaluationStack;
         if (stack.Count < 2)
-            throw new InvalidOperationException($"Swap index is out of stack bounds: 1/{stack.Count}");
+            throw new ArgumentOutOfRangeException($"Swap index is out of stack bounds: 1/{stack.Count}");
         stack.Swap(0, 1);
     }
 
@@ -167,7 +167,7 @@ partial class JumpTable
         // Equivalent to: swap(1,2), swap(0,1)
         var stack = engine.CurrentContext!.EvaluationStack;
         if (stack.Count < 3)
-            throw new InvalidOperationException($"Swap index is out of stack bounds: 2/{stack.Count}");
+            throw new ArgumentOutOfRangeException($"Swap index is out of stack bounds: 2/{stack.Count}");
         stack.Swap(1, 2);
         stack.Swap(0, 1);
     }
