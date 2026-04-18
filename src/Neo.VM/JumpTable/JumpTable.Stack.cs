@@ -147,7 +147,10 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Swap(ExecutionEngine engine, Instruction instruction)
     {
-        engine.CurrentContext!.EvaluationStack.Swap(0, 1);
+        var stack = engine.CurrentContext!.EvaluationStack;
+        if (stack.Count < 2)
+            throw new InvalidOperationException($"Swap index is out of stack bounds: 1/{stack.Count}");
+        stack.Swap(0, 1);
     }
 
     /// <summary>
@@ -163,6 +166,8 @@ partial class JumpTable
         // ROT: [a, b, c] -> [b, c, a] (c is top)
         // Equivalent to: swap(1,2), swap(0,1)
         var stack = engine.CurrentContext!.EvaluationStack;
+        if (stack.Count < 3)
+            throw new InvalidOperationException($"Swap index is out of stack bounds: 2/{stack.Count}");
         stack.Swap(1, 2);
         stack.Swap(0, 1);
     }

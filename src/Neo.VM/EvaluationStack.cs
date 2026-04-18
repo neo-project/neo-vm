@@ -147,15 +147,13 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     /// <summary>
     /// Swaps two items on the stack by their indices from the top.
     /// This is an O(1) operation that doesn't trigger reference counting changes.
+    /// Note: The caller must ensure indices are within bounds and non-negative.
     /// </summary>
     /// <param name="index1">First index from top of stack.</param>
     /// <param name="index2">Second index from top of stack.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void Swap(int index1, int index2)
     {
-        if (index1 < 0 || index1 >= _innerList.Count)
-            throw new ArgumentOutOfRangeException(nameof(index1), $"Out of stack bounds: {index1}/{_innerList.Count}");
-        if (index2 < 0 || index2 >= _innerList.Count)
-            throw new ArgumentOutOfRangeException(nameof(index2), $"Out of stack bounds: {index2}/{_innerList.Count}");
         if (index1 == index2) return;
 
         int actualIndex1 = _innerList.Count - index1 - 1;
