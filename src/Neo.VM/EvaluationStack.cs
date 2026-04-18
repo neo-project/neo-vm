@@ -150,7 +150,6 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     /// </summary>
     /// <param name="index1">First index from top of stack.</param>
     /// <param name="index2">Second index from top of stack.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void Swap(int index1, int index2)
     {
         if (index1 < 0 || index1 >= _innerList.Count)
