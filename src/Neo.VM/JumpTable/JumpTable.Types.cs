@@ -25,10 +25,11 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void IsNull(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceArgs? IsNull(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop();
         engine.Push(x.IsNull);
+        return null;
     }
 
     /// <summary>
@@ -39,7 +40,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void IsType(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceArgs? IsType(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop();
         var type = (StackItemType)instruction.TokenU8;
@@ -50,6 +51,7 @@ partial class JumpTable
 #endif
             throw new InvalidOperationException($"Invalid type: {type}");
         engine.Push(x.Type == type);
+        return null;
     }
 
     /// <summary>
@@ -60,7 +62,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Convert(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceArgs? Convert(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop();
         var fromType = x.Type;
@@ -69,17 +71,16 @@ partial class JumpTable
         if (fromType == StackItemType.Array && toType == StackItemType.Struct || fromType == StackItemType.Struct && toType == StackItemType.Array)
         {
             if (fromType == StackItemType.Array)
-                engine.PriceArgs = new OpcodePriceArgs { Type = StackItemType.Array, Length = ((Types.Array)x).Count };
-            else
-                engine.PriceArgs = new OpcodePriceArgs { Type = StackItemType.Struct, Length = ((Struct)x).Count };
+                return new OpcodePriceArgs { Type = StackItemType.Array, Length = ((Types.Array)x).Count };
+            return new OpcodePriceArgs { Type = StackItemType.Struct, Length = ((Struct)x).Count };
         }
         else if (fromType == StackItemType.ByteString && toType == StackItemType.Buffer || fromType == StackItemType.Buffer && toType == StackItemType.ByteString)
         {
             if (fromType == StackItemType.ByteString)
-                engine.PriceArgs = new OpcodePriceArgs { Type = StackItemType.ByteString, Length = ((ByteString)x).GetSpan().Length };
-            else
-                engine.PriceArgs = new OpcodePriceArgs { Type = StackItemType.ByteString, Length = ((Types.Buffer)x).GetSpan().Length };
+                return new OpcodePriceArgs { Type = StackItemType.ByteString, Length = ((ByteString)x).GetSpan().Length };
+            return new OpcodePriceArgs { Type = StackItemType.ByteString, Length = ((Types.Buffer)x).GetSpan().Length };
         }
+        return null;
     }
 
     /// <summary>
@@ -90,7 +91,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void AbortMsg(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceArgs? AbortMsg(ExecutionEngine engine, Instruction instruction)
     {
         var msg = engine.Pop().GetString();
         throw new Exception($"{OpCode.ABORTMSG} is executed. Reason: {msg}");
@@ -104,11 +105,12 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void AssertMsg(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceArgs? AssertMsg(ExecutionEngine engine, Instruction instruction)
     {
         var msg = engine.Pop().GetString();
         var x = engine.Pop().GetBoolean();
         if (!x)
             throw new Exception($"{OpCode.ASSERTMSG} is executed with false result. Reason: {msg}");
+        return null;
     }
 }

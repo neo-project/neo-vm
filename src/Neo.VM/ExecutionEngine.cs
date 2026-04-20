@@ -58,11 +58,6 @@ public class ExecutionEngine : IDisposable
     public EvaluationStack ResultStack { get; }
 
     /// <summary>
-    /// Dynamic opcode pricing arguments emitted by the currently executing opcode.
-    /// </summary>
-    public OpcodePriceArgs? PriceArgs { get; protected internal set; }
-
-    /// <summary>
     /// The VM object representing the uncaught exception.
     /// </summary>
     public StackItem? UncaughtException { get; internal set; }
@@ -148,7 +143,6 @@ public class ExecutionEngine : IDisposable
         {
             try
             {
-                PriceArgs = null;
                 ExecutionContext context = CurrentContext!;
                 Instruction? currentInstruction = context.CurrentInstruction;
                 Instruction instruction = currentInstruction ?? Instruction.RET;
@@ -161,15 +155,16 @@ public class ExecutionEngine : IDisposable
                                   + " "
                                   + this.CurrentContext.EvaluationStack);
 #endif
+                OpcodePriceArgs? priceArgs = null;
                 try
                 {
-                    JumpTable[instruction.OpCode](this, instruction);
+                    priceArgs = JumpTable[instruction.OpCode](this, instruction);
                 }
                 catch (CatchableException ex) when (Limits.CatchEngineExceptions)
                 {
                     JumpTable.ExecuteThrow(this, ex.Message);
                 }
-                PostExecuteInstruction(instruction);
+                PostExecuteInstruction(instruction, priceArgs);
                 if (!isJumping && currentInstruction != null)
                     context.InstructionPointer += instruction.Size;
                 isJumping = false;
@@ -305,7 +300,7 @@ public class ExecutionEngine : IDisposable
     /// <summary>
     /// Called after an instruction is executed.
     /// </summary>
-    protected virtual void PostExecuteInstruction(Instruction instruction)
+    protected virtual void PostExecuteInstruction(Instruction instruction, OpcodePriceArgs? priceArgs)
     {
         ReferenceCounter.CheckPostExecution();
     }

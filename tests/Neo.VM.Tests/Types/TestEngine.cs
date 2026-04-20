@@ -30,20 +30,20 @@ public class TestEngine : ExecutionEngine
         return jumpTable;
     }
 
-    private static void OnSysCall(ExecutionEngine engine, Instruction instruction)
+    private static OpcodePriceArgs? OnSysCall(ExecutionEngine engine, Instruction instruction)
     {
         uint method = instruction.TokenU32;
 
         if (method == 0x77777777)
         {
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new object()));
-            return;
+            return null;
         }
 
         if (method == 0xaddeadde)
         {
             engine.JumpTable.ExecuteThrow(engine, "error");
-            return;
+            return null;
         }
 
         throw new Exception();
