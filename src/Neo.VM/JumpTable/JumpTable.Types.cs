@@ -74,7 +74,7 @@ partial class JumpTable
                 return new OpcodePriceParams { Type = StackItemType.Array, Length = ((Types.Array)x).Count };
             return new OpcodePriceParams { Type = StackItemType.Struct, Length = ((Struct)x).Count };
         }
-        else if (fromType == StackItemType.ByteString && toType == StackItemType.Buffer || fromType == StackItemType.Buffer && toType == StackItemType.ByteString)
+        if (fromType == StackItemType.ByteString && toType == StackItemType.Buffer || fromType == StackItemType.Buffer && toType == StackItemType.ByteString)
         {
             if (fromType == StackItemType.ByteString)
                 return new OpcodePriceParams { Type = StackItemType.ByteString, Length = ((ByteString)x).GetSpan().Length };
