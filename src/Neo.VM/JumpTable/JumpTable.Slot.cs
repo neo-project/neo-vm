@@ -24,7 +24,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? InitSSlot(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? InitSSlot(ExecutionEngine engine, Instruction instruction)
     {
         if (engine.CurrentContext!.StaticFields != null)
             throw new InvalidOperationException($"{instruction.OpCode} cannot be executed twice.");
@@ -41,7 +41,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? InitSlot(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? InitSlot(ExecutionEngine engine, Instruction instruction)
     {
         if (engine.CurrentContext!.LocalVariables != null || engine.CurrentContext.Arguments != null)
             throw new InvalidOperationException($"{instruction.OpCode} cannot be executed twice.");
@@ -59,7 +59,7 @@ partial class JumpTable
                 items[i] = engine.Pop();
             }
             engine.CurrentContext.Arguments = new Slot(items, engine.ReferenceCounter);
-            return new OpcodePriceArgs { Length = instruction.TokenU8_1 };
+            return new OpcodePriceParams { Length = instruction.TokenU8_1 };
         }
         return null;
     }
@@ -71,7 +71,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdSFld0(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdSFld0(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.StaticFields, 0);
         return null;
@@ -84,7 +84,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdSFld1(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdSFld1(ExecutionEngine engine, Instruction instruction)
 
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.StaticFields, 1);
@@ -98,7 +98,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdSFld2(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdSFld2(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.StaticFields, 2);
         return null;
@@ -111,7 +111,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdSFld3(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdSFld3(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.StaticFields, 3);
         return null;
@@ -124,7 +124,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdSFld4(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdSFld4(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.StaticFields, 4);
         return null;
@@ -137,7 +137,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdSFld5(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdSFld5(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.StaticFields, 5);
         return null;
@@ -150,7 +150,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdSFld6(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdSFld6(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.StaticFields, 6);
         return null;
@@ -164,7 +164,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdSFld(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdSFld(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.StaticFields, instruction.TokenU8);
         return null;
@@ -177,7 +177,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StSFld0(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StSFld0(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.StaticFields, 0);
     }
@@ -189,7 +189,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StSFld1(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StSFld1(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.StaticFields, 1);
     }
@@ -201,7 +201,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StSFld2(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StSFld2(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.StaticFields, 2);
     }
@@ -213,7 +213,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StSFld3(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StSFld3(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.StaticFields, 3);
     }
@@ -225,7 +225,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StSFld4(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StSFld4(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.StaticFields, 4);
     }
@@ -237,7 +237,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StSFld5(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StSFld5(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.StaticFields, 5);
     }
@@ -249,7 +249,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StSFld6(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StSFld6(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.StaticFields, 6);
     }
@@ -262,7 +262,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StSFld(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StSFld(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.StaticFields, instruction.TokenU8);
     }
@@ -274,7 +274,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdLoc0(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdLoc0(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.LocalVariables, 0);
         return null;
@@ -287,7 +287,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdLoc1(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdLoc1(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.LocalVariables, 1);
         return null;
@@ -300,7 +300,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdLoc2(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdLoc2(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.LocalVariables, 2);
         return null;
@@ -313,7 +313,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdLoc3(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdLoc3(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.LocalVariables, 3);
         return null;
@@ -326,7 +326,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdLoc4(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdLoc4(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.LocalVariables, 4);
         return null;
@@ -339,7 +339,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdLoc5(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdLoc5(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.LocalVariables, 5);
         return null;
@@ -352,7 +352,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdLoc6(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdLoc6(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.LocalVariables, 6);
         return null;
@@ -366,7 +366,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdLoc(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdLoc(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.LocalVariables, instruction.TokenU8);
         return null;
@@ -379,7 +379,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StLoc0(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StLoc0(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.LocalVariables, 0);
     }
@@ -391,7 +391,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StLoc1(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StLoc1(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.LocalVariables, 1);
     }
@@ -403,7 +403,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StLoc2(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StLoc2(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.LocalVariables, 2);
     }
@@ -415,7 +415,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StLoc3(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StLoc3(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.LocalVariables, 3);
     }
@@ -427,7 +427,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StLoc4(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StLoc4(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.LocalVariables, 4);
     }
@@ -439,7 +439,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StLoc5(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StLoc5(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.LocalVariables, 5);
     }
@@ -451,7 +451,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StLoc6(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StLoc6(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.LocalVariables, 6);
     }
@@ -464,7 +464,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StLoc(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StLoc(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.LocalVariables, instruction.TokenU8);
     }
@@ -476,7 +476,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdArg0(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdArg0(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.Arguments, 0);
         return null;
@@ -489,7 +489,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdArg1(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdArg1(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.Arguments, 1);
         return null;
@@ -502,7 +502,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdArg2(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdArg2(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.Arguments, 2);
         return null;
@@ -515,7 +515,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdArg3(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdArg3(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.Arguments, 3);
         return null;
@@ -528,7 +528,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdArg4(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdArg4(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.Arguments, 4);
         return null;
@@ -541,7 +541,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdArg5(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdArg5(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.Arguments, 5);
         return null;
@@ -554,7 +554,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdArg6(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdArg6(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.Arguments, 6);
         return null;
@@ -568,7 +568,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? LdArg(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? LdArg(ExecutionEngine engine, Instruction instruction)
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.Arguments, instruction.TokenU8);
         return null;
@@ -581,7 +581,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StArg0(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StArg0(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.Arguments, 0);
     }
@@ -593,7 +593,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StArg1(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StArg1(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.Arguments, 1);
     }
@@ -605,7 +605,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StArg2(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StArg2(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.Arguments, 2);
     }
@@ -617,7 +617,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StArg3(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StArg3(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.Arguments, 3);
     }
@@ -629,7 +629,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StArg4(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StArg4(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.Arguments, 4);
     }
@@ -641,7 +641,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StArg5(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StArg5(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.Arguments, 5);
     }
@@ -653,7 +653,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StArg6(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StArg6(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.Arguments, 6);
     }
@@ -666,7 +666,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? StArg(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? StArg(ExecutionEngine engine, Instruction instruction)
     {
         return ExecuteStoreToSlot(engine, engine.CurrentContext!.Arguments, instruction.TokenU8);
     }
@@ -679,7 +679,7 @@ partial class JumpTable
     /// <param name="engine">The execution engine.</param>
     /// <param name="slot">The slot to store the value.</param>
     /// <param name="index">The index within the slot.</param>
-    public virtual OpcodePriceArgs? ExecuteStoreToSlot(ExecutionEngine engine, Slot? slot, int index)
+    public virtual OpcodePriceParams? ExecuteStoreToSlot(ExecutionEngine engine, Slot? slot, int index)
     {
         if (slot is null)
             throw new InvalidOperationException("Slot has not been initialized.");
@@ -687,7 +687,7 @@ partial class JumpTable
             throw new InvalidOperationException($"Index out of range when storing to slot: {index}, {index}/[0, {slot.Count}).");
         var r = engine.ReferenceCounter.Count;
         slot[index] = engine.Pop();
-        return new OpcodePriceArgs { RefsDelta = r - engine.ReferenceCounter.Count };
+        return new OpcodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>

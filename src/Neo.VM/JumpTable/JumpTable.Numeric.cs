@@ -25,7 +25,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Sign(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Sign(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop().GetInteger();
         engine.Push(x.Sign);
@@ -40,7 +40,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Abs(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Abs(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop().GetInteger();
         engine.Push(BigInteger.Abs(x));
@@ -55,7 +55,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Negate(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Negate(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop().GetInteger();
         engine.Push(-x);
@@ -70,7 +70,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Inc(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Inc(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop().GetInteger();
         engine.Push(x + 1);
@@ -85,7 +85,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Dec(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Dec(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop().GetInteger();
         engine.Push(x - 1);
@@ -100,7 +100,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Add(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Add(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
@@ -116,7 +116,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Sub(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Sub(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
@@ -132,7 +132,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Mul(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Mul(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
@@ -148,7 +148,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Div(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Div(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
@@ -164,7 +164,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Mod(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Mod(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
@@ -180,7 +180,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Pow(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Pow(ExecutionEngine engine, Instruction instruction)
     {
         var exponent = (int)engine.Pop().GetInteger();
         engine.Limits.AssertShift(exponent);
@@ -197,7 +197,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Sqrt(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Sqrt(ExecutionEngine engine, Instruction instruction)
     {
         engine.Push(engine.Pop().GetInteger().Sqrt());
         return null;
@@ -211,7 +211,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 3, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? ModMul(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? ModMul(ExecutionEngine engine, Instruction instruction)
     {
         var modulus = engine.Pop().GetInteger();
         var x2 = engine.Pop().GetInteger();
@@ -228,7 +228,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 3, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? ModPow(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? ModPow(ExecutionEngine engine, Instruction instruction)
     {
         var modulus = engine.Pop().GetInteger();
         var exponent = engine.Pop().GetInteger();
@@ -248,7 +248,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Shl(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Shl(ExecutionEngine engine, Instruction instruction)
     {
         var shift = (int)engine.Pop().GetInteger();
         engine.Limits.AssertShift(shift);
@@ -265,7 +265,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Shr(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Shr(ExecutionEngine engine, Instruction instruction)
     {
         var shift = (int)engine.Pop().GetInteger();
         engine.Limits.AssertShift(shift);
@@ -282,7 +282,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Not(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Not(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop().GetBoolean();
         engine.Push(!x);
@@ -297,7 +297,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? BoolAnd(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? BoolAnd(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetBoolean();
         var x1 = engine.Pop().GetBoolean();
@@ -313,7 +313,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? BoolOr(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? BoolOr(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetBoolean();
         var x1 = engine.Pop().GetBoolean();
@@ -329,7 +329,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Nz(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Nz(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop().GetInteger();
         engine.Push(!x.IsZero);
@@ -344,7 +344,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? NumEqual(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? NumEqual(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
@@ -360,7 +360,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? NumNotEqual(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? NumNotEqual(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
@@ -376,7 +376,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Lt(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Lt(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop();
         var x1 = engine.Pop();
@@ -395,7 +395,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Le(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Le(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop();
         var x1 = engine.Pop();
@@ -414,7 +414,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Gt(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Gt(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop();
         var x1 = engine.Pop();
@@ -433,7 +433,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Ge(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Ge(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop();
         var x1 = engine.Pop();
@@ -452,7 +452,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Min(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Min(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
@@ -468,7 +468,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Max(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Max(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
@@ -485,7 +485,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 3, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceArgs? Within(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? Within(ExecutionEngine engine, Instruction instruction)
     {
         var b = engine.Pop().GetInteger();
         var a = engine.Pop().GetInteger();

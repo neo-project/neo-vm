@@ -16,7 +16,7 @@ namespace Neo.VM;
 /// <summary>
 /// Contains opcode-specific parameters used to calculate dynamic price.
 /// </summary>
-public struct OpcodePriceArgs
+public struct OpcodePriceParams
 {
     public StackItemType Type { get; internal set; }
     public int Length { get; internal set; }

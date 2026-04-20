@@ -21,7 +21,7 @@ public partial class JumpTable
     /// </summary>
     public static readonly JumpTable Default = new();
 
-    public delegate OpcodePriceArgs? DelAction(ExecutionEngine engine, Instruction instruction);
+    public delegate OpcodePriceParams? DelAction(ExecutionEngine engine, Instruction instruction);
     protected readonly DelAction[] Table = new DelAction[byte.MaxValue];
 
     public DelAction this[OpCode opCode]
@@ -67,7 +67,7 @@ public partial class JumpTable
         }
     }
 
-    public virtual OpcodePriceArgs? InvalidOpcode(ExecutionEngine engine, Instruction instruction)
+    public virtual OpcodePriceParams? InvalidOpcode(ExecutionEngine engine, Instruction instruction)
     {
         throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
     }

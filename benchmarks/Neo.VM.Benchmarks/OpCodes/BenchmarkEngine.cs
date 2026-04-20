@@ -197,7 +197,7 @@ public class BenchmarkEngine : ExecutionEngine
         return jumpTable;
     }
 
-    private static OpcodePriceArgs? OnSysCall(ExecutionEngine engine, Instruction instruction)
+    private static OpcodePriceParams? OnSysCall(ExecutionEngine engine, Instruction instruction)
     {
         uint method = instruction.TokenU32;
         if (method == 0x77777777)
