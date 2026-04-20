@@ -432,9 +432,7 @@ partial class JumpTable
         engine.Push(item);
         var n = engine.ReferenceCounter.Count - r2;
         if (item.Type == StackItemType.ByteString)
-        {
             n = ((ByteString)item).GetSpan().Length;
-        }
         return new OpcodePriceParams { Type = item.Type, Length = n, RefsDelta = r1 - r2 };
     }
 
