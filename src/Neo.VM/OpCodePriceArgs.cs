@@ -18,8 +18,8 @@ namespace Neo.VM;
 /// </summary>
 public struct OpcodePriceArgs
 {
-    public StackItemType Type;
-    public int Length;
-    public int RefsDelta;
-    public int NClonedItems;
+    public StackItemType Type { get; internal set; }
+    public int Length { get; internal set; }
+    public int RefsDelta { get; internal set; }
+    public int NClonedItems { get; internal set; }
 }
