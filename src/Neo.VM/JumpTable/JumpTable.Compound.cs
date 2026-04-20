@@ -367,9 +367,8 @@ partial class JumpTable
         foreach (var item in values)
             if (item is Struct s)
             {
-                var cloned = s.Clone(engine.Limits, out int n);
+                newArray.Add(s.Clone(engine.Limits, out int n));
                 nClonedItems += n;
-                newArray.Add(cloned);
             }
             else
                 newArray.Add(item);
