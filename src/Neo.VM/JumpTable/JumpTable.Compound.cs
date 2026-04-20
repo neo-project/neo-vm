@@ -367,7 +367,7 @@ partial class JumpTable
         foreach (var item in values)
             if (item is Struct s)
             {
-                var (cloned, n) = s.Clone(engine.Limits);
+                var cloned = s.Clone(engine.Limits, out int n);
                 nClonedItems += n;
                 newArray.Add(cloned);
             }
@@ -453,7 +453,7 @@ partial class JumpTable
         var newItem = engine.Pop();
         var array = engine.Pop<VMArray>();
         var nClonedItems = 0;
-        if (newItem is Struct s) (newItem, nClonedItems) = s.Clone(engine.Limits);
+        if (newItem is Struct s) newItem = s.Clone(engine.Limits, out nClonedItems);
         array.Add(newItem);
         var r2 = engine.ReferenceCounter.Count;
         if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
@@ -473,7 +473,7 @@ partial class JumpTable
     {
         var value = engine.Pop();
         var nClonedItems = 0;
-        if (value is Struct s) (value, nClonedItems) = s.Clone(engine.Limits);
+        if (value is Struct s) value = s.Clone(engine.Limits, out nClonedItems);
         var key = engine.Pop<PrimitiveType>();
         var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();

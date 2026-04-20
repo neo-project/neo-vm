@@ -44,9 +44,11 @@ public class Struct : Array
     /// Create a new structure with the same content as this structure. All nested structures will be copied by value.
     /// </summary>
     /// <param name="limits">Execution engine limits</param>
+    /// <param name="nClonedItems">The number of items cloned.</param>
     /// <returns>The copied structure.</returns>
-    public (Struct, int) Clone(ExecutionEngineLimits limits)
+    public Struct Clone(ExecutionEngineLimits limits, out int nClonedItems)
     {
+        nClonedItems = 0;
         int count = (int)(limits.MaxStackSize - 1);
         Struct result = new(ReferenceCounter);
         Queue<Struct> queue = new();
@@ -73,7 +75,8 @@ public class Struct : Array
                 }
             }
         }
-        return (result, (int)limits.MaxStackSize - count);
+        nClonedItems = (int)(limits.MaxStackSize - 1) - count;
+        return result;
     }
 
     public override StackItem ConvertTo(StackItemType type)
