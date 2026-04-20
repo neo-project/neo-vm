@@ -130,7 +130,6 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual OpcodePriceParams? PushA(ExecutionEngine engine, Instruction instruction)
-
     {
         var position = checked(engine.CurrentContext!.InstructionPointer + instruction.TokenI32);
         if (position < 0 || position > engine.CurrentContext.Script.Length)
