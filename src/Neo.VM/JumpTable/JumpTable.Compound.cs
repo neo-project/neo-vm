@@ -629,15 +629,17 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual OpcodePriceParams? PopItem(ExecutionEngine engine, Instruction instruction)
     {
+        var r1 = engine.ReferenceCounter.Count;
         var x = engine.Pop<VMArray>();
         var index = x.Count - 1;
         var item = x[index];
+        var r2 = engine.ReferenceCounter.Count;
         engine.Push(item);
         x.RemoveAt(index);
         if (engine.ReferenceCounter.Version == RCVersion.V2)
         {
             if (!x.IsStackReferenced)
-                return new OpcodePriceParams { RefsDelta = -engine.ReferenceCounter.Count, Length = 1 };
+                return new OpcodePriceParams { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2), Length = 1 };
             engine.ReferenceCounter.RemoveStackReference(item);
         }
         return null;
