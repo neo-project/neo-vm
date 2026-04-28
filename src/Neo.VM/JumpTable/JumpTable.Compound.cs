@@ -30,7 +30,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2n+1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? PackMap(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? PackMap(ExecutionEngine engine, Instruction instruction)
     {
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size * 2 > engine.CurrentContext!.EvaluationStack.Count)
@@ -44,7 +44,7 @@ partial class JumpTable
             map[key] = value;
         }
         engine.Push(map);
-        return new OpcodePriceParams { RefsDelta = engine.ReferenceCounter.Count - r };
+        return new OpCodePriceParams { RefsDelta = engine.ReferenceCounter.Count - r };
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop n+1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? PackStruct(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? PackStruct(ExecutionEngine engine, Instruction instruction)
     {
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size > engine.CurrentContext!.EvaluationStack.Count)
@@ -67,7 +67,7 @@ partial class JumpTable
             @struct.Add(item);
         }
         engine.Push(@struct);
-        return new OpcodePriceParams { Length = size };
+        return new OpCodePriceParams { Length = size };
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop n+1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Pack(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Pack(ExecutionEngine engine, Instruction instruction)
     {
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size > engine.CurrentContext!.EvaluationStack.Count)
@@ -90,7 +90,7 @@ partial class JumpTable
             array.Add(item);
         }
         engine.Push(array);
-        return new OpcodePriceParams { Length = size };
+        return new OpCodePriceParams { Length = size };
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 2n+1 or n+1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Unpack(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Unpack(ExecutionEngine engine, Instruction instruction)
     {
         var compound = engine.Pop<CompoundType>();
         switch (compound)
@@ -123,7 +123,7 @@ partial class JumpTable
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {compound.Type}");
         }
         engine.Push(compound.Count);
-        return new OpcodePriceParams { Type = compound.Type, Length = compound.Count };
+        return new OpCodePriceParams { Type = compound.Type, Length = compound.Count };
     }
 
     /// <summary>
@@ -137,7 +137,7 @@ partial class JumpTable
     /// TODO: Change to NewNullArray method or add it?
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? NewArray0(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? NewArray0(ExecutionEngine engine, Instruction instruction)
     {
         engine.Push(new VMArray(engine.ReferenceCounter));
         return null;
@@ -151,7 +151,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? NewArray(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? NewArray(ExecutionEngine engine, Instruction instruction)
     {
         var n = (int)engine.Pop().GetInteger();
         if (n < 0 || n > engine.Limits.MaxStackSize)
@@ -170,7 +170,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? NewArray_T(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? NewArray_T(ExecutionEngine engine, Instruction instruction)
     {
         var n = (int)engine.Pop().GetInteger();
         if (n < 0 || n > engine.Limits.MaxStackSize)
@@ -194,7 +194,7 @@ partial class JumpTable
         var itemArray = new StackItem[n];
         Array.Fill(itemArray, item);
         engine.Push(new VMArray(engine.ReferenceCounter, itemArray));
-        return new OpcodePriceParams { Type = type, Length = n };
+        return new OpCodePriceParams { Type = type, Length = n };
     }
 
     /// <summary>
@@ -205,7 +205,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 0, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? NewStruct0(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? NewStruct0(ExecutionEngine engine, Instruction instruction)
     {
         engine.Push(new Struct(engine.ReferenceCounter));
         return null;
@@ -219,7 +219,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? NewStruct(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? NewStruct(ExecutionEngine engine, Instruction instruction)
     {
         var n = (int)engine.Pop().GetInteger();
         if (n < 0 || n > engine.Limits.MaxStackSize)
@@ -228,7 +228,7 @@ partial class JumpTable
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
         engine.Push(new Struct(engine.ReferenceCounter, nullArray));
-        return new OpcodePriceParams { Length = n };
+        return new OpCodePriceParams { Length = n };
     }
 
     /// <summary>
@@ -239,7 +239,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 0, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? NewMap(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? NewMap(ExecutionEngine engine, Instruction instruction)
     {
         engine.Push(new Map(engine.ReferenceCounter));
         return null;
@@ -253,7 +253,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Size(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Size(ExecutionEngine engine, Instruction instruction)
     {
         var r = engine.ReferenceCounter.Count;
         // TODO: we should be able to optimize by using peek instead of dup and pop
@@ -272,7 +272,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
-        return new OpcodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
+        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -283,7 +283,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? HasKey(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? HasKey(ExecutionEngine engine, Instruction instruction)
     {
         var key = engine.Pop<PrimitiveType>();
         var r = engine.ReferenceCounter.Count;
@@ -327,7 +327,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
-        return new OpcodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
+        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -338,11 +338,11 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Keys(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Keys(ExecutionEngine engine, Instruction instruction)
     {
         var map = engine.Pop<Map>();
         engine.Push(new VMArray(engine.ReferenceCounter, map.Keys));
-        return new OpcodePriceParams { Length = map.Count };
+        return new OpCodePriceParams { Length = map.Count };
     }
 
     /// <summary>
@@ -353,7 +353,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Values(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Values(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop();
         int nClonedItems = 0;
@@ -373,7 +373,7 @@ partial class JumpTable
             else
                 newArray.Add(item);
         engine.Push(newArray);
-        return new OpcodePriceParams { Length = newArray.Count, NClonedItems = nClonedItems };
+        return new OpCodePriceParams { Length = newArray.Count, NClonedItems = nClonedItems };
     }
 
     /// <summary>
@@ -385,7 +385,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? PickItem(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? PickItem(ExecutionEngine engine, Instruction instruction)
     {
         var key = engine.Pop<PrimitiveType>();
         var r1 = engine.ReferenceCounter.Count;
@@ -433,7 +433,7 @@ partial class JumpTable
         var n = engine.ReferenceCounter.Count - r2;
         if (item.Type == StackItemType.ByteString)
             n = ((ByteString)item).GetSpan().Length;
-        return new OpcodePriceParams { Type = item.Type, Length = n, RefsDelta = r1 - r2 };
+        return new OpCodePriceParams { Type = item.Type, Length = n, RefsDelta = r1 - r2 };
     }
 
     /// <summary>
@@ -444,7 +444,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Append(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Append(ExecutionEngine engine, Instruction instruction)
     {
         var r1 = engine.ReferenceCounter.Count;
         var newItem = engine.Pop();
@@ -455,7 +455,7 @@ partial class JumpTable
         var r2 = engine.ReferenceCounter.Count;
         if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
             engine.ReferenceCounter.AddStackReference(newItem);
-        return new OpcodePriceParams { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2, NClonedItems = nClonedItems };
+        return new OpCodePriceParams { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2, NClonedItems = nClonedItems };
     }
 
     /// <summary>
@@ -466,7 +466,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 3, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? SetItem(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? SetItem(ExecutionEngine engine, Instruction instruction)
     {
         var value = engine.Pop();
         var nClonedItems = 0;
@@ -523,7 +523,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
-        return new OpcodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, NClonedItems = nClonedItems };
+        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, NClonedItems = nClonedItems };
     }
 
     /// <summary>
@@ -534,7 +534,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? ReverseItems(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? ReverseItems(ExecutionEngine engine, Instruction instruction)
     {
         var r = engine.ReferenceCounter.Count;
         int l;
@@ -552,7 +552,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
-        return new OpcodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
+        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
     }
 
     /// <summary>
@@ -563,7 +563,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Remove(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Remove(ExecutionEngine engine, Instruction instruction)
     {
         var key = engine.Pop<PrimitiveType>();
         var r = engine.ReferenceCounter.Count;
@@ -593,7 +593,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
-        return new OpcodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
+        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -604,7 +604,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? ClearItems(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? ClearItems(ExecutionEngine engine, Instruction instruction)
     {
         var r = engine.ReferenceCounter.Count;
         var x = engine.Pop<CompoundType>();
@@ -616,7 +616,7 @@ partial class JumpTable
             }
         }
         x.Clear();
-        return new OpcodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
+        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -627,7 +627,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? PopItem(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? PopItem(ExecutionEngine engine, Instruction instruction)
     {
         var r1 = engine.ReferenceCounter.Count;
         var x = engine.Pop<VMArray>();
@@ -639,7 +639,7 @@ partial class JumpTable
         if (engine.ReferenceCounter.Version == RCVersion.V2)
         {
             if (!x.IsStackReferenced)
-                return new OpcodePriceParams { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2), Length = 1 };
+                return new OpCodePriceParams { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2), Length = 1 };
             engine.ReferenceCounter.RemoveStackReference(item);
         }
         return null;

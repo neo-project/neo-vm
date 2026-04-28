@@ -25,12 +25,12 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? NewBuffer(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? NewBuffer(ExecutionEngine engine, Instruction instruction)
     {
         int length = (int)engine.Pop().GetInteger();
         engine.Limits.AssertMaxItemSize(length);
         engine.Push(new Buffer(length));
-        return new OpcodePriceParams { Length = length };
+        return new OpCodePriceParams { Length = length };
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 5, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Memcpy(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Memcpy(ExecutionEngine engine, Instruction instruction)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -60,7 +60,7 @@ partial class JumpTable
             throw new InvalidOperationException($"The destination index + count is out of range for {nameof(OpCode.MEMCPY)}, index: {di}, count: {count}, {di}/[0, {dst.Size}].");
         // TODO: check if we can optimize the memcpy by using peek instead of dup then pop
         src.Slice(si, count).CopyTo(dst.InnerBuffer.Span[di..]);
-        return new OpcodePriceParams { Length = count };
+        return new OpCodePriceParams { Length = count };
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Cat(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Cat(ExecutionEngine engine, Instruction instruction)
     {
         var x2 = engine.Pop().GetSpan();
         var x1 = engine.Pop().GetSpan();
@@ -82,7 +82,7 @@ partial class JumpTable
         x1.CopyTo(result.InnerBuffer.Span);
         x2.CopyTo(result.InnerBuffer.Span[x1.Length..]);
         engine.Push(result);
-        return new OpcodePriceParams { Length = length };
+        return new OpCodePriceParams { Length = length };
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 3, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? SubStr(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? SubStr(ExecutionEngine engine, Instruction instruction)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -107,7 +107,7 @@ partial class JumpTable
         Buffer result = new(count, false);
         x.Slice(index, count).CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
-        return new OpcodePriceParams { Length = count };
+        return new OpCodePriceParams { Length = count };
     }
 
     /// <summary>
@@ -118,7 +118,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Left(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Left(ExecutionEngine engine, Instruction instruction)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -129,7 +129,7 @@ partial class JumpTable
         Buffer result = new(count, false);
         x[..count].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
-        return new OpcodePriceParams { Length = count };
+        return new OpCodePriceParams { Length = count };
     }
 
     /// <summary>
@@ -140,7 +140,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Right(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Right(ExecutionEngine engine, Instruction instruction)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -151,6 +151,6 @@ partial class JumpTable
         Buffer result = new(count, false);
         x[^count..^0].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
-        return new OpcodePriceParams { Length = count };
+        return new OpCodePriceParams { Length = count };
     }
 }

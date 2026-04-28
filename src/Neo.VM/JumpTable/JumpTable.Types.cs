@@ -25,7 +25,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? IsNull(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? IsNull(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop();
         engine.Push(x.IsNull);
@@ -40,7 +40,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? IsType(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? IsType(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop();
         var type = (StackItemType)instruction.TokenU8;
@@ -62,7 +62,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? Convert(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? Convert(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop();
         var fromType = x.Type;
@@ -71,14 +71,14 @@ partial class JumpTable
         if (fromType == StackItemType.Array && toType == StackItemType.Struct || fromType == StackItemType.Struct && toType == StackItemType.Array)
         {
             if (fromType == StackItemType.Array)
-                return new OpcodePriceParams { Type = StackItemType.Array, Length = ((Types.Array)x).Count };
-            return new OpcodePriceParams { Type = StackItemType.Struct, Length = ((Struct)x).Count };
+                return new OpCodePriceParams { Type = StackItemType.Array, Length = ((Types.Array)x).Count };
+            return new OpCodePriceParams { Type = StackItemType.Struct, Length = ((Struct)x).Count };
         }
         if (fromType == StackItemType.ByteString && toType == StackItemType.Buffer || fromType == StackItemType.Buffer && toType == StackItemType.ByteString)
         {
             if (fromType == StackItemType.ByteString)
-                return new OpcodePriceParams { Type = StackItemType.ByteString, Length = ((ByteString)x).GetSpan().Length };
-            return new OpcodePriceParams { Type = StackItemType.ByteString, Length = ((Types.Buffer)x).GetSpan().Length };
+                return new OpCodePriceParams { Type = StackItemType.ByteString, Length = ((ByteString)x).GetSpan().Length };
+            return new OpCodePriceParams { Type = StackItemType.ByteString, Length = ((Types.Buffer)x).GetSpan().Length };
         }
         return null;
     }
@@ -91,7 +91,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? AbortMsg(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? AbortMsg(ExecutionEngine engine, Instruction instruction)
     {
         var msg = engine.Pop().GetString();
         throw new Exception($"{OpCode.ABORTMSG} is executed. Reason: {msg}");
@@ -105,7 +105,7 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpcodePriceParams? AssertMsg(ExecutionEngine engine, Instruction instruction)
+    public virtual OpCodePriceParams? AssertMsg(ExecutionEngine engine, Instruction instruction)
     {
         var msg = engine.Pop().GetString();
         var x = engine.Pop().GetBoolean();

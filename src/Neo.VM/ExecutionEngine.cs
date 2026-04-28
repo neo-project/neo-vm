@@ -155,7 +155,7 @@ public class ExecutionEngine : IDisposable
                                   + " "
                                   + this.CurrentContext.EvaluationStack);
 #endif
-                OpcodePriceParams? priceArgs = null;
+                OpCodePriceParams? priceArgs = null;
                 try
                 {
                     priceArgs = JumpTable[instruction.OpCode](this, instruction);
@@ -300,7 +300,7 @@ public class ExecutionEngine : IDisposable
     /// <summary>
     /// Called after an instruction is executed.
     /// </summary>
-    protected virtual void PostExecuteInstruction(Instruction instruction, OpcodePriceParams? priceArgs)
+    protected virtual void PostExecuteInstruction(Instruction instruction, OpCodePriceParams? priceArgs)
     {
         ReferenceCounter.CheckPostExecution();
     }
