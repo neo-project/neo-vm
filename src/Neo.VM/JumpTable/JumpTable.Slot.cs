@@ -85,7 +85,6 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual OpCodePriceParams? LdSFld1(ExecutionEngine engine, Instruction instruction)
-
     {
         ExecuteLoadFromSlot(engine, engine.CurrentContext!.StaticFields, 1);
         return null;

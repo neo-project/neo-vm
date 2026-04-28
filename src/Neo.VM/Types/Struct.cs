@@ -48,7 +48,6 @@ public class Struct : Array
     /// <returns>The copied structure.</returns>
     public Struct Clone(ExecutionEngineLimits limits, out int nClonedItems)
     {
-        nClonedItems = 0;
         int count = (int)(limits.MaxStackSize - 1);
         Struct result = new(ReferenceCounter);
         Queue<Struct> queue = new();
