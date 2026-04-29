@@ -43,8 +43,9 @@ partial class JumpTable
             var value = engine.Pop();
             map[key] = value;
         }
+        var priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, Length = size };
         engine.Push(map);
-        return new OpCodePriceParams { RefsDelta = engine.ReferenceCounter.Count - r };
+        return priceParams;
     }
 
     /// <summary>
@@ -123,7 +124,7 @@ partial class JumpTable
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {compound.Type}");
         }
         engine.Push(compound.Count);
-        return new OpCodePriceParams { Type = compound.Type, Length = compound.Count };
+        return new OpCodePriceParams { Length = compound.Count };
     }
 
     /// <summary>
@@ -159,7 +160,7 @@ partial class JumpTable
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
         engine.Push(new VMArray(engine.ReferenceCounter, nullArray));
-        return null;
+        return new OpCodePriceParams { Type = StackItemType.Any, Length = n };
     }
 
     /// <summary>
@@ -228,7 +229,7 @@ partial class JumpTable
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
         engine.Push(new Struct(engine.ReferenceCounter, nullArray));
-        return new OpCodePriceParams { Length = n };
+        return new OpCodePriceParams { Type = StackItemType.Any, Length = n };
     }
 
     /// <summary>
@@ -430,10 +431,10 @@ partial class JumpTable
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
         engine.Push(item);
-        var n = engine.ReferenceCounter.Count - r2;
+        var l = 0;
         if (item.Type == StackItemType.ByteString)
-            n = ((ByteString)item).GetSpan().Length;
-        return new OpCodePriceParams { Type = item.Type, Length = n, RefsDelta = r1 - r2 };
+            l = ((ByteString)item).GetSpan().Length;
+        return new OpCodePriceParams { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2, Length = l };
     }
 
     /// <summary>
@@ -552,7 +553,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
-        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
+        return new OpCodePriceParams { Type = x.Type, RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
     }
 
     /// <summary>
@@ -593,7 +594,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
-        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
+        return new OpCodePriceParams { Type = x.Type, RefsDelta = r - engine.ReferenceCounter.Count, Length = 1 };
     }
 
     /// <summary>
@@ -639,7 +640,7 @@ partial class JumpTable
         if (engine.ReferenceCounter.Version == RCVersion.V2)
         {
             if (!x.IsStackReferenced)
-                return new OpCodePriceParams { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2), Length = 1 };
+                return new OpCodePriceParams { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2) };
             engine.ReferenceCounter.RemoveStackReference(item);
         }
         return null;

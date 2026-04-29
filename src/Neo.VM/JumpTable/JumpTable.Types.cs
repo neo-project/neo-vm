@@ -27,9 +27,10 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual OpCodePriceParams? IsNull(ExecutionEngine engine, Instruction instruction)
     {
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         engine.Push(x.IsNull);
-        return null;
+        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -42,6 +43,7 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual OpCodePriceParams? IsType(ExecutionEngine engine, Instruction instruction)
     {
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         var type = (StackItemType)instruction.TokenU8;
 #if NET5_0_OR_GREATER
@@ -51,7 +53,7 @@ partial class JumpTable
 #endif
             throw new InvalidOperationException($"Invalid type: {type}");
         engine.Push(x.Type == type);
-        return null;
+        return new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -78,7 +80,7 @@ partial class JumpTable
         {
             if (fromType == StackItemType.ByteString)
                 return new OpCodePriceParams { Type = StackItemType.ByteString, Length = ((ByteString)x).GetSpan().Length };
-            return new OpCodePriceParams { Type = StackItemType.ByteString, Length = ((Types.Buffer)x).GetSpan().Length };
+            return new OpCodePriceParams { Type = StackItemType.Buffer, Length = ((Types.Buffer)x).GetSpan().Length };
         }
         return null;
     }
