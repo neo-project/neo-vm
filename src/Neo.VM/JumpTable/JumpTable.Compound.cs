@@ -569,6 +569,7 @@ partial class JumpTable
         var key = engine.Pop<PrimitiveType>();
         var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
+        var l = 0;
         switch (x)
         {
             case VMArray array:
@@ -579,7 +580,7 @@ partial class JumpTable
                 var i = (int)index;
                 var item = array[i];
                 array.RemoveAt(i);
-
+                l = array.Count - i;
                 if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
                     engine.ReferenceCounter.RemoveStackReference(item);
                 break;
@@ -594,7 +595,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
-        return new OpCodePriceParams { Type = x.Type, RefsDelta = r - engine.ReferenceCounter.Count, Length = 1 };
+        return new OpCodePriceParams { Type = x.Type, RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
     }
 
     /// <summary>
