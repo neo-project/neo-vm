@@ -35,12 +35,6 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
     }
 
     /// <inheritdoc/>
-    public void AddReference(StackItem item, CompoundType parent)
-    {
-        throw new NotSupportedException();
-    }
-
-    /// <inheritdoc/>
     public void AddStackReference(StackItem item, int count = 1)
     {
         // Increment the reference count by the specified count.
@@ -62,28 +56,10 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
     }
 
     /// <inheritdoc/>
-    public void AddZeroReferred(StackItem item)
-    {
-        throw new NotSupportedException();
-    }
-
-    /// <inheritdoc/>
     public void CheckPostExecution()
     {
         if (Count > _limits.MaxStackSize)
             throw new InvalidOperationException($"MaxStackSize exceed: {Count}/{_limits.MaxStackSize}");
-    }
-
-    /// <inheritdoc/>
-    public int CheckZeroReferred()
-    {
-        throw new NotSupportedException();
-    }
-
-    /// <inheritdoc/>
-    public void RemoveReference(StackItem item, CompoundType parent)
-    {
-        throw new NotSupportedException();
     }
 
     /// <inheritdoc/>

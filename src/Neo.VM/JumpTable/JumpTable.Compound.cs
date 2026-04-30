@@ -35,7 +35,7 @@ partial class JumpTable
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size * 2 > engine.CurrentContext!.EvaluationStack.Count)
             throw new InvalidOperationException($"The map size is out of valid range, 2*{size}/[0, {engine.CurrentContext!.EvaluationStack.Count}].");
-        Map map = new(engine.ReferenceCounter);
+        Map map = new();
         for (var i = 0; i < size; i++)
         {
             var key = engine.Pop<PrimitiveType>();
@@ -58,7 +58,7 @@ partial class JumpTable
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size > engine.CurrentContext!.EvaluationStack.Count)
             throw new InvalidOperationException($"The struct size is out of valid range, {size}/[0, {engine.CurrentContext!.EvaluationStack.Count}].");
-        Struct @struct = new(engine.ReferenceCounter);
+        Struct @struct = new();
         for (var i = 0; i < size; i++)
         {
             var item = engine.Pop();
@@ -80,7 +80,7 @@ partial class JumpTable
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size > engine.CurrentContext!.EvaluationStack.Count)
             throw new InvalidOperationException($"The array size is out of valid range, {size}/[0, {engine.CurrentContext!.EvaluationStack.Count}].");
-        VMArray array = new(engine.ReferenceCounter);
+        VMArray array = new();
         for (var i = 0; i < size; i++)
         {
             var item = engine.Pop();
@@ -134,7 +134,7 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void NewArray0(ExecutionEngine engine, Instruction instruction)
     {
-        engine.Push(new VMArray(engine.ReferenceCounter));
+        engine.Push(new VMArray());
     }
 
     /// <summary>
@@ -152,7 +152,7 @@ partial class JumpTable
             throw new InvalidOperationException($"The array size is out of valid range, {n}/[0, {engine.Limits.MaxStackSize}].");
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
-        engine.Push(new VMArray(engine.ReferenceCounter, nullArray));
+        engine.Push(new VMArray(nullArray));
     }
 
     /// <summary>
@@ -182,7 +182,7 @@ partial class JumpTable
         };
         var itemArray = new StackItem[n];
         Array.Fill(itemArray, item);
-        engine.Push(new VMArray(engine.ReferenceCounter, itemArray));
+        engine.Push(new VMArray(itemArray));
     }
 
     /// <summary>
@@ -195,7 +195,7 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void NewStruct0(ExecutionEngine engine, Instruction instruction)
     {
-        engine.Push(new Struct(engine.ReferenceCounter));
+        engine.Push(new Struct());
     }
 
     /// <summary>
@@ -214,7 +214,7 @@ partial class JumpTable
 
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
-        engine.Push(new Struct(engine.ReferenceCounter, nullArray));
+        engine.Push(new Struct(nullArray));
     }
 
     /// <summary>
@@ -227,7 +227,7 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void NewMap(ExecutionEngine engine, Instruction instruction)
     {
-        engine.Push(new Map(engine.ReferenceCounter));
+        engine.Push(new Map());
     }
 
     /// <summary>
@@ -322,7 +322,7 @@ partial class JumpTable
     public virtual void Keys(ExecutionEngine engine, Instruction instruction)
     {
         var map = engine.Pop<Map>();
-        engine.Push(new VMArray(engine.ReferenceCounter, map.Keys));
+        engine.Push(new VMArray(map.Keys));
     }
 
     /// <summary>
@@ -342,7 +342,7 @@ partial class JumpTable
             Map map => map.Values,
             _ => throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}"),
         };
-        VMArray newArray = new(engine.ReferenceCounter);
+        VMArray newArray = new();
         foreach (var item in values)
             if (item is Struct s)
                 newArray.Add(s.Clone(engine.Limits));

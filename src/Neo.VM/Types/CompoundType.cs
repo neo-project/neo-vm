@@ -22,26 +22,24 @@ namespace Neo.VM.Types;
 public abstract class CompoundType : StackItem
 {
     /// <summary>
-    /// The reference counter used to count the items in the VM object.
+    /// Create a new <see cref="CompoundType"/>.
     /// </summary>
-    protected internal readonly IReferenceCounter? ReferenceCounter;
+    protected CompoundType() { }
 
     /// <summary>
-    /// Create a new <see cref="CompoundType"/> with the specified reference counter.
+    /// The number of references to this StackItem from the evaluation stack.
+    ///
+    /// This field tracks how many times this item is referenced by the evaluation stack.
+    /// It is incremented when the item is pushed onto the stack and decremented when it is popped off.
+    ///
+    /// Use this field to manage stack references and determine when an item is no longer needed.
     /// </summary>
-    /// <param name="referenceCounter">The reference counter to be used.</param>
-    protected CompoundType(IReferenceCounter? referenceCounter = null)
-    {
-        if (referenceCounter?.Version == RCVersion.V1)
-        {
-            ReferenceCounter = referenceCounter;
-            referenceCounter.AddZeroReferred(this);
-        }
-        else
-        {
-            ReferenceCounter = null;
-        }
-    }
+    internal int StackReferences = 0;
+
+    /// <summary>
+    /// Indicates whether this <see cref="StackItem"/> is referenced from any VM stack roots.
+    /// </summary>
+    internal bool IsStackReferenced => StackReferences != 0;
 
     /// <summary>
     /// The number of items in this VM object.
