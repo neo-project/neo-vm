@@ -26,11 +26,7 @@ public class Null : StackItem
 
     public override StackItem ConvertTo(StackItemType type)
     {
-#if NET5_0_OR_GREATER
         if (type == StackItemType.Any || !Enum.IsDefined(type))
-#else
-        if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
-#endif
             throw new InvalidCastException($"Type {nameof(Null)} can't be converted to StackItemType: {type}");
         return this;
     }

@@ -125,11 +125,7 @@ public class Script
                     case OpCode.ISTYPE:
                     case OpCode.CONVERT:
                         var type = (StackItemType)instruction.TokenU8;
-#if NET5_0_OR_GREATER
                         if (!Enum.IsDefined(type))
-#else
-                        if (!Enum.IsDefined(typeof(StackItemType), type))
-#endif
                             throw new BadScriptException();
                         if (instruction.OpCode != OpCode.NEWARRAY_T && type == StackItemType.Any)
                             throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
@@ -151,11 +147,7 @@ public class Script
     {
         if (!_instructions.TryGetValue(ip, out var instruction))
         {
-#if NET5_0_OR_GREATER
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(ip, Length);
-#else
-            if (ip >= Length) throw new ArgumentOutOfRangeException(nameof(ip));
-#endif
             if (_strictMode) throw new ArgumentException($"Instruction not found at position {ip} in strict mode.", nameof(ip));
             instruction = new Instruction(_value, ip);
             _instructions.Add(ip, instruction);

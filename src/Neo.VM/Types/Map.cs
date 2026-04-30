@@ -28,11 +28,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// </summary>
     public const int MaxKeySize = 64;
 
-#if NET5_0_OR_GREATER
     private readonly OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
-#else
-    private readonly Collections.OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
-#endif
 
     /// <summary>
     /// Gets or sets the element that has the specified key in the map.
@@ -190,11 +186,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// <see langword="true" /> if the map contains an element that has the specified key;
     /// otherwise, <see langword="false"/>.
     /// </returns>
-#if NET5_0_OR_GREATER
     public bool TryGetValue(PrimitiveType key, [MaybeNullWhen(false)] out StackItem value)
-#else
-    public bool TryGetValue(PrimitiveType key, out StackItem value)
-#endif
     {
         if (key.Size > MaxKeySize)
             throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
