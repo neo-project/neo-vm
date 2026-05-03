@@ -141,11 +141,13 @@ public class ExecutionEngine : IDisposable
         }
         else
         {
+            ExecutionContext context = CurrentContext!;
+            Instruction? currentInstruction = context.CurrentInstruction;
+            Instruction instruction = currentInstruction ?? Instruction.RET;
+            OpCodePriceParams? priceParams = null;
+            bool postExecuted = false;
             try
             {
-                ExecutionContext context = CurrentContext!;
-                Instruction? currentInstruction = context.CurrentInstruction;
-                Instruction instruction = currentInstruction ?? Instruction.RET;
                 PreExecuteInstruction(instruction);
 #if VMPERF
                 Console.WriteLine("op:["
@@ -155,16 +157,21 @@ public class ExecutionEngine : IDisposable
                                   + " "
                                   + this.CurrentContext.EvaluationStack);
 #endif
-                OpCodePriceParams? priceArgs = null;
                 try
                 {
-                    priceArgs = JumpTable[instruction.OpCode](this, instruction);
+                    JumpTable[instruction.OpCode](this, instruction, out priceParams);
                 }
                 catch (CatchableException ex) when (Limits.CatchEngineExceptions)
                 {
                     JumpTable.ExecuteThrow(this, ex.Message);
+                    postExecuted = true;
+                    PostExecuteInstruction(instruction, priceParams);
                 }
-                PostExecuteInstruction(instruction, priceArgs);
+                if (!postExecuted)
+                {
+                    postExecuted = true;
+                    PostExecuteInstruction(instruction, priceParams);
+                }
                 if (!isJumping && currentInstruction != null)
                     context.InstructionPointer += instruction.Size;
                 isJumping = false;
@@ -172,6 +179,10 @@ public class ExecutionEngine : IDisposable
             catch (Exception e)
             {
                 OnFault(e);
+                if (!postExecuted)
+                {
+                    PostExecuteInstruction(instruction, priceParams);
+                }
             }
         }
     }

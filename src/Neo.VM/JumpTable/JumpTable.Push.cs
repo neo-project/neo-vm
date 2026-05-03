@@ -24,11 +24,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushInt8(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushInt8(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(new BigInteger(instruction.Operand.Span));
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -37,11 +38,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushInt16(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushInt16(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(new BigInteger(instruction.Operand.Span));
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -50,11 +52,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushInt32(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushInt32(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(new BigInteger(instruction.Operand.Span));
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -63,11 +66,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushInt64(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushInt64(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(new BigInteger(instruction.Operand.Span));
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -76,11 +80,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushInt128(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushInt128(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(new BigInteger(instruction.Operand.Span));
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -89,11 +94,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushInt256(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushInt256(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(new BigInteger(instruction.Operand.Span));
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -102,11 +108,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushT(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushT(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(StackItem.True);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -115,11 +122,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushF(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushF(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(StackItem.False);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -128,14 +136,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushA(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushA(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var position = checked(engine.CurrentContext!.InstructionPointer + instruction.TokenI32);
         if (position < 0 || position > engine.CurrentContext.Script.Length)
             throw new InvalidOperationException($"Bad pointer address(Instruction instruction) {position}");
         engine.Push(new Pointer(engine.CurrentContext.Script, position));
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -144,11 +153,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushNull(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushNull(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(StackItem.Null);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -158,12 +168,13 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushData1(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushData1(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Limits.AssertMaxItemSize(instruction.Operand.Length);
         engine.Push(instruction.Operand);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -173,12 +184,13 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushData2(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushData2(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Limits.AssertMaxItemSize(instruction.Operand.Length);
         engine.Push(instruction.Operand);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -188,12 +200,13 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushData4(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushData4(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Limits.AssertMaxItemSize(instruction.Operand.Length);
         engine.Push(instruction.Operand);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -202,11 +215,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? PushM1(ExecutionEngine engine, Instruction instruction)
+    public virtual void PushM1(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(-1);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -215,11 +229,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push0(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push0(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(0);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -228,11 +243,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push1(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push1(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(1);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -241,11 +257,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push2(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push2(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(2);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -254,11 +271,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push3(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push3(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(3);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -267,11 +285,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push4(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push4(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(4);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -280,11 +299,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push5(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push5(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(5);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -293,11 +313,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push6(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push6(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(6);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -306,11 +327,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push7(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push7(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(7);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -319,11 +341,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push8(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push8(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(8);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -332,11 +355,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push9(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push9(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(9);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -345,11 +369,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push10(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push10(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(10);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -358,11 +383,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push11(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push11(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(11);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -371,11 +397,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push12(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push12(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(12);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -384,11 +411,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push13(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push13(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(13);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -397,11 +425,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push14(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push14(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(14);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -410,11 +439,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push15(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push15(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(15);
-        return null;
+        priceParams = null;
     }
 
     /// <summary>
@@ -423,10 +453,11 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual OpCodePriceParams? Push16(ExecutionEngine engine, Instruction instruction)
+    public virtual void Push16(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(16);
-        return null;
+        priceParams = null;
     }
 }
