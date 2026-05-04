@@ -658,6 +658,7 @@ partial class JumpTable
         var r2 = engine.ReferenceCounter.Count;
         engine.Push(item);
         x.RemoveAt(index);
+        priceParams = null;
         if (engine.ReferenceCounter.Version == RCVersion.V2)
         {
             if (!x.IsStackReferenced)
@@ -665,6 +666,5 @@ partial class JumpTable
             else
                 engine.ReferenceCounter.RemoveStackReference(item);
         }
-        priceParams = null;
     }
 }
