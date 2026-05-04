@@ -141,13 +141,14 @@ public class ExecutionEngine : IDisposable
         }
         else
         {
-            ExecutionContext context = CurrentContext!;
-            Instruction? currentInstruction = context.CurrentInstruction;
-            Instruction instruction = currentInstruction ?? Instruction.RET;
             OpCodePriceParams? priceParams = null;
             bool postExecuted = false;
+            Instruction instruction = Instruction.RET;
             try
             {
+                ExecutionContext context = CurrentContext!;
+                Instruction? currentInstruction = context.CurrentInstruction;
+                instruction = currentInstruction ?? Instruction.RET;
                 PreExecuteInstruction(instruction);
 #if VMPERF
                 Console.WriteLine("op:["

@@ -86,7 +86,6 @@ public sealed partial class ExecutionContext
     /// </summary>
     public Instruction? CurrentInstruction
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get
         {
             return GetInstruction(InstructionPointer);
