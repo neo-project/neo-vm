@@ -12,6 +12,7 @@
 using Neo.VM.Types;
 using System;
 using System.Runtime.CompilerServices;
+using System.Xml.Schema;
 
 namespace Neo.VM;
 
@@ -80,9 +81,9 @@ partial class JumpTable
         else if (fromType == StackItemType.ByteString && toType == StackItemType.Buffer || fromType == StackItemType.Buffer && toType == StackItemType.ByteString)
         {
             if (fromType == StackItemType.ByteString)
-                priceParams = new OpCodePriceParams { Type = StackItemType.ByteString, Length = ((ByteString)x).GetSpan().Length };
+                priceParams = new OpCodePriceParams { Type = StackItemType.ByteString, Length = ((ByteString)x).Size };
             else
-                priceParams = new OpCodePriceParams { Type = StackItemType.Buffer, Length = ((Types.Buffer)x).GetSpan().Length };
+                priceParams = new OpCodePriceParams { Type = StackItemType.Buffer, Length = ((Types.Buffer)x).Size };
         }
         else
             priceParams = null;
