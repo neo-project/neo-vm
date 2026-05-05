@@ -43,11 +43,7 @@ partial class JumpTable
     {
         var x = engine.Pop();
         var type = (StackItemType)instruction.TokenU8;
-#if NET5_0_OR_GREATER
         if (type == StackItemType.Any || !Enum.IsDefined(type))
-#else
-        if (type == StackItemType.Any || !Enum.IsDefined(typeof(StackItemType), type))
-#endif
             throw new InvalidOperationException($"Invalid type: {type}");
         engine.Push(x.Type == type);
     }

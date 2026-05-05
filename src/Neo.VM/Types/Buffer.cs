@@ -78,11 +78,7 @@ public class Buffer : StackItem
                     throw new InvalidCastException();
                 return new BigInteger(InnerBuffer.Span);
             case StackItemType.ByteString:
-#if NET5_0_OR_GREATER
                 byte[] clone = GC.AllocateUninitializedArray<byte>(InnerBuffer.Length);
-#else
-                byte[] clone = new byte[InnerBuffer.Length];
-#endif
                 InnerBuffer.CopyTo(clone);
                 return clone;
             default:

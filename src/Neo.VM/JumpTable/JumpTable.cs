@@ -49,11 +49,7 @@ public partial class JumpTable
                     throw new InvalidOperationException($"Opcode {opCode} is already defined.");
                 }
 
-#if NET5_0_OR_GREATER
                 Table[(byte)opCode] = mi.CreateDelegate<DelAction>(this);
-#else
-                Table[(byte)opCode] = (DelAction)mi.CreateDelegate(typeof(DelAction), this);
-#endif
             }
         }
 
