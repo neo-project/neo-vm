@@ -164,6 +164,24 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     }
 
     /// <summary>
+    /// Roll brings an item with the given index to the top of the stack moving all
+    /// other elements down accordingly. It does all of that without popping and
+    /// pushing elements.
+    /// </summary>
+    /// <param name="index">Index elem.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal void Roll(int index)
+    {
+        if (index < 0 || index >= _innerList.Count)
+            throw new ArgumentOutOfRangeException(nameof(index), $"Out of stack bounds: {index}/{_innerList.Count}");
+        if (index == 0)
+            return;
+        var item = _innerList[_innerList.Count - 1 - index];
+        _innerList.RemoveAt(_innerList.Count - 1 - index);
+        _innerList.Add(item);
+    }
+
+    /// <summary>
     /// Removes and returns the item at the top of the stack with reference counting.
     /// </summary>
     /// <returns>The item removed from the top of the stack.</returns>
