@@ -12,6 +12,7 @@
 using Neo.VM.Types;
 using System;
 using System.Runtime.CompilerServices;
+using System.Xml.Schema;
 
 namespace Neo.VM;
 
@@ -23,12 +24,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void IsNull(ExecutionEngine engine, Instruction instruction)
+    public virtual void IsNull(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         engine.Push(x.IsNull);
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -37,10 +41,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void IsType(ExecutionEngine engine, Instruction instruction)
+    public virtual void IsType(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         var type = (StackItemType)instruction.TokenU8;
 #if NET5_0_OR_GREATER
@@ -50,6 +56,7 @@ partial class JumpTable
 #endif
             throw new InvalidOperationException($"Invalid type: {type}");
         engine.Push(x.Type == type);
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -58,12 +65,28 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Convert(ExecutionEngine engine, Instruction instruction)
+    public virtual void Convert(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var x = engine.Pop();
-        engine.Push(x.ConvertTo((StackItemType)instruction.TokenU8));
+        var fromType = x.Type;
+        var toType = (StackItemType)instruction.TokenU8;
+        engine.Push(x.ConvertTo(toType));
+        if (fromType == StackItemType.Array && toType == StackItemType.Struct || fromType == StackItemType.Struct && toType == StackItemType.Array)
+        {
+            priceParams = new OpCodePriceParams { Type = fromType, Length = ((CompoundType)x).Count };
+        }
+        else if (fromType == StackItemType.ByteString && toType == StackItemType.Buffer || fromType == StackItemType.Buffer && toType == StackItemType.ByteString)
+        {
+            if (fromType == StackItemType.ByteString)
+                priceParams = new OpCodePriceParams { Type = StackItemType.ByteString, Length = ((ByteString)x).Size };
+            else
+                priceParams = new OpCodePriceParams { Type = StackItemType.Buffer, Length = ((Types.Buffer)x).Size };
+        }
+        else
+            priceParams = null;
     }
 
     /// <summary>
@@ -72,9 +95,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void AbortMsg(ExecutionEngine engine, Instruction instruction)
+    public virtual void AbortMsg(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var msg = engine.Pop().GetString();
         throw new Exception($"{OpCode.ABORTMSG} is executed. Reason: {msg}");
@@ -86,13 +110,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void AssertMsg(ExecutionEngine engine, Instruction instruction)
+    public virtual void AssertMsg(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var msg = engine.Pop().GetString();
         var x = engine.Pop().GetBoolean();
         if (!x)
             throw new Exception($"{OpCode.ASSERTMSG} is executed with false result. Reason: {msg}");
+        priceParams = null;
     }
 }

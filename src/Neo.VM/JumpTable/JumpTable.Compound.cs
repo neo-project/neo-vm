@@ -28,20 +28,23 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2n+1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void PackMap(ExecutionEngine engine, Instruction instruction)
+    public virtual void PackMap(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size * 2 > engine.CurrentContext!.EvaluationStack.Count)
             throw new InvalidOperationException($"The map size is out of valid range, 2*{size}/[0, {engine.CurrentContext!.EvaluationStack.Count}].");
         Map map = new(engine.ReferenceCounter);
+        var r = engine.ReferenceCounter.Count;
         for (var i = 0; i < size; i++)
         {
             var key = engine.Pop<PrimitiveType>();
             var value = engine.Pop();
             map[key] = value;
         }
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, Length = size };
         engine.Push(map);
     }
 
@@ -51,9 +54,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop n+1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void PackStruct(ExecutionEngine engine, Instruction instruction)
+    public virtual void PackStruct(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size > engine.CurrentContext!.EvaluationStack.Count)
@@ -65,6 +69,7 @@ partial class JumpTable
             @struct.Add(item);
         }
         engine.Push(@struct);
+        priceParams = new OpCodePriceParams { Length = size };
     }
 
     /// <summary>
@@ -73,9 +78,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop n+1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Pack(ExecutionEngine engine, Instruction instruction)
+    public virtual void Pack(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size > engine.CurrentContext!.EvaluationStack.Count)
@@ -87,6 +93,7 @@ partial class JumpTable
             array.Add(item);
         }
         engine.Push(array);
+        priceParams = new OpCodePriceParams { Length = size };
     }
 
     /// <summary>
@@ -95,9 +102,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 2n+1 or n+1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Unpack(ExecutionEngine engine, Instruction instruction)
+    public virtual void Unpack(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var compound = engine.Pop<CompoundType>();
         switch (compound)
@@ -119,6 +127,7 @@ partial class JumpTable
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {compound.Type}");
         }
         engine.Push(compound.Count);
+        priceParams = new OpCodePriceParams { Length = compound.Count };
     }
 
     /// <summary>
@@ -127,14 +136,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>
     /// Pop 0, Push 1
     /// TODO: Change to NewNullArray method or add it?
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void NewArray0(ExecutionEngine engine, Instruction instruction)
+    public virtual void NewArray0(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(new VMArray(engine.ReferenceCounter));
+        priceParams = null;
     }
 
     /// <summary>
@@ -143,9 +154,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void NewArray(ExecutionEngine engine, Instruction instruction)
+    public virtual void NewArray(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var n = (int)engine.Pop().GetInteger();
         if (n < 0 || n > engine.Limits.MaxStackSize)
@@ -153,6 +165,7 @@ partial class JumpTable
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
         engine.Push(new VMArray(engine.ReferenceCounter, nullArray));
+        priceParams = new OpCodePriceParams { Type = StackItemType.Any, Length = n };
     }
 
     /// <summary>
@@ -161,9 +174,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void NewArray_T(ExecutionEngine engine, Instruction instruction)
+    public virtual void NewArray_T(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var n = (int)engine.Pop().GetInteger();
         if (n < 0 || n > engine.Limits.MaxStackSize)
@@ -187,6 +201,7 @@ partial class JumpTable
         var itemArray = new StackItem[n];
         Array.Fill(itemArray, item);
         engine.Push(new VMArray(engine.ReferenceCounter, itemArray));
+        priceParams = new OpCodePriceParams { Type = type, Length = n };
     }
 
     /// <summary>
@@ -195,11 +210,13 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 0, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void NewStruct0(ExecutionEngine engine, Instruction instruction)
+    public virtual void NewStruct0(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(new Struct(engine.ReferenceCounter));
+        priceParams = null;
     }
 
     /// <summary>
@@ -208,9 +225,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void NewStruct(ExecutionEngine engine, Instruction instruction)
+    public virtual void NewStruct(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var n = (int)engine.Pop().GetInteger();
         if (n < 0 || n > engine.Limits.MaxStackSize)
@@ -219,6 +237,7 @@ partial class JumpTable
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
         engine.Push(new Struct(engine.ReferenceCounter, nullArray));
+        priceParams = new OpCodePriceParams { Type = StackItemType.Any, Length = n };
     }
 
     /// <summary>
@@ -227,11 +246,13 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 0, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void NewMap(ExecutionEngine engine, Instruction instruction)
+    public virtual void NewMap(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         engine.Push(new Map(engine.ReferenceCounter));
+        priceParams = null;
     }
 
     /// <summary>
@@ -240,10 +261,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Size(ExecutionEngine engine, Instruction instruction)
+    public virtual void Size(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
+        var r = engine.ReferenceCounter.Count;
         // TODO: we should be able to optimize by using peek instead of dup and pop
         var x = engine.Pop();
         switch (x)
@@ -260,6 +283,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -268,11 +292,13 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void HasKey(ExecutionEngine engine, Instruction instruction)
+    public virtual void HasKey(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var key = engine.Pop<PrimitiveType>();
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         // Check the type of the top item and perform the corresponding action.
         switch (x)
@@ -313,6 +339,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -321,12 +348,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Keys(ExecutionEngine engine, Instruction instruction)
+    public virtual void Keys(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var map = engine.Pop<Map>();
         engine.Push(new VMArray(engine.ReferenceCounter, map.Keys));
+        priceParams = new OpCodePriceParams { Length = map.Count };
     }
 
     /// <summary>
@@ -335,11 +364,13 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Values(ExecutionEngine engine, Instruction instruction)
+    public virtual void Values(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var x = engine.Pop();
+        int nClonedItems = 0;
         var values = x switch
         {
             VMArray array => array,
@@ -349,10 +380,14 @@ partial class JumpTable
         VMArray newArray = new(engine.ReferenceCounter);
         foreach (var item in values)
             if (item is Struct s)
-                newArray.Add(s.Clone(engine.Limits));
+            {
+                newArray.Add(s.Clone(engine.Limits, out int n));
+                nClonedItems += n;
+            }
             else
                 newArray.Add(item);
         engine.Push(newArray);
+        priceParams = new OpCodePriceParams { Length = newArray.Count, NClonedItems = nClonedItems };
     }
 
     /// <summary>
@@ -362,12 +397,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void PickItem(ExecutionEngine engine, Instruction instruction)
+    public virtual void PickItem(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var key = engine.Pop<PrimitiveType>();
+        var r1 = engine.ReferenceCounter.Count;
         var x = engine.Pop();
+        var r2 = engine.ReferenceCounter.Count;
+        StackItem item;
         switch (x)
         {
             case VMArray array:
@@ -375,14 +414,14 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
-                    engine.Push(array[(int)index]);
+                    item = array[(int)index];
                     break;
                 }
             case Map map:
                 {
                     if (!map.TryGetValue(key, out var value))
                         throw new CatchableException($"Key {key} not found in {nameof(Map)}.");
-                    engine.Push(value);
+                    item = value;
                     break;
                 }
             case PrimitiveType primitive:
@@ -391,7 +430,7 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= byteArray.Length)
                         throw new CatchableException($"The index of {nameof(PrimitiveType)} is out of range, {index}/[0, {byteArray.Length}).");
-                    engine.Push((BigInteger)byteArray[(int)index]);
+                    item = (BigInteger)byteArray[(int)index];
                     break;
                 }
             case Buffer buffer:
@@ -399,12 +438,17 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
-                    engine.Push((BigInteger)buffer.InnerBuffer.Span[(int)index]);
+                    item = (BigInteger)buffer.InnerBuffer.Span[(int)index];
                     break;
                 }
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        engine.Push(item);
+        var l = 0;
+        if (item.Type == StackItemType.ByteString)
+            l = ((ByteString)item).GetSpan().Length;
+        priceParams = new OpCodePriceParams { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2, Length = l };
     }
 
     /// <summary>
@@ -413,16 +457,21 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Append(ExecutionEngine engine, Instruction instruction)
+    public virtual void Append(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
+        var r1 = engine.ReferenceCounter.Count;
         var newItem = engine.Pop();
         var array = engine.Pop<VMArray>();
-        if (newItem is Struct s) newItem = s.Clone(engine.Limits);
+        var nClonedItems = 0;
+        if (newItem is Struct s) newItem = s.Clone(engine.Limits, out nClonedItems);
         array.Add(newItem);
+        var r2 = engine.ReferenceCounter.Count;
         if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
             engine.ReferenceCounter.AddStackReference(newItem);
+        priceParams = new OpCodePriceParams { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2, NClonedItems = nClonedItems };
     }
 
     /// <summary>
@@ -431,13 +480,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 3, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void SetItem(ExecutionEngine engine, Instruction instruction)
+    public virtual void SetItem(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var value = engine.Pop();
-        if (value is Struct s) value = s.Clone(engine.Limits);
+        var nClonedItems = 0;
+        if (value is Struct s) value = s.Clone(engine.Limits, out nClonedItems);
         var key = engine.Pop<PrimitiveType>();
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         var isRC2 = engine.ReferenceCounter.Version == RCVersion.V2;
         switch (x)
@@ -488,6 +540,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, NClonedItems = nClonedItems };
     }
 
     /// <summary>
@@ -496,22 +549,28 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void ReverseItems(ExecutionEngine engine, Instruction instruction)
+    public virtual void ReverseItems(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
+        var r = engine.ReferenceCounter.Count;
+        int l;
         var x = engine.Pop();
         switch (x)
         {
             case VMArray array:
                 array.Reverse();
+                l = array.Count;
                 break;
             case Buffer buffer:
                 buffer.InnerBuffer.Span.Reverse();
+                l = buffer.Size;
                 break;
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        priceParams = new OpCodePriceParams { Type = x.Type, RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
     }
 
     /// <summary>
@@ -520,12 +579,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Remove(ExecutionEngine engine, Instruction instruction)
+    public virtual void Remove(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
         var key = engine.Pop<PrimitiveType>();
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
+        var l = 0;
         switch (x)
         {
             case VMArray array:
@@ -536,7 +598,7 @@ partial class JumpTable
                 var i = (int)index;
                 var item = array[i];
                 array.RemoveAt(i);
-
+                l = array.Count - i;
                 if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
                     engine.ReferenceCounter.RemoveStackReference(item);
                 break;
@@ -551,6 +613,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        priceParams = new OpCodePriceParams { Type = x.Type, RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
     }
 
     /// <summary>
@@ -559,10 +622,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void ClearItems(ExecutionEngine engine, Instruction instruction)
+    public virtual void ClearItems(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop<CompoundType>();
         if (engine.ReferenceCounter.Version == RCVersion.V2 && x.IsStackReferenced)
         {
@@ -572,6 +637,7 @@ partial class JumpTable
             }
         }
         x.Clear();
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -580,16 +646,25 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void PopItem(ExecutionEngine engine, Instruction instruction)
+    public virtual void PopItem(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
+        var r1 = engine.ReferenceCounter.Count;
         var x = engine.Pop<VMArray>();
         var index = x.Count - 1;
         var item = x[index];
+        var r2 = engine.ReferenceCounter.Count;
         engine.Push(item);
         x.RemoveAt(index);
-        if (engine.ReferenceCounter.Version == RCVersion.V2 && x.IsStackReferenced)
-            engine.ReferenceCounter.RemoveStackReference(item);
+        priceParams = null;
+        if (engine.ReferenceCounter.Version == RCVersion.V2)
+        {
+            if (!x.IsStackReferenced)
+                priceParams = new OpCodePriceParams { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2) };
+            else
+                engine.ReferenceCounter.RemoveStackReference(item);
+        }
     }
 }
