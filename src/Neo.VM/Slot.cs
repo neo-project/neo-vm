@@ -75,6 +75,22 @@ public class Slot : IReadOnlyList<StackItem>
         referenceCounter.AddStackReference(StackItem.Null, count);
     }
 
+    /// <summary>
+    /// Creates a slot containing the specified items.
+    /// </summary>
+    /// <param name="stack">The items to be contained.</param>
+    /// <param name="n">The number items for initalizing slot.</param>
+    /// <param name="referenceCounter">The reference counter to be used.</param>
+    public Slot(EvaluationStack stack, int n, IReferenceCounter referenceCounter)
+    {
+        _referenceCounter = referenceCounter;
+        _items = new StackItem[n];
+        for (int i = 0; i < n; i++)
+        {
+            _items[i] = stack.PopNoRef();
+        }
+    }
+
     internal void ClearReferences()
     {
         foreach (StackItem item in _items)
