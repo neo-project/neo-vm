@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using Neo.VM.Types;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array = System.Array;
@@ -95,6 +96,17 @@ public class Slot : IReadOnlyList<StackItem>
     {
         foreach (StackItem item in _items)
             _referenceCounter.RemoveStackReference(item);
+    }
+
+    internal void Store(EvaluationStack stack, int index)
+    {
+        if (index < 0 || index >= _items.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), $"Out of stack bounds: {index}/{_items.Length}");
+        }
+        _referenceCounter.RemoveStackReference(_items[index]);
+        var item = stack.PopNoRef();
+        _items[index] = item;
     }
 
     IEnumerator<StackItem> IEnumerable<StackItem>.GetEnumerator()

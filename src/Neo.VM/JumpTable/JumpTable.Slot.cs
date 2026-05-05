@@ -650,9 +650,7 @@ partial class JumpTable
     {
         if (slot is null)
             throw new InvalidOperationException("Slot has not been initialized.");
-        if (index < 0 || index >= slot.Count)
-            throw new InvalidOperationException($"Index out of range when storing to slot: {index}, {index}/[0, {slot.Count}).");
-        slot[index] = engine.Pop();
+        slot.Store(engine.CurrentContext!.EvaluationStack, index);
     }
 
     /// <summary>
