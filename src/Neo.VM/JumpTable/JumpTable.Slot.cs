@@ -52,12 +52,7 @@ partial class JumpTable
         }
         if (instruction.TokenU8_1 > 0)
         {
-            var items = new StackItem[instruction.TokenU8_1];
-            for (var i = 0; i < instruction.TokenU8_1; i++)
-            {
-                items[i] = engine.Pop();
-            }
-            engine.CurrentContext.Arguments = new Slot(items, engine.ReferenceCounter);
+            engine.CurrentContext.Arguments = new Slot(engine.CurrentContext!.EvaluationStack, instruction.TokenU8_1, engine.ReferenceCounter);
         }
     }
 
