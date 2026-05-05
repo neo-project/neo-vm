@@ -141,14 +141,12 @@ public class ExecutionEngine : IDisposable
         }
         else
         {
-            OpCodePriceParams? priceParams = null;
-            bool postExecuted = false;
-            Instruction instruction = Instruction.RET;
             try
             {
                 ExecutionContext context = CurrentContext!;
                 Instruction? currentInstruction = context.CurrentInstruction;
-                instruction = currentInstruction ?? Instruction.RET;
+                Instruction instruction = currentInstruction ?? Instruction.RET;
+                OpCodePriceParams? priceParams = null;
                 PreExecuteInstruction(instruction);
 #if VMPERF
                 Console.WriteLine("op:["
@@ -165,12 +163,9 @@ public class ExecutionEngine : IDisposable
                 catch (CatchableException ex) when (Limits.CatchEngineExceptions)
                 {
                     JumpTable.ExecuteThrow(this, ex.Message);
-                    postExecuted = true;
-                    PostExecuteInstruction(instruction, priceParams);
                 }
-                if (!postExecuted)
+                finally
                 {
-                    postExecuted = true;
                     PostExecuteInstruction(instruction, priceParams);
                 }
                 if (!isJumping && currentInstruction != null)
@@ -180,10 +175,6 @@ public class ExecutionEngine : IDisposable
             catch (Exception e)
             {
                 OnFault(e);
-                if (!postExecuted)
-                {
-                    PostExecuteInstruction(instruction, priceParams);
-                }
             }
         }
     }
