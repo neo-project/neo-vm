@@ -186,7 +186,11 @@ partial class JumpTable
         };
         var itemArray = new StackItem[n];
         Array.Fill(itemArray, item);
-        engine.Push(new VMArray(engine.ReferenceCounter, itemArray));
+        var newArray = new VMArray(engine.ReferenceCounter, itemArray);
+        newArray.StackReferences--;
+        engine.Push(newArray);
+        newArray.StackReferences++;
+        engine.ReferenceCounter.AddStackReference(StackItem.Null, n);
     }
 
     /// <summary>
