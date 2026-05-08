@@ -170,11 +170,7 @@ partial class JumpTable
             throw new InvalidOperationException($"The array size is out of valid range, {n}/[0, {engine.Limits.MaxStackSize}].");
 
         var type = (StackItemType)instruction.TokenU8;
-#if NET5_0_OR_GREATER
         if (!Enum.IsDefined(type))
-#else
-        if (!Enum.IsDefined(typeof(StackItemType), type))
-#endif
             throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {instruction.TokenU8}");
 
         var item = instruction.TokenU8 switch
