@@ -661,10 +661,10 @@ partial class JumpTable
         priceParams = null;
         if (engine.ReferenceCounter.Version == RCVersion.V2)
         {
-            if (!x.IsStackReferenced)
-                priceParams = new OpCodePriceParams { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2) };
-            else
+            if (x.IsStackReferenced)
                 engine.ReferenceCounter.RemoveStackReference(item);
+            else
+                priceParams = new OpCodePriceParams { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2) };
         }
     }
 }

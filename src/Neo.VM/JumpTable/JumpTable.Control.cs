@@ -459,10 +459,11 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Assert(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop().GetBoolean();
         if (!x)
             throw new Exception($"{OpCode.ASSERT} is executed with false result.");
-        priceParams = null;
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -476,8 +477,11 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Throw(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
-        ExecuteThrow(engine, engine.Pop());
-        priceParams = null;
+        var r = engine.ReferenceCounter.Count;
+        var item = engine.Pop();
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
+        ExecuteThrow(engine, item);
+        priceParams = new OpCodePriceParams { RefsDelta = priceParams.Value.RefsDelta + engine.ReferenceCounter.Count - r };
     }
 
     /// <summary>

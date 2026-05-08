@@ -32,7 +32,7 @@ partial class JumpTable
         if (instruction.TokenU8 == 0)
             throw new InvalidOperationException($"The operand {instruction.TokenU8} is invalid for OpCode.{instruction.OpCode}.");
         engine.CurrentContext.StaticFields = new Slot(instruction.TokenU8, engine.ReferenceCounter);
-        priceParams = null;
+        priceParams = new OpCodePriceParams { RefsDelta = instruction.TokenU8 };
     }
 
     /// <summary>
@@ -53,7 +53,6 @@ partial class JumpTable
         {
             engine.CurrentContext.LocalVariables = new Slot(instruction.TokenU8, engine.ReferenceCounter);
         }
-        priceParams = null;
         if (instruction.TokenU8_1 > 0)
         {
             var items = new StackItem[instruction.TokenU8_1];
@@ -62,8 +61,8 @@ partial class JumpTable
                 items[i] = engine.Pop();
             }
             engine.CurrentContext.Arguments = new Slot(items, engine.ReferenceCounter);
-            priceParams = new OpCodePriceParams { Length = instruction.TokenU8_1 };
         }
+        priceParams = new OpCodePriceParams { RefsDelta = instruction.TokenU8, Length = instruction.TokenU8_1 };
     }
 
     /// <summary>

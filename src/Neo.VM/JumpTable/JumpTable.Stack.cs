@@ -79,7 +79,7 @@ partial class JumpTable
             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
         var r = engine.ReferenceCounter.Count;
         engine.CurrentContext!.EvaluationStack.Remove<StackItem>(n);
-        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, Length = n };
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ partial class JumpTable
         var item = engine.Peek();
         engine.Push(item);
         if (item.Type == StackItemType.ByteString)
-            priceParams = new OpCodePriceParams { Length = item.GetSpan().Length };
+            priceParams = new OpCodePriceParams { Length = ((ByteString)item).Size };
         else
             priceParams = null;
     }
@@ -131,7 +131,7 @@ partial class JumpTable
         var item = engine.Peek(1);
         engine.Push(item);
         if (item.Type == StackItemType.ByteString)
-            priceParams = new OpCodePriceParams { Length = item.GetSpan().Length };
+            priceParams = new OpCodePriceParams { Length = ((ByteString)item).Size };
         else
             priceParams = null;
     }
@@ -153,7 +153,7 @@ partial class JumpTable
         var item = engine.Peek(n);
         engine.Push(item);
         if (item.Type == StackItemType.ByteString)
-            priceParams = new OpCodePriceParams { Length = item.GetSpan().Length };
+            priceParams = new OpCodePriceParams { Length = ((ByteString)item).Size };
         else
             priceParams = null;
     }
@@ -171,7 +171,7 @@ partial class JumpTable
         var item = engine.Peek();
         engine.CurrentContext!.EvaluationStack.Insert(2, item);
         if (item.Type == StackItemType.ByteString)
-            priceParams = new OpCodePriceParams { Length = item.GetSpan().Length };
+            priceParams = new OpCodePriceParams { Length = ((ByteString)item).Size };
         else
             priceParams = null;
     }

@@ -115,10 +115,11 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void AssertMsg(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
     {
+        var r = engine.ReferenceCounter.Count;
         var msg = engine.Pop().GetString();
         var x = engine.Pop().GetBoolean();
         if (!x)
             throw new Exception($"{OpCode.ASSERTMSG} is executed with false result. Reason: {msg}");
-        priceParams = null;
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, Length = msg!.Length };
     }
 }
