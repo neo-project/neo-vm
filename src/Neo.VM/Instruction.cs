@@ -192,11 +192,7 @@ public class Instruction
     private Instruction(OpCode opcode)
     {
         OpCode = opcode;
-#if NET5_0_OR_GREATER
         if (!Enum.IsDefined(opcode)) throw new BadScriptException();
-#else
-        if (!Enum.IsDefined(typeof(OpCode), opcode)) throw new BadScriptException();
-#endif
     }
 
     internal Instruction(ReadOnlyMemory<byte> script, int ip) : this((OpCode)script.Span[ip++])
