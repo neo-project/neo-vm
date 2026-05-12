@@ -401,7 +401,6 @@ partial class JumpTable
         var key = engine.Pop<PrimitiveType>();
         var r1 = engine.ReferenceCounter.Count;
         var x = engine.Pop();
-        var r2 = engine.ReferenceCounter.Count;
         StackItem item;
         switch (x)
         {
@@ -409,7 +408,10 @@ partial class JumpTable
                 {
                     var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
+                    {
+                        priceParams = new OpCodePriceParams { RefsDelta = r1 - engine.ReferenceCounter.Count };
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
+                    }
                     item = array[(int)index];
                     break;
                 }
@@ -425,7 +427,10 @@ partial class JumpTable
                     var byteArray = primitive.GetSpan();
                     var index = key.GetInteger();
                     if (index < 0 || index >= byteArray.Length)
+                    {
+                        priceParams = new OpCodePriceParams { RefsDelta = r1 - engine.ReferenceCounter.Count };
                         throw new CatchableException($"The index of {nameof(PrimitiveType)} is out of range, {index}/[0, {byteArray.Length}).");
+                    }
                     item = (BigInteger)byteArray[(int)index];
                     break;
                 }
@@ -433,13 +438,17 @@ partial class JumpTable
                 {
                     var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
+                    {
+                        priceParams = new OpCodePriceParams { RefsDelta = r1 - engine.ReferenceCounter.Count };
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
+                    }
                     item = (BigInteger)buffer.InnerBuffer.Span[(int)index];
                     break;
                 }
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
+        var r2 = engine.ReferenceCounter.Count;
         engine.Push(item);
         var l = 0;
         if (item.Type == StackItemType.ByteString)
@@ -494,7 +503,10 @@ partial class JumpTable
                 {
                     var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
+                    {
+                        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, NClonedItems = nClonedItems };
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
+                    }
                     var i = (int)index;
                     if (isRC2 && array.IsStackReferenced)
                         engine.ReferenceCounter.RemoveStackReference(array[i]);
@@ -524,7 +536,10 @@ partial class JumpTable
                 {
                     var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
+                    {
+                        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count, NClonedItems = nClonedItems };
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
+                    }
                     if (value is not PrimitiveType p)
                         throw new InvalidOperationException($"Only primitive type values can be set in {nameof(Buffer)} in {instruction.OpCode}.");
                     var b = p.GetInteger();

@@ -479,9 +479,8 @@ partial class JumpTable
     {
         var r = engine.ReferenceCounter.Count;
         var item = engine.Pop();
-        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
         ExecuteThrow(engine, item);
-        priceParams = new OpCodePriceParams { RefsDelta = priceParams.Value.RefsDelta + engine.ReferenceCounter.Count - r };
+        priceParams = new OpCodePriceParams { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
