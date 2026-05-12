@@ -366,7 +366,9 @@ partial class JumpTable
     public virtual void Keys(ExecutionEngine engine, Instruction instruction)
     {
         var map = engine.Pop<Map>();
-        engine.Push(new VMArray(engine.ReferenceCounter, map.Keys));
+        var array = new VMArray(engine.ReferenceCounter, map.Keys);
+        array.StackReferences++;
+        engine.PushItemCounted(array, map.Count + 1);
     }
 
     /// <summary>
