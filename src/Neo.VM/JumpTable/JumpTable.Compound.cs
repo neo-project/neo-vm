@@ -38,11 +38,18 @@ partial class JumpTable
         Map map = new(engine.ReferenceCounter);
         for (var i = 0; i < size; i++)
         {
-            var key = engine.Pop<PrimitiveType>();
-            var value = engine.Pop();
+            var key = engine.PopNoRef<PrimitiveType>();
+            var value = engine.PopNoRef();
+            if (map.TryGetValue(key, out var oldValue))
+            {
+                engine.ReferenceCounter.RemoveStackReference(key);
+                engine.ReferenceCounter.RemoveStackReference(oldValue);
+            }
             map[key] = value;
         }
+        map.StackReferences--;
         engine.Push(map);
+        map.StackReferences++;
     }
 
     /// <summary>

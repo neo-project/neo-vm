@@ -286,6 +286,16 @@ public class ExecutionEngine : IDisposable
     }
 
     /// <summary>
+    /// Removes and returns the item at the top of the current stack without reference counting.
+    /// </summary>
+    /// <returns>The item removed from the top of the stack.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public StackItem PopNoRef()
+    {
+        return CurrentContext!.EvaluationStack.PopNoRef();
+    }
+
+    /// <summary>
     /// Removes and returns the item at the top of the current stack and convert it to the specified type.
     /// </summary>
     /// <typeparam name="T">The type to convert to.</typeparam>
@@ -294,6 +304,18 @@ public class ExecutionEngine : IDisposable
     public T Pop<T>() where T : StackItem
     {
         return CurrentContext!.EvaluationStack.Pop<T>();
+    }
+
+    /// <summary>
+    /// Removes and returns the item at the top of the current stack and convert it to the specified type
+    /// without reference counting.
+    /// </summary>
+    /// <typeparam name="T">The type to convert to.</typeparam>
+    /// <returns>The item removed from the top of the stack.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public T PopNoRef<T>() where T : StackItem
+    {
+        return CurrentContext!.EvaluationStack.PopNoRef<T>();
     }
 
     /// <summary>
