@@ -11,7 +11,7 @@
 
 using Neo.VM.Types;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -381,20 +381,66 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Values(ExecutionEngine engine, Instruction instruction)
     {
-        var x = engine.Pop();
-        var values = x switch
+        var x = engine.PopNoRef();
+
+        IEnumerable<StackItem> values;
+        bool isReferenced;
+
+        switch (x)
         {
-            VMArray array => array,
-            Map map => map.Values,
-            _ => throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}"),
-        };
+            case VMArray array:
+                {
+                    array.StackReferences--;
+                    values = array;
+                    isReferenced = array.IsStackReferenced;
+                    break;
+                }
+            case Map map:
+                {
+                    map.StackReferences--;
+                    values = map.Values;
+                    isReferenced = map.IsStackReferenced;
+                    if (!isReferenced)
+                        engine.ReferenceCounter.AddStackReference(StackItem.Null, -map.Count);
+                    break;
+                }
+            default:
+                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
+        }
         VMArray newArray = new(engine.ReferenceCounter);
-        foreach (var item in values)
-            if (item is Struct s)
-                newArray.Add(s.Clone(engine.Limits));
-            else
-                newArray.Add(item);
-        engine.Push(newArray);
+        var isRC2 = engine.ReferenceCounter.Version == RCVersion.V2;
+        if (isReferenced)
+        {
+            foreach (var item in values)
+            {
+                var cpItem = item is Struct s ? s.Clone(engine.Limits) : item;
+                newArray.Add(cpItem);
+                if (isRC2)
+                    engine.ReferenceCounter.AddStackReference(cpItem);
+            }
+        }
+        else
+        {
+            foreach (var item in values)
+            {
+                if (item is Struct s)
+                {
+                    var cpItem = s.Clone(engine.Limits);
+                    if (isRC2)
+                    {
+                        engine.ReferenceCounter.RemoveStackReference(item);
+                        engine.ReferenceCounter.AddStackReference(cpItem);
+                    }
+                    newArray.Add(cpItem);
+                }
+                else
+                {
+                    newArray.Add(item);
+                }
+            }
+        }
+        newArray.StackReferences++;
+        engine.PushItemCounted(newArray, 0);
     }
 
     /// <summary>
