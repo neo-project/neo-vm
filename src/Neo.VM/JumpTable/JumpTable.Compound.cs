@@ -475,8 +475,13 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void SetItem(ExecutionEngine engine, Instruction instruction)
     {
-        var value = engine.Pop();
-        if (value is Struct s) value = s.Clone(engine.Limits);
+        var value = engine.PopNoRef();
+        if (value is Struct s)
+        {
+            engine.ReferenceCounter.RemoveStackReference(value);
+            value = s.Clone(engine.Limits);
+            engine.ReferenceCounter.AddStackReference(value);
+        }
         var key = engine.Pop<PrimitiveType>();
         var x = engine.Pop();
         var isRC2 = engine.ReferenceCounter.Version == RCVersion.V2;
@@ -488,16 +493,20 @@ partial class JumpTable
                     if (index < 0 || index >= array.Count)
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
                     var i = (int)index;
-                    if (isRC2 && array.IsStackReferenced)
+                    if (!array.IsStackReferenced)
+                        engine.ReferenceCounter.RemoveStackReference(value);
+                    else if (isRC2)
                         engine.ReferenceCounter.RemoveStackReference(array[i]);
                     array[i] = value;
-                    if (isRC2 && array.IsStackReferenced)
-                        engine.ReferenceCounter.AddStackReference(value);
                     break;
                 }
             case Map map:
                 {
-                    if (isRC2 && map.IsStackReferenced)
+                    if (!map.IsStackReferenced)
+                    {
+                        engine.ReferenceCounter.RemoveStackReference(value);
+                    }
+                    else if (isRC2)
                     {
                         if (!map.TryGetValue(key, out var value1))
                         {
@@ -507,13 +516,13 @@ partial class JumpTable
                         {
                             engine.ReferenceCounter.RemoveStackReference(value1);
                         }
-                        engine.ReferenceCounter.AddStackReference(value);
                     }
                     map[key] = value;
                     break;
                 }
             case Buffer buffer:
                 {
+                    engine.ReferenceCounter.RemoveStackReference(value);
                     var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
