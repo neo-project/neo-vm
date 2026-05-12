@@ -340,4 +340,17 @@ public class ExecutionEngine : IDisposable
     {
         CurrentContext!.EvaluationStack.Push(item);
     }
+
+    /// <summary>
+    /// Pushes item to the stack and adds exactly the specified
+    /// value to the reference counter. It's a perfect method to ruin the counter,
+    /// so use carefully.
+    /// </summary>
+    /// <param name="item">The item to be pushed.</param>
+    /// <param name="count">The value by which the reference counter increases.</param>s
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void PushItemCounted(StackItem item, int count)
+    {
+        CurrentContext!.EvaluationStack.PushItemCounted(item, count);
+    }
 }

@@ -11,6 +11,7 @@
 
 using Neo.VM.Types;
 using System;
+using System.Collections;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -68,10 +69,12 @@ partial class JumpTable
         Struct @struct = new(engine.ReferenceCounter);
         for (var i = 0; i < size; i++)
         {
-            var item = engine.Pop();
+            var item = engine.PopNoRef();
             @struct.Add(item);
         }
+        @struct.StackReferences--;
         engine.Push(@struct);
+        @struct.StackReferences++;
     }
 
     /// <summary>
@@ -90,10 +93,12 @@ partial class JumpTable
         VMArray array = new(engine.ReferenceCounter);
         for (var i = 0; i < size; i++)
         {
-            var item = engine.Pop();
+            var item = engine.PopNoRef();
             array.Add(item);
         }
+        array.StackReferences--;
         engine.Push(array);
+        array.StackReferences++;
     }
 
     /// <summary>
@@ -106,20 +111,44 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Unpack(ExecutionEngine engine, Instruction instruction)
     {
-        var compound = engine.Pop<CompoundType>();
+        var compound = engine.PopNoRef<CompoundType>();
+        compound.StackReferences--;
+        // Decrease reference count by 1.
+        engine.ReferenceCounter.RemoveStackReference(StackItem.Null);
         switch (compound)
         {
             case Map map:
-                foreach (var (key, value) in map.Reverse())
+                if (map.IsStackReferenced)
                 {
-                    engine.Push(value);
-                    engine.Push(key);
+                    foreach (var (key, value) in map.Reverse())
+                    {
+                        engine.Push(value);
+                        engine.PushItemCounted(key, 1);
+                    }
+                }
+                else
+                {
+                    foreach (var (key, value) in map.Reverse())
+                    {
+                        engine.PushItemCounted(value, 0);
+                        engine.PushItemCounted(key, 0);
+                    }
                 }
                 break;
             case VMArray array:
-                for (var i = array.Count - 1; i >= 0; i--)
+                if (array.IsStackReferenced)
                 {
-                    engine.Push(array[i]);
+                    for (var i = array.Count - 1; i >= 0; i--)
+                    {
+                        engine.Push(array[i]);
+                    }
+                }
+                else
+                {
+                    for (var i = array.Count - 1; i >= 0; i--)
+                    {
+                        engine.PushItemCounted(array[i], 0);
+                    }
                 }
                 break;
             default:

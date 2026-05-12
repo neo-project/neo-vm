@@ -135,6 +135,20 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
         _referenceCounter.AddStackReference(item);
     }
 
+    /// <summary>
+    /// Pushes item to the stack and adds exactly the specified
+    /// value to the reference counter. It's a perfect method to ruin the counter,
+    /// so use carefully.
+    /// </summary>
+    /// <param name="item">The item to be pushed.</param>
+    /// <param name="count">The value by which the reference counter increases.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void PushItemCounted(StackItem item, int count)
+    {
+        _innerList.Add(item);
+        _referenceCounter.AddStackReference(StackItem.Null, count);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void Reverse(int n)
     {
