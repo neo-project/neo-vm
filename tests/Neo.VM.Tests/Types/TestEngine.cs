@@ -30,7 +30,7 @@ public class TestEngine : ExecutionEngine
         return jumpTable;
     }
 
-    private static void OnSysCall(ExecutionEngine engine, Instruction instruction, out OpCodePriceParams? priceParams)
+    private static void OnSysCall(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
     {
         uint method = instruction.TokenU32;
 

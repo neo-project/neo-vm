@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2026 The Neo Project.
 //
-// OpCodePriceParams.cs file belongs to the neo project and is free
+// RunStats.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
 // accompanying file LICENSE in the main directory of the
 // repository or http://www.opensource.org/licenses/mit-license.php
@@ -16,7 +16,7 @@ namespace Neo.VM;
 /// <summary>
 /// Contains opcode-specific parameters used to calculate dynamic price.
 /// </summary>
-public struct OpCodePriceParams
+public struct RunStats
 {
     /// <summary>
     /// Typ specifies type of <see cref="StackItemType"/> which in most of the cases serves

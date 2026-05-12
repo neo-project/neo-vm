@@ -146,7 +146,7 @@ public class ExecutionEngine : IDisposable
                 ExecutionContext context = CurrentContext!;
                 Instruction? currentInstruction = context.CurrentInstruction;
                 Instruction instruction = currentInstruction ?? Instruction.RET;
-                OpCodePriceParams? priceParams = null;
+                RunStats? priceParams = null;
                 PreExecuteInstruction(instruction);
 #if VMPERF
                 Console.WriteLine("op:["
@@ -303,7 +303,7 @@ public class ExecutionEngine : IDisposable
     /// <summary>
     /// Called after an instruction is executed.
     /// </summary>
-    protected virtual void PostExecuteInstruction(Instruction instruction, OpCodePriceParams? priceArgs)
+    protected virtual void PostExecuteInstruction(Instruction instruction, RunStats? priceArgs)
     {
         ReferenceCounter.CheckPostExecution();
     }
