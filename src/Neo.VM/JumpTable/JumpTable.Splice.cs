@@ -23,15 +23,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void NewBuffer(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void NewBuffer(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         int length = (int)engine.Pop().GetInteger();
         engine.Limits.AssertMaxItemSize(length);
         engine.Push(new Buffer(length));
-        priceParams = new RunStats { Length = length };
+        runStats = new RunStats { Length = length };
     }
 
     /// <summary>
@@ -40,10 +40,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 5, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Memcpy(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void Memcpy(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -62,7 +62,7 @@ partial class JumpTable
             throw new InvalidOperationException($"The destination index + count is out of range for {nameof(OpCode.MEMCPY)}, index: {di}, count: {count}, {di}/[0, {dst.Size}].");
         // TODO: check if we can optimize the memcpy by using peek instead of dup then pop
         src.Slice(si, count).CopyTo(dst.InnerBuffer.Span[di..]);
-        priceParams = new RunStats { Length = count };
+        runStats = new RunStats { Length = count };
     }
 
     /// <summary>
@@ -72,10 +72,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Cat(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void Cat(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetSpan();
         var x1 = engine.Pop().GetSpan();
@@ -85,7 +85,7 @@ partial class JumpTable
         x1.CopyTo(result.InnerBuffer.Span);
         x2.CopyTo(result.InnerBuffer.Span[x1.Length..]);
         engine.Push(result);
-        priceParams = new RunStats { Length = length };
+        runStats = new RunStats { Length = length };
     }
 
     /// <summary>
@@ -94,10 +94,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 3, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void SubStr(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void SubStr(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -111,7 +111,7 @@ partial class JumpTable
         Buffer result = new(count, false);
         x.Slice(index, count).CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
-        priceParams = new RunStats { Length = count };
+        runStats = new RunStats { Length = count };
     }
 
     /// <summary>
@@ -120,10 +120,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Left(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void Left(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -134,7 +134,7 @@ partial class JumpTable
         Buffer result = new(count, false);
         x[..count].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
-        priceParams = new RunStats { Length = count };
+        runStats = new RunStats { Length = count };
     }
 
     /// <summary>
@@ -143,10 +143,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Right(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void Right(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -157,6 +157,6 @@ partial class JumpTable
         Buffer result = new(count, false);
         x[^count..^0].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
-        priceParams = new RunStats { Length = count };
+        runStats = new RunStats { Length = count };
     }
 }

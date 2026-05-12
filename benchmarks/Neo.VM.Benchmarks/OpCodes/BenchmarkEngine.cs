@@ -197,9 +197,9 @@ public class BenchmarkEngine : ExecutionEngine
         return jumpTable;
     }
 
-    private static void OnSysCall(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    private static void OnSysCall(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
-        priceParams = null;
+        runStats = null;
         uint method = instruction.TokenU32;
         if (method == 0x77777777)
             engine.CurrentContext!.EvaluationStack.Push(StackItem.FromInterface(new object()));

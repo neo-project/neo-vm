@@ -63,7 +63,7 @@ public partial class JumpTable
         }
     }
 
-    public virtual void InvalidOpcode(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void InvalidOpcode(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
     }

@@ -21,14 +21,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Invert(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void Invert(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x = engine.Pop().GetInteger();
         engine.Push(~x);
-        priceParams = null;
+        runStats = null;
     }
 
     /// <summary>
@@ -37,15 +37,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void And(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void And(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         engine.Push(x1 & x2);
-        priceParams = null;
+        runStats = null;
     }
 
     /// <summary>
@@ -54,15 +54,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Or(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void Or(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         engine.Push(x1 | x2);
-        priceParams = null;
+        runStats = null;
     }
 
     /// <summary>
@@ -71,15 +71,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void XOr(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void XOr(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         engine.Push(x1 ^ x2);
-        priceParams = null;
+        runStats = null;
     }
 
     /// <summary>
@@ -88,15 +88,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Equal(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void Equal(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop();
         var x1 = engine.Pop();
         engine.Push(x1.Equals(x2, engine.Limits));
-        priceParams = null;
+        runStats = null;
     }
 
     /// <summary>
@@ -105,14 +105,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
-    /// <param name="priceParams">The opcode parameters for dynamic pricing.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void NotEqual(ExecutionEngine engine, Instruction instruction, out RunStats? priceParams)
+    public virtual void NotEqual(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop();
         var x1 = engine.Pop();
         engine.Push(!x1.Equals(x2, engine.Limits));
-        priceParams = null;
+        runStats = null;
     }
 }

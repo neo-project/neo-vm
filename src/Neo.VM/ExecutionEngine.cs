@@ -146,7 +146,7 @@ public class ExecutionEngine : IDisposable
                 ExecutionContext context = CurrentContext!;
                 Instruction? currentInstruction = context.CurrentInstruction;
                 Instruction instruction = currentInstruction ?? Instruction.RET;
-                RunStats? priceParams = null;
+                RunStats? runStats = null;
                 PreExecuteInstruction(instruction);
 #if VMPERF
                 Console.WriteLine("op:["
@@ -158,7 +158,7 @@ public class ExecutionEngine : IDisposable
 #endif
                 try
                 {
-                    JumpTable[instruction.OpCode](this, instruction, out priceParams);
+                    JumpTable[instruction.OpCode](this, instruction, out runStats);
                 }
                 catch (CatchableException ex) when (Limits.CatchEngineExceptions)
                 {
@@ -166,7 +166,7 @@ public class ExecutionEngine : IDisposable
                 }
                 finally
                 {
-                    PostExecuteInstruction(instruction, priceParams);
+                    PostExecuteInstruction(instruction, runStats);
                 }
                 if (!isJumping && currentInstruction != null)
                     context.InstructionPointer += instruction.Size;
