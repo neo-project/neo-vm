@@ -39,20 +39,26 @@ partial class JumpTable
         Map map = new(engine.ReferenceCounter);
         if (engine.ReferenceCounter.Version == RCVersion.V1)
         {
-            var key = engine.Pop<PrimitiveType>();
-            var value = engine.Pop();
-            map[key] = value;
+            for (var i = 0; i < size; i++)
+            {
+                var key = engine.Pop<PrimitiveType>();
+                var value = engine.Pop();
+                map[key] = value;
+            }
         }
         else
         {
-            var key = engine.PopNoRef<PrimitiveType>();
-            var value = engine.PopNoRef();
-            if (map.TryGetValue(key, out var oldValue))
+            for (var i = 0; i < size; i++)
             {
-                engine.ReferenceCounter.RemoveStackReference(key);
-                engine.ReferenceCounter.RemoveStackReference(oldValue);
+                var key = engine.PopNoRef<PrimitiveType>();
+                var value = engine.PopNoRef();
+                if (map.TryGetValue(key, out var oldValue))
+                {
+                    engine.ReferenceCounter.RemoveStackReference(key);
+                    engine.ReferenceCounter.RemoveStackReference(oldValue);
+                }
+                map[key] = value;
             }
-            map[key] = value;
         }
         map.StackReferences--;
         engine.Push(map);
