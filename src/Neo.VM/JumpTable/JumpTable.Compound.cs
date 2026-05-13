@@ -37,7 +37,13 @@ partial class JumpTable
         if (size < 0 || size * 2 > engine.CurrentContext!.EvaluationStack.Count)
             throw new InvalidOperationException($"The map size is out of valid range, 2*{size}/[0, {engine.CurrentContext!.EvaluationStack.Count}].");
         Map map = new(engine.ReferenceCounter);
-        for (var i = 0; i < size; i++)
+        if (engine.ReferenceCounter.Version == RCVersion.V1)
+        {
+            var key = engine.Pop<PrimitiveType>();
+            var value = engine.Pop();
+            map[key] = value;
+        }
+        else
         {
             var key = engine.PopNoRef<PrimitiveType>();
             var value = engine.PopNoRef();
