@@ -303,7 +303,7 @@ public class ExecutionEngine : IDisposable
     /// <summary>
     /// Called after an instruction is executed.
     /// </summary>
-    protected virtual void PostExecuteInstruction(Instruction instruction, RunStats? priceArgs)
+    protected virtual void PostExecuteInstruction(Instruction instruction, RunStats? runStats)
     {
         ReferenceCounter.CheckPostExecution();
     }
