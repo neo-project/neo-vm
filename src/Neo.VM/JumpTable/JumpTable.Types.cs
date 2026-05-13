@@ -12,7 +12,6 @@
 using Neo.VM.Types;
 using System;
 using System.Runtime.CompilerServices;
-using System.Xml.Schema;
 
 namespace Neo.VM;
 
