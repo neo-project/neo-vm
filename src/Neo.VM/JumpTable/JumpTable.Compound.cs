@@ -547,7 +547,10 @@ partial class JumpTable
                 {
                     var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
+                    {
+                        engine.ReferenceCounter.RemoveStackReference(value);
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
+                    }
                     var i = (int)index;
                     if (!array.IsStackReferenced)
                         engine.ReferenceCounter.RemoveStackReference(value);
@@ -581,7 +584,10 @@ partial class JumpTable
                     engine.ReferenceCounter.RemoveStackReference(value);
                     var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
+                    {
+                        engine.ReferenceCounter.RemoveStackReference(value);
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
+                    }
                     if (value is not PrimitiveType p)
                         throw new InvalidOperationException($"Only primitive type values can be set in {nameof(Buffer)} in {instruction.OpCode}.");
                     var b = p.GetInteger();
