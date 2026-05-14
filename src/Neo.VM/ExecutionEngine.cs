@@ -290,7 +290,7 @@ public class ExecutionEngine : IDisposable
     /// </summary>
     /// <returns>The item removed from the top of the stack.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public StackItem PopNoRef()
+    internal StackItem PopNoRef()
     {
         return CurrentContext!.EvaluationStack.PopNoRef();
     }
@@ -313,7 +313,7 @@ public class ExecutionEngine : IDisposable
     /// <typeparam name="T">The type to convert to.</typeparam>
     /// <returns>The item removed from the top of the stack.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T PopNoRef<T>() where T : StackItem
+    internal T PopNoRef<T>() where T : StackItem
     {
         return CurrentContext!.EvaluationStack.PopNoRef<T>();
     }
@@ -349,7 +349,7 @@ public class ExecutionEngine : IDisposable
     /// <param name="item">The item to be pushed.</param>
     /// <param name="count">The value by which the reference counter increases.</param>s
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void PushItemCounted(StackItem item, int count)
+    internal void PushItemCounted(StackItem item, int count)
     {
         CurrentContext!.EvaluationStack.PushItemCounted(item, count);
     }
