@@ -585,7 +585,6 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
                     {
-                        engine.ReferenceCounter.RemoveStackReference(value);
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
                     }
                     if (value is not PrimitiveType p)
