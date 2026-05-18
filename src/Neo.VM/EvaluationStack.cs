@@ -136,9 +136,10 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     }
 
     /// <summary>
-    /// Pushes item to the stack and adds exactly the specified
-    /// value to the reference counter. It's a perfect method to ruin the counter,
-    /// so use carefully.
+    /// Pushes item to the stack and adds exactly the specified value to the reference counter.
+    /// This method does not adjust the item's own stack reference state, so use it only when
+    /// the caller already accounts for references explicitly.
+    /// Use carefully, otherwise the counter may become inconsistent.
     /// </summary>
     /// <param name="item">The item to be pushed.</param>
     /// <param name="count">The value by which the reference counter increases.</param>
