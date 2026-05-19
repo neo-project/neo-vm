@@ -677,8 +677,7 @@ partial class JumpTable
         {
             if (x.IsStackReferenced)
                 engine.ReferenceCounter.RemoveStackReference(item);
-            else
-                runStats = new RunStats { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2) };
+            runStats = new RunStats { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2) };
         }
     }
 }
