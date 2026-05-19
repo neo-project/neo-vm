@@ -418,7 +418,10 @@ partial class JumpTable
             case Map map:
                 {
                     if (!map.TryGetValue(key, out var value))
+                    {
+                        runStats = new RunStats { RefsDelta = r1 - engine.ReferenceCounter.Count };
                         throw new CatchableException($"Key {key} not found in {nameof(Map)}.");
+                    }
                     item = value;
                     break;
                 }
