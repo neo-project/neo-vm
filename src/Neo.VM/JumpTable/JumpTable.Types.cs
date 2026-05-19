@@ -65,23 +65,24 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Convert(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
+        var r1 = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         var fromType = x.Type;
         var toType = (StackItemType)instruction.TokenU8;
+        var r2 = engine.ReferenceCounter.Count;
         engine.Push(x.ConvertTo(toType));
+        var (type, length) = (StackItemType.Any, 0);
         if (fromType == StackItemType.Array && toType == StackItemType.Struct || fromType == StackItemType.Struct && toType == StackItemType.Array)
         {
-            runStats = new RunStats { Type = fromType, Length = ((CompoundType)x).Count };
+            type = StackItemType.Array;
+            length = ((CompoundType)x).Count;
         }
         else if (fromType == StackItemType.ByteString && toType == StackItemType.Buffer || fromType == StackItemType.Buffer && toType == StackItemType.ByteString)
         {
-            if (fromType == StackItemType.ByteString)
-                runStats = new RunStats { Type = StackItemType.ByteString, Length = ((ByteString)x).Size };
-            else
-                runStats = new RunStats { Type = StackItemType.Buffer, Length = ((Types.Buffer)x).Size };
+            type = StackItemType.ByteString;
+            length = fromType == StackItemType.ByteString ? ((ByteString)x).Size : ((Types.Buffer)x).Size;
         }
-        else
-            runStats = null;
+        runStats = new RunStats { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2), Type = type, Length = length };
     }
 
     /// <summary>
