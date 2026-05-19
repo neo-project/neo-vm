@@ -111,10 +111,7 @@ partial class JumpTable
     {
         var item = engine.Peek();
         engine.Push(item);
-        if (item.Type == StackItemType.ByteString)
-            runStats = new RunStats { Length = ((ByteString)item).Size };
-        else
-            runStats = null;
+        runStats = null;
     }
 
     /// <summary>
@@ -130,10 +127,7 @@ partial class JumpTable
     {
         var item = engine.Peek(1);
         engine.Push(item);
-        if (item.Type == StackItemType.ByteString)
-            runStats = new RunStats { Length = ((ByteString)item).Size };
-        else
-            runStats = null;
+        runStats = null;
     }
 
     /// <summary>
@@ -152,10 +146,7 @@ partial class JumpTable
             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
         var item = engine.Peek(n);
         engine.Push(item);
-        if (item.Type == StackItemType.ByteString)
-            runStats = new RunStats { Length = ((ByteString)item).Size };
-        else
-            runStats = null;
+        runStats = null;
     }
 
     /// <summary>
@@ -170,10 +161,7 @@ partial class JumpTable
     {
         var item = engine.Peek();
         engine.CurrentContext!.EvaluationStack.Insert(2, item);
-        if (item.Type == StackItemType.ByteString)
-            runStats = new RunStats { Length = ((ByteString)item).Size };
-        else
-            runStats = null;
+        runStats = null;
     }
 
     /// <summary>
