@@ -496,8 +496,10 @@ partial class JumpTable
         var value = engine.Pop();
         var nClonedItems = 0;
         if (value is Struct s) value = s.Clone(engine.Limits, out nClonedItems);
+        var (r1, r2) = (engine.ReferenceCounter.Count, engine.ReferenceCounter.Count);
         var key = engine.Pop<PrimitiveType>();
         var r = engine.ReferenceCounter.Count;
+        var r3 = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         var isRC2 = engine.ReferenceCounter.Version == RCVersion.V2;
         switch (x)
@@ -507,7 +509,7 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
                     {
-                        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count, NClonedItems = nClonedItems };
+                        runStats = new RunStats { RefsDelta = (r1 - r2) + (r3 - r2) + (r3 - engine.ReferenceCounter.Count), NClonedItems = nClonedItems };
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
                     }
                     var i = (int)index;
@@ -540,7 +542,7 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
                     {
-                        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count, NClonedItems = nClonedItems };
+                        runStats = new RunStats { RefsDelta = (r1 - r2) + (r3 - r2) + (r3 - engine.ReferenceCounter.Count), NClonedItems = nClonedItems };
                         throw new CatchableException($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).");
                     }
                     if (value is not PrimitiveType p)
@@ -554,7 +556,7 @@ partial class JumpTable
             default:
                 throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
         }
-        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count, NClonedItems = nClonedItems };
+        runStats = new RunStats { RefsDelta = (r1 - r2) + (r3 - r2) + (r3 - engine.ReferenceCounter.Count), NClonedItems = nClonedItems };
     }
 
     /// <summary>
