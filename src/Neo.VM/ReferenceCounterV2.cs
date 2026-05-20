@@ -19,8 +19,6 @@ namespace Neo.VM;
 /// </summary>
 public sealed class ReferenceCounterV2 : IReferenceCounter
 {
-    public RCVersion Version { get; } = RCVersion.V2;
-
     private readonly ExecutionEngineLimits _limits;
 
     // Keeps the total count of references.

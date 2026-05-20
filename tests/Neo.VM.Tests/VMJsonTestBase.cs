@@ -94,7 +94,7 @@ public abstract class VMJsonTestBase
         AssertResult(result.InvocationStack, engine.InvocationStack, message + " [Invocation stack]");
         if (result.ResultStack is not null) // compare stack only if requested (for circular references it's impossible to repreesnt stack in JSON).
             AssertResult(result.ResultStack, engine.ResultStack, message + " [Result stack] ");
-        if (result.Refs != null && engine.ReferenceCounter.Version == RCVersion.V2)
+        if (result.Refs != null)
             AssertAreEqual(result.Refs, engine.ReferenceCounter.Count, message + "Refs are different");
     }
 

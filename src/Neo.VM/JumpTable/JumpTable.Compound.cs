@@ -417,7 +417,7 @@ partial class JumpTable
         var array = engine.Pop<VMArray>();
         if (newItem is Struct s) newItem = s.Clone(engine.Limits);
         array.Add(newItem);
-        if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
+        if (array.IsStackReferenced)
             engine.ReferenceCounter.AddStackReference(newItem);
     }
 
@@ -435,7 +435,6 @@ partial class JumpTable
         if (value is Struct s) value = s.Clone(engine.Limits);
         var key = engine.Pop<PrimitiveType>();
         var x = engine.Pop();
-        var isRC2 = engine.ReferenceCounter.Version == RCVersion.V2;
         switch (x)
         {
             case VMArray array:
@@ -444,16 +443,16 @@ partial class JumpTable
                     if (index < 0 || index >= array.Count)
                         throw new CatchableException($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).");
                     var i = (int)index;
-                    if (isRC2 && array.IsStackReferenced)
+                    if (array.IsStackReferenced)
                         engine.ReferenceCounter.RemoveStackReference(array[i]);
                     array[i] = value;
-                    if (isRC2 && array.IsStackReferenced)
+                    if (array.IsStackReferenced)
                         engine.ReferenceCounter.AddStackReference(value);
                     break;
                 }
             case Map map:
                 {
-                    if (isRC2 && map.IsStackReferenced)
+                    if (map.IsStackReferenced)
                     {
                         if (!map.TryGetValue(key, out var value1))
                         {
@@ -533,12 +532,12 @@ partial class JumpTable
                 var item = array[i];
                 array.RemoveAt(i);
 
-                if (engine.ReferenceCounter.Version == RCVersion.V2 && array.IsStackReferenced)
+                if (array.IsStackReferenced)
                     engine.ReferenceCounter.RemoveStackReference(item);
                 break;
             case Map map:
                 var old = map.Remove(key);
-                if (old is not null && engine.ReferenceCounter.Version == RCVersion.V2 && map.IsStackReferenced)
+                if (old is not null && map.IsStackReferenced)
                 {
                     engine.ReferenceCounter.RemoveStackReference(key);
                     engine.ReferenceCounter.RemoveStackReference(old);
@@ -560,7 +559,7 @@ partial class JumpTable
     public virtual void ClearItems(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop<CompoundType>();
-        if (engine.ReferenceCounter.Version == RCVersion.V2 && x.IsStackReferenced)
+        if (x.IsStackReferenced)
         {
             foreach (var xSubItem in x.SubItems)
             {
@@ -585,7 +584,7 @@ partial class JumpTable
         var item = x[index];
         engine.Push(item);
         x.RemoveAt(index);
-        if (engine.ReferenceCounter.Version == RCVersion.V2 && x.IsStackReferenced)
+        if (x.IsStackReferenced)
             engine.ReferenceCounter.RemoveStackReference(item);
     }
 }
