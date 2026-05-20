@@ -37,41 +37,38 @@ public abstract class VMJsonTestBase
         {
             Assert.IsFalse(string.IsNullOrEmpty(test.Name), "Name is required");
 
-            foreach (var refCounter in new IReferenceCounter[] { new ReferenceCounter(), new ReferenceCounterV2() })
+            var refCounter = new ReferenceCounter();
+            using TestEngine engine = new TestEngine(refCounter, ExecutionEngineLimits.Default);
+            Debugger debugger = new(engine);
+
+            if (test.Script.Length > 0)
             {
-                using TestEngine engine = new TestEngine(refCounter, ExecutionEngineLimits.Default);
-                Debugger debugger = new(engine);
+                engine.LoadScript(test.Script);
+            }
 
-                if (test.Script.Length > 0)
+            // Execute Steps
+            if (test.Steps != null)
+            {
+                foreach (var step in test.Steps)
                 {
-                    engine.LoadScript(test.Script);
-                }
+                    // Actions
 
-                // Execute Steps
-
-                if (test.Steps != null)
-                {
-                    foreach (var step in test.Steps)
+                    if (step.Actions != null) foreach (var run in step.Actions)
                     {
-                        // Actions
-
-                        if (step.Actions != null) foreach (var run in step.Actions)
+                        switch (run)
                         {
-                            switch (run)
-                            {
-                                case VMUTActionType.Execute: debugger.Execute(); break;
-                                case VMUTActionType.StepInto: debugger.StepInto(); break;
-                                case VMUTActionType.StepOut: debugger.StepOut(); break;
-                                case VMUTActionType.StepOver: debugger.StepOver(); break;
-                            }
+                            case VMUTActionType.Execute: debugger.Execute(); break;
+                            case VMUTActionType.StepInto: debugger.StepInto(); break;
+                            case VMUTActionType.StepOut: debugger.StepOut(); break;
+                            case VMUTActionType.StepOver: debugger.StepOver(); break;
                         }
-
-                        // Review results
-
-                        var add = string.IsNullOrEmpty(step.Name) ? "" : "-" + step.Name;
-
-                        AssertResult(step.Result, engine, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
                     }
+
+                    // Review results
+
+                    var add = string.IsNullOrEmpty(step.Name) ? "" : "-" + step.Name;
+
+                    AssertResult(step.Result, engine, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
                 }
             }
         }
@@ -85,9 +82,7 @@ public abstract class VMJsonTestBase
     /// <param name="message">Message</param>
     private static void AssertResult(VMUTExecutionEngineState result, TestEngine engine, string message)
     {
-        AssertAreEqual(result.State.ToString().ToLowerInvariant(), engine.State.ToString().ToLowerInvariant(), message + "State is different");
-        if (result.Refs != null && engine.ReferenceCounter.Version == RCVersion.V2)
-            AssertAreEqual(result.Refs, engine.ReferenceCounter.Count, message + "Refs are different");
+        AssertAreEqual(result.State.ToString().ToLowerInvariant(), engine.State.ToString().ToLowerInvariant(), message + $"State is different " + engine.FaultException?.ToString());
         if (engine.State == VMState.FAULT)
         {
             if (result.ExceptionMessage != null)
@@ -97,7 +92,10 @@ public abstract class VMJsonTestBase
             return;
         }
         AssertResult(result.InvocationStack, engine.InvocationStack, message + " [Invocation stack]");
-        AssertResult(result.ResultStack, engine.ResultStack, message + " [Result stack] ");
+        if (result.ResultStack is not null) // compare stack only if requested (for circular references it's impossible to repreesnt stack in JSON).
+            AssertResult(result.ResultStack, engine.ResultStack, message + " [Result stack] ");
+        if (result.Refs != null)
+            AssertAreEqual(result.Refs, engine.ReferenceCounter.Count, message + "Refs are different");
     }
 
     /// <summary>
@@ -119,8 +117,8 @@ public abstract class VMJsonTestBase
             AssertAreEqual(result[x].InstructionPointer, context.InstructionPointer, message + "Instruction pointer is different");
 
             // Check stack
-
-            AssertResult(result[x].EvaluationStack, context.EvaluationStack, message + " [EvaluationStack]");
+            if (result[x].EvaluationStack is not null)
+                AssertResult(result[x].EvaluationStack, context.EvaluationStack, message + " [EvaluationStack]");
 
             // Check slots
 

@@ -1,0 +1,1940 @@
+{
+  "category": "Others",
+  "name": "Reference counter",
+  "tests": [
+    {
+      "name": "AddReference - parent to child - counter increases (A->B; A is on stack)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "APPEND"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 1,
+                "nextInstruction": "DUP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "refs": 1
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "RemoveReference - parent to child - counter decreases (A->B; A is on stack)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "APPEND",
+        "DUP",
+        "PUSH0",
+        "REMOVE"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "DUP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 2
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "refs": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "AddReference - multiple parents - tracks correctly (A->C, B->C; both A and B are on stack)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "NEWARRAY0",
+        "TUCK",
+        "SWAP",
+        "APPEND"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "resultStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              },
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "AddReference - same parent multiple times - tracks correctly (A->[B,B,B]; A is on stack)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "DUP",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "TUCK",
+        "APPEND",
+        "APPEND"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "resultStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  },
+                  {
+                    "type": "Array",
+                    "value": []
+                  },
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "AddReference - non-trackable child - count still increases (A->Int; A is on stack)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "PUSH1",
+        "APPEND"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "resultStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ],
+            "refs": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Circular reference - self reference cleaned up",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "DUP",
+        "APPEND",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "refs": 2
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Circular reference - two items cleaned up",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "DUP",
+        "NEWARRAY0",
+        "APPEND",
+        "DUP",
+        "PUSH0",
+        "PICKITEM",
+        "SWAP",
+        "APPEND",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 11,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Circular reference - three items cleaned up: A -> A",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "PUSH1",
+        "APPEND",
+        "DUP",
+        "DUP",
+        "APPEND",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "evaluationStack": [],
+            "refs": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Circular reference - three items: A -> A",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "PUSH1",
+        "APPEND",
+        "DUP",
+        "DUP",
+        "APPEND"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "refs": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "Circular reference - partially reachable: root -> A -> B -> A",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "APPEND",
+        "DUP",
+        "PUSH0",
+        "PICKITEM",
+        "DUP",
+        "NEWARRAY0",
+        "APPEND",
+        "DUP",
+        "PUSH0",
+        "PICKITEM",
+        "SWAP",
+        "APPEND"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "evaluationStack": [],
+            "refs": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Circular reference - complex graph cleaned up correctly: 0->1, 1->2, 2->3, 3->4, 4->0, 2->0",
+      "script": [
+        "INITSLOT",
+        "0x05",
+        "0x00",
+        "NEWARRAY0",
+        "DUP",
+        "STLOC0",
+        "DUP",
+        "NEWARRAY0",
+        "DUP",
+        "STLOC1",
+        "APPEND",
+        "LDLOC1",
+        "NEWARRAY0",
+        "DUP",
+        "STLOC2",
+        "APPEND",
+        "LDLOC2",
+        "NEWARRAY0",
+        "DUP",
+        "STLOC3",
+        "APPEND",
+        "LDLOC3",
+        "NEWARRAY0",
+        "DUP",
+        "STLOC4",
+        "APPEND",
+        "LDLOC4",
+        "LDLOC0",
+        "APPEND",
+        "LDLOC2",
+        "LDLOC0",
+        "APPEND",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "evaluationStack": [],
+            "refs": 6
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mixed references - stack and object: parent->child, parent is on stack, child is removed from stack",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "APPEND",
+        "DUP",
+        "PUSH0",
+        "PICKITEM",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "evaluationStack": [
+               {
+                  "type": "Array",
+                  "value": [
+                    {
+                      "type": "Array",
+                      "value": []
+                    }
+                  ]
+               }
+            ],
+            "refs": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Zero referred - multiple SCCs: SCC1 reachable from stack (root->A, A->root), SCC2 not reachable from stack (B->C, C->B)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "SWAP",
+        "APPEND",
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "SWAP",
+        "APPEND"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "invocationStack": [],
+            "refs": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "Zero referred - map with compound values",
+      "script": [
+        "NEWMAP",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "PUSH1",
+        "SWAP",
+        "SETITEM",
+        "PUSH1",
+        "APPEND",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
+                "nextInstruction": "DROP"
+              }
+            ],
+             "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value": {
+                      "0x01":
+                      {
+                        "type": "Array",
+                        "value": [
+                          {
+                            "type": "Integer",
+                            "value": 1
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+            "refs": 4
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "RET"
+              }
+            ],
+             "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Zero referred - nested structs",
+      "script": [
+        "NEWSTRUCT0",
+        "DUP",
+        "PUSH1",
+        "APPEND",
+        "DUP",
+        "PUSH2",
+        "APPEND",
+        "NEWSTRUCT0",
+        "TUCK",
+        "SWAP",
+        "APPEND",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 11,
+                "nextInstruction": "DROP"
+              }
+            ],
+             "evaluationStack": [
+                  {
+                    "type": "Struct",
+                    "value": [
+                      {
+                        "type": "Struct",
+                        "value": [
+                          {
+                            "type": "Integer",
+                            "value": 1
+                          },
+                          {
+                            "type": "Integer",
+                            "value": 2
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+            "refs": 4
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 12,
+                "nextInstruction": "RET"
+              }
+            ],
+             "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Zero referred - subitems in same component",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "SWAP",
+        "APPEND",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
+                "nextInstruction": "RET"
+              }
+            ],
+             "evaluationStack": [],
+            "refs": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mixed references - remove parent first (A->B; A is on stack)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "APPEND",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 2
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mixed references - nested arrays (A->B->C; A is on stack)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "NEWARRAY0",
+        "APPEND",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": [
+                      {
+                        "type": "Array",
+                        "value": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Interleaved components - verifies complex sequences work correctly (A->C, B; A and B on stack)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "APPEND",
+        "NEWARRAY0",
+        "SWAP",
+        "DROP",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": []
+              },
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "refs": 1
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Remove stack reference - item still has stack references - check RemoveStackReference when the compound type still has stack references",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "SWAP",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              },
+              {
+                "type": "Array",
+                "value": []
+              },
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 4
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              },
+              {
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "refs": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "Remove stack reference - last parent triggers cleanup - removes a child referenced by multiple parents; cleanup should only happen after the last referrer is removed (A->C, B->C; both A and B on stack)",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "NEWARRAY0",
+        "TUCK",
+        "SWAP",
+        "APPEND",
+        "DUP",
+        "PUSH0",
+        "REMOVE",
+        "SWAP",
+        "DUP",
+        "PUSH0",
+        "REMOVE",
+        "DROP",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
+                "nextInstruction": "DUP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              },
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 4
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 12,
+                "nextInstruction": "SWAP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              },
+              {
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 16,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": []
+              },
+              {
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "refs": 2
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 17,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "refs": 1
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 18,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Multiple references from same parent require all removals - multiple references from the same parent should keep the child alive until all references are removed (A->[B, B])",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "APPEND",
+        "DUP",
+        "PUSH0",
+        "REMOVE",
+        "DUP",
+        "PUSH0",
+        "REMOVE",
+        "DROP",
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "DUP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  },
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "DUP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 2
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 13,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": []
+              }
+            ],
+            "refs": 1
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 14,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Buffer used as map value cleanup - Buffers tracked as map values should be cleaned with their parent container",
+      "script": [
+        "NEWMAP",
+        "DUP",
+        "PUSH0",
+        "PUSH1",
+        "NEWBUFFER",
+        "SETITEM",
+        "DUP",
+        "PUSH0",
+        "REMOVE",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "DUP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Map",
+                "value": {
+                  "0x00": {
+                    "type": "Buffer",
+                    "value": "0x00"
+                  }
+                }
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Map",
+                "value": {}
+              }
+            ],
+            "refs": 1
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Array - SetItem updates references",
+      "script": [
+        "PUSH1",
+        "NEWARRAY",
+        "DUP",
+        "PUSH0",
+        "PUSH1",
+        "SETITEM",
+        "DUP",
+        "PUSH0",
+        "PUSH2",
+        "SETITEM",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "DUP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ],
+            "refs": 2
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "DROP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  }
+                ]
+              }
+            ],
+            "refs": 2
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 11,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Array - RemoveAt removes reference",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "PUSH0",
+        "APPEND",
+        "DUP",
+        "PUSH1",
+        "APPEND",
+        "DUP",
+        "PUSH2",
+        "APPEND",
+        "DUP",
+        "PUSH1",
+        "REMOVE"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "DUP"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  }
+                ]
+              }
+            ],
+            "refs": 4
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 13,
+                "nextInstruction": "RET"
+              }
+            ],
+            "evaluationStack": [
+              {
+                "type": "Array",
+                "value": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 2
+                  }
+                ]
+              }
+            ],
+            "refs": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "Array - clear - remove all references",
+      "script": [
+        "NEWARRAY0",
+        "DUP",
+        "PUSH1",
+        "APPEND",
+        "DUP",
+        "PUSH2",
+        "APPEND",
+        "DUP",
+        "PUSH3",
+        "APPEND",
+        "DUP",
+        "CLEARITEMS",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 11,
+                "nextInstruction": "CLEARITEMS",
+                "evaluationStack": [
+                  {
+                    "type": "Array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 1
+                      },
+                      {
+                        "type": "Integer",
+                        "value": 2
+                      },
+                      {
+                        "type": "Integer",
+                        "value": 3
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Array",
+                    "value": [
+                      {
+                        "type": "Integer",
+                        "value": 1
+                      },
+                      {
+                        "type": "Integer",
+                        "value": 2
+                      },
+                      {
+                        "type": "Integer",
+                        "value": 3
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "refs": 5
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 12,
+                "nextInstruction": "DROP",
+                "evaluationStack": [
+                  {
+                    "type": "Array",
+                    "value": []
+                  }
+                ]
+              }
+            ],
+            "refs": 1
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 13,
+                "nextInstruction": "RET"
+              }
+            ],
+            "resultStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Map - clear - remove all references",
+      "script": [
+        "NEWMAP",
+        "DUP",
+        "PUSH1",
+        "PUSHT",
+        "SETITEM",
+        "DUP",
+        "PUSH2",
+        "PUSHT",
+        "SETITEM",
+        "DUP",
+        "CLEARITEMS",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 10,
+                "nextInstruction": "CLEARITEMS",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value":
+                    {
+                      "0x01":
+                      {
+                        "type": "Boolean",
+                        "value": true
+                      },
+                      "0x02" :
+                      {
+                        "type": "Boolean",
+                        "value": true
+                      }
+                    }
+                  },
+                  {
+                    "type": "Map",
+                    "value":
+                    {
+                      "0x01":
+                      {
+                        "type": "Boolean",
+                        "value": true
+                      },
+                      "0x02" :
+                      {
+                        "type": "Boolean",
+                        "value": true
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "refs": 6
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 11,
+                "nextInstruction": "DROP",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value": {}
+                  }
+                ]
+              }
+            ],
+            "refs": 1
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 12,
+                "nextInstruction": "RET",
+                "evaluationStack": []
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Map - remove key - remove reference",
+      "script": [
+        "NEWMAP",
+        "DUP",
+        "PUSH1",
+        "PUSHT",
+        "SETITEM",
+        "DUP",
+        "PUSH1",
+        "REMOVE"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "DUP",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value":
+                    {
+                      "0x01":
+                      {
+                        "type": "Boolean",
+                        "value": true
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "RET",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value": {}
+                  }
+                ]
+              }
+            ],
+            "evaluationStack": [],
+            "refs": 1
+          }
+        }
+      ]
+    }
+  ]
+}
