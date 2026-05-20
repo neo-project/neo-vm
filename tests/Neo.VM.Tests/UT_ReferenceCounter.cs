@@ -648,7 +648,7 @@ public class UT_ReferenceCounter
     {
         using ScriptBuilder sb = new();
         sb.Emit(OpCode.RET);
-        using ExecutionEngine engine = new(null, new ReferenceCounterV2(), ExecutionEngineLimits.Default);
+        using ExecutionEngine engine = new(null, new ReferenceCounter(), ExecutionEngineLimits.Default);
         engine.LoadScript(sb.ToArray());
         Assert.AreEqual(0, engine.ReferenceCounter.Count);
         Array array = new(new StackItem[] { 1, 2, 3, 4 });
@@ -660,7 +660,7 @@ public class UT_ReferenceCounter
     [TestMethod]
     public void TestPostExecuteInstruction()
     {
-        var refCounter = new ReferenceCounterV2();
+        var refCounter = new ReferenceCounter();
         for (int i = 0; i < ExecutionEngineLimits.Default.MaxStackSize; i++)
         {
             refCounter.AddStackReference(StackItem.Null);

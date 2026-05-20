@@ -27,7 +27,7 @@ public class UT_ExecutionContext
     [TestMethod]
     public void TestStateTest()
     {
-        var context = new ExecutionContext(Array.Empty<byte>(), -1, new ReferenceCounterV2());
+        var context = new ExecutionContext(Array.Empty<byte>(), -1, new ReferenceCounter());
 
         // Test factory
 

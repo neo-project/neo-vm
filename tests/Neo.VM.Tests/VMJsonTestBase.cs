@@ -37,7 +37,7 @@ public abstract class VMJsonTestBase
         {
             Assert.IsFalse(string.IsNullOrEmpty(test.Name), "Name is required");
 
-            var refCounter = new ReferenceCounterV2();
+            var refCounter = new ReferenceCounter();
             using TestEngine engine = new TestEngine(refCounter, ExecutionEngineLimits.Default);
             Debugger debugger = new(engine);
 

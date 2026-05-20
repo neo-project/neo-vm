@@ -139,7 +139,7 @@ public class Benchmarks_InstructionAdvance
         var bytes = new byte[InstructionCount];
         System.Array.Fill(bytes, (byte)OpCode.PUSH0);
         _script = new Script(bytes);
-        _context = new ExecutionContext(_script, 0, new ReferenceCounterV2());
+        _context = new ExecutionContext(_script, 0, new ReferenceCounter());
     }
 
     [IterationSetup]

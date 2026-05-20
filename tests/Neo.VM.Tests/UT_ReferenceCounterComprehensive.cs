@@ -42,7 +42,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestAddStackReference_SingleItem_CountIncreases()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         Assert.AreEqual(0, rc.Count);
@@ -53,7 +53,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestAddStackReference_MultipleCount_CountIncreasesCorrectly()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         rc.AddStackReference(array, 5);
@@ -63,7 +63,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestRemoveStackReference_SingleItem_CountDecreases()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         rc.AddStackReference(array, 3);
@@ -76,7 +76,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestStackReference_NonTrackedType_CountStillChanges()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         StackItem intItem = 42; // Integer - not tracked
 
         rc.AddStackReference(intItem);
@@ -89,7 +89,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestStackReference_Buffer_IsTracked()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var buffer = new Buffer(10);
 
         rc.AddStackReference(buffer);
@@ -106,7 +106,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestAddZeroReferred_NoTrackingElements()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         // Array creation itself doesn't imply RC modifications since no items on stack are expected.
@@ -116,7 +116,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestCheckZeroReferred_WithStackReference()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         rc.AddStackReference(array);
@@ -127,7 +127,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestCheckZeroReferred_NoZeroItems_ReturnsCurrentCount()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         rc.AddStackReference(array);
@@ -139,7 +139,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestRemoveStackReference_ToZero_AddsToZeroReferred()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         rc.AddStackReference(array);
@@ -156,14 +156,14 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestEmptyReferenceCounter_CountIsZero()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         Assert.AreEqual(0, rc.Count);
     }
 
     [TestMethod]
     public void TestLargeNumberOfItems()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var arrays = new Array[100];
 
         for (int i = 0; i < 100; i++)
@@ -185,7 +185,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestDeepNesting()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var root = new Array();
         rc.AddStackReference(root);
 
@@ -212,7 +212,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestArray_TrackedCorrectly()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         rc.AddStackReference(array);
@@ -231,7 +231,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestMap_TrackedCorrectly()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var map = new Map();
 
         rc.AddStackReference(map);
@@ -251,7 +251,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestStruct_TrackedCorrectly()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var s = new Struct();
 
         rc.AddStackReference(s);
@@ -268,7 +268,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestBuffer_TrackedCorrectly()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var buffer = new Buffer(10);
 
         rc.AddStackReference(buffer);
@@ -282,7 +282,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestNestedCompoundTypes()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
         var map = new Map();
         var s = new Struct();
@@ -312,7 +312,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestCacheInvalidation_AddReference()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var parent = new Array();
         var child = new Array();
 
@@ -332,7 +332,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestCacheInvalidation_RemoveReference()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var parent = new Array();
         var child = new Array();
 
@@ -510,7 +510,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestStress_ManySmallArrays()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var arrays = new Array[1000];
 
         for (int i = 0; i < 1000; i++)
@@ -532,7 +532,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestStress_ComplexInterconnectedGraph()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var arrays = new Array[20];
 
         for (int i = 0; i < 20; i++)
@@ -562,7 +562,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestStress_RepeatedCheckZeroReferred()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         rc.AddStackReference(array);
@@ -580,7 +580,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestBehavior_AddRemoveSymmetry()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         for (int i = 0; i < 10; i++)
@@ -601,7 +601,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestBehavior_CountNeverNegative()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
 
         // Even with no items, count should be 0
         Assert.AreEqual(0, rc.Count);
@@ -620,7 +620,7 @@ public class UT_ReferenceCounterComprehensive
         // Run the same scenario multiple times to ensure deterministic behavior
         for (int run = 0; run < 10; run++)
         {
-            var rc = new ReferenceCounterV2();
+            var rc = new ReferenceCounter();
             var a = new Array();
             var b = new Array();
             var c = new Array();
@@ -646,7 +646,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestAddStackReference_ExistingItem()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         rc.AddStackReference(array);
@@ -664,7 +664,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestAddStackReference_RemovesFromZeroReferred()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array(new List<StackItem>() { new Boolean(true) });
 
         rc.AddStackReference(array);
@@ -684,7 +684,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestAddStackReference_PrimitiveType()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         StackItem intItem = 42;
 
         rc.AddStackReference(intItem);
@@ -698,7 +698,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestRemoveStackReference_RemoveLastReference()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         StackItem intItem = 42;
 
         rc.AddStackReference(intItem);
@@ -719,7 +719,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestRemoveStackReference_ItemStillHasStackReferences2()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var array = new Array();
 
         rc.AddStackReference(array, 3); // Add 3 stack references
@@ -735,7 +735,7 @@ public class UT_ReferenceCounterComprehensive
     [TestMethod]
     public void TestSlotUpdateReplacesReferences()
     {
-        var rc = new ReferenceCounterV2();
+        var rc = new ReferenceCounter();
         var slot = new Slot(1, rc);
         var first = new Array();
         var second = new Array();

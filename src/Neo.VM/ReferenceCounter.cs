@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2026 The Neo Project.
 //
-// ReferenceCounterV2.cs file belongs to the neo project and is free
+// ReferenceCounter.cs file belongs to the neo project and is free
 // software distributed under the MIT software license, see the
 // accompanying file LICENSE in the main directory of the
 // repository or http://www.opensource.org/licenses/mit-license.php
@@ -17,7 +17,7 @@ namespace Neo.VM;
 /// <summary>
 /// Used for reference counting of objects in the VM.
 /// </summary>
-public sealed class ReferenceCounterV2 : IReferenceCounter
+public sealed class ReferenceCounter : IReferenceCounter
 {
     private readonly ExecutionEngineLimits _limits;
 
@@ -27,7 +27,7 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
     /// <inheritdoc/>
     public int Count => _referencesCount;
 
-    public ReferenceCounterV2(ExecutionEngineLimits? limits = null)
+    public ReferenceCounter(ExecutionEngineLimits? limits = null)
     {
         _limits = limits ?? ExecutionEngineLimits.Default;
     }
