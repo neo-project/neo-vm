@@ -301,7 +301,7 @@ public class ExecutionEngine : IDisposable
     /// </summary>
     protected virtual void PostExecuteInstruction(Instruction instruction)
     {
-        ReferenceCounter.CheckPostExecution();
+        ReferenceCounter.PostExecuteInstruction();
     }
 
     /// <summary>

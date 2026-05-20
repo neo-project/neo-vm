@@ -56,7 +56,7 @@ public sealed class ReferenceCounterV2 : IReferenceCounter
     }
 
     /// <inheritdoc/>
-    public void CheckPostExecution()
+    public void PostExecuteInstruction()
     {
         if (Count > _limits.MaxStackSize)
             throw new InvalidOperationException($"MaxStackSize exceed: {Count}/{_limits.MaxStackSize}");

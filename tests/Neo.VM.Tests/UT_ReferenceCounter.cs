@@ -658,15 +658,15 @@ public class UT_ReferenceCounter
     }
 
     [TestMethod]
-    public void TestCheckPostExecution()
+    public void TestPostExecuteInstruction()
     {
         var refCounter = new ReferenceCounterV2();
         for (int i = 0; i < ExecutionEngineLimits.Default.MaxStackSize; i++)
         {
             refCounter.AddStackReference(StackItem.Null);
         }
-        refCounter.CheckPostExecution();
+        refCounter.PostExecuteInstruction();
         refCounter.AddStackReference(StackItem.Null);
-        Assert.ThrowsExactly<InvalidOperationException>(() => refCounter.CheckPostExecution());
+        Assert.ThrowsExactly<InvalidOperationException>(() => refCounter.PostExecuteInstruction());
     }
 }

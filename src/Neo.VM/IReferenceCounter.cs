@@ -54,5 +54,5 @@ public interface IReferenceCounter
     /// <summary>
     /// Validate reference counters after execution and throw if limits are violated.
     /// </summary>
-    void CheckPostExecution();
+    void PostExecuteInstruction();
 }
