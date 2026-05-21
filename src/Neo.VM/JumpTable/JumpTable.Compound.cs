@@ -627,7 +627,9 @@ partial class JumpTable
                     engine.ReferenceCounter.RemoveStackReference(item);
                 break;
             case Map map:
-                var old = map.Remove(key);
+                var old = map.Remove(key, out int idx);
+                if (idx >= 0)
+                    l = map.Count - idx;
                 if (old is not null && engine.ReferenceCounter.Version == RCVersion.V2 && map.IsStackReferenced)
                 {
                     engine.ReferenceCounter.RemoveStackReference(key);
