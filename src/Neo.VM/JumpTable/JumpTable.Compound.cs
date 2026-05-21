@@ -349,9 +349,10 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Keys(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
+        var r = engine.ReferenceCounter.Count;
         var map = engine.Pop<Map>();
         engine.Push(new VMArray(engine.ReferenceCounter, map.Keys));
-        runStats = new RunStats { Length = map.Count };
+        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count, Length = map.Count };
     }
 
     /// <summary>
@@ -366,7 +367,8 @@ partial class JumpTable
     public virtual void Values(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x = engine.Pop();
-        int nClonedItems = 0;
+        var nClonedItems = 0;
+        var refsDelta = 0;
         var values = x switch
         {
             VMArray array => array,
@@ -377,13 +379,19 @@ partial class JumpTable
         foreach (var item in values)
             if (item is Struct s)
             {
+                var r = engine.ReferenceCounter.Count;
                 newArray.Add(s.Clone(engine.Limits, out int n));
                 nClonedItems += n;
+                refsDelta += engine.ReferenceCounter.Count - r;
             }
             else
+            {
+                var r = engine.ReferenceCounter.Count;
                 newArray.Add(item);
+                refsDelta += engine.ReferenceCounter.Count - r;
+            }
         engine.Push(newArray);
-        runStats = new RunStats { Length = newArray.Count, NClonedItems = nClonedItems };
+        runStats = new RunStats { RefsDelta = refsDelta, Length = newArray.Count, NClonedItems = nClonedItems };
     }
 
     /// <summary>
