@@ -461,10 +461,7 @@ partial class JumpTable
         }
         var r2 = engine.ReferenceCounter.Count;
         engine.Push(item);
-        var l = 0;
-        if (item.Type == StackItemType.ByteString)
-            l = ((ByteString)item).GetSpan().Length;
-        runStats = new RunStats { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2, Length = l };
+        runStats = new RunStats { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2 };
     }
 
     /// <summary>
