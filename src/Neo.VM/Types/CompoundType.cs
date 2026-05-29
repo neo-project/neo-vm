@@ -39,7 +39,7 @@ public abstract class CompoundType : StackItem
     /// <summary>
     /// Indicates whether this <see cref="StackItem"/> is referenced from any VM stack roots.
     /// </summary>
-    internal bool IsStackReferenced => StackReferences != 0;
+    public bool IsStackReferenced => StackReferences != 0;
 
     /// <summary>
     /// The number of items in this VM object.
