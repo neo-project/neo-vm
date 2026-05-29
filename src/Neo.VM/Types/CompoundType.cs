@@ -34,7 +34,7 @@ public abstract class CompoundType : StackItem
     ///
     /// Use this field to manage stack references and determine when an item is no longer needed.
     /// </summary>
-    internal int StackReferences = 0;
+    internal int StackReferences { get; set; }
 
     /// <summary>
     /// Indicates whether this <see cref="StackItem"/> is referenced from any VM stack roots.
