@@ -166,7 +166,7 @@ public class ExecutionEngine : IDisposable
                 }
                 finally
                 {
-                    PostExecuteInstruction(instruction, runStats);
+                    PostExecuteInstruction(currentInstruction, runStats);
                 }
                 if (!isJumping && currentInstruction != null)
                     context.InstructionPointer += instruction.Size;
@@ -303,7 +303,7 @@ public class ExecutionEngine : IDisposable
     /// <summary>
     /// Called after an instruction is executed.
     /// </summary>
-    protected virtual void PostExecuteInstruction(Instruction instruction, RunStats? runStats)
+    protected virtual void PostExecuteInstruction(Instruction? instruction, RunStats? runStats)
     {
         ReferenceCounter.CheckPostExecution();
     }
