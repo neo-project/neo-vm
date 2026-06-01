@@ -28,20 +28,18 @@ public class Benchmarks_ArrayBuild
     [Benchmark]
     public VMArray BuildWithListFill()
     {
-        var referenceCounter = new ReferenceCounter();
         var items = new List<StackItem>(N);
         for (int i = 0; i < N; i++)
             items.Add(Item);
-        return new VMArray(referenceCounter, items);
+        return new VMArray(items);
     }
 
     [Benchmark]
     public VMArray BuildWithArrayFill()
     {
-        var referenceCounter = new ReferenceCounter();
         var itemArray = new StackItem[N];
         System.Array.Fill(itemArray, Item);
-        return new VMArray(referenceCounter, itemArray);
+        return new VMArray(itemArray);
     }
 }
 

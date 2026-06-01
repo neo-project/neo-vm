@@ -29,9 +29,7 @@ public class TestArray : CompoundType, IReadOnlyList<StackItem>
         set
         {
             if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
-            ReferenceCounter?.RemoveReference(InnerList[index], this);
             InnerList[index] = value;
-            ReferenceCounter?.AddReference(value, this);
         }
     }
 
@@ -48,17 +46,7 @@ public class TestArray : CompoundType, IReadOnlyList<StackItem>
     /// </summary>
     /// <param name="items">The items to be included in the array.</param>
     public TestArray(IEnumerable<StackItem>? items = null)
-        : this(null, items)
-    {
-    }
-
-    /// <summary>
-    /// Create an array containing the specified items. And make the array use the specified <see cref="IReferenceCounter"/>.
-    /// </summary>
-    /// <param name="referenceCounter">The <see cref="IReferenceCounter"/> to be used by this array.</param>
-    /// <param name="items">The items to be included in the array.</param>
-    public TestArray(IReferenceCounter? referenceCounter, IEnumerable<StackItem>? items = null)
-        : base(referenceCounter)
+        : base()
     {
         InnerList = items switch
         {
@@ -66,9 +54,6 @@ public class TestArray : CompoundType, IReadOnlyList<StackItem>
             List<StackItem> list => list,
             _ => new List<StackItem>(items)
         };
-        if (referenceCounter != null)
-            foreach (StackItem item in InnerList)
-                referenceCounter.AddReference(item, this);
     }
 
     /// <summary>
@@ -79,29 +64,25 @@ public class TestArray : CompoundType, IReadOnlyList<StackItem>
     {
         if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
         InnerList.Add(item);
-        ReferenceCounter?.AddReference(item, this);
     }
 
     public override void Clear()
     {
         if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
-        if (ReferenceCounter != null)
-            foreach (StackItem item in InnerList)
-                ReferenceCounter.RemoveReference(item, this);
         InnerList.Clear();
     }
 
     public override StackItem ConvertTo(StackItemType type)
     {
         if (Type == StackItemType.Array && type == StackItemType.Struct)
-            return new Struct(ReferenceCounter, new List<StackItem>(InnerList));
+            return new Struct(new List<StackItem>(InnerList));
         return base.ConvertTo(type);
     }
 
     internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
     {
         if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
-        var result = this is TestStruct ? new TestStruct(ReferenceCounter) : new TestArray(ReferenceCounter);
+        var result = this is TestStruct ? new TestStruct() : new TestArray();
         refMap.Add(this, result);
         foreach (StackItem item in InnerList)
             result.Add(item.DeepCopy(refMap, asImmutable));
@@ -126,7 +107,6 @@ public class TestArray : CompoundType, IReadOnlyList<StackItem>
     public void RemoveAt(int index)
     {
         if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
-        ReferenceCounter?.RemoveReference(InnerList[index], this);
         InnerList.RemoveAt(index);
     }
 
