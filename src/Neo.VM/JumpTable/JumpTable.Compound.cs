@@ -188,7 +188,9 @@ partial class JumpTable
             throw new InvalidOperationException($"The array size is out of valid range, {n}/[0, {engine.Limits.MaxStackSize}].");
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
-        engine.Push(new VMArray(nullArray));
+        var newArray = new VMArray(nullArray);
+        newArray.StackReferences++;
+        engine.PushItemCounted(newArray, n + 1);
     }
 
     /// <summary>
