@@ -221,10 +221,8 @@ partial class JumpTable
         var itemArray = new StackItem[n];
         Array.Fill(itemArray, item);
         var newArray = new VMArray(itemArray);
-        newArray.StackReferences--;
-        engine.Push(newArray);
         newArray.StackReferences++;
-        engine.ReferenceCounter.AddStackReference(StackItem.Null, n);
+        engine.PushItemCounted(newArray, n + 1);
     }
 
     /// <summary>
