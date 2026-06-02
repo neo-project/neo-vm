@@ -71,9 +71,8 @@ partial class JumpTable
             var item = engine.PopNoRef();
             @struct.Add(item);
         }
-        @struct.StackReferences--;
-        engine.Push(@struct);
         @struct.StackReferences++;
+        engine.PushItemCounted(@struct, 1);
     }
 
     /// <summary>
