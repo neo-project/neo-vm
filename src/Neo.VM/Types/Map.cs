@@ -49,18 +49,6 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
             if (key.Size > MaxKeySize)
                 throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
             if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not set value.");
-            if (ReferenceCounter != null)
-            {
-                if (dictionary.TryGetValue(key, out StackItem? old_value))
-                    ReferenceCounter.RemoveReference(old_value, this);
-                else
-                    ReferenceCounter.AddReference(key, this);
-                if (value is CompoundType { ReferenceCounter: null })
-                {
-                    throw new InvalidOperationException("Can not set a Map without a ReferenceCounter.");
-                }
-                ReferenceCounter.AddReference(value, this);
-            }
             dictionary[key] = value;
         }
     }
@@ -84,21 +72,18 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     public IEnumerable<StackItem> Values => dictionary.Values;
 
     /// <summary>
-    /// Create a new map with the specified reference counter.
+    /// Create a new map.
     /// </summary>
-    /// <param name="referenceCounter">The reference counter to be used.</param>
-    public Map(IReferenceCounter? referenceCounter = null)
-        : base(referenceCounter)
+    public Map() : base()
     {
     }
 
     /// <summary>
-    /// Create a new map with the specified dictionary and reference counter.
+    /// Create a new map.
     /// </summary>
     /// <param name="dictionary">Dictionary</param>
-    /// <param name="referenceCounter">Reference Counter</param>
-    public Map(IEnumerable<KeyValuePair<PrimitiveType, StackItem>> dictionary, IReferenceCounter? referenceCounter = null)
-        : this(referenceCounter)
+    public Map(IEnumerable<KeyValuePair<PrimitiveType, StackItem>> dictionary)
+        : this()
     {
         foreach (var (k, v) in dictionary)
         {
@@ -109,12 +94,6 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     public override void Clear()
     {
         if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not clear.");
-        if (ReferenceCounter != null)
-            foreach (var pair in dictionary)
-            {
-                ReferenceCounter.RemoveReference(pair.Key, this);
-                ReferenceCounter.RemoveReference(pair.Value, this);
-            }
         dictionary.Clear();
     }
 
@@ -136,7 +115,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
     {
         if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
-        Map result = new(ReferenceCounter);
+        Map result = new();
         refMap.Add(this, result);
         foreach (var (k, v) in dictionary)
             result[k] = v.DeepCopy(refMap, asImmutable);
@@ -169,8 +148,6 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
         if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not remove key.");
         if (!dictionary.Remove(key, out StackItem? oldValue))
             return null;
-        ReferenceCounter?.RemoveReference(key, this);
-        ReferenceCounter?.RemoveReference(oldValue, this);
         return oldValue;
     }
 
