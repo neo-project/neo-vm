@@ -254,7 +254,9 @@ partial class JumpTable
 
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
-        engine.Push(new Struct(nullArray));
+        var newStruct = new Struct(nullArray);
+        newStruct.StackReferences++;
+        engine.PushItemCounted(newStruct, n + 1);
     }
 
     /// <summary>
