@@ -242,7 +242,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Array(new StackItem[] { 42 }));
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -267,7 +267,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { }));
+            engine.Push(new Array(new StackItem[] { }));
             engine.Push(new Integer(42));
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
 
@@ -290,7 +290,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { }));
+            engine.Push(new Array(new StackItem[] { }));
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
             Assert.AreEqual(VMState.HALT, engine.Execute());
             Assert.AreEqual(1, engine.ResultStack.Count);
@@ -314,7 +314,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Map(engine.ReferenceCounter));
+            engine.Push(new Map());
             engine.Push(new Integer(0));
             engine.Push(new Integer(100500));
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
@@ -340,7 +340,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Map(engine.ReferenceCounter));
+            engine.Push(new Map());
             Assert.AreEqual(1, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -365,9 +365,9 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Array(new StackItem[] { 42 }));
             engine.Push(new Integer(0));
-            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Array(new StackItem[] { 42 }));
             Assert.AreEqual(5, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -388,7 +388,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Array(new StackItem[] { 42 }));
             engine.Push(new Integer(0));
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
 
@@ -410,7 +410,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Struct(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Struct(new StackItem[] { 42 }));
             engine.Push(new Integer(0));
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
 
@@ -432,7 +432,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Map(engine.ReferenceCounter) { [new Integer(0)] = StackItem.True });
+            engine.Push(new Map() { [new Integer(0)] = StackItem.True });
             engine.Push(new Integer(0));
             Assert.AreEqual(4, engine.ReferenceCounter.Count);
 
@@ -456,7 +456,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Array(new StackItem[] { 42 }));
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -480,7 +480,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Struct(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Struct(new StackItem[] { 42 }));
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -504,7 +504,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Map(engine.ReferenceCounter) { [new Integer(0)] = StackItem.True });
+            engine.Push(new Map() { [new Integer(0)] = StackItem.True });
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -525,7 +525,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Array(new StackItem[] { 42 }));
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -546,7 +546,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Struct(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Struct(new StackItem[] { 42 }));
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -567,7 +567,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Map(engine.ReferenceCounter) { [new Integer(0)] = StackItem.True });
+            engine.Push(new Map() { [new Integer(0)] = StackItem.True });
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -589,7 +589,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Array(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Array(new StackItem[] { 42 }));
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -611,7 +611,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Struct(engine.ReferenceCounter, new StackItem[] { 42 }));
+            engine.Push(new Struct(new StackItem[] { 42 }));
             Assert.AreEqual(2, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -633,7 +633,7 @@ public class UT_ReferenceCounter
             engine.LoadScript(sb.ToArray());
             Assert.AreEqual(0, engine.ReferenceCounter.Count);
 
-            engine.Push(new Map(engine.ReferenceCounter) { [new Integer(0)] = StackItem.True });
+            engine.Push(new Map() { [new Integer(0)] = StackItem.True });
             Assert.AreEqual(3, engine.ReferenceCounter.Count);
 
             Assert.AreEqual(VMState.HALT, engine.Execute());
@@ -651,39 +651,22 @@ public class UT_ReferenceCounter
         using ExecutionEngine engine = new(null, new ReferenceCounter(), ExecutionEngineLimits.Default);
         engine.LoadScript(sb.ToArray());
         Assert.AreEqual(0, engine.ReferenceCounter.Count);
-        Array array = new(engine.ReferenceCounter, new StackItem[] { 1, 2, 3, 4 });
-        Assert.AreEqual(array.Count, engine.ReferenceCounter.Count);
+        Array array = new(new StackItem[] { 1, 2, 3, 4 });
+        Assert.AreEqual(0, engine.ReferenceCounter.Count); // Array is not pushed to stack.
         Assert.AreEqual(VMState.HALT, engine.Execute());
-        Assert.AreEqual(array.Count, engine.ReferenceCounter.Count);
+        Assert.AreEqual(0, engine.ReferenceCounter.Count);
     }
 
     [TestMethod]
-    public void TestInvalidReferenceStackItem()
+    public void TestPostExecuteInstruction()
     {
-        var reference = new ReferenceCounter();
-        var arr = new Array(reference);
-        var arr2 = new Array();
-
-        for (var i = 0; i < 10; i++)
+        var refCounter = new ReferenceCounter();
+        for (int i = 0; i < ExecutionEngineLimits.Default.MaxStackSize; i++)
         {
-            arr2.Add(i);
-        }
-
-        Assert.ThrowsExactly<InvalidOperationException>(() => arr.Add(arr2));
-    }
-
-    [TestMethod]
-    public void TestCheckPostExecution()
-    {
-        foreach (var refCounter in new IReferenceCounter[] { new ReferenceCounter(), new ReferenceCounterV2() })
-        {
-            for (int i = 0; i < ExecutionEngineLimits.Default.MaxStackSize; i++)
-            {
-                refCounter.AddStackReference(StackItem.Null);
-            }
-            refCounter.CheckPostExecution();
             refCounter.AddStackReference(StackItem.Null);
-            Assert.ThrowsExactly<InvalidOperationException>(() => refCounter.CheckPostExecution());
         }
+        refCounter.PostExecuteInstruction();
+        refCounter.AddStackReference(StackItem.Null);
+        Assert.ThrowsExactly<InvalidOperationException>(() => refCounter.PostExecuteInstruction());
     }
 }

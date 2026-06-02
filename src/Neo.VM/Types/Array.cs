@@ -35,14 +35,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
         set
         {
             if (IsReadOnly) throw new InvalidOperationException("The object is readonly.");
-            ReferenceCounter?.RemoveReference(InnerList[index], this);
             InnerList[index] = value;
-            if (ReferenceCounter != null && value is CompoundType { ReferenceCounter: null })
-            {
-                throw new InvalidOperationException("Can not set a CompoundType without a ReferenceCounter.");
-            }
-
-            ReferenceCounter?.AddReference(value, this);
         }
     }
 
@@ -59,17 +52,7 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
     /// </summary>
     /// <param name="items">The items to be included in the array.</param>
     public Array(IEnumerable<StackItem>? items = null)
-        : this(null, items)
-    {
-    }
-
-    /// <summary>
-    /// Create an array containing the specified items. And make the array use the specified <see cref="IReferenceCounter"/>.
-    /// </summary>
-    /// <param name="referenceCounter">The <see cref="IReferenceCounter"/> to be used by this array.</param>
-    /// <param name="items">The items to be included in the array.</param>
-    public Array(IReferenceCounter? referenceCounter, IEnumerable<StackItem>? items = null)
-        : base(referenceCounter)
+        : base()
     {
         InnerList = items switch
         {
@@ -77,18 +60,6 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
             List<StackItem> list => list,
             _ => new List<StackItem>(items)
         };
-
-        if (referenceCounter?.Version != RCVersion.V1) return;
-
-        foreach (var item in InnerList)
-        {
-            if (item is CompoundType { ReferenceCounter: null })
-            {
-                throw new InvalidOperationException("Can not set a CompoundType without a ReferenceCounter.");
-            }
-
-            referenceCounter.AddReference(item, this);
-        }
     }
 
     /// <summary>
@@ -99,36 +70,25 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
     {
         if (IsReadOnly) throw new InvalidOperationException("The array is readonly, can not add item.");
         InnerList.Add(item);
-
-        if (ReferenceCounter == null) return;
-
-        if (item is CompoundType { ReferenceCounter: null })
-        {
-            throw new InvalidOperationException("Can not set a CompoundType without a ReferenceCounter.");
-        }
-        ReferenceCounter.AddReference(item, this);
     }
 
     public override void Clear()
     {
         if (IsReadOnly) throw new InvalidOperationException("The array is readonly, can not clear.");
-        if (ReferenceCounter is not null)
-            foreach (StackItem item in InnerList)
-                ReferenceCounter.RemoveReference(item, this);
         InnerList.Clear();
     }
 
     public override StackItem ConvertTo(StackItemType type)
     {
         if (Type == StackItemType.Array && type == StackItemType.Struct)
-            return new Struct(ReferenceCounter, new List<StackItem>(InnerList));
+            return new Struct(new List<StackItem>(InnerList));
         return base.ConvertTo(type);
     }
 
     internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
     {
         if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
-        Array result = this is Struct ? new Struct(ReferenceCounter) : new Array(ReferenceCounter);
+        Array result = this is Struct ? new Struct() : new Array();
         refMap.Add(this, result);
         foreach (StackItem item in InnerList)
             result.Add(item.DeepCopy(refMap, asImmutable));
@@ -153,7 +113,6 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
     public void RemoveAt(int index)
     {
         if (IsReadOnly) throw new InvalidOperationException("The array is readonly, can not remove item.");
-        ReferenceCounter?.RemoveReference(InnerList[index], this);
         InnerList.RemoveAt(index);
     }
 
