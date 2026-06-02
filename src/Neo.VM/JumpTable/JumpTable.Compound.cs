@@ -94,9 +94,8 @@ partial class JumpTable
             var item = engine.PopNoRef();
             array.Add(item);
         }
-        array.StackReferences--;
-        engine.Push(array);
         array.StackReferences++;
+        engine.PushItemCounted(array, 1);
     }
 
     /// <summary>
