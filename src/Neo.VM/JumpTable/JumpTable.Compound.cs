@@ -535,24 +535,26 @@ partial class JumpTable
                     var i = (int)index;
                     if (array.IsStackReferenced)
                         engine.ReferenceCounter.RemoveStackReference(array[i]);
+                    else
+                        engine.ReferenceCounter.RemoveStackReference(value);
                     array[i] = value;
-                    if (array.IsStackReferenced)
-                        engine.ReferenceCounter.AddStackReference(value);
                     break;
                 }
             case Map map:
                 {
                     if (map.IsStackReferenced)
                     {
-                        if (!map.TryGetValue(key, out var value1))
-                        {
-                            engine.ReferenceCounter.AddStackReference(key);
-                        }
-                        else
+                        if (map.TryGetValue(key, out var value1))
                         {
                             engine.ReferenceCounter.RemoveStackReference(value1);
                         }
+                        else
+                        {
+                            engine.ReferenceCounter.AddStackReference(key);
+                        }
                     }
+                    else
+                        engine.ReferenceCounter.RemoveStackReference(value);
                     map[key] = value;
                     break;
                 }
