@@ -502,9 +502,8 @@ partial class JumpTable
         var nClonedItems = 0;
         if (value is Struct s) value = s.Clone(engine.Limits, out nClonedItems);
         var (r1, r2) = (engine.ReferenceCounter.Count, engine.ReferenceCounter.Count);
-        var key = engine.Pop<PrimitiveType>();
-        var r = engine.ReferenceCounter.Count;
         var r3 = engine.ReferenceCounter.Count;
+        var key = engine.Pop<PrimitiveType>();
         var x = engine.Pop();
         switch (x)
         {
