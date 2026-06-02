@@ -48,9 +48,8 @@ partial class JumpTable
             }
             map[key] = value;
         }
-        map.StackReferences--;
-        engine.Push(map);
         map.StackReferences++;
+        engine.PushItemCounted(map, 1);
     }
 
     /// <summary>
