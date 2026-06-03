@@ -64,7 +64,7 @@ public class Struct : Array
                 }
             }
         }
-        nClonedItems = (int)(limits.MaxStackSize - 1) - count;
+        nClonedItems = (int)limits.MaxStackSize - count;
         return result;
     }
 
