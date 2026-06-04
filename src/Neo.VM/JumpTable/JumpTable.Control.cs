@@ -477,10 +477,11 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Throw(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
-        var r = engine.ReferenceCounter.Count;
+        var r1 = engine.ReferenceCounter.Count;
         var item = engine.Pop();
+        var r2 = engine.ReferenceCounter.Count;
         ExecuteThrow(engine, item);
-        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count };
+        runStats = new RunStats { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2 };
     }
 
     /// <summary>
