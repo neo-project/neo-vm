@@ -480,8 +480,8 @@ partial class JumpTable
         var r1 = engine.ReferenceCounter.Count;
         var item = engine.Pop();
         var r2 = engine.ReferenceCounter.Count;
-        ExecuteThrow(engine, item);
-        runStats = new RunStats { RefsDelta = r1 - r2 + engine.ReferenceCounter.Count - r2 };
+        ExecuteThrow(engine, item, out int refsDelta);
+        runStats = new RunStats { RefsDelta = r1 - r2 + refsDelta };
     }
 
     /// <summary>
@@ -576,7 +576,7 @@ partial class JumpTable
         if (engine.UncaughtException is null)
             engine.CurrentContext.InstructionPointer = currentTry.EndPointer;
         else
-            ExecuteThrow(engine, engine.UncaughtException);
+            ExecuteThrow(engine, engine.UncaughtException, out _);
 
         engine.isJumping = true;
         runStats = null;
@@ -717,7 +717,8 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="ex">The exception to throw.</param>
-    public virtual void ExecuteThrow(ExecutionEngine engine, StackItem? ex)
+    /// <param name="refsDelta">The delta for reference counting.</param>
+    public virtual void ExecuteThrow(ExecutionEngine engine, StackItem? ex, out int refsDelta)
     {
         engine.UncaughtException = ex;
 
@@ -733,14 +734,18 @@ partial class JumpTable
                         executionContext.TryStack.Pop();
                         continue;
                     }
+                    var r = engine.ReferenceCounter.Count;
                     for (var i = 0; i < pop; i++)
                     {
                         engine.ContextUnloaded(engine.InvocationStack.Pop());
                     }
+                    refsDelta = r - engine.ReferenceCounter.Count;
                     if (tryContext.State == ExceptionHandlingState.Try && tryContext.HasCatch)
                     {
                         tryContext.State = ExceptionHandlingState.Catch;
+                        r = engine.ReferenceCounter.Count;
                         engine.Push(engine.UncaughtException!);
+                        refsDelta += engine.ReferenceCounter.Count - r;
                         executionContext.InstructionPointer = tryContext.CatchPointer;
                         engine.UncaughtException = null;
                     }

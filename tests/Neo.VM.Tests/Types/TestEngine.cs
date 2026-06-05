@@ -43,7 +43,7 @@ public class TestEngine : ExecutionEngine
 
         if (method == 0xaddeadde)
         {
-            engine.JumpTable.ExecuteThrow(engine, "error");
+            engine.JumpTable.ExecuteThrow(engine, "error", out _);
             runStats = null;
             return;
         }

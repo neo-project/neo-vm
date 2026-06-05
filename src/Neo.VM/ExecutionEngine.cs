@@ -162,7 +162,7 @@ public class ExecutionEngine : IDisposable
                 }
                 catch (CatchableException ex) when (Limits.CatchEngineExceptions)
                 {
-                    JumpTable.ExecuteThrow(this, ex.Message);
+                    JumpTable.ExecuteThrow(this, ex.Message, out _);
                 }
                 finally
                 {
