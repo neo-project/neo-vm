@@ -574,12 +574,17 @@ partial class JumpTable
             throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
 
         if (engine.UncaughtException is null)
+        {
             engine.CurrentContext.InstructionPointer = currentTry.EndPointer;
+            runStats = null;
+        }
         else
-            ExecuteThrow(engine, engine.UncaughtException, out _);
+        {
+            ExecuteThrow(engine, engine.UncaughtException, out int refsDelta);
+            runStats = new RunStats { RefsDelta = refsDelta };
+        }
 
         engine.isJumping = true;
-        runStats = null;
     }
 
     /// <summary>
