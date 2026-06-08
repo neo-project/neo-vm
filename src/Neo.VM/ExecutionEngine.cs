@@ -160,10 +160,6 @@ public class ExecutionEngine : IDisposable
                 {
                     JumpTable[instruction.OpCode](this, instruction, out runStats);
                 }
-                catch (CatchableException ex) when (Limits.CatchEngineExceptions)
-                {
-                    JumpTable.ExecuteThrow(this, ex.Message, out _);
-                }
                 finally
                 {
                     PostExecuteInstruction(currentInstruction, runStats);
