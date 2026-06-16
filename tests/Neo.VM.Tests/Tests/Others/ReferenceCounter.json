@@ -2010,6 +2010,181 @@
       ]
     },
     {
+      "name": "Circular reference - clear self referenced Array with primitive types",
+      "script": [
+		    "NEWARRAY0",
+        "DUP",
+        "PUSH1",
+        "APPEND",
+		    "DUP",
+		    "DUP",
+		    "APPEND",
+		    "CLEARITEMS"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "APPEND",
+                "evaluationStack": [
+                  {
+                    "type": "Array",
+                    "value": [ 
+                      {
+                        "type": "Integer",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Array",
+                    "value": [ 
+                      {
+                        "type": "Integer",
+                        "value": 1
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Array",
+                    "value": [ 
+                      {
+                        "type": "Integer",
+                        "value": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "refs": 4
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "CLEARITEMS"
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Circular reference - clear self referenced Map",
+      "script": [
+		    "NEWMAP",
+		    "DUP",
+		    "DUP",
+        "PUSH1",
+        "SWAP",
+        "SETITEM",
+		    "CLEARITEMS"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "SETITEM",
+                "evaluationStack": [
+                  {
+                    "type": "Map",
+                    "value": { }
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  },
+                  {
+                    "type": "Map",
+                    "value": { }
+                  },
+                  {
+                    "type": "Map",
+                    "value": { }
+                  }
+                ]
+              }
+            ],
+            "refs": 4
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "CLEARITEMS"
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
       "name": "RC must not be negative due to circular reference removal",
       "script": [
        	"INITSLOT", "0x01", "0x00",
