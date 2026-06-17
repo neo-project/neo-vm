@@ -24,9 +24,11 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Nop(ExecutionEngine engine, Instruction instruction)
+    public virtual void Nop(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
+        runStats = null;
     }
 
     /// <summary>
@@ -36,10 +38,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Jmp(ExecutionEngine engine, Instruction instruction)
+    public virtual void Jmp(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         ExecuteJumpOffset(engine, instruction.TokenI8);
+        runStats = null;
     }
 
     /// <summary>
@@ -49,10 +53,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Jmp_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void Jmp_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         ExecuteJumpOffset(engine, instruction.TokenI32);
+        runStats = null;
     }
 
     /// <summary>
@@ -63,12 +69,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpIf(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpIf(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         if (engine.Pop().GetBoolean())
             ExecuteJumpOffset(engine, instruction.TokenI8);
+        runStats = null;
     }
 
     /// <summary>
@@ -79,12 +87,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpIf_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpIf_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         if (engine.Pop().GetBoolean())
             ExecuteJumpOffset(engine, instruction.TokenI32);
+        runStats = null;
     }
 
     /// <summary>
@@ -95,12 +105,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpIfNot(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpIfNot(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         if (!engine.Pop().GetBoolean())
             ExecuteJumpOffset(engine, instruction.TokenI8);
+        runStats = null;
     }
 
     /// <summary>
@@ -111,12 +123,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpIfNot_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpIfNot_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         if (!engine.Pop().GetBoolean())
             ExecuteJumpOffset(engine, instruction.TokenI32);
+        runStats = null;
     }
 
     /// <summary>
@@ -127,14 +141,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpEq(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpEq(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 == x2)
             ExecuteJumpOffset(engine, instruction.TokenI8);
+        runStats = null;
     }
 
     /// <summary>
@@ -145,14 +161,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpEq_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpEq_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 == x2)
             ExecuteJumpOffset(engine, instruction.TokenI32);
+        runStats = null;
     }
 
     /// <summary>
@@ -163,14 +181,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpNe(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpNe(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 != x2)
             ExecuteJumpOffset(engine, instruction.TokenI8);
+        runStats = null;
     }
 
     /// <summary>
@@ -181,14 +201,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpNe_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpNe_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 != x2)
             ExecuteJumpOffset(engine, instruction.TokenI32);
+        runStats = null;
     }
 
     /// <summary>
@@ -199,14 +221,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpGt(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpGt(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 > x2)
             ExecuteJumpOffset(engine, instruction.TokenI8);
+        runStats = null;
     }
 
     /// <summary>
@@ -217,14 +241,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpGt_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpGt_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 > x2)
             ExecuteJumpOffset(engine, instruction.TokenI32);
+        runStats = null;
     }
 
     /// <summary>
@@ -235,14 +261,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpGe(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpGe(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 >= x2)
             ExecuteJumpOffset(engine, instruction.TokenI8);
+        runStats = null;
     }
 
     /// <summary>
@@ -253,14 +281,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpGe_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpGe_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 >= x2)
             ExecuteJumpOffset(engine, instruction.TokenI32);
+        runStats = null;
     }
 
     /// <summary>
@@ -271,14 +301,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpLt(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpLt(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 < x2)
             ExecuteJumpOffset(engine, instruction.TokenI8);
+        runStats = null;
     }
 
     /// <summary>
@@ -289,14 +321,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpLt_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpLt_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 < x2)
             ExecuteJumpOffset(engine, instruction.TokenI32);
+        runStats = null;
     }
 
     /// <summary>
@@ -307,14 +341,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpLe(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpLe(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 <= x2)
             ExecuteJumpOffset(engine, instruction.TokenI8);
+        runStats = null;
     }
 
     /// <summary>
@@ -325,14 +361,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void JmpLe_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void JmpLe_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x2 = engine.Pop().GetInteger();
         var x1 = engine.Pop().GetInteger();
         if (x1 <= x2)
             ExecuteJumpOffset(engine, instruction.TokenI32);
+        runStats = null;
     }
 
     /// <summary>
@@ -342,10 +380,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Call(ExecutionEngine engine, Instruction instruction)
+    public virtual void Call(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         ExecuteCall(engine, checked(engine.CurrentContext!.InstructionPointer + instruction.TokenI8));
+        runStats = null;
     }
 
     /// <summary>
@@ -355,10 +395,12 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction containing the offset as the first operand.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Call_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void Call_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         ExecuteCall(engine, checked(engine.CurrentContext!.InstructionPointer + instruction.TokenI32));
+        runStats = null;
     }
 
     /// <summary>
@@ -368,14 +410,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void CallA(ExecutionEngine engine, Instruction instruction)
+    public virtual void CallA(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var x = engine.Pop<Pointer>();
         if (x.Script != engine.CurrentContext!.Script)
             throw new InvalidOperationException("Pointers can't be shared between scripts");
         ExecuteCall(engine, x.Position);
+        runStats = null;
     }
 
     /// <summary>
@@ -384,8 +428,9 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void CallT(ExecutionEngine engine, Instruction instruction)
+    public virtual void CallT(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         throw new InvalidOperationException($"Token not found: {instruction.TokenU16}");
     }
@@ -396,8 +441,9 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Abort(ExecutionEngine engine, Instruction instruction)
+    public virtual void Abort(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         throw new Exception($"{OpCode.ABORT} is executed.");
     }
@@ -408,13 +454,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Assert(ExecutionEngine engine, Instruction instruction)
+    public virtual void Assert(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
+        var r = engine.ReferenceCounter.Count;
         var x = engine.Pop().GetBoolean();
         if (!x)
             throw new Exception($"{OpCode.ASSERT} is executed with false result.");
+        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 
     /// <summary>
@@ -423,11 +472,16 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Throw(ExecutionEngine engine, Instruction instruction)
+    public virtual void Throw(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
-        ExecuteThrow(engine, engine.Pop());
+        var r1 = engine.ReferenceCounter.Count;
+        var item = engine.Pop();
+        var r2 = engine.ReferenceCounter.Count;
+        ExecuteThrow(engine, item, out int refsDelta);
+        runStats = new RunStats { RefsDelta = r1 - r2 + refsDelta };
     }
 
     /// <summary>
@@ -439,12 +493,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Try(ExecutionEngine engine, Instruction instruction)
+    public virtual void Try(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         int catchOffset = instruction.TokenI8;
         int finallyOffset = instruction.TokenI8_1;
         ExecuteTry(engine, catchOffset, finallyOffset);
+        runStats = null;
     }
 
     /// <summary>
@@ -456,12 +512,14 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Try_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void Try_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var catchOffset = instruction.TokenI32;
         var finallyOffset = instruction.TokenI32_1;
         ExecuteTry(engine, catchOffset, finallyOffset);
+        runStats = null;
     }
 
     /// <summary>
@@ -472,11 +530,13 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void EndTry(ExecutionEngine engine, Instruction instruction)
+    public virtual void EndTry(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var endOffset = instruction.TokenI8;
         ExecuteEndTry(engine, endOffset);
+        runStats = null;
     }
 
     /// <summary>
@@ -487,11 +547,13 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void EndTry_L(ExecutionEngine engine, Instruction instruction)
+    public virtual void EndTry_L(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var endOffset = instruction.TokenI32;
         ExecuteEndTry(engine, endOffset);
+        runStats = null;
     }
 
     /// <summary>
@@ -502,8 +564,9 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void EndFinally(ExecutionEngine engine, Instruction instruction)
+    public virtual void EndFinally(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         if (engine.CurrentContext!.TryStack is null)
             throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
@@ -511,9 +574,15 @@ partial class JumpTable
             throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
 
         if (engine.UncaughtException is null)
+        {
             engine.CurrentContext.InstructionPointer = currentTry.EndPointer;
+            runStats = null;
+        }
         else
-            ExecuteThrow(engine, engine.UncaughtException);
+        {
+            ExecuteThrow(engine, engine.UncaughtException, out int refsDelta);
+            runStats = new RunStats { RefsDelta = refsDelta };
+        }
 
         engine.isJumping = true;
     }
@@ -524,8 +593,9 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Ret(ExecutionEngine engine, Instruction instruction)
+    public virtual void Ret(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         var context_pop = engine.InvocationStack.Pop();
         var stack_eval = engine.InvocationStack.Count == 0 ? engine.ResultStack : engine.InvocationStack.Peek().EvaluationStack;
@@ -543,6 +613,7 @@ partial class JumpTable
             engine.State = VMState.HALT;
         engine.ContextUnloaded(context_pop);
         engine.isJumping = true;
+        runStats = null;
     }
 
     /// <summary>
@@ -551,8 +622,9 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The current instruction.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Syscall(ExecutionEngine engine, Instruction instruction)
+    public virtual void Syscall(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
         throw new InvalidOperationException($"Syscall not found: {instruction.TokenU32}");
     }
@@ -650,7 +722,8 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="ex">The exception to throw.</param>
-    public virtual void ExecuteThrow(ExecutionEngine engine, StackItem? ex)
+    /// <param name="refsDelta">The delta for reference counting.</param>
+    public virtual void ExecuteThrow(ExecutionEngine engine, StackItem? ex, out int refsDelta)
     {
         engine.UncaughtException = ex;
 
@@ -666,14 +739,18 @@ partial class JumpTable
                         executionContext.TryStack.Pop();
                         continue;
                     }
+                    var r = engine.ReferenceCounter.Count;
                     for (var i = 0; i < pop; i++)
                     {
                         engine.ContextUnloaded(engine.InvocationStack.Pop());
                     }
+                    refsDelta = r - engine.ReferenceCounter.Count;
                     if (tryContext.State == ExceptionHandlingState.Try && tryContext.HasCatch)
                     {
                         tryContext.State = ExceptionHandlingState.Catch;
+                        r = engine.ReferenceCounter.Count;
                         engine.Push(engine.UncaughtException!);
+                        refsDelta += engine.ReferenceCounter.Count - r;
                         executionContext.InstructionPointer = tryContext.CatchPointer;
                         engine.UncaughtException = null;
                     }
