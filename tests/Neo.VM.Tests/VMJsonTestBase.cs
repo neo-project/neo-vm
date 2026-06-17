@@ -52,7 +52,6 @@ public abstract class VMJsonTestBase
                 foreach (var step in test.Steps)
                 {
                     // Actions
-
                     if (step.Actions != null) foreach (var run in step.Actions)
                     {
                         switch (run)
@@ -65,7 +64,6 @@ public abstract class VMJsonTestBase
                     }
 
                     // Review results
-
                     var add = string.IsNullOrEmpty(step.Name) ? "" : "-" + step.Name;
 
                     AssertResult(step.Result, engine, $"{ut.Category}-{ut.Name}-{test.Name}{add}: ");
@@ -77,54 +75,53 @@ public abstract class VMJsonTestBase
     /// <summary>
     /// Assert result
     /// </summary>
-    /// <param name="engine">Engine</param>
-    /// <param name="result">Result</param>
+    /// <param name="actual">Actual engine</param>
+    /// <param name="expected">Expected engine state</param>
     /// <param name="message">Message</param>
-    private static void AssertResult(VMUTExecutionEngineState result, TestEngine engine, string message)
+    private static void AssertResult(VMUTExecutionEngineState expected, TestEngine actual, string message)
     {
-        AssertAreEqual(result.State.ToString().ToLowerInvariant(), engine.State.ToString().ToLowerInvariant(), message + $"State is different " + engine.FaultException?.ToString());
-        if (engine.State == VMState.FAULT)
+        AssertAreEqual(expected.State.ToString().ToLowerInvariant(), actual.State.ToString().ToLowerInvariant(), message + $" Engine state mismatch. Actual FaultException: {actual.FaultException?.ToString()}");
+        if (actual.State == VMState.FAULT)
         {
-            if (result.ExceptionMessage != null)
+            if (expected.ExceptionMessage != null)
             {
-                AssertAreEqual(result.ExceptionMessage, engine.FaultException.Message, message + " [Exception]");
+                AssertAreEqual(expected.ExceptionMessage, actual.FaultException.Message, message + " [Exception]");
             }
             return;
         }
-        AssertResult(result.InvocationStack, engine.InvocationStack, message + " [Invocation stack]");
-        if (result.ResultStack is not null) // compare stack only if requested (for circular references it's impossible to represent stack in JSON).
-            AssertResult(result.ResultStack, engine.ResultStack, message + " [Result stack] ");
-        if (result.Refs != null)
-            AssertAreEqual(result.Refs, engine.ReferenceCounter.Count, message + "Refs are different");
+        AssertResult(expected.InvocationStack, actual.InvocationStack, message + " [Invocation stack]");
+        if (expected.ResultStack is not null) // compare stack only if requested (for circular references it's impossible to represent stack in JSON).
+            AssertResult(expected.ResultStack, actual.ResultStack, message + " [Result stack]");
+        if (expected.Refs != null)
+            AssertAreEqual(expected.Refs, actual.ReferenceCounter.Count, message + " Reference counter value mismatch");
     }
 
     /// <summary>
     /// Assert invocation stack
     /// </summary>
-    /// <param name="stack">Stack</param>
-    /// <param name="result">Result</param>
+    /// <param name="actual">Actual invocation stack</param>
+    /// <param name="expected">Expected execution context state</param>
     /// <param name="message">Message</param>
-    private static void AssertResult(VMUTExecutionContextState[] result, Stack<ExecutionContext> stack, string message)
+    private static void AssertResult(VMUTExecutionContextState[] expected, Stack<ExecutionContext> actual, string message)
     {
-        AssertAreEqual(result == null ? 0 : result.Length, stack.Count, message + "Stack is different");
+        AssertAreEqual(expected == null ? 0 : expected.Length, actual.Count, message + " Stack length mismatch");
 
         int x = 0;
-        foreach (var context in stack)
+        foreach (var context in actual)
         {
             var opcode = context.InstructionPointer >= context.Script.Length ? OpCode.RET : context.Script[context.InstructionPointer];
 
-            AssertAreEqual(result[x].NextInstruction, opcode, message + "Next instruction is different");
-            AssertAreEqual(result[x].InstructionPointer, context.InstructionPointer, message + "Instruction pointer is different");
+            AssertAreEqual(expected[x].NextInstruction, opcode, message + " NextInstruction mismatch");
+            AssertAreEqual(expected[x].InstructionPointer, context.InstructionPointer, message + " InstructionPointer mismatch");
 
             // Check stack
-            if (result[x].EvaluationStack is not null)
-                AssertResult(result[x].EvaluationStack, context.EvaluationStack, message + " [EvaluationStack]");
+            if (expected[x].EvaluationStack is not null)
+                AssertResult(expected[x].EvaluationStack, context.EvaluationStack, message + " [EvaluationStack]");
 
             // Check slots
-
-            AssertResult(result[x].Arguments, context.Arguments, message + " [Arguments]");
-            AssertResult(result[x].LocalVariables, context.LocalVariables, message + " [LocalVariables]");
-            AssertResult(result[x].StaticFields, context.StaticFields, message + " [StaticFields]");
+            AssertResult(expected[x].Arguments, context.Arguments, message + " [Arguments]");
+            AssertResult(expected[x].LocalVariables, context.LocalVariables, message + " [LocalVariables]");
+            AssertResult(expected[x].StaticFields, context.StaticFields, message + " [StaticFields]");
 
             x++;
         }
@@ -133,32 +130,32 @@ public abstract class VMJsonTestBase
     /// <summary>
     /// Assert result stack
     /// </summary>
-    /// <param name="stack">Stack</param>
-    /// <param name="result">Result</param>
+    /// <param name="actual">Actual evaluation stack</param>
+    /// <param name="expected">Expected stack content</param>
     /// <param name="message">Message</param>
-    private static void AssertResult(VMUTStackItem[] result, EvaluationStack stack, string message)
+    private static void AssertResult(VMUTStackItem[] expected, EvaluationStack actual, string message)
     {
-        AssertAreEqual(stack.Count, result == null ? 0 : result.Length, message + "Stack is different");
+        AssertAreEqual(expected == null ? 0 : expected.Length, actual.Count, message + " Stack length mismatch");
 
-        for (int x = 0, max = stack.Count; x < max; x++)
+        for (int x = 0, max = actual.Count; x < max; x++)
         {
-            AssertAreEqual(ItemToJson(stack.Peek(x)).ToString(Formatting.None), PrepareJsonItem(result[x]).ToString(Formatting.None), message + "Stack item is different");
+            AssertAreEqual(PrepareJsonItem(expected[x]).ToString(Formatting.None), ItemToJson(actual.Peek(x)).ToString(Formatting.None), message + $" Stack item #{x} mismatch");
         }
     }
 
     /// <summary>
     /// Assert result slot
     /// </summary>
-    /// <param name="slot">Slot</param>
-    /// <param name="result">Result</param>
+    /// <param name="actual">Actual slot</param>
+    /// <param name="expected">Expected slot content</param>
     /// <param name="message">Message</param>
-    private static void AssertResult(VMUTStackItem[] result, Slot slot, string message)
+    private static void AssertResult(VMUTStackItem[] expected, Slot actual, string message)
     {
-        AssertAreEqual(slot == null ? 0 : slot.Count, result == null ? 0 : result.Length, message + "Slot is different");
+        AssertAreEqual(expected == null ? 0 : expected.Length, actual == null ? 0 : actual.Count, message + " Slot length mismatch");
 
-        for (int x = 0, max = slot == null ? 0 : slot.Count; x < max; x++)
+        for (int x = 0, max = actual == null ? 0 : actual.Count; x < max; x++)
         {
-            AssertAreEqual(ItemToJson(slot[x]).ToString(Formatting.None), PrepareJsonItem(result[x]).ToString(Formatting.None), message + "Stack item is different");
+            AssertAreEqual(PrepareJsonItem(expected[x]).ToString(Formatting.None), ItemToJson(actual[x]).ToString(Formatting.None), message + $" Stack item #{x} mismatch");
         }
     }
 
@@ -187,7 +184,6 @@ public abstract class VMJsonTestBase
             case VMUTStackItemType.String:
                 {
                     // Easy access
-
                     ret["type"] = VMUTStackItemType.ByteString.ToString();
                     ret["value"] = Encoding.UTF8.GetBytes(item.Value.Value<string>());
                     break;
@@ -203,7 +199,6 @@ public abstract class VMJsonTestBase
             case VMUTStackItemType.Integer:
                 {
                     // Ensure format
-
                     ret["value"] = ret["value"].Value<string>();
                     break;
                 }
