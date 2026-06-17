@@ -2104,6 +2104,83 @@
       ]
     },
     {
+      "name": "Circular reference - indirect cycle (A -> B -> A); clear A",
+      "script": [
+		    "NEWARRAY0",
+        "DUP",
+        "DUP",
+        "NEWARRAY0",
+        "TUCK",
+        "APPEND",
+        "SWAP",
+        "APPEND",
+        "CLEARITEMS"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "APPEND",
+                "evaluationStack": [
+                  {
+                    "type": "Array",
+                    "value": [ 
+                      {
+                        "type": "Array",
+                        "value": [ ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Array",
+                    "value": [ ]
+                  },
+                  {
+                    "type": "Array",
+                    "value": [ 
+                      {
+                        "type": "Array",
+                        "value": [ ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "refs": 4
+          }
+        },
+        {
+          "actions": [
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 9,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
       "name": "Circular reference - clear self referenced Map",
       "script": [
 		    "NEWMAP",
