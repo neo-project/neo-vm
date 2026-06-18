@@ -1248,7 +1248,7 @@
         "DUP",
         "PUSH0",
         "REMOVE",
-        "DROP",
+        "DROP"
       ],
       "steps": [
         {
@@ -1939,11 +1939,11 @@
     {
       "name": "Circular reference - clear self referenced Array",
       "script": [
-		    "NEWARRAY0",
-		    "DUP",
-		    "DUP",
-		    "APPEND",
-		    "CLEARITEMS"
+        "NEWARRAY0",
+        "DUP",
+        "DUP",
+        "APPEND",
+        "CLEARITEMS"
       ],
       "steps": [
         {
@@ -2012,14 +2012,14 @@
     {
       "name": "Circular reference - clear self referenced Array with primitive types",
       "script": [
-		    "NEWARRAY0",
+        "NEWARRAY0",
         "DUP",
         "PUSH1",
         "APPEND",
-		    "DUP",
-		    "DUP",
-		    "APPEND",
-		    "CLEARITEMS"
+        "DUP",
+        "DUP",
+        "APPEND",
+        "CLEARITEMS"
       ],
       "steps": [
         {
@@ -2106,7 +2106,7 @@
     {
       "name": "Circular reference - indirect cycle (A -> B -> A); clear A",
       "script": [
-		    "NEWARRAY0",
+        "NEWARRAY0",
         "DUP",
         "DUP",
         "NEWARRAY0",
@@ -2183,13 +2183,13 @@
     {
       "name": "Circular reference - clear self referenced Map",
       "script": [
-		    "NEWMAP",
-		    "DUP",
-		    "DUP",
+        "NEWMAP",
+        "DUP",
+        "DUP",
         "PUSH1",
         "SWAP",
         "SETITEM",
-		    "CLEARITEMS"
+        "CLEARITEMS"
       ],
       "steps": [
         {
@@ -2265,19 +2265,19 @@
       "name": "RC must not be negative due to circular reference removal",
       "script": [
        	"INITSLOT", "0x01", "0x00",
-		    "PUSH16",
-		    "STLOC0",
-		    "NEWARRAY0",
-		    "DUP",
-		    "DUP",
-		    "APPEND",
-		    "CLEARITEMS",
-		    "LDLOC0",
-		    "DEC",
-		    "DUP",
-		    "STLOC0",
-		    "PUSH0",
-		    "JMPGT", "0xf6"
+       	"PUSH16",
+       	"STLOC0",
+       	"NEWARRAY0",
+       	"DUP",
+       	"DUP",
+       	"APPEND",
+       	"CLEARITEMS",
+       	"LDLOC0",
+       	"DEC",
+       	"DUP",
+       	"STLOC0",
+       	"PUSH0",
+       	"JMPGT", "0xf6"
       ],
       "steps": [
         {
