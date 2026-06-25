@@ -147,7 +147,7 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     public void PushItemCounted(StackItem item, int count)
     {
         _innerList.Add(item);
-        _referenceCounter.AddStackReference(StackItem.Null, count);
+        _referenceCounter.Inc(count);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

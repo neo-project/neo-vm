@@ -73,7 +73,7 @@ public class Slot : IReadOnlyList<StackItem>
         _referenceCounter = referenceCounter;
         _items = new StackItem[count];
         Array.Fill(_items, StackItem.Null);
-        referenceCounter.AddStackReference(StackItem.Null, count);
+        referenceCounter.Inc(count);
     }
 
     /// <summary>
