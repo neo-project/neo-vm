@@ -286,6 +286,16 @@ public class ExecutionEngine : IDisposable
     }
 
     /// <summary>
+    /// Removes and returns the item at the top of the current stack without reference counting.
+    /// </summary>
+    /// <returns>The item removed from the top of the stack.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal StackItem PopNoRef()
+    {
+        return CurrentContext!.EvaluationStack.PopNoRef();
+    }
+
+    /// <summary>
     /// Removes and returns the item at the top of the current stack and convert it to the specified type.
     /// </summary>
     /// <typeparam name="T">The type to convert to.</typeparam>
@@ -294,6 +304,18 @@ public class ExecutionEngine : IDisposable
     public T Pop<T>() where T : StackItem
     {
         return CurrentContext!.EvaluationStack.Pop<T>();
+    }
+
+    /// <summary>
+    /// Removes and returns the item at the top of the current stack and convert it to the specified type
+    /// without reference counting.
+    /// </summary>
+    /// <typeparam name="T">The type to convert to.</typeparam>
+    /// <returns>The item removed from the top of the stack.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal T PopNoRef<T>() where T : StackItem
+    {
+        return CurrentContext!.EvaluationStack.PopNoRef<T>();
     }
 
     /// <summary>
@@ -317,5 +339,18 @@ public class ExecutionEngine : IDisposable
     public void Push(StackItem item)
     {
         CurrentContext!.EvaluationStack.Push(item);
+    }
+
+    /// <summary>
+    /// Pushes item to the stack and adds exactly the specified
+    /// value to the reference counter. It's a perfect method to ruin the counter,
+    /// so use carefully.
+    /// </summary>
+    /// <param name="item">The item to be pushed.</param>
+    /// <param name="count">The value by which the reference counter increases.</param>s
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal void PushItemCounted(StackItem item, int count)
+    {
+        CurrentContext!.EvaluationStack.PushItemCounted(item, count);
     }
 }

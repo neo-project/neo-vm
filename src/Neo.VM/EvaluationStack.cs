@@ -135,6 +135,21 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
         _referenceCounter.AddStackReference(item);
     }
 
+    /// <summary>
+    /// Pushes item to the stack and adds exactly the specified value to the reference counter.
+    /// This method does not adjust the item's own stack reference state, so use it only when
+    /// the caller already accounts for references explicitly.
+    /// Use carefully, otherwise the counter may become inconsistent.
+    /// </summary>
+    /// <param name="item">The item to be pushed.</param>
+    /// <param name="count">The value by which the reference counter increases.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void PushItemCounted(StackItem item, int count)
+    {
+        _innerList.Add(item);
+        _referenceCounter.Inc(count);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal void Reverse(int n)
     {
@@ -164,7 +179,25 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     }
 
     /// <summary>
-    /// Removes and returns the item at the top of the stack.
+    /// Roll brings an item with the given index to the top of the stack moving all
+    /// other elements down accordingly. It does all of that without popping and
+    /// pushing elements.
+    /// </summary>
+    /// <param name="index">Index elem.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal void Roll(int index)
+    {
+        if (index < 0 || index >= _innerList.Count)
+            throw new ArgumentOutOfRangeException(nameof(index), $"Out of stack bounds: {index}/{_innerList.Count}");
+        if (index == 0)
+            return;
+        var item = _innerList[_innerList.Count - 1 - index];
+        _innerList.RemoveAt(_innerList.Count - 1 - index);
+        _innerList.Add(item);
+    }
+
+    /// <summary>
+    /// Removes and returns the item at the top of the stack with reference counting.
     /// </summary>
     /// <returns>The item removed from the top of the stack.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -174,7 +207,18 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     }
 
     /// <summary>
-    /// Removes and returns the item at the top of the stack and convert it to the specified type.
+    /// Removes and returns the item at the top of the stack without reference counting.
+    /// </summary>
+    /// <returns>The item removed from the top of the stack.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public StackItem PopNoRef()
+    {
+        return RemoveNoRef<StackItem>(0);
+    }
+
+    /// <summary>
+    /// Removes and returns the item at the top of the stack and convert it to the specified type
+    /// with reference counting.
     /// </summary>
     /// <typeparam name="T">The type to convert to.</typeparam>
     /// <returns>The item removed from the top of the stack.</returns>
@@ -184,7 +228,26 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
         return Remove<T>(0);
     }
 
+    /// <summary>
+    /// Removes and returns the item at the top of the stack and convert it to the specified type
+    /// without reference counting.
+    /// </summary>
+    /// <typeparam name="T">The type to convert to.</typeparam>
+    /// <returns>The item removed from the top of the stack.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public T PopNoRef<T>() where T : StackItem
+    {
+        return RemoveNoRef<T>(0);
+    }
+
     internal T Remove<T>(int index) where T : StackItem
+    {
+        var item = RemoveNoRef<T>(index);
+        _referenceCounter.RemoveStackReference(item);
+        return item;
+    }
+
+    internal T RemoveNoRef<T>(int index) where T : StackItem
     {
         if (index >= _innerList.Count)
             throw new ArgumentOutOfRangeException(nameof(index), $"Out of stack bounds: {index}/{_innerList.Count}");
@@ -198,7 +261,6 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
         if (_innerList[index] is not T item)
             throw new InvalidCastException($"The item can't be casted to type {typeof(T)}");
         _innerList.RemoveAt(index);
-        _referenceCounter.RemoveStackReference(item);
         return item;
     }
 

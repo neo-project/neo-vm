@@ -24,6 +24,18 @@ public interface IReferenceCounter
     int Count { get; }
 
     /// <summary>
+    /// Increments the number of references by the specified value. Use it carefully, this method does not
+    /// perform any additional checks and changes RC value directly.
+    /// </summary>
+    void Inc(int count = 1);
+
+    /// <summary>
+    /// Decrements the number of references by the specified value. Use it carefully, this method does not
+    /// perform any additional checks and changes RC value directly.
+    /// </summary>
+    void Dec(int count = 1);
+
+    /// <summary>
     /// Adds a stack reference to a specified item with a count.
     ///
     /// This method is used when an item gains a new stack reference, usually due to being pushed onto the evaluation stack.

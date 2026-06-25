@@ -1251,6 +1251,63 @@
           }
         }
       ]
+    },
+    {
+      "name": "Caught out-of-bounds [Buffer]",
+      "script": [
+        "TRY", "0x0900",
+        "PUSH0",
+        "NEWBUFFER",
+        "PUSH1",
+        "PUSH0",
+        "SETITEM",
+        "ENDTRY",
+        "DROP"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto",
+            "StepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "SETITEM",
+                "evaluationStack": [
+                  {
+                    "type": "Integer",
+                    "value": 0
+                  },
+                  {
+                    "type": "Integer",
+                    "value": 1
+                  },
+                  {
+                    "type": "Buffer",
+                    "value": ""
+                  }
+                ]
+              }
+            ],
+            "refs": 3
+          }
+        },
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "refs": 0
+          }
+        }
+      ]
     }
   ]
 }
