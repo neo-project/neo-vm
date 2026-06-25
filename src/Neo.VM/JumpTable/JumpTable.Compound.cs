@@ -654,14 +654,15 @@ partial class JumpTable
     public virtual void ClearItems(ExecutionEngine engine, Instruction instruction)
     {
         var x = engine.Pop<CompoundType>();
+        var subItems = x.SubItems.ToList();
+        x.Clear();
         if (x.IsStackReferenced)
         {
-            foreach (var xSubItem in x.SubItems)
+            foreach (var xSubItem in subItems)
             {
                 engine.ReferenceCounter.RemoveStackReference(xSubItem);
             }
         }
-        x.Clear();
     }
 
     /// <summary>
