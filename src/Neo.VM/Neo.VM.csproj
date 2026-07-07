@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Copyright>2015-2026 The Neo Project</Copyright>
     <Description>Neo virtual machine</Description>
-    <Version>3.10.1</Version>
+    <VersionPrefix>3.10.2</VersionPrefix>
     <Authors>The Neo Project</Authors>
     <TargetFrameworks>net10.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
