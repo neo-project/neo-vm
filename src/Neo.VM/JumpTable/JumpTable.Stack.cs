@@ -163,13 +163,7 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Rot(ExecutionEngine engine, Instruction instruction)
     {
-        // ROT: [a, b, c] -> [b, c, a] (c is top)
-        // Equivalent to: swap(1,2), swap(0,1)
-        var stack = engine.CurrentContext!.EvaluationStack;
-        if (stack.Count < 3)
-            throw new ArgumentOutOfRangeException($"Swap index is out of stack bounds: 2/{stack.Count}");
-        stack.Swap(1, 2);
-        stack.Swap(0, 1);
+        engine.CurrentContext!.EvaluationStack.Roll(2);
     }
 
     /// <summary>
@@ -183,11 +177,7 @@ partial class JumpTable
     public virtual void Roll(ExecutionEngine engine, Instruction instruction)
     {
         var n = (int)engine.Pop().GetInteger();
-        if (n < 0)
-            throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
-        if (n == 0) return;
-        var x = engine.CurrentContext!.EvaluationStack.Remove<StackItem>(n);
-        engine.Push(x);
+        engine.CurrentContext!.EvaluationStack.Roll(n);
     }
 
     /// <summary>

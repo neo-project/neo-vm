@@ -33,6 +33,18 @@ public sealed class ReferenceCounter : IReferenceCounter
     }
 
     /// <inheritdoc/>
+    public void Inc(int count = 1)
+    {
+        _referencesCount += count;
+    }
+
+    /// <inheritdoc/>
+    public void Dec(int count = 1)
+    {
+        _referencesCount -= count;
+    }
+
+    /// <inheritdoc/>
     public void AddStackReference(StackItem item, int count = 1)
     {
         // Increment the reference count by the specified count.
