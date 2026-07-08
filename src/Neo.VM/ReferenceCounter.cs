@@ -33,6 +33,18 @@ public sealed class ReferenceCounter : IReferenceCounter
     }
 
     /// <inheritdoc/>
+    public void Inc(int count = 1)
+    {
+        _referencesCount += count;
+    }
+
+    /// <inheritdoc/>
+    public void Dec(int count = 1)
+    {
+        _referencesCount -= count;
+    }
+
+    /// <inheritdoc/>
     public void AddStackReference(StackItem item, int count = 1)
     {
         // Increment the reference count by the specified count.
@@ -63,21 +75,29 @@ public sealed class ReferenceCounter : IReferenceCounter
     /// <inheritdoc/>
     public void RemoveStackReference(StackItem item)
     {
-        // Decrease the reference count.
-        _referencesCount--;
-
         if (item is CompoundType compoundType)
         {
-            // Decrease the item's stack references.
-            compoundType.StackReferences--;
-
-            if (compoundType.StackReferences == 0)
+            if (compoundType.IsStackReferenced)
             {
-                foreach (var subItem in compoundType.SubItems)
+                // Decrease the reference count.
+                _referencesCount--;
+
+                // Decrease the item's stack references.
+                compoundType.StackReferences--;
+
+                if (compoundType.StackReferences == 0)
                 {
-                    RemoveStackReference(subItem);
+                    foreach (var subItem in compoundType.SubItems)
+                    {
+                        RemoveStackReference(subItem);
+                    }
                 }
             }
+        }
+        else
+        {
+            // Decrease the reference count.
+            _referencesCount--;
         }
     }
 }

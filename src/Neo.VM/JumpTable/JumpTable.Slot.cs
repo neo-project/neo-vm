@@ -55,12 +55,7 @@ partial class JumpTable
         }
         if (instruction.TokenU8_1 > 0)
         {
-            var items = new StackItem[instruction.TokenU8_1];
-            for (var i = 0; i < instruction.TokenU8_1; i++)
-            {
-                items[i] = engine.Pop();
-            }
-            engine.CurrentContext.Arguments = new Slot(items, engine.ReferenceCounter);
+            engine.CurrentContext.Arguments = new Slot(engine.CurrentContext!.EvaluationStack, instruction.TokenU8_1, engine.ReferenceCounter);
         }
         runStats = new RunStats { RefsDelta = instruction.TokenU8, Length = instruction.TokenU8_1 };
     }
@@ -732,10 +727,8 @@ partial class JumpTable
     {
         if (slot is null)
             throw new InvalidOperationException("Slot has not been initialized.");
-        if (index < 0 || index >= slot.Count)
-            throw new InvalidOperationException($"Index out of range when storing to slot: {index}, {index}/[0, {slot.Count}).");
         var r = engine.ReferenceCounter.Count;
-        slot[index] = engine.Pop();
+        slot.Store(engine.CurrentContext!.EvaluationStack, index);
         runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 

@@ -11,6 +11,7 @@
 
 using Neo.VM.Types;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -40,12 +41,18 @@ partial class JumpTable
         var r = engine.ReferenceCounter.Count;
         for (var i = 0; i < size; i++)
         {
-            var key = engine.Pop<PrimitiveType>();
-            var value = engine.Pop();
+            var key = engine.PopNoRef<PrimitiveType>();
+            var value = engine.PopNoRef();
+            if (map.TryGetValue(key, out var oldValue))
+            {
+                engine.ReferenceCounter.RemoveStackReference(key);
+                engine.ReferenceCounter.RemoveStackReference(oldValue);
+            }
             map[key] = value;
         }
+        map.StackReferences++;
         runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count, Length = size };
-        engine.Push(map);
+        engine.PushItemCounted(map, 1);
     }
 
     /// <summary>
@@ -65,10 +72,11 @@ partial class JumpTable
         Struct @struct = new();
         for (var i = 0; i < size; i++)
         {
-            var item = engine.Pop();
+            var item = engine.PopNoRef();
             @struct.Add(item);
         }
-        engine.Push(@struct);
+        @struct.StackReferences++;
+        engine.PushItemCounted(@struct, 1);
         runStats = new RunStats { Length = size };
     }
 
@@ -89,10 +97,11 @@ partial class JumpTable
         VMArray array = new();
         for (var i = 0; i < size; i++)
         {
-            var item = engine.Pop();
+            var item = engine.PopNoRef();
             array.Add(item);
         }
-        engine.Push(array);
+        array.StackReferences++;
+        engine.PushItemCounted(array, 1);
         runStats = new RunStats { Length = size };
     }
 
@@ -107,20 +116,44 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Unpack(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
-        var compound = engine.Pop<CompoundType>();
+        var compound = engine.PopNoRef<CompoundType>();
+        compound.StackReferences--;
+        // Decrease reference count by 1.
+        engine.ReferenceCounter.RemoveStackReference(StackItem.Null);
         switch (compound)
         {
             case Map map:
-                foreach (var (key, value) in map.Reverse())
+                if (map.IsStackReferenced)
                 {
-                    engine.Push(value);
-                    engine.Push(key);
+                    foreach (var (key, value) in map.Reverse())
+                    {
+                        engine.Push(value);
+                        engine.PushItemCounted(key, 1);
+                    }
+                }
+                else
+                {
+                    foreach (var (key, value) in map.Reverse())
+                    {
+                        engine.PushItemCounted(value, 0);
+                        engine.PushItemCounted(key, 0);
+                    }
                 }
                 break;
             case VMArray array:
-                for (var i = array.Count - 1; i >= 0; i--)
+                if (array.IsStackReferenced)
                 {
-                    engine.Push(array[i]);
+                    for (var i = array.Count - 1; i >= 0; i--)
+                    {
+                        engine.Push(array[i]);
+                    }
+                }
+                else
+                {
+                    for (var i = array.Count - 1; i >= 0; i--)
+                    {
+                        engine.PushItemCounted(array[i], 0);
+                    }
                 }
                 break;
             default:
@@ -164,7 +197,9 @@ partial class JumpTable
             throw new InvalidOperationException($"The array size is out of valid range, {n}/[0, {engine.Limits.MaxStackSize}].");
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
-        engine.Push(new VMArray(nullArray));
+        var newArray = new VMArray(nullArray);
+        newArray.StackReferences++;
+        engine.PushItemCounted(newArray, n + 1);
         runStats = new RunStats { Type = StackItemType.Any, Length = n };
     }
 
@@ -196,7 +231,9 @@ partial class JumpTable
         };
         var itemArray = new StackItem[n];
         Array.Fill(itemArray, item);
-        engine.Push(new VMArray(itemArray));
+        var newArray = new VMArray(itemArray);
+        newArray.StackReferences++;
+        engine.PushItemCounted(newArray, n + 1);
         runStats = new RunStats { Type = type, Length = n };
     }
 
@@ -232,7 +269,9 @@ partial class JumpTable
 
         var nullArray = new StackItem[n];
         Array.Fill(nullArray, StackItem.Null);
-        engine.Push(new Struct(nullArray));
+        var newStruct = new Struct(nullArray);
+        newStruct.StackReferences++;
+        engine.PushItemCounted(newStruct, n + 1);
         runStats = new RunStats { Type = StackItemType.Any, Length = n };
     }
 
@@ -351,8 +390,10 @@ partial class JumpTable
     {
         var r = engine.ReferenceCounter.Count;
         var map = engine.Pop<Map>();
+        var array = new VMArray(map.Keys);
+        array.StackReferences++;
         runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count, Length = map.Count };
-        engine.Push(new VMArray(map.Keys));
+        engine.PushItemCounted(array, map.Count + 1);
     }
 
     /// <summary>
@@ -366,31 +407,72 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Values(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
-        var x = engine.Pop();
+        var x = engine.PopNoRef();
+
         var nClonedItems = 0;
         var refsDelta = 0;
-        var values = x switch
+        IEnumerable<StackItem> values;
+        bool isReferenced;
+
+        switch (x)
         {
-            VMArray array => array,
-            Map map => map.Values,
-            _ => throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}"),
-        };
+            case VMArray array:
+                {
+                    array.StackReferences--;
+                    values = array;
+                    isReferenced = array.IsStackReferenced;
+                    break;
+                }
+            case Map map:
+                {
+                    map.StackReferences--;
+                    values = map.Values;
+                    isReferenced = map.IsStackReferenced;
+                    if (!isReferenced)
+                        // Decrease refcounter value by number of keys in map.
+                        engine.ReferenceCounter.AddStackReference(StackItem.Null, -map.Count);
+                    break;
+                }
+            default:
+                throw new InvalidOperationException($"Invalid type for {instruction.OpCode}: {x.Type}");
+        }
         VMArray newArray = new();
-        foreach (var item in values)
-            if (item is Struct s)
+        if (isReferenced)
+        {
+            var r = engine.ReferenceCounter.Count;
+            foreach (var item in values)
             {
-                var r = engine.ReferenceCounter.Count;
-                newArray.Add(s.Clone(engine.Limits, out int n));
+                var n = 0;
+                var cpItem = item is Struct s ? s.Clone(engine.Limits, out n) : item;
+                newArray.Add(cpItem);
                 nClonedItems += n;
-                refsDelta += engine.ReferenceCounter.Count - r;
+                engine.ReferenceCounter.AddStackReference(cpItem);
             }
-            else
+            refsDelta = engine.ReferenceCounter.Count - r;
+        }
+        else
+        {
+            foreach (var item in values)
             {
-                var r = engine.ReferenceCounter.Count;
-                newArray.Add(item);
-                refsDelta += engine.ReferenceCounter.Count - r;
+                if (item is Struct s)
+                {
+                    var cpItem = s.Clone(engine.Limits, out int n);
+                    var r = engine.ReferenceCounter.Count;
+                    engine.ReferenceCounter.RemoveStackReference(item);
+                    refsDelta += r - engine.ReferenceCounter.Count;
+                    engine.ReferenceCounter.AddStackReference(cpItem);
+                    newArray.Add(cpItem);
+                    nClonedItems += n;
+                    refsDelta += n;
+                }
+                else
+                {
+                    newArray.Add(item);
+                }
             }
-        engine.Push(newArray);
+        }
+        newArray.StackReferences++;
+        engine.PushItemCounted(newArray, 0);
         runStats = new RunStats { RefsDelta = refsDelta, Length = newArray.Count, NClonedItems = nClonedItems };
     }
 
@@ -506,10 +588,15 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void SetItem(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
     {
-        var value = engine.Pop();
+        var value = engine.PopNoRef();
         var nClonedItems = 0;
-        if (value is Struct s) value = s.Clone(engine.Limits, out nClonedItems);
         var (r1, r2) = (engine.ReferenceCounter.Count, engine.ReferenceCounter.Count);
+        if (value is Struct s)
+        {
+            engine.ReferenceCounter.RemoveStackReference(value);
+            value = s.Clone(engine.Limits, out nClonedItems);
+            engine.ReferenceCounter.AddStackReference(value);
+        }
         var r3 = engine.ReferenceCounter.Count;
         var key = engine.Pop<PrimitiveType>();
         var x = engine.Pop();
@@ -520,6 +607,7 @@ partial class JumpTable
                     var index = key.GetInteger();
                     if (index < 0 || index >= array.Count)
                     {
+                        engine.ReferenceCounter.RemoveStackReference(value);
                         var r4 = engine.ReferenceCounter.Count;
                         ExecuteThrow(engine, $"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).", out int refsDelta);
                         runStats = new RunStats { RefsDelta = (r1 - r2) + (r3 - r2) + (r3 - r4) + refsDelta, NClonedItems = nClonedItems };
@@ -528,30 +616,32 @@ partial class JumpTable
                     var i = (int)index;
                     if (array.IsStackReferenced)
                         engine.ReferenceCounter.RemoveStackReference(array[i]);
+                    else
+                        engine.ReferenceCounter.RemoveStackReference(value);
                     array[i] = value;
-                    if (array.IsStackReferenced)
-                        engine.ReferenceCounter.AddStackReference(value);
                     break;
                 }
             case Map map:
                 {
                     if (map.IsStackReferenced)
                     {
-                        if (!map.TryGetValue(key, out var value1))
-                        {
-                            engine.ReferenceCounter.AddStackReference(key);
-                        }
-                        else
+                        if (map.TryGetValue(key, out var value1))
                         {
                             engine.ReferenceCounter.RemoveStackReference(value1);
                         }
-                        engine.ReferenceCounter.AddStackReference(value);
+                        else
+                        {
+                            engine.ReferenceCounter.AddStackReference(key);
+                        }
                     }
+                    else
+                        engine.ReferenceCounter.RemoveStackReference(value);
                     map[key] = value;
                     break;
                 }
             case Buffer buffer:
                 {
+                    engine.ReferenceCounter.RemoveStackReference(value);
                     var index = key.GetInteger();
                     if (index < 0 || index >= buffer.Size)
                     {
@@ -662,14 +752,15 @@ partial class JumpTable
     {
         var r = engine.ReferenceCounter.Count;
         var x = engine.Pop<CompoundType>();
+        var subItems = x.SubItems.ToList();
+        x.Clear();
         if (x.IsStackReferenced)
         {
-            foreach (var xSubItem in x.SubItems)
+            foreach (var xSubItem in subItems)
             {
                 engine.ReferenceCounter.RemoveStackReference(xSubItem);
             }
         }
-        x.Clear();
         runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count };
     }
 

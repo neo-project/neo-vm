@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using Neo.VM.Types;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Array = System.Array;
@@ -72,13 +73,40 @@ public class Slot : IReadOnlyList<StackItem>
         _referenceCounter = referenceCounter;
         _items = new StackItem[count];
         Array.Fill(_items, StackItem.Null);
-        referenceCounter.AddStackReference(StackItem.Null, count);
+        referenceCounter.Inc(count);
+    }
+
+    /// <summary>
+    /// Creates a slot containing the specified items.
+    /// </summary>
+    /// <param name="stack">The items to be contained.</param>
+    /// <param name="n">The number items for initalizing slot.</param>
+    /// <param name="referenceCounter">The reference counter to be used.</param>
+    public Slot(EvaluationStack stack, int n, IReferenceCounter referenceCounter)
+    {
+        _referenceCounter = referenceCounter;
+        _items = new StackItem[n];
+        for (int i = 0; i < n; i++)
+        {
+            _items[i] = stack.PopNoRef();
+        }
     }
 
     internal void ClearReferences()
     {
         foreach (StackItem item in _items)
             _referenceCounter.RemoveStackReference(item);
+    }
+
+    internal void Store(EvaluationStack stack, int index)
+    {
+        if (index < 0 || index >= _items.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), $"Out of stack bounds: {index}/{_items.Length}");
+        }
+        _referenceCounter.RemoveStackReference(_items[index]);
+        var item = stack.PopNoRef();
+        _items[index] = item;
     }
 
     IEnumerator<StackItem> IEnumerable<StackItem>.GetEnumerator()
