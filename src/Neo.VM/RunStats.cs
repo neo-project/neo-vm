@@ -20,9 +20,9 @@ public struct RunStats
 {
     /// <summary>
     /// Typ specifies type of <see cref="StackItemType"/> which in most of the cases serves
-	/// as an operand of the given opcode.
+    /// as an operand of the given opcode.
     /// </summary>
-    public StackItemType Type { get; internal set; }
+    public StackItemType Type { get; private set; }
     /// <summary>
     /// Length denotes one of the following:
     /// - the number of elements in the compound type (that is, the length of Array
@@ -31,13 +31,45 @@ public struct RunStats
     /// - the number of VM slot cells or stack elements involved in opcode handling;
     /// - the number of stack elements that the opcode processes.
     /// </summary>
-    public int Length { get; internal set; }
+    public int Length { get; private set; }
     /// <summary>
     /// RefsDelta is total change of refCounter value performed by opcode.
     /// </summary>
-    public int RefsDelta { get; internal set; }
+    public int RefsDelta { get; private set; }
     /// <summary>
     /// NClonedItems is number of items cloned by opcode.
     /// </summary>
-    public int NClonedItems { get; internal set; }
+    public int NClonedItems { get; private set; }
+
+    /// <summary>
+    /// Records the <see cref="StackItemType"/> operand of the executed opcode.
+    /// </summary>
+    public void CollectType(StackItemType type)
+    {
+        Type = type;
+    }
+
+    /// <summary>
+    /// Records the length-related statistic of the executed opcode, see <see cref="Length"/>.
+    /// </summary>
+    public void CollectOpLength(int length)
+    {
+        Length = length;
+    }
+
+    /// <summary>
+    /// Records the reference counter delta caused by the executed opcode.
+    /// </summary>
+    public void CollectRefDelta(int refsDelta)
+    {
+        RefsDelta = refsDelta;
+    }
+
+    /// <summary>
+    /// Records the number of items cloned by the executed opcode.
+    /// </summary>
+    public void CollectClonedItems(int nClonedItems)
+    {
+        NClonedItems = nClonedItems;
+    }
 }

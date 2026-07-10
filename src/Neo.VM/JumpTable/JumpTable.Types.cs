@@ -26,12 +26,12 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void IsNull(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void IsNull(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
         engine.Push(x.IsNull);
-        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count };
+        runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void IsType(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void IsType(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var r = engine.ReferenceCounter.Count;
         var x = engine.Pop();
@@ -51,7 +51,7 @@ partial class JumpTable
         if (type == StackItemType.Any || !Enum.IsDefined(type))
             throw new InvalidOperationException($"Invalid type: {type}");
         engine.Push(x.Type == type);
-        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count };
+        runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Convert(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Convert(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var r1 = engine.ReferenceCounter.Count;
         var x = engine.Pop();
@@ -82,7 +82,9 @@ partial class JumpTable
             type = StackItemType.ByteString;
             length = fromType == StackItemType.ByteString ? ((ByteString)x).Size : ((Types.Buffer)x).Size;
         }
-        runStats = new RunStats { RefsDelta = (r1 - r2) + (engine.ReferenceCounter.Count - r2), Type = type, Length = length };
+        runStats.CollectRefDelta((r1 - r2) + (engine.ReferenceCounter.Count - r2));
+        runStats.CollectType(type);
+        runStats.CollectOpLength(length);
     }
 
     /// <summary>
@@ -94,7 +96,7 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void AbortMsg(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void AbortMsg(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var msg = engine.Pop().GetString();
         throw new Exception($"{OpCode.ABORTMSG} is executed. Reason: {msg}");
@@ -109,13 +111,14 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void AssertMsg(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void AssertMsg(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var r = engine.ReferenceCounter.Count;
         var msg = engine.Pop().GetString();
         var x = engine.Pop().GetBoolean();
         if (!x)
             throw new Exception($"{OpCode.ASSERTMSG} is executed with false result. Reason: {msg}");
-        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count, Length = msg!.Length };
+        runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
+        runStats.CollectOpLength(msg!.Length);
     }
 }

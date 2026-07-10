@@ -146,7 +146,7 @@ public class ExecutionEngine : IDisposable
                 ExecutionContext context = CurrentContext!;
                 Instruction? currentInstruction = context.CurrentInstruction;
                 Instruction instruction = currentInstruction ?? Instruction.RET;
-                RunStats? runStats = null;
+                RunStats runStats = default;
                 PreExecuteInstruction(instruction);
 #if VMPERF
                 Console.WriteLine("op:["
@@ -158,7 +158,7 @@ public class ExecutionEngine : IDisposable
 #endif
                 try
                 {
-                    JumpTable[instruction.OpCode](this, instruction, out runStats);
+                    JumpTable[instruction.OpCode](this, instruction, ref runStats);
                 }
                 finally
                 {
@@ -321,7 +321,7 @@ public class ExecutionEngine : IDisposable
     /// <summary>
     /// Called after an instruction is executed.
     /// </summary>
-    protected virtual void PostExecuteInstruction(Instruction? instruction, RunStats? runStats)
+    protected virtual void PostExecuteInstruction(Instruction? instruction, RunStats runStats)
     {
         ReferenceCounter.PostExecuteInstruction();
     }

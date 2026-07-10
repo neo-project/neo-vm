@@ -30,21 +30,19 @@ public class TestEngine : ExecutionEngine
         return jumpTable;
     }
 
-    private static void OnSysCall(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    private static void OnSysCall(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         uint method = instruction.TokenU32;
 
         if (method == 0x77777777)
         {
             engine.CurrentContext.EvaluationStack.Push(StackItem.FromInterface(new object()));
-            runStats = null;
             return;
         }
 
         if (method == 0xaddeadde)
         {
             engine.JumpTable.ExecuteThrow(engine, "error", out _);
-            runStats = null;
             return;
         }
 

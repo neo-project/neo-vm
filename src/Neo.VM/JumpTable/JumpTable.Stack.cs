@@ -26,10 +26,9 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 0, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Depth(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Depth(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         engine.Push(engine.CurrentContext!.EvaluationStack.Count);
-        runStats = null;
     }
 
     /// <summary>
@@ -41,11 +40,11 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Drop(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Drop(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var r = engine.ReferenceCounter.Count;
         engine.Pop();
-        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count };
+        runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
     }
 
     /// <summary>
@@ -56,11 +55,11 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Nip(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Nip(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var r = engine.ReferenceCounter.Count;
         engine.CurrentContext!.EvaluationStack.Remove<StackItem>(1);
-        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count };
+        runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
     }
 
     /// <summary>
@@ -72,14 +71,15 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void XDrop(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void XDrop(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var n = (int)engine.Pop().GetInteger();
         if (n < 0)
             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
         var r = engine.ReferenceCounter.Count;
         engine.CurrentContext!.EvaluationStack.Remove<StackItem>(n);
-        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count, Length = n };
+        runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
+        runStats.CollectOpLength(n);
     }
 
     /// <summary>
@@ -90,12 +90,13 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Clear(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Clear(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var r = engine.ReferenceCounter.Count;
         var l = engine.CurrentContext!.EvaluationStack.Count;
         engine.CurrentContext!.EvaluationStack.Clear();
-        runStats = new RunStats { RefsDelta = r - engine.ReferenceCounter.Count, Length = l };
+        runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
+        runStats.CollectOpLength(l);
     }
 
     /// <summary>
@@ -107,11 +108,10 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 0, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Dup(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Dup(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var item = engine.Peek();
         engine.Push(item);
-        runStats = null;
     }
 
     /// <summary>
@@ -123,11 +123,10 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 0, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Over(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Over(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var item = engine.Peek(1);
         engine.Push(item);
-        runStats = null;
     }
 
     /// <summary>
@@ -139,14 +138,13 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Pick(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Pick(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var n = (int)engine.Pop().GetInteger();
         if (n < 0)
             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
         var item = engine.Peek(n);
         engine.Push(item);
-        runStats = null;
     }
 
     /// <summary>
@@ -157,11 +155,10 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Tuck(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Tuck(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var item = engine.Peek();
         engine.CurrentContext!.EvaluationStack.Insert(2, item);
-        runStats = null;
     }
 
     /// <summary>
@@ -173,13 +170,12 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 0, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Swap(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Swap(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var stack = engine.CurrentContext!.EvaluationStack;
         if (stack.Count < 2)
             throw new ArgumentOutOfRangeException($"Swap index is out of stack bounds: 1/{stack.Count}");
         stack.Swap(0, 1);
-        runStats = null;
     }
 
     /// <summary>
@@ -191,10 +187,10 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 0, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Rot(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Rot(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         engine.CurrentContext!.EvaluationStack.Roll(2);
-        runStats = new RunStats { Length = 2 };
+        runStats.CollectOpLength(2);
     }
 
     /// <summary>
@@ -206,11 +202,11 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Roll(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Roll(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var n = (int)engine.Pop().GetInteger();
         engine.CurrentContext!.EvaluationStack.Roll(n);
-        runStats = new RunStats { Length = n };
+        runStats.CollectOpLength(n);
     }
 
     /// <summary>
@@ -221,10 +217,10 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Reverse3(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Reverse3(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         engine.CurrentContext!.EvaluationStack.Reverse(3);
-        runStats = new RunStats { Length = 3 };
+        runStats.CollectOpLength(3);
     }
 
     /// <summary>
@@ -235,10 +231,10 @@ partial class JumpTable
     /// <param name="instruction">The instruction being executed.</param>
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Reverse4(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void Reverse4(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         engine.CurrentContext!.EvaluationStack.Reverse(4);
-        runStats = new RunStats { Length = 4 };
+        runStats.CollectOpLength(4);
     }
 
     /// <summary>
@@ -250,10 +246,10 @@ partial class JumpTable
     /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void ReverseN(ExecutionEngine engine, Instruction instruction, out RunStats? runStats)
+    public virtual void ReverseN(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var n = (int)engine.Pop().GetInteger();
         engine.CurrentContext!.EvaluationStack.Reverse(n);
-        runStats = new RunStats { Length = n };
+        runStats.CollectOpLength(n);
     }
 }
