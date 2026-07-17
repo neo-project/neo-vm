@@ -114,11 +114,12 @@ partial class JumpTable
     public virtual void AssertMsg(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var r = engine.ReferenceCounter.Count;
-        var msg = engine.Pop().GetString();
+        var msgItem = engine.Pop();
+        var msg = msgItem.GetString();
         var x = engine.Pop().GetBoolean();
         if (!x)
             throw new Exception($"{OpCode.ASSERTMSG} is executed with false result. Reason: {msg}");
         runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
-        runStats.CollectOpLength(msg!.Length);
+        runStats.CollectOpLength(msgItem.GetSpan().Length);
     }
 }
