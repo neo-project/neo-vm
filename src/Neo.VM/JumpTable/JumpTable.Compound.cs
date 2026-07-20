@@ -34,11 +34,11 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void PackMap(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
+        var r = engine.ReferenceCounter.Count;
         var size = (int)engine.Pop().GetInteger();
         if (size < 0 || size * 2 > engine.CurrentContext!.EvaluationStack.Count)
             throw new InvalidOperationException($"The map size is out of valid range, 2*{size}/[0, {engine.CurrentContext!.EvaluationStack.Count}].");
         Map map = new();
-        var r = engine.ReferenceCounter.Count;
         for (var i = 0; i < size; i++)
         {
             var key = engine.PopNoRef<PrimitiveType>();
@@ -333,8 +333,8 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void HasKey(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
-        var key = engine.Pop<PrimitiveType>();
         var r = engine.ReferenceCounter.Count;
+        var key = engine.Pop<PrimitiveType>();
         var x = engine.Pop();
         // Check the type of the top item and perform the corresponding action.
         switch (x)
@@ -492,8 +492,8 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void PickItem(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
-        var key = engine.Pop<PrimitiveType>();
         var r1 = engine.ReferenceCounter.Count;
+        var key = engine.Pop<PrimitiveType>();
         var x = engine.Pop();
         StackItem item;
         switch (x)
@@ -715,8 +715,8 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Remove(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
-        var key = engine.Pop<PrimitiveType>();
         var r = engine.ReferenceCounter.Count;
+        var key = engine.Pop<PrimitiveType>();
         var x = engine.Pop();
         var l = 0;
         switch (x)

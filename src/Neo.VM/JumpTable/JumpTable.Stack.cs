@@ -73,10 +73,10 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void XDrop(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
+        var r = engine.ReferenceCounter.Count;
         var n = (int)engine.Pop().GetInteger();
         if (n < 0)
             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
-        var r = engine.ReferenceCounter.Count;
         engine.CurrentContext!.EvaluationStack.Remove<StackItem>(n);
         runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
         runStats.CollectOpLength(n);
