@@ -110,8 +110,7 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Dup(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
-        var item = engine.Peek();
-        engine.Push(item);
+        engine.Push(engine.Peek());
     }
 
     /// <summary>
@@ -125,8 +124,7 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Over(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
-        var item = engine.Peek(1);
-        engine.Push(item);
+        engine.Push(engine.Peek(1));
     }
 
     /// <summary>
@@ -143,8 +141,7 @@ partial class JumpTable
         var n = (int)engine.Pop().GetInteger();
         if (n < 0)
             throw new InvalidOperationException($"The negative value {n} is invalid for OpCode.{instruction.OpCode}.");
-        var item = engine.Peek(n);
-        engine.Push(item);
+        engine.Push(engine.Peek(n));
     }
 
     /// <summary>
@@ -157,8 +154,7 @@ partial class JumpTable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual void Tuck(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
-        var item = engine.Peek();
-        engine.CurrentContext!.EvaluationStack.Insert(2, item);
+        engine.CurrentContext!.EvaluationStack.Insert(2, engine.Peek());
     }
 
     /// <summary>
