@@ -13,6 +13,9 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
+using Neo.VM.Types;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Neo.Test;
 
@@ -21,12 +24,11 @@ public class UT_JumpTable_Types
 {
     private class StatsCapturingEngine : ExecutionEngine
     {
-        public RunStats? AssertMsgStats;
+        public List<(OpCode OpCode, RunStats Stats)> AllStats = new();
 
         protected override void PostExecuteInstruction(Instruction? instruction, RunStats runStats)
         {
-            if (instruction?.OpCode == OpCode.ASSERTMSG)
-                AssertMsgStats = runStats;
+            AllStats.Add((instruction?.OpCode ?? OpCode.NOP, runStats));
             base.PostExecuteInstruction(instruction, runStats);
         }
     }
@@ -42,8 +44,13 @@ public class UT_JumpTable_Types
         engine.Execute();
 
         Assert.AreEqual(VMState.HALT, engine.State);
-        Assert.IsNotNull(engine.AssertMsgStats);
-        return engine.AssertMsgStats!.Value.Length;
+
+        var assertMsgStats = engine.AllStats
+            .Where(s => s.OpCode == OpCode.ASSERTMSG)
+            .Select(u => u.Stats)
+            .FirstOrDefault();
+
+        return assertMsgStats.Length;
     }
 
     [TestMethod]
@@ -72,5 +79,40 @@ public class UT_JumpTable_Types
         // "é" (2 bytes) + "😀" (4 bytes) + "!" (1 byte) = 7 bytes,
         // while string.Length would report 1 + 2 + 1 = 4.
         Assert.AreEqual(7, RunAssertMsgAndGetLength("é😀!"));
+    }
+
+    [TestMethod]
+    public void Check_ConvertWorksWell()
+    {
+        foreach (var opcode in new OpCode[] { OpCode.NEWARRAY0, OpCode.NEWSTRUCT0 })
+            foreach (var convertTo in new StackItemType[] { StackItemType.Array, StackItemType.Struct })
+            {
+                using var engine = new StatsCapturingEngine();
+                using var sb = new ScriptBuilder();
+                sb.Emit(opcode);
+                sb.Emit(OpCode.CONVERT, new byte[] { (byte)convertTo });
+
+                engine.LoadScript(sb.ToArray());
+                Assert.AreEqual(VMState.HALT, engine.Execute());
+
+                var result = engine.ResultStack.Pop();
+
+                // Ensure result it's ok
+
+                if (convertTo == StackItemType.Array)
+                    Assert.AreEqual(StackItemType.Array, result.Type);
+                else
+                    Assert.AreEqual(StackItemType.Struct, result.Type);
+
+                // Ensure RunStats
+
+                var convertStats = engine.AllStats
+                    .Where(s => s.OpCode == OpCode.CONVERT)
+                    .Select(u => u.Stats)
+                    .FirstOrDefault();
+
+                Assert.AreEqual(StackItemType.Array, convertStats.Type,
+                    message: $"Expected {StackItemType.Array}, but got {convertStats.Type} while convert from {opcode} to {convertTo}");
+            }
     }
 }
