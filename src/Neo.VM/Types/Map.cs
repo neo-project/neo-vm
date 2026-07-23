@@ -137,17 +137,21 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// Removes the element with the specified key from the map.
     /// </summary>
     /// <param name="key">The key of the element to remove.</param>
+    /// <param name="index">The index of the element to remove.</param>
     /// <returns>
     /// <see cref="StackItem"/> if the element is successfully removed;
     /// otherwise, <see langword="null"/>.
     /// </returns>
-    public StackItem? Remove(PrimitiveType key)
+    public StackItem? Remove(PrimitiveType key, out int index)
     {
         if (key.Size > MaxKeySize)
             throw new ArgumentException($"Can not remove key from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.", nameof(key));
         if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not remove key.");
-        if (!dictionary.Remove(key, out StackItem? oldValue))
+        index = dictionary.IndexOf(key);
+        if (index < 0)
             return null;
+        StackItem oldValue = dictionary.GetAt(index).Value;
+        dictionary.RemoveAt(index);
         return oldValue;
     }
 

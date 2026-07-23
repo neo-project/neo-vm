@@ -266,17 +266,17 @@ public class UT_StackItem
             [key] = value,
         };
 
-        var removed = map.Remove(key);
+        var removed = map.Remove(key, out _);
         Assert.AreEqual(value, removed);
         Assert.IsFalse(map.ContainsKey(key));
 
-        removed = map.Remove(key);
+        removed = map.Remove(key, out _);
         Assert.IsNull(removed);
 
         var bigKey = new ByteString(new byte[65]);
-        Assert.ThrowsExactly<System.ArgumentException>(() => map.Remove(bigKey));
+        Assert.ThrowsExactly<System.ArgumentException>(() => map.Remove(bigKey, out _));
 
         var readonlyMap = (Map)map.DeepCopy(true);
-        Assert.ThrowsExactly<System.InvalidOperationException>(() => readonlyMap.Remove(key));
+        Assert.ThrowsExactly<System.InvalidOperationException>(() => readonlyMap.Remove(key, out _));
     }
 }

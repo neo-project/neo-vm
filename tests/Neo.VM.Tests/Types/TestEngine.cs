@@ -30,7 +30,7 @@ public class TestEngine : ExecutionEngine
         return jumpTable;
     }
 
-    private static void OnSysCall(ExecutionEngine engine, Instruction instruction)
+    private static void OnSysCall(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         uint method = instruction.TokenU32;
 
@@ -42,7 +42,7 @@ public class TestEngine : ExecutionEngine
 
         if (method == 0xaddeadde)
         {
-            engine.JumpTable.ExecuteThrow(engine, "error");
+            engine.JumpTable.ExecuteThrow(engine, "error", out _);
             return;
         }
 
