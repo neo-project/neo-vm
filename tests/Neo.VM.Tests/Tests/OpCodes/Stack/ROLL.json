@@ -36,6 +36,23 @@
       ]
     },
     {
+      "name": "With 0 and empty stack",
+      "script": [
+        "PUSH0",
+        "ROLL"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "execute"
+          ],
+          "result": {
+            "state": "FAULT"
+          }
+        }
+      ]
+    },
+    {
       "name": "Pick outside",
       "script": [
         "PUSH1",

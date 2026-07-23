@@ -230,6 +230,44 @@
           }
         }
       ]
+    },
+    {
+      "name": "Any type",
+      "script": [
+        "NEWSTRUCT0",
+        "ISTYPE",
+        "0x00"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT",
+            "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invalid type",
+      "script": [
+        "NEWSTRUCT0",
+        "ISTYPE",
+        "0xff"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "FAULT",
+            "refs": 0
+          }
+        }
+      ]
     }
   ]
 }
