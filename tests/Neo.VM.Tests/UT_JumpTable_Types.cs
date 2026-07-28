@@ -104,15 +104,20 @@ public class UT_JumpTable_Types
                 else
                     Assert.AreEqual(StackItemType.Struct, result.Type);
 
-                // Ensure RunStats
+                // Converting Array<->Struct actually copies the underlying items, so it must
+                // be priced dynamically (Type == Array). Converting to the same compound type
+                // (Array->Array or Struct->Struct) is a no-op.
+                var fromType = opcode == OpCode.NEWARRAY0 ? StackItemType.Array : StackItemType.Struct;
+                var isDynamicTimeConversion = fromType != convertTo;
 
                 var convertStats = engine.AllStats
                     .Where(s => s.OpCode == OpCode.CONVERT)
                     .Select(u => u.Stats)
                     .FirstOrDefault();
 
-                Assert.AreEqual(StackItemType.Array, convertStats.Type,
-                    message: $"Expected {StackItemType.Array}, but got {convertStats.Type} while convert from {opcode} to {convertTo}");
+                var expectedType = isDynamicTimeConversion ? StackItemType.Array : StackItemType.Any;
+                Assert.AreEqual(expectedType, convertStats.Type,
+                    message: $"Expected {expectedType}, but got {convertStats.Type} while convert from {opcode} to {convertTo}");
             }
     }
 }
