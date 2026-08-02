@@ -34,8 +34,9 @@ public class Struct : Array
     /// Create a new structure with the same content as this structure. All nested structures will be copied by value.
     /// </summary>
     /// <param name="limits">Execution engine limits</param>
+    /// <param name="nClonedItems">The number of items cloned.</param>
     /// <returns>The copied structure.</returns>
-    public Struct Clone(ExecutionEngineLimits limits)
+    public Struct Clone(ExecutionEngineLimits limits, out int nClonedItems)
     {
         int count = (int)(limits.MaxStackSize - 1);
         Struct result = new();
@@ -63,6 +64,7 @@ public class Struct : Array
                 }
             }
         }
+        nClonedItems = (int)limits.MaxStackSize - count;
         return result;
     }
 
