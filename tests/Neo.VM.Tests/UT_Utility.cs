@@ -44,7 +44,6 @@ public class UT_Utility
         Assert.AreEqual(new BigInteger(52), new BigInteger(19).ModInverse(141));
     }
 
-
     [TestMethod]
     public void TestSpanNotZero()
     {
