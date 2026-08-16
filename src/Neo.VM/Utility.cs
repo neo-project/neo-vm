@@ -112,4 +112,10 @@ static class Utility
 
         return z;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool NotZero(this ReadOnlySpan<byte> x)
+    {
+        return x.IndexOfAnyExcept((byte)0) >= 0;
+    }
 }

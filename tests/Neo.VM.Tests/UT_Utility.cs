@@ -43,4 +43,18 @@ public class UT_Utility
 
         Assert.AreEqual(new BigInteger(52), new BigInteger(19).ModInverse(141));
     }
+
+    [TestMethod]
+    public void TestSpanNotZero()
+    {
+        Assert.IsFalse(((ReadOnlySpan<byte>)Array.Empty<byte>().AsSpan()).NotZero());
+        Assert.IsFalse(((ReadOnlySpan<byte>)new byte[4].AsSpan()).NotZero());
+        Assert.IsFalse(((ReadOnlySpan<byte>)new byte[8].AsSpan()).NotZero());
+        Assert.IsFalse(((ReadOnlySpan<byte>)new byte[11].AsSpan()).NotZero());
+
+        Assert.IsTrue(((ReadOnlySpan<byte>)new byte[4] { 0x00, 0x00, 0x00, 0x01 }).NotZero());
+        Assert.IsTrue(((ReadOnlySpan<byte>)new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 }).NotZero());
+        Assert.IsTrue(((ReadOnlySpan<byte>)new byte[11] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 }).NotZero());
+        Assert.IsTrue(((ReadOnlySpan<byte>)new byte[11] { 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }).NotZero());
+    }
 }
