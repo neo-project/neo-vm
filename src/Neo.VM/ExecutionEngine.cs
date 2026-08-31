@@ -9,6 +9,9 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+using Neo.VM.Builder;
+using Neo.VM.Middleware;
+using Neo.VM.Pipeline;
 using Neo.VM.Types;
 using System;
 using System.Collections.Generic;
@@ -22,10 +25,17 @@ namespace Neo.VM;
 public class ExecutionEngine : IDisposable
 {
     private VMState _state = VMState.BREAK;
+    private ExecutionPipeline _pipeline;
+    private readonly List<IEngineMiddleware> _middleware = [];
 
     internal bool isJumping = false;
 
     public JumpTable JumpTable { get; }
+
+    /// <summary>
+    /// Gets the middleware pipeline invoked around execution.
+    /// </summary>
+    public ExecutionPipeline Pipeline => _pipeline;
 
     /// <summary>
     /// Restrictions on the VM.
@@ -63,6 +73,11 @@ public class ExecutionEngine : IDisposable
     public StackItem? UncaughtException { get; internal set; }
 
     /// <summary>
+    /// Gets the exception that caused a <see cref="VMState.FAULT"/>, if any.
+    /// </summary>
+    public Exception? FaultException { get; private set; }
+
+    /// <summary>
     /// The current state of the VM.
     /// </summary>
     public VMState State
@@ -95,12 +110,30 @@ public class ExecutionEngine : IDisposable
     /// <param name="jumpTable">The jump table to be used.</param>
     /// <param name="referenceCounter">The reference counter to be used.</param>
     /// <param name="limits">Restrictions on the VM.</param>
-    internal ExecutionEngine(JumpTable? jumpTable, IReferenceCounter referenceCounter, ExecutionEngineLimits limits)
+    /// <param name="pipeline">Middleware pipeline; defaults to <see cref="ExecutionPipeline.Empty"/>.</param>
+    internal ExecutionEngine(JumpTable? jumpTable, IReferenceCounter referenceCounter, ExecutionEngineLimits limits, ExecutionPipeline? pipeline = null)
     {
         JumpTable = jumpTable ?? JumpTable.Default;
         Limits = limits;
         ReferenceCounter = referenceCounter;
         ResultStack = new(referenceCounter);
+        _pipeline = pipeline ?? ExecutionPipeline.Empty;
+    }
+
+    /// <summary>
+    /// Adds middleware to the execution pipeline.
+    /// First registered middleware runs first. Duplicate instances are ignored.
+    /// </summary>
+    /// <param name="middleware">The middleware to register.</param>
+    /// <returns>This engine for chaining.</returns>
+    public ExecutionEngine Use(IEngineMiddleware middleware)
+    {
+        ArgumentNullException.ThrowIfNull(middleware);
+        if (_middleware.Contains(middleware))
+            return this;
+        _middleware.Add(middleware);
+        _pipeline = ExecutionPipelineBuilder.Create().Use(_middleware).Build();
+        return this;
     }
 
     public void Dispose()
@@ -119,14 +152,18 @@ public class ExecutionEngine : IDisposable
 
     /// <summary>
     /// Start execution of the VM.
+    /// Stops on <see cref="VMState.HALT"/>, <see cref="VMState.FAULT"/>, or <see cref="VMState.BREAK"/>.
     /// </summary>
     /// <returns></returns>
     public virtual VMState Execute()
     {
         if (State == VMState.BREAK)
             State = VMState.NONE;
-        while (State != VMState.HALT && State != VMState.FAULT)
+        _pipeline.PreExecution();
+        while (State != VMState.HALT && State != VMState.FAULT && State != VMState.BREAK)
             ExecuteNext();
+        if (State == VMState.HALT || State == VMState.FAULT)
+            _pipeline.PostExecution();
         return State;
     }
 
@@ -148,6 +185,7 @@ public class ExecutionEngine : IDisposable
                 Instruction instruction = currentInstruction ?? Instruction.RET;
                 RunStats runStats = default;
                 PreExecuteInstruction(instruction);
+                _pipeline.PreExecute(context);
 #if VMPERF
                 Console.WriteLine("op:["
                                   + this.CurrentContext.InstructionPointer.ToString("X04")
@@ -167,6 +205,7 @@ public class ExecutionEngine : IDisposable
                 if (!isJumping && currentInstruction != null)
                     context.InstructionPointer += instruction.Size;
                 isJumping = false;
+                _pipeline.PostExecute(context);
             }
             catch (Exception e)
             {
@@ -248,6 +287,7 @@ public class ExecutionEngine : IDisposable
     protected virtual void OnFault(Exception ex)
     {
         State = VMState.FAULT;
+        FaultException = ex;
 
 #if VMPERF
         if (ex != null)

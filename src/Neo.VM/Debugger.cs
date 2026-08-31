@@ -9,136 +9,34 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using Neo.VM.Middleware;
 
 namespace Neo.VM;
 
 /// <summary>
-/// A simple debugger for <see cref="ExecutionEngine"/>.
+/// A debugger for <see cref="ExecutionEngine"/> implemented as engine middleware.
 /// </summary>
-public class Debugger
+public class Debugger : DebuggerMiddleware
 {
-    private readonly ExecutionEngine _engine;
-    private readonly Dictionary<Script, HashSet<uint>> _breakPoints = new();
-
     /// <summary>
     /// Create a debugger on the specified <see cref="ExecutionEngine"/>.
+    /// The debugger is registered on the engine pipeline.
     /// </summary>
     /// <param name="engine">The <see cref="ExecutionEngine"/> to attach the debugger.</param>
     public Debugger(ExecutionEngine engine)
+        : base(engine)
     {
-        _engine = engine;
     }
 
     /// <summary>
-    /// Add a breakpoint at the specified position of the specified script.
-    /// The VM will break the execution when it reaches the breakpoint.
+    /// Create a debugger on the specified <see cref="ExecutionEngine"/> with a logger.
+    /// The debugger is registered on the engine pipeline.
     /// </summary>
-    /// <param name="script">The script to add the breakpoint.</param>
-    /// <param name="position">The position of the breakpoint in the script.</param>
-    public void AddBreakPoint(Script script, uint position)
+    /// <param name="engine">The <see cref="ExecutionEngine"/> to attach the debugger.</param>
+    /// <param name="logger">Logger that receives debugger messages.</param>
+    public Debugger(ExecutionEngine engine, ILogger logger)
+        : base(engine, logger)
     {
-        if (!_breakPoints.TryGetValue(script, out var hashset))
-        {
-            hashset = new HashSet<uint>();
-            _breakPoints.Add(script, hashset);
-        }
-        hashset.Add(position);
-    }
-
-    /// <summary>
-    /// Start or continue execution of the VM.
-    /// </summary>
-    /// <returns>Returns the state of the VM after the execution.</returns>
-    public VMState Execute()
-    {
-        if (_engine.State == VMState.BREAK)
-            _engine.State = VMState.NONE;
-        while (_engine.State == VMState.NONE)
-            ExecuteAndCheckBreakPoints();
-        return _engine.State;
-    }
-
-    private void ExecuteAndCheckBreakPoints()
-    {
-        _engine.ExecuteNext();
-        if (_engine.State == VMState.NONE && _engine.InvocationStack.Count > 0 && _breakPoints.Count > 0)
-        {
-            if (_breakPoints.TryGetValue(_engine.CurrentContext!.Script, out var hashset) &&
-                hashset.Contains((uint)_engine.CurrentContext.InstructionPointer))
-            {
-                _engine.State = VMState.BREAK;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Removes the breakpoint at the specified position in the specified script.
-    /// </summary>
-    /// <param name="script">The script to remove the breakpoint.</param>
-    /// <param name="position">The position of the breakpoint in the script.</param>
-    /// <returns>
-    /// <see langword="true"/> if the breakpoint is successfully found and removed;
-    /// otherwise, <see langword="false"/>.
-    /// </returns>
-    public bool RemoveBreakPoint(Script script, uint position)
-    {
-        if (!_breakPoints.TryGetValue(script, out var hashset)) return false;
-        if (!hashset.Remove(position)) return false;
-        if (hashset.Count == 0) _breakPoints.Remove(script);
-        return true;
-    }
-
-    /// <summary>
-    /// Execute the next instruction.
-    /// If the instruction involves a call to a method,
-    /// it steps into the method and breaks the execution on the first instruction of that method.
-    /// </summary>
-    /// <returns>The VM state after the instruction is executed.</returns>
-    public VMState StepInto()
-    {
-        if (_engine.State == VMState.HALT || _engine.State == VMState.FAULT)
-            return _engine.State;
-        _engine.ExecuteNext();
-        if (_engine.State == VMState.NONE)
-            _engine.State = VMState.BREAK;
-        return _engine.State;
-    }
-
-    /// <summary>
-    /// Execute until the currently executed method is returned.
-    /// </summary>
-    /// <returns>The VM state after the currently executed method is returned.</returns>
-    public VMState StepOut()
-    {
-        if (_engine.State == VMState.BREAK)
-            _engine.State = VMState.NONE;
-        int c = _engine.InvocationStack.Count;
-        while (_engine.State == VMState.NONE && _engine.InvocationStack.Count >= c)
-            ExecuteAndCheckBreakPoints();
-        if (_engine.State == VMState.NONE)
-            _engine.State = VMState.BREAK;
-        return _engine.State;
-    }
-
-    /// <summary>
-    /// Execute the next instruction.
-    /// If the instruction involves a call to a method, it does not step into the method (it steps over it instead).
-    /// </summary>
-    /// <returns>The VM state after the instruction is executed.</returns>
-    public VMState StepOver()
-    {
-        if (_engine.State == VMState.HALT || _engine.State == VMState.FAULT)
-            return _engine.State;
-        _engine.State = VMState.NONE;
-        int c = _engine.InvocationStack.Count;
-        do
-        {
-            ExecuteAndCheckBreakPoints();
-        }
-        while (_engine.State == VMState.NONE && _engine.InvocationStack.Count > c);
-        if (_engine.State == VMState.NONE)
-            _engine.State = VMState.BREAK;
-        return _engine.State;
     }
 }

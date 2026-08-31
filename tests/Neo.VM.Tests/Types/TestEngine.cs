@@ -17,8 +17,6 @@ namespace Neo.Test.Types;
 
 public class TestEngine : ExecutionEngine
 {
-    public Exception FaultException { get; private set; }
-
     public TestEngine() : base(ComposeJumpTable()) { }
 
     public TestEngine(IReferenceCounter referenceCounter, ExecutionEngineLimits limits) : base(ComposeJumpTable(), referenceCounter, limits) { }
@@ -47,11 +45,5 @@ public class TestEngine : ExecutionEngine
         }
 
         throw new Exception();
-    }
-
-    protected override void OnFault(Exception ex)
-    {
-        FaultException = ex;
-        base.OnFault(ex);
     }
 }
