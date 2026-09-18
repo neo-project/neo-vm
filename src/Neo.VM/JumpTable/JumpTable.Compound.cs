@@ -432,7 +432,7 @@ partial class JumpTable
                     isReferenced = map.IsStackReferenced;
                     if (!isReferenced)
                         // Decrease refcounter value by number of keys in map.
-                        engine.ReferenceCounter.AddStackReference(StackItem.Null, -map.Count);
+                        engine.ReferenceCounter.Dec(map.Count);
                     break;
                 }
             default:
