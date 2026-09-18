@@ -120,4 +120,24 @@ public class UT_JumpTable_Types
                     message: $"Expected {expectedType}, but got {convertStats.Type} while convert from {opcode} to {convertTo}");
             }
     }
+
+    [TestMethod]
+    public void SetItem_StructClone_RefsDeltaAccountsForCloneCorrectly()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.NEWMAP);
+        sb.Emit(OpCode.PUSH0);
+        sb.Emit(OpCode.NEWSTRUCT0);
+        sb.Emit(OpCode.SETITEM);
+
+        using var engine = new StatsCapturingEngine();
+        engine.LoadScript(sb.ToArray());
+
+        Assert.AreEqual(VMState.HALT, engine.Execute());
+
+        var stats = engine.AllStats.Single(s => s.OpCode == OpCode.SETITEM).Stats;
+        // 1 (removing struct) + 1 (adding cloned struct) + 1 (removing key)
+        // + 1 (removing map) + 1 (removing cloned struct)
+        Assert.AreEqual(5, stats.RefsDelta);
+    }
 }

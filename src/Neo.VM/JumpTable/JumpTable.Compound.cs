@@ -600,6 +600,7 @@ partial class JumpTable
         {
             engine.ReferenceCounter.RemoveStackReference(value);
             value = s.Clone(engine.Limits, out nClonedItems);
+            r2 = engine.ReferenceCounter.Count;
             engine.ReferenceCounter.AddStackReference(value);
         }
         var r3 = engine.ReferenceCounter.Count;
