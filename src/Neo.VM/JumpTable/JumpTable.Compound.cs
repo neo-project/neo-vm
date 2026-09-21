@@ -599,8 +599,8 @@ partial class JumpTable
         if (value is Struct s)
         {
             engine.ReferenceCounter.RemoveStackReference(value);
-            value = s.Clone(engine.Limits, out nClonedItems);
             r2 = engine.ReferenceCounter.Count;
+            value = s.Clone(engine.Limits, out nClonedItems);
             engine.ReferenceCounter.AddStackReference(value);
         }
         var r3 = engine.ReferenceCounter.Count;

@@ -140,4 +140,58 @@ public class UT_JumpTable_Types
         // + 1 (removing map) + 1 (removing cloned struct)
         Assert.AreEqual(5, stats.RefsDelta);
     }
+
+    private static int RunAndGetSetItemRefsDelta(params OpCode[] script)
+    {
+        using var sb = new ScriptBuilder();
+        foreach (var op in script)
+            sb.Emit(op);
+
+        using var engine = new StatsCapturingEngine();
+        engine.LoadScript(sb.ToArray());
+        Assert.AreEqual(VMState.HALT, engine.Execute());
+        return engine.AllStats.Single(s => s.OpCode == OpCode.SETITEM).Stats.RefsDelta;
+    }
+
+    [TestMethod]
+    public void SetItem_MapDropped_StructOfStruct()
+    {
+        Assert.AreEqual(14, RunAndGetSetItemRefsDelta(
+            OpCode.NEWMAP, OpCode.PUSH0, OpCode.PUSH2, OpCode.NEWSTRUCT, OpCode.PUSH1, OpCode.PACKSTRUCT, OpCode.SETITEM));
+    }
+
+    [TestMethod]
+    public void SetItem_MapDropped_StructOfArray()
+    {
+        Assert.AreEqual(14, RunAndGetSetItemRefsDelta(
+            OpCode.NEWMAP, OpCode.PUSH0, OpCode.PUSH2, OpCode.NEWARRAY, OpCode.PUSH1, OpCode.PACKSTRUCT, OpCode.SETITEM));
+    }
+
+    [TestMethod]
+    public void SetItem_MapKept_StructOfStruct()
+    {
+        Assert.AreEqual(9, RunAndGetSetItemRefsDelta(
+            OpCode.NEWMAP, OpCode.DUP, OpCode.PUSH0, OpCode.PUSH2, OpCode.NEWSTRUCT, OpCode.PUSH1, OpCode.PACKSTRUCT, OpCode.SETITEM));
+    }
+
+    [TestMethod]
+    public void SetItem_MapKept_StructOfArray()
+    {
+        Assert.AreEqual(9, RunAndGetSetItemRefsDelta(
+            OpCode.NEWMAP, OpCode.DUP, OpCode.PUSH0, OpCode.PUSH2, OpCode.NEWARRAY, OpCode.PUSH1, OpCode.PACKSTRUCT, OpCode.SETITEM));
+    }
+
+    [TestMethod]
+    public void SetItem_MapDropped_Array()
+    {
+        Assert.AreEqual(5, RunAndGetSetItemRefsDelta(
+            OpCode.NEWMAP, OpCode.PUSH0, OpCode.PUSH2, OpCode.NEWARRAY, OpCode.SETITEM));
+    }
+
+    [TestMethod]
+    public void SetItem_MapKept_Array()
+    {
+        Assert.AreEqual(1, RunAndGetSetItemRefsDelta(
+            OpCode.NEWMAP, OpCode.DUP, OpCode.PUSH0, OpCode.PUSH2, OpCode.NEWARRAY, OpCode.SETITEM));
+    }
 }
