@@ -1255,7 +1255,8 @@
     {
       "name": "Caught out-of-bounds [Buffer]",
       "script": [
-        "TRY", "0x0900",
+        "TRY",
+        "0x0900",
         "PUSH0",
         "NEWBUFFER",
         "PUSH1",
@@ -1305,6 +1306,355 @@
           "result": {
             "state": "HALT",
             "refs": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "RefsDelta [Empty struct, map dropped]",
+      "script": [
+        "NEWMAP",
+        "PUSH0",
+        "NEWSTRUCT0",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 3,
+                "nextInstruction": "SETITEM"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 0,
+            "runStats": {
+              "refsDelta": 5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "RefsDelta [Struct of struct, map dropped]",
+      "script": [
+        "NEWMAP",
+        "PUSH0",
+        "PUSH2",
+        "NEWSTRUCT",
+        "PUSH1",
+        "PACKSTRUCT",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "SETITEM"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 0,
+            "runStats": {
+              "refsDelta": 14
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "RefsDelta [Struct of array, map dropped]",
+      "script": [
+        "NEWMAP",
+        "PUSH0",
+        "PUSH2",
+        "NEWARRAY",
+        "PUSH1",
+        "PACKSTRUCT",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "SETITEM"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 0,
+            "runStats": {
+              "refsDelta": 14
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "RefsDelta [Struct of struct, map kept]",
+      "script": [
+        "NEWMAP",
+        "DUP",
+        "PUSH0",
+        "PUSH2",
+        "NEWSTRUCT",
+        "PUSH1",
+        "PACKSTRUCT",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "SETITEM"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 6,
+            "runStats": {
+              "refsDelta": 9
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "RefsDelta [Struct of array, map kept]",
+      "script": [
+        "NEWMAP",
+        "DUP",
+        "PUSH0",
+        "PUSH2",
+        "NEWARRAY",
+        "PUSH1",
+        "PACKSTRUCT",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 7,
+                "nextInstruction": "SETITEM"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 8,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 6,
+            "runStats": {
+              "refsDelta": 9
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "RefsDelta [Array, map dropped]",
+      "script": [
+        "NEWMAP",
+        "PUSH0",
+        "PUSH2",
+        "NEWARRAY",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 4,
+                "nextInstruction": "SETITEM"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 0,
+            "runStats": {
+              "refsDelta": 5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "RefsDelta [Array, map kept]",
+      "script": [
+        "NEWMAP",
+        "DUP",
+        "PUSH0",
+        "PUSH2",
+        "NEWARRAY",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto",
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 5,
+                "nextInstruction": "SETITEM"
+              }
+            ]
+          }
+        },
+        {
+          "actions": [
+            "stepInto"
+          ],
+          "result": {
+            "state": "BREAK",
+            "invocationStack": [
+              {
+                "instructionPointer": 6,
+                "nextInstruction": "RET"
+              }
+            ],
+            "refs": 5,
+            "runStats": {
+              "refsDelta": 1
+            }
           }
         }
       ]
