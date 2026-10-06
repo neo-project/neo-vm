@@ -9,6 +9,7 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+using Neo.VM.Extensions;
 using System;
 using System.Diagnostics;
 
@@ -45,9 +46,10 @@ public class InteropInterface : StackItem
         return true;
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode(ExecutionEngineLimits limits)
     {
-        return HashCode.Combine(_object);
+        var span = GetSpan(limits);
+        return HashCode.Combine(Type, span.Length, span.ToHashCode(397), _object);
     }
 
     public override T GetInterface<T>()

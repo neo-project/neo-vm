@@ -112,7 +112,15 @@ public class Buffer : StackItem
             : $"(\"Base64: {Convert.ToBase64String(GetSpan())}\")";
     }
 
-    public override int GetHashCode() => throw new NotSupportedException("Mutable buffer does not support GetHashCode.");
+    public override int GetHashCode()
+        => throw new NotSupportedException("Mutable buffer does not support GetHashCode.");
+
+    /// <summary>
+    /// Content hash of <see cref="Type"/>, size, and
+    /// <see cref="StackItem.GetSafeSpan()"/>.
+    /// </summary>
+    public override int GetHashCode(ExecutionEngineLimits limits)
+        => CombineHash(GetSafeSpan());
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator Buffer(byte[] value) => new(value);
