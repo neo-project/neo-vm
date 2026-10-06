@@ -173,4 +173,17 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
             throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
         return dictionary.TryGetValue(key, out value);
     }
+
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+    {
+        var result = new List<byte>();
+        foreach (var (key, value) in dictionary)
+        {
+            result.AddRange(key.GetSafeSpan(visited));
+            ExecutionEngineLimits.Default.AssertMaxItemSize(result.Count);
+            result.AddRange(value.GetSafeSpan(visited));
+            ExecutionEngineLimits.Default.AssertMaxItemSize(result.Count);
+        }
+        return result.ToArray();
+    }
 }
