@@ -51,7 +51,7 @@ public class ByteString : PrimitiveType
         return Equals(b);
     }
 
-    internal override bool Equals(StackItem? other, ExecutionEngineLimits limits)
+    public override bool Equals(StackItem? other, ExecutionEngineLimits limits)
     {
         uint maxComparableSize = limits.MaxComparableSize;
         return Equals(other, ref maxComparableSize);

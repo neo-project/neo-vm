@@ -48,6 +48,9 @@ public abstract class CompoundType : StackItem
 
     public abstract IEnumerable<StackItem> SubItems { get; }
 
+    internal override IEnumerable<StackItem> GetChildren()
+        => SubItems;
+
     public abstract int SubItemsCount { get; }
 
     public bool IsReadOnly { get; protected set; }
