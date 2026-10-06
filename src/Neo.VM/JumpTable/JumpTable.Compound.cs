@@ -434,7 +434,7 @@ partial class JumpTable
                     isReferenced = map.IsStackReferenced;
                     if (!isReferenced)
                         // Decrease refcounter value by number of keys in map.
-                        engine.ReferenceCounter.AddStackReference(StackItem.Null, -map.Count);
+                        engine.ReferenceCounter.Dec(map.Count);
                     break;
                 }
             default:
@@ -601,6 +601,7 @@ partial class JumpTable
         if (value is Struct s)
         {
             engine.ReferenceCounter.RemoveStackReference(value);
+            r2 = engine.ReferenceCounter.Count;
             value = s.Clone(engine.Limits, out nClonedItems);
             engine.ReferenceCounter.AddStackReference(value);
         }

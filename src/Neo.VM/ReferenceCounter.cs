@@ -15,7 +15,11 @@ using System;
 namespace Neo.VM;
 
 /// <summary>
-/// Used for reference counting of objects in the VM.
+/// Counts VM stack items the same way neo-go does: a single integer for the
+/// total number of references, plus a per-compound <see cref="CompoundType.StackReferences"/>
+/// count. Compound children are walked only when the compound becomes
+/// referenced (0 → 1) or unreferenced (1 → 0). Unreferenced compounds are not
+/// decremented, so cyclic graphs cannot drive the counter negative.
 /// </summary>
 public sealed class ReferenceCounter : IReferenceCounter
 {
@@ -47,14 +51,13 @@ public sealed class ReferenceCounter : IReferenceCounter
     /// <inheritdoc/>
     public void AddStackReference(StackItem item, int count = 1)
     {
-        // Increment the reference count by the specified count.
         _referencesCount += count;
 
         if (item is CompoundType compoundType)
         {
-            // Increment the item's stack references by the specified count.
             compoundType.StackReferences += count;
 
+            // First reference: count children (array/struct items, map keys and values).
             if (compoundType.StackReferences == count)
             {
                 foreach (var subItem in compoundType.SubItems)
@@ -77,12 +80,11 @@ public sealed class ReferenceCounter : IReferenceCounter
     {
         if (item is CompoundType compoundType)
         {
+            // Skip compounds that are already unreferenced so cyclic graphs
+            // cannot underflow the counter and bypass MaxStackSize.
             if (compoundType.IsStackReferenced)
             {
-                // Decrease the reference count.
                 _referencesCount--;
-
-                // Decrease the item's stack references.
                 compoundType.StackReferences--;
 
                 if (compoundType.StackReferences == 0)
@@ -96,7 +98,6 @@ public sealed class ReferenceCounter : IReferenceCounter
         }
         else
         {
-            // Decrease the reference count.
             _referencesCount--;
         }
     }

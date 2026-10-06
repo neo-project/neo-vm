@@ -19,6 +19,8 @@ public class TestEngine : ExecutionEngine
 {
     public Exception FaultException { get; private set; }
 
+    public RunStats LastRunStats { get; private set; }
+
     public TestEngine() : base(ComposeJumpTable()) { }
 
     public TestEngine(IReferenceCounter referenceCounter, ExecutionEngineLimits limits) : base(ComposeJumpTable(), referenceCounter, limits) { }
@@ -53,5 +55,11 @@ public class TestEngine : ExecutionEngine
     {
         FaultException = ex;
         base.OnFault(ex);
+    }
+
+    protected override void PostExecuteInstruction(Instruction instruction, RunStats runStats)
+    {
+        LastRunStats = runStats;
+        base.PostExecuteInstruction(instruction, runStats);
     }
 }
