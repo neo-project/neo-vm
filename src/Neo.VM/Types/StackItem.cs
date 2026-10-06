@@ -191,19 +191,22 @@ public abstract partial class StackItem : IEquatable<StackItem>
 
     /// <summary>
     /// Get the readonly span used to read the VM object data.
-    /// Compounds throw <see cref="InvalidCastException"/>; other types use
-    /// <see cref="GetSafeSpan()"/>.
+    /// Compounds throw <see cref="InvalidCastException"/>.
+    /// Primitives use <see cref="PrimitiveType.Memory"/> so Integer 0 stays empty.
     /// </summary>
     public ReadOnlySpan<byte> GetSpan()
     {
         if (this is CompoundType)
             throw new InvalidCastException();
+        if (this is PrimitiveType primitive)
+            return primitive.Memory.Span;
         return GetSafeSpan();
     }
 
     /// <summary>
     /// Opcode path for splice handlers. Compounds throw
-    /// <see cref="InvalidCastException"/>. Other types use
+    /// <see cref="InvalidCastException"/>. Primitives use
+    /// <see cref="PrimitiveType.Memory"/>; other types use
     /// <see cref="GetSafeSpan()"/> and assert
     /// <see cref="ExecutionEngineLimits.MaxItemSize"/>.
     /// </summary>
@@ -211,7 +214,9 @@ public abstract partial class StackItem : IEquatable<StackItem>
     {
         if (this is CompoundType)
             throw new InvalidCastException();
-        var span = GetSafeSpan();
+        var span = this is PrimitiveType primitive
+            ? primitive.Memory.Span
+            : GetSafeSpan();
         limits.AssertMaxItemSize(span.Length);
         return span;
     }

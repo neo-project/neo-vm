@@ -125,6 +125,9 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
         InnerList.Reverse();
     }
 
+    /// <summary>
+    /// Concatenate child spans, skipping <see cref="Null"/>.
+    /// </summary>
     protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
     {
         var result = new List<byte>();
@@ -133,7 +136,6 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
             if (item is Null)
                 continue;
             result.AddRange(item.GetSafeSpan(visited));
-            ExecutionEngineLimits.Default.AssertMaxItemSize(result.Count);
         }
         return result.ToArray();
     }

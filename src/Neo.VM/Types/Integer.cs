@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -77,6 +78,22 @@ public class Integer : PrimitiveType
     public override BigInteger GetInteger()
     {
         return value;
+    }
+
+    /// <summary>
+    /// Binary form of the Integer type: always <see cref="MaxSize"/> (32)
+    /// little-endian bytes. Non-negative values are unsigned-padded with zeros;
+    /// negatives are two's-complement sign-extended.
+    /// </summary>
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+    {
+        var bytes = new byte[MaxSize];
+        var unsigned = value.Sign >= 0;
+        if (!value.TryWriteBytes(bytes, out var written, isUnsigned: unsigned, isBigEndian: false))
+            throw new InvalidOperationException($"Integer does not fit in {MaxSize} bytes.");
+        if (!unsigned && written < MaxSize)
+            bytes.AsSpan(written).Fill(0xFF);
+        return bytes;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
