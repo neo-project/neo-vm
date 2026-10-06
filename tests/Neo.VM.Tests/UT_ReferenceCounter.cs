@@ -10,12 +10,14 @@
 // modifications are permitted.
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Neo.Test.Types;
 using Neo.VM;
 using Neo.VM.Types;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Array = Neo.VM.Types.Array;
+using Buffer = Neo.VM.Types.Buffer;
 
 namespace Neo.Test;
 
@@ -668,5 +670,390 @@ public class UT_ReferenceCounter
         refCounter.PostExecuteInstruction();
         refCounter.AddStackReference(StackItem.Null);
         Assert.ThrowsExactly<InvalidOperationException>(() => refCounter.PostExecuteInstruction());
+    }
+
+    [TestMethod]
+    public void TestAdd_MatchesNeoGo()
+    {
+        var rc = new ReferenceCounter();
+        Assert.AreEqual(0, rc.Count);
+
+        rc.AddStackReference(StackItem.Null);
+        Assert.AreEqual(1, rc.Count);
+
+        rc.AddStackReference(StackItem.Null);
+        Assert.AreEqual(2, rc.Count); // count scalar items twice
+
+        var arr = new Array(new StackItem[] { new ByteString(new byte[] { 1 }), StackItem.False });
+        rc.AddStackReference(arr);
+        Assert.AreEqual(5, rc.Count); // array + 2 elements
+
+        rc.AddStackReference(arr);
+        Assert.AreEqual(6, rc.Count); // count only array
+
+        rc.RemoveStackReference(arr);
+        Assert.AreEqual(5, rc.Count);
+
+        rc.RemoveStackReference(arr);
+        Assert.AreEqual(2, rc.Count);
+
+        var map = new Map { [new ByteString("some"u8.ToArray())] = StackItem.False };
+        rc.AddStackReference(map);
+        Assert.AreEqual(5, rc.Count); // map + key + value
+
+        rc.AddStackReference(map);
+        Assert.AreEqual(6, rc.Count); // map only
+
+        rc.RemoveStackReference(map);
+        Assert.AreEqual(5, rc.Count);
+
+        rc.RemoveStackReference(map);
+        Assert.AreEqual(2, rc.Count);
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupPopItem()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.DUP);
+        sb.Emit(OpCode.POPITEM);
+
+        using ExecutionEngine engine = new();
+        engine.LoadScript(sb.ToArray());
+        engine.Push(new Array(new StackItem[] { 42, 42 }));
+        Assert.AreEqual(3, engine.ReferenceCounter.Count);
+
+        Assert.AreEqual(VMState.HALT, engine.Execute());
+        Assert.AreEqual(2, engine.ResultStack.Count);
+        Assert.AreEqual(3, engine.ReferenceCounter.Count);
+
+        engine.ResultStack.Pop();
+        Assert.AreEqual(1, engine.ResultStack.Count);
+        Assert.AreEqual(2, engine.ReferenceCounter.Count);
+
+        engine.ResultStack.Pop();
+        Assert.AreEqual(0, engine.ResultStack.Count);
+        Assert.AreEqual(0, engine.ReferenceCounter.Count);
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_Unpack()
+    {
+        foreach (var (name, factory) in UnpackContainers())
+        {
+            using ScriptBuilder sb = new();
+            sb.Emit(OpCode.UNPACK);
+
+            using ExecutionEngine engine = new();
+            engine.LoadScript(sb.ToArray());
+            engine.Push(factory(out int keyCount));
+            Assert.AreEqual(3 + keyCount, engine.ReferenceCounter.Count, name);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(2 + keyCount, engine.ResultStack.Count, name);
+            Assert.AreEqual((2 + keyCount) + 1, engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            Assert.AreEqual(2 + keyCount, engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            if (name == "map")
+            {
+                Assert.AreEqual(2, engine.ReferenceCounter.Count, name);
+                engine.ResultStack.Pop();
+            }
+            Assert.AreEqual(0, engine.ResultStack.Count, name);
+            Assert.AreEqual(0, engine.ReferenceCounter.Count, name);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupUnpack()
+    {
+        foreach (var (name, factory) in UnpackContainers())
+        {
+            using ScriptBuilder sb = new();
+            sb.Emit(OpCode.DUP);
+            sb.Emit(OpCode.UNPACK);
+
+            using ExecutionEngine engine = new();
+            engine.LoadScript(sb.ToArray());
+            engine.Push(factory(out int keyCount));
+            Assert.AreEqual((2 + keyCount) + 1, engine.ReferenceCounter.Count, name);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual((2 + keyCount) + 1, engine.ResultStack.Count, name);
+            Assert.AreEqual(3 + 1 + 2 * keyCount + 1, engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            Assert.AreEqual(3 + 1 + 2 * keyCount, engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            if (name == "map")
+            {
+                Assert.AreEqual(3 + 1 + keyCount, engine.ReferenceCounter.Count, name);
+                engine.ResultStack.Pop();
+            }
+            Assert.AreEqual(1, engine.ResultStack.Count, name);
+            Assert.AreEqual(3 + keyCount, engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            Assert.AreEqual(0, engine.ResultStack.Count, name);
+            Assert.AreEqual(0, engine.ReferenceCounter.Count, name);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_Values()
+    {
+        foreach (var (name, factory) in ValuesContainers())
+        {
+            using ScriptBuilder sb = new();
+            sb.Emit(OpCode.VALUES);
+
+            using ExecutionEngine engine = new();
+            engine.LoadScript(sb.ToArray());
+            engine.Push(factory(out int keyCount));
+            Assert.AreEqual(3 + keyCount, engine.ReferenceCounter.Count, name);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(1, engine.ResultStack.Count, name);
+            Assert.AreEqual(3, engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            Assert.AreEqual(0, engine.ResultStack.Count, name);
+            Assert.AreEqual(0, engine.ReferenceCounter.Count, name);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_DupValues()
+    {
+        foreach (var (name, factory) in ValuesContainers())
+        {
+            using ScriptBuilder sb = new();
+            sb.Emit(OpCode.DUP);
+            sb.Emit(OpCode.VALUES);
+
+            using ExecutionEngine engine = new();
+            engine.LoadScript(sb.ToArray());
+            engine.Push(factory(out int keyCount));
+            Assert.AreEqual(3 + keyCount, engine.ReferenceCounter.Count, name);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(2, engine.ResultStack.Count, name);
+            Assert.AreEqual((3 + keyCount) + 3, engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            Assert.AreEqual(3 + keyCount, engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            Assert.AreEqual(0, engine.ResultStack.Count, name);
+            Assert.AreEqual(0, engine.ReferenceCounter.Count, name);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_SetItemCloneStruct()
+    {
+        foreach (var (name, factory) in SetItemCloneContainers())
+        {
+            using ScriptBuilder sb = new();
+            sb.Emit(OpCode.DUP);
+            sb.Emit(OpCode.PUSH0);
+            sb.Emit(OpCode.PUSH3);
+            sb.Emit(OpCode.PICK);
+            sb.Emit(OpCode.SETITEM);
+
+            using ExecutionEngine engine = new();
+            engine.LoadScript(sb.ToArray());
+            engine.Push(new Struct(new StackItem[] { 42 }));
+            Assert.AreEqual(2, engine.ReferenceCounter.Count, name);
+            engine.Push(factory(out int keyCount));
+            Assert.AreEqual(2 + (2 + keyCount), engine.ReferenceCounter.Count, name);
+
+            Assert.AreEqual(VMState.HALT, engine.Execute());
+            Assert.AreEqual(2, engine.ResultStack.Count, name);
+            Assert.AreEqual(2 + (3 + keyCount), engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            Assert.AreEqual(2, engine.ReferenceCounter.Count, name);
+
+            engine.ResultStack.Pop();
+            Assert.AreEqual(0, engine.ResultStack.Count, name);
+            Assert.AreEqual(0, engine.ReferenceCounter.Count, name);
+        }
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_PackMapSameKey_DifferentValues()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.PACKMAP);
+
+        using ExecutionEngine engine = new();
+        engine.LoadScript(sb.ToArray());
+        engine.Push(StackItem.Null);
+        engine.Push(new Integer(0));
+        engine.Push(new Array(new StackItem[] { 42 }));
+        engine.Push(new Integer(0));
+        engine.Push(new Integer(2));
+        Assert.AreEqual(5, engine.CurrentContext!.EvaluationStack.Count);
+        Assert.AreEqual((1 + 1) + (2 + 1) + 1, engine.ReferenceCounter.Count);
+
+        Assert.AreEqual(VMState.HALT, engine.Execute());
+        Assert.AreEqual(1, engine.ResultStack.Count);
+        Assert.AreEqual(1 + (1 + 1), engine.ReferenceCounter.Count);
+
+        engine.ResultStack.Pop();
+        Assert.AreEqual(0, engine.ResultStack.Count);
+        Assert.AreEqual(0, engine.ReferenceCounter.Count);
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_PackMapSameKey_SameValues()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.PACKMAP);
+
+        using ExecutionEngine engine = new();
+        engine.LoadScript(sb.ToArray());
+        var arr = new Array(new StackItem[] { 42 });
+        engine.Push(arr);
+        engine.Push(new Integer(0));
+        engine.Push(arr);
+        engine.Push(new Integer(0));
+        engine.Push(new Integer(2));
+        Assert.AreEqual(5, engine.CurrentContext!.EvaluationStack.Count);
+        Assert.AreEqual((2 + 1) + (1 + 1) + 1, engine.ReferenceCounter.Count);
+
+        Assert.AreEqual(VMState.HALT, engine.Execute());
+        Assert.AreEqual(1, engine.ResultStack.Count);
+        Assert.AreEqual(1 + (1 + 2), engine.ReferenceCounter.Count);
+
+        engine.ResultStack.Pop();
+        Assert.AreEqual(0, engine.ResultStack.Count);
+        Assert.AreEqual(0, engine.ReferenceCounter.Count);
+    }
+
+    [TestMethod]
+    public void TestCheckZeroReferred_SetItemException()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.TRY, new byte[] { 4, 0 });
+        sb.Emit(OpCode.SETITEM);
+
+        using ExecutionEngine engine = new();
+        engine.LoadScript(sb.ToArray());
+        engine.Push(new Buffer(0));
+        engine.Push(new Integer(0));
+        engine.Push(new Array(new StackItem[] { 42 }));
+        Assert.AreEqual(3, engine.CurrentContext!.EvaluationStack.Count);
+        Assert.AreEqual(1 + 1 + 2, engine.ReferenceCounter.Count);
+
+        Assert.AreEqual(VMState.HALT, engine.Execute());
+        Assert.AreEqual(1, engine.ResultStack.Count);
+        Assert.AreEqual(1, engine.ReferenceCounter.Count);
+    }
+
+    [TestMethod]
+    public void TestNegativeRC_CircularClearItemsCannotUnderflow()
+    {
+        // Port of neo-go TestNegativeRC / nspcc-dev/neo-go#4312 and neo-vm#580:
+        // CLEARITEMS on a self-referential array must not drive RC negative,
+        // otherwise MaxStackSize can be bypassed.
+        byte[] prog =
+        [
+            (byte)OpCode.INITSLOT, 0x01, 0x00,
+            (byte)OpCode.PUSH16, (byte)OpCode.INC, (byte)OpCode.STLOC0,
+            (byte)OpCode.NEWARRAY0,
+            (byte)OpCode.DUP,
+            (byte)OpCode.DUP,
+            (byte)OpCode.APPEND,
+            (byte)OpCode.CLEARITEMS,
+            (byte)OpCode.LDLOC0, (byte)OpCode.DEC, (byte)OpCode.DUP,
+            (byte)OpCode.STLOC0, (byte)OpCode.PUSH0,
+            (byte)OpCode.JMPGT, 0xf6,
+            (byte)OpCode.PUSH16, (byte)OpCode.PUSH7, (byte)OpCode.SHL, (byte)OpCode.PUSH14, (byte)OpCode.ADD, (byte)OpCode.STLOC0,
+            (byte)OpCode.PUSH0,
+            (byte)OpCode.LDLOC0, (byte)OpCode.DEC, (byte)OpCode.DUP,
+            (byte)OpCode.STLOC0, (byte)OpCode.PUSH0,
+            (byte)OpCode.JMPGT, 0xfa,
+        ];
+
+        using var engine = new TestEngine();
+        engine.LoadScript(prog);
+        Assert.AreEqual(VMState.FAULT, engine.Execute());
+        Assert.IsNotNull(engine.FaultException);
+        Assert.AreEqual($"MaxStackSize exceed: {ExecutionEngineLimits.Default.MaxStackSize + 1}/{ExecutionEngineLimits.Default.MaxStackSize}", engine.FaultException.Message);
+        Assert.AreEqual((int)ExecutionEngineLimits.Default.MaxStackSize + 1, engine.ReferenceCounter.Count);
+    }
+
+    private delegate StackItem ContainerFactory(out int keyCount);
+
+    private static (string Name, ContainerFactory Factory)[] UnpackContainers()
+    {
+        return
+        [
+            ("array", (out int keyCount) =>
+            {
+                keyCount = 0;
+                return new Array(new StackItem[] { new Array(new StackItem[] { 42 }) });
+            }),
+            ("struct", (out int keyCount) =>
+            {
+                keyCount = 0;
+                return new Struct(new StackItem[] { new Array(new StackItem[] { 42 }) });
+            }),
+            ("map", (out int keyCount) =>
+            {
+                keyCount = 1;
+                return new Map { [new Integer(0)] = new Array(new StackItem[] { 42 }) };
+            }),
+        ];
+    }
+
+    private static (string Name, ContainerFactory Factory)[] ValuesContainers()
+    {
+        return
+        [
+            ("array", (out int keyCount) =>
+            {
+                keyCount = 0;
+                return new Array(new StackItem[] { new Struct(new StackItem[] { 42 }) });
+            }),
+            ("struct", (out int keyCount) =>
+            {
+                keyCount = 0;
+                return new Struct(new StackItem[] { new Struct(new StackItem[] { 42 }) });
+            }),
+            ("map", (out int keyCount) =>
+            {
+                keyCount = 1;
+                return new Map { [new Integer(0)] = new Struct(new StackItem[] { 42 }) };
+            }),
+        ];
+    }
+
+    private static (string Name, ContainerFactory Factory)[] SetItemCloneContainers()
+    {
+        return
+        [
+            ("array", (out int keyCount) =>
+            {
+                keyCount = 0;
+                return new Array(new StackItem[] { StackItem.Null });
+            }),
+            ("struct", (out int keyCount) =>
+            {
+                keyCount = 0;
+                return new Struct(new StackItem[] { StackItem.Null });
+            }),
+            ("map", (out int keyCount) =>
+            {
+                keyCount = 1;
+                return new Map { [new Integer(0)] = StackItem.Null };
+            }),
+        ];
     }
 }

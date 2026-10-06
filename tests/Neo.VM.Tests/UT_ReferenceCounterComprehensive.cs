@@ -460,8 +460,7 @@ public class UT_ReferenceCounterComprehensive
         engine.LoadScript(sb.ToArray());
 
         Assert.AreEqual(VMState.HALT, engine.Execute());
-        // Null is not tracked (not CompoundType or Buffer), so count is 0
-        // This verifies that non-tracked types don't affect the reference count
+        // INITSLOT counts the Null placeholders; RET unloads the slot and drops them.
         Assert.AreEqual(0, engine.ReferenceCounter.Count);
     }
 
@@ -500,6 +499,24 @@ public class UT_ReferenceCounterComprehensive
 
         Assert.AreEqual(VMState.HALT, engine.Execute());
         // Array on stack (1 ref) - static slot is cleared after execution
+        Assert.AreEqual(1, engine.ReferenceCounter.Count);
+    }
+
+    [TestMethod]
+    public void TestSlotStore_FailedPop_DoesNotCorruptRefCounter()
+    {
+        using ScriptBuilder sb = new();
+        sb.Emit(OpCode.INITSLOT, new byte[] { 1, 0 });
+        sb.EmitPush(42);
+        sb.Emit(OpCode.STLOC0);
+        sb.Emit(OpCode.STLOC0);
+
+        using var engine = new ExecutionEngine();
+        engine.LoadScript(sb.ToArray());
+
+        Assert.AreEqual(VMState.FAULT, engine.Execute());
+        // First STLOC0 stores 42; second STLOC0 pops an empty stack and FAULTs.
+        // Slot.Store pops before dropping the old slot value, so 42 stays referenced.
         Assert.AreEqual(1, engine.ReferenceCounter.Count);
     }
 

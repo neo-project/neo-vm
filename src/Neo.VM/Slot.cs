@@ -104,8 +104,10 @@ public class Slot : IReadOnlyList<StackItem>
         {
             throw new ArgumentOutOfRangeException(nameof(index), $"Out of stack bounds: {index}/{_items.Length}");
         }
-        _referenceCounter.RemoveStackReference(_items[index]);
+        // Item moves from the evaluation stack to the slot, so it stays referenced.
+        // Skip RC on the pop (neo-go slot.store): pop first, then drop the old slot value.
         var item = stack.PopNoRef();
+        _referenceCounter.RemoveStackReference(_items[index]);
         _items[index] = item;
     }
 

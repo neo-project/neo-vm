@@ -38,10 +38,9 @@ public interface IReferenceCounter
     /// <summary>
     /// Adds a stack reference to a specified item with a count.
     ///
-    /// This method is used when an item gains a new stack reference, usually due to being pushed onto the evaluation stack.
-    /// It increments the reference count and updates the tracking structures if necessary.
-    ///
-    /// Use this method when you need to add one or more stack references to a stack item.
+    /// Always increases <see cref="Count"/>. For compound types, the item's own
+    /// reference count is increased, and children are counted only on the
+    /// transition from unreferenced to referenced (0 → 1).
     /// </summary>
     /// <param name="item">The item to add a stack reference to.</param>
     /// <param name="count">The number of references to add.</param>
@@ -50,10 +49,10 @@ public interface IReferenceCounter
     /// <summary>
     /// Removes a stack reference from a specified item.
     ///
-    /// This method is used when an item loses a stack reference, usually due to being popped off the evaluation stack.
-    /// It decrements the reference count and updates the tracking structures if necessary.
-    ///
-    /// Use this method when you need to remove one or more stack references from a stack item.
+    /// Scalar items always decrease <see cref="Count"/>. Compound types are
+    /// skipped when they are not referenced, which prevents a negative count
+    /// on cyclic structures. Children are uncounted only when the item's last
+    /// reference is dropped (1 → 0).
     /// </summary>
     /// <param name="item">The item to remove a stack reference from.</param>
     void RemoveStackReference(StackItem item);
