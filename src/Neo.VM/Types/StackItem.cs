@@ -104,11 +104,24 @@ public abstract partial class StackItem : IEquatable<StackItem>
     /// <returns>The copied object.</returns>
     public StackItem DeepCopy(bool asImmutable = false)
     {
-        return DeepCopy(new(ReferenceEqualityComparer.Instance), asImmutable);
+        return DeepCopy(asImmutable, out _);
     }
 
-    internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
+    /// <summary>
+    /// Copy the object and all its children.
+    /// </summary>
+    /// <param name="asImmutable">Whether the copy should be immutable.</param>
+    /// <param name="count">The number of visited items, including repeated references.</param>
+    /// <returns>The copied object.</returns>
+    public StackItem DeepCopy(bool asImmutable, out int count)
     {
+        count = 0;
+        return DeepCopy(new(ReferenceEqualityComparer.Instance), asImmutable, ref count);
+    }
+
+    internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable, ref int count)
+    {
+        count++;
         return this;
     }
 

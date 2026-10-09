@@ -86,8 +86,9 @@ public class Buffer : StackItem
         }
     }
 
-    internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
+    internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable, ref int count)
     {
+        count++;
         if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
         StackItem result = asImmutable ? new ByteString(InnerBuffer.ToArray()) : new Buffer(InnerBuffer.Span);
         refMap.Add(this, result);
