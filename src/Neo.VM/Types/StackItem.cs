@@ -124,7 +124,13 @@ public abstract partial class StackItem : IEquatable<StackItem>
         return ReferenceEquals(this, other);
     }
 
-    internal virtual bool Equals(StackItem? other, ExecutionEngineLimits limits)
+    /// <summary>
+    /// Compare this item to <paramref name="other"/> using <paramref name="limits"/>.
+    /// <see cref="OpCode.EQUAL"/> / <see cref="OpCode.NOTEQUAL"/> pass
+    /// <see cref="ExecutionEngine.Limits"/> so ByteString and Struct honor
+    /// <see cref="ExecutionEngineLimits.MaxComparableSize"/>.
+    /// </summary>
+    public virtual bool Equals(StackItem? other, ExecutionEngineLimits limits)
     {
         return Equals(other);
     }
@@ -191,6 +197,41 @@ public abstract partial class StackItem : IEquatable<StackItem>
     public virtual ReadOnlySpan<byte> GetSpan()
     {
         throw new InvalidCastException();
+    }
+
+    /// <summary>
+    /// Child items for cycle detection. Compounds override this.
+    /// </summary>
+    internal virtual IEnumerable<StackItem> GetChildren()
+        => [];
+
+    /// <summary>
+    /// Whether this object graph contains a circular reference.
+    /// </summary>
+    public bool HasCircularReference()
+    {
+        var visited = new HashSet<StackItem>(ReferenceEqualityComparer.Instance);
+        return DetectCycle(this, visited);
+    }
+
+    /// <summary>
+    /// DFS with a reference-equality visited set. Re-visiting a node on the
+    /// current path is a cycle; the node is removed on the way out so
+    /// diamonds are not treated as cycles.
+    /// </summary>
+    private static bool DetectCycle(StackItem? current, HashSet<StackItem> visited)
+    {
+        if (current is null)
+            return false;
+        if (!visited.Add(current))
+            return true;
+        foreach (var child in current.GetChildren())
+        {
+            if (DetectCycle(child, visited))
+                return true;
+        }
+        visited.Remove(current);
+        return false;
     }
 
     /// <summary>

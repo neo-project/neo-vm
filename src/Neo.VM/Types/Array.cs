@@ -72,6 +72,57 @@ public class Array : CompoundType, IReadOnlyList<StackItem>
         InnerList.Add(item);
     }
 
+    /// <summary>
+    /// Content equality for hosts and <see cref="IEquatable{T}"/>.
+    /// Circular graphs use a pair map so they do not recurse.
+    /// </summary>
+    public override bool Equals(StackItem? other)
+    {
+        if (other is not Array a)
+            return false;
+        return EqualsContent(a, new Dictionary<StackItem, StackItem>(ReferenceEqualityComparer.Instance));
+    }
+
+    /// <summary>
+    /// Reference equality used by <see cref="OpCode.EQUAL"/> / <see cref="OpCode.NOTEQUAL"/>.
+    /// </summary>
+    public override bool Equals(StackItem? other, ExecutionEngineLimits limits)
+        => ReferenceEquals(this, other);
+
+    /// <summary>
+    /// Item-by-item compare with a pair map so circular graphs do not recurse.
+    /// </summary>
+    private bool EqualsContent(Array other, Dictionary<StackItem, StackItem> seen)
+    {
+        if (ReferenceEquals(this, other)) return true;
+        if (seen.TryGetValue(this, out var mapped))
+            return ReferenceEquals(mapped, other);
+        if (Type != other.Type || Count != other.Count)
+            return false;
+        seen.Add(this, other);
+        for (var i = 0; i < Count; i++)
+        {
+            var left = this[i];
+            var right = other[i];
+            if (left is null)
+            {
+                if (right is not null) return false;
+                continue;
+            }
+            if (left is Array la)
+            {
+                if (right is not Array ra)
+                    return false;
+                if (!la.EqualsContent(ra, seen))
+                    return false;
+                continue;
+            }
+            if (!left.Equals(right))
+                return false;
+        }
+        return true;
+    }
+
     public override void Clear()
     {
         if (IsReadOnly) throw new InvalidOperationException("The array is readonly, can not clear.");

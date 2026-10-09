@@ -58,6 +58,21 @@ public class Buffer : StackItem
         data.CopyTo(InnerBuffer.Span);
     }
 
+    /// <summary>
+    /// Content equality for hosts and <see cref="IEquatable{T}"/>.
+    /// </summary>
+    public override bool Equals(StackItem? other)
+        => ReferenceEquals(this, other) || EqualsContent(other);
+
+    /// <summary>
+    /// Reference equality used by <see cref="OpCode.EQUAL"/> / <see cref="OpCode.NOTEQUAL"/>.
+    /// </summary>
+    public override bool Equals(StackItem? other, ExecutionEngineLimits limits)
+        => ReferenceEquals(this, other);
+
+    private bool EqualsContent(StackItem? other)
+        => other is Buffer b && GetSpan().SequenceEqual(b.GetSpan());
+
     internal override void Cleanup()
     {
         if (!_keep_alive)
