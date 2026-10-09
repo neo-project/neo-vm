@@ -94,10 +94,6 @@ public abstract partial class StackItem : IEquatable<StackItem>
         throw new InvalidCastException();
     }
 
-    internal virtual void Cleanup()
-    {
-    }
-
     /// <summary>
     /// Copy the object and all its children.
     /// </summary>

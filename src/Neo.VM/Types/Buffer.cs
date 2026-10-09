@@ -10,9 +10,9 @@
 // modifications are permitted.
 
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Numerics;
 
 namespace Neo.VM.Types;
@@ -34,39 +34,24 @@ public class Buffer : StackItem
     public int Size => InnerBuffer.Length;
     public override StackItemType Type => StackItemType.Buffer;
 
-    private readonly byte[] _buffer;
-    private bool _keep_alive = false;
-
     /// <summary>
     /// Create a buffer of the specified size.
     /// </summary>
     /// <param name="size">The size of this buffer.</param>
-    /// <param name="zeroInitialize">Indicates whether the created buffer is zero-initialized.</param>
-    public Buffer(int size, bool zeroInitialize = true)
+    public Buffer(int size)
     {
-        _buffer = ArrayPool<byte>.Shared.Rent(size);
-        InnerBuffer = new Memory<byte>(_buffer, 0, size);
-        if (zeroInitialize) InnerBuffer.Span.Clear();
+        var stream = new MemoryStream(size);
+        stream.SetLength(size);
+        InnerBuffer = new Memory<byte>(stream.GetBuffer(), 0, size);
     }
 
     /// <summary>
     /// Create a buffer with the specified data.
     /// </summary>
     /// <param name="data">The data to be contained in this buffer.</param>
-    public Buffer(ReadOnlySpan<byte> data) : this(data.Length, false)
+    public Buffer(ReadOnlySpan<byte> data) : this(data.Length)
     {
         data.CopyTo(InnerBuffer.Span);
-    }
-
-    internal override void Cleanup()
-    {
-        if (!_keep_alive)
-            ArrayPool<byte>.Shared.Return(_buffer, clearArray: false);
-    }
-
-    public void KeepAlive()
-    {
-        _keep_alive = true;
     }
 
     public override StackItem ConvertTo(StackItemType type)

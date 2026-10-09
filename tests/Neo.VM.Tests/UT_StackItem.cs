@@ -279,4 +279,21 @@ public class UT_StackItem
         var readonlyMap = (Map)map.DeepCopy(true);
         Assert.ThrowsExactly<System.InvalidOperationException>(() => readonlyMap.Remove(key, out _));
     }
+
+    [TestMethod]
+    public void TestBufferMemoryStream()
+    {
+        var empty = new Buffer(0);
+        Assert.AreEqual(0, empty.Size);
+
+        var buffer = new Buffer(16);
+        Assert.AreEqual(16, buffer.Size);
+        CollectionAssert.AreEqual(new byte[16], buffer.GetSpan().ToArray());
+
+        var data = new byte[] { 1, 2, 3 };
+        var copy = new Buffer(data);
+        CollectionAssert.AreEqual(data, copy.GetSpan().ToArray());
+        copy.InnerBuffer.Span[0] = 9;
+        Assert.AreEqual(1, data[0]);
+    }
 }
