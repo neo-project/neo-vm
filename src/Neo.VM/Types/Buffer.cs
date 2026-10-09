@@ -14,6 +14,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Neo.VM.Types;
 
@@ -31,7 +32,7 @@ public class Buffer : StackItem
     /// <summary>
     /// The size of the buffer.
     /// </summary>
-    public int Size => InnerBuffer.Length;
+    public override int Size => InnerBuffer.Length;
     public override StackItemType Type => StackItemType.Buffer;
 
     private readonly byte[] _buffer;
@@ -78,7 +79,7 @@ public class Buffer : StackItem
                     throw new InvalidCastException();
                 return new BigInteger(InnerBuffer.Span);
             case StackItemType.ByteString:
-                byte[] clone = GC.AllocateUninitializedArray<byte>(InnerBuffer.Length);
+                var clone = GC.AllocateUninitializedArray<byte>(InnerBuffer.Length);
                 InnerBuffer.CopyTo(clone);
                 return clone;
             default:
@@ -99,7 +100,7 @@ public class Buffer : StackItem
         return true;
     }
 
-    public override ReadOnlySpan<byte> GetSpan()
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
     {
         return InnerBuffer.Span;
     }
@@ -111,5 +112,23 @@ public class Buffer : StackItem
             : $"(\"Base64: {Convert.ToBase64String(GetSpan())}\")";
     }
 
-    public override int GetHashCode() => throw new NotSupportedException("Mutable buffer does not support GetHashCode.");
+    public override int GetHashCode()
+        => throw new NotSupportedException("Mutable buffer does not support GetHashCode.");
+
+    /// <summary>
+    /// Content hash of <see cref="Type"/>, size, and
+    /// <see cref="StackItem.GetSafeSpan()"/>.
+    /// </summary>
+    public override int GetHashCode(ExecutionEngineLimits limits)
+        => CombineHash(GetSafeSpan());
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static implicit operator Buffer(byte[] value) => new(value);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator byte[](Buffer value) => value.GetSpan().ToArray();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator BigInteger(Buffer value)
+        => new(value.GetSpan());
 }

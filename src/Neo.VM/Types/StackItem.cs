@@ -9,6 +9,7 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+using Neo.VM.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -83,6 +84,11 @@ public abstract partial class StackItem : IEquatable<StackItem>
     public abstract StackItemType Type { get; }
 
     /// <summary>
+    /// Byte length of parameterless GetSpan.
+    /// </summary>
+    public virtual int Size => GetSpan().Length;
+
+    /// <summary>
     /// Convert the VM object to the specified type.
     /// </summary>
     /// <param name="type">The type to be converted to.</param>
@@ -130,22 +136,26 @@ public abstract partial class StackItem : IEquatable<StackItem>
     }
 
     /// <summary>
-    /// Generates a hash code based on the item's span.
-    ///
-    /// This method provides a hash code for the StackItem based on its byte span.
-    /// It is used for efficient storage and retrieval in hash-based collections.
-    ///
-    /// Use this method when you need a hash code for a StackItem.
+    /// Hash using <see cref="ExecutionEngineLimits.Default"/>.
     /// </summary>
-    /// <returns>The hash code for the StackItem.</returns>
     public override int GetHashCode()
+        => GetHashCode(ExecutionEngineLimits.Default);
+
+    /// <summary>
+    /// Hash of <see cref="Type"/>, size, and span bytes.
+    /// </summary>
+    public virtual int GetHashCode(ExecutionEngineLimits limits)
     {
         if (_hashCode == 0)
-        {
-            _hashCode = HashCode.Combine(Type, GetSpan().XxHash3_32());
-        }
+            _hashCode = CombineHash(GetSpan(limits));
         return _hashCode;
     }
+
+    /// <summary>
+    /// Mix <see cref="Type"/>, span length (size), and the span bytes.
+    /// </summary>
+    private protected int CombineHash(ReadOnlySpan<byte> span)
+        => HashCode.Combine(Type, span.Length, span.ToHashCode(397));
 
     /// <summary>
     /// Wrap the specified <see cref="object"/> and return an <see cref="InteropInterface"/> containing the <see cref="object"/>.
@@ -186,12 +196,65 @@ public abstract partial class StackItem : IEquatable<StackItem>
 
     /// <summary>
     /// Get the readonly span used to read the VM object data.
+    /// Compounds throw <see cref="InvalidCastException"/>; other types use
+    /// <see cref="GetSafeSpan()"/>.
     /// </summary>
-    /// <returns></returns>
-    public virtual ReadOnlySpan<byte> GetSpan()
+    public ReadOnlySpan<byte> GetSpan()
     {
-        throw new InvalidCastException();
+        if (this is CompoundType)
+            throw new InvalidCastException();
+        return GetSafeSpan();
     }
+
+    /// <summary>
+    /// Opcode path for splice handlers. Compounds throw
+    /// <see cref="InvalidCastException"/>. Other types use
+    /// <see cref="GetSafeSpan()"/> and assert
+    /// <see cref="ExecutionEngineLimits.MaxItemSize"/>.
+    /// </summary>
+    public ReadOnlySpan<byte> GetSpan(ExecutionEngineLimits limits)
+    {
+        if (this is CompoundType)
+            throw new InvalidCastException();
+        var span = GetSafeSpan();
+        limits.AssertMaxItemSize(span.Length);
+        return span;
+    }
+
+    /// <summary>
+    /// Cycle-safe byte representation. Compounds always succeed here;
+    /// <see cref="GetSpan()"/> throws for Array/Map/Struct.
+    /// </summary>
+    internal ReadOnlySpan<byte> GetSafeSpan()
+    {
+        var visited = new HashSet<StackItem>(ReferenceEqualityComparer.Instance);
+        return GetSafeSpan(visited);
+    }
+
+    /// <summary>
+    /// If <paramref name="visited"/> already contains this item, returns empty
+    /// (circular reference). Otherwise computes <see cref="ComputeSpan"/>.
+    /// </summary>
+    protected internal ReadOnlySpan<byte> GetSafeSpan(HashSet<StackItem> visited)
+    {
+        if (!visited.Add(this))
+            return [];
+        try
+        {
+            return ComputeSpan(visited);
+        }
+        finally
+        {
+            visited.Remove(this);
+        }
+    }
+
+    /// <summary>
+    /// Type-specific bytes. Compounds recurse through
+    /// <see cref="GetSafeSpan(HashSet{StackItem})"/>.
+    /// </summary>
+    protected virtual ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+        => [];
 
     /// <summary>
     /// Get the <see cref="string"/> value represented by the VM object.
@@ -279,4 +342,41 @@ public abstract partial class StackItem : IEquatable<StackItem>
     {
         return (ByteString)value;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator byte(StackItem value) => (byte)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator sbyte(StackItem value) => (sbyte)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator short(StackItem value) => (short)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator ushort(StackItem value) => (ushort)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator int(StackItem value) => (int)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator uint(StackItem value) => (uint)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator long(StackItem value) => (long)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator ulong(StackItem value) => (ulong)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator BigInteger(StackItem value)
+        => value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator bool(StackItem value) => value.GetBoolean();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator byte[](StackItem value) => [.. value.GetSpan()];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator string(StackItem value) => value.ToString() ?? string.Empty;
 }
