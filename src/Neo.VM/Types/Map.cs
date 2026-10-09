@@ -112,13 +112,16 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
         return dictionary.ContainsKey(key);
     }
 
-    internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
+    internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable, ref int count)
     {
+        count++;
         if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
         Map result = new();
         refMap.Add(this, result);
         foreach (var (k, v) in dictionary)
-            result[k] = v.DeepCopy(refMap, asImmutable);
+        {
+            result[k] = v.DeepCopy(refMap, asImmutable, ref count);
+        }
         result.IsReadOnly = IsReadOnly || asImmutable;
         return result;
     }

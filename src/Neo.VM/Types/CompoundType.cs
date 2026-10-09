@@ -57,7 +57,7 @@ public abstract class CompoundType : StackItem
     /// </summary>
     public abstract void Clear();
 
-    internal abstract override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable);
+    internal abstract override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable, ref int count);
 
     public sealed override bool GetBoolean()
     {

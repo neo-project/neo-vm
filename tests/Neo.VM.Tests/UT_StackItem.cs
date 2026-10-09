@@ -254,6 +254,57 @@ public class UT_StackItem
         Assert.AreSame(aa, aa[^1]);
         Assert.IsTrue(a[^2].Equals(aa[^2], ExecutionEngineLimits.Default));
         Assert.AreNotSame(a[^2], aa[^2]);
+
+        // root + 7 elements + 2 map entries * 2 + 3 struct elements + 1 self-reference
+        a.DeepCopy(false, out int count);
+        Assert.AreEqual(16, count);
+    }
+
+    [TestMethod]
+    public void TestDeepCopyCount()
+    {
+        // Primitive and Null items are visited once.
+        new Integer(1).DeepCopy(false, out int count);
+        Assert.AreEqual(1, count);
+        StackItem.Null.DeepCopy(false, out count);
+        Assert.AreEqual(1, count);
+        new Buffer(new byte[] { 1 }).DeepCopy(true, out count);
+        Assert.AreEqual(1, count);
+
+        // Repeated references are counted, but not traversed again.
+        Array b = new() { 2 };
+        Array a = new() { 1, b, b };
+        a.DeepCopy(false, out count);
+        Assert.AreEqual(5, count);
+
+        // Self-reference.
+        Array cyclic = new();
+        cyclic.Add(cyclic);
+        cyclic.DeepCopy(false, out count);
+        Assert.AreEqual(2, count);
+
+        // Both map keys and values are counted.
+        Map map = new() { [1] = 2, [3] = 4 };
+        map.DeepCopy(true, out count);
+        Assert.AreEqual(5, count);
+
+        // Repeated Buffer is counted on every occurrence.
+        Buffer buffer = new(new byte[] { 1 });
+        map = new() { [1] = buffer, [2] = buffer };
+        map.DeepCopy(true, out count);
+        Assert.AreEqual(5, count);
+
+        // Nested compound items: map(1) + key(1) + array(1) + struct(1 + 1) + repeated struct(1).
+        Struct s = new() { 1 };
+        map = new() { [1] = new Array { s, s } };
+        map.DeepCopy(true, out count);
+        Assert.AreEqual(6, count);
+
+        // Empty containers.
+        new Array().DeepCopy(false, out count);
+        Assert.AreEqual(1, count);
+        new Map().DeepCopy(false, out count);
+        Assert.AreEqual(1, count);
     }
 
     [TestMethod]
