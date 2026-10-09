@@ -38,8 +38,7 @@ public class Buffer : StackItem
     /// Create a buffer of the specified size.
     /// </summary>
     /// <param name="size">The size of this buffer.</param>
-    /// <param name="zeroInitialize">Indicates whether the created buffer is zero-initialized.</param>
-    public Buffer(int size, bool zeroInitialize = true)
+    public Buffer(int size)
     {
         var stream = new MemoryStream(size);
         stream.SetLength(size);
@@ -50,7 +49,7 @@ public class Buffer : StackItem
     /// Create a buffer with the specified data.
     /// </summary>
     /// <param name="data">The data to be contained in this buffer.</param>
-    public Buffer(ReadOnlySpan<byte> data) : this(data.Length, false)
+    public Buffer(ReadOnlySpan<byte> data) : this(data.Length)
     {
         data.CopyTo(InnerBuffer.Span);
     }

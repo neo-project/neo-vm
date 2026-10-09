@@ -286,7 +286,7 @@ public class UT_StackItem
         var empty = new Buffer(0);
         Assert.AreEqual(0, empty.Size);
 
-        var buffer = new Buffer(16, false);
+        var buffer = new Buffer(16);
         Assert.AreEqual(16, buffer.Size);
         CollectionAssert.AreEqual(new byte[16], buffer.GetSpan().ToArray());
 
