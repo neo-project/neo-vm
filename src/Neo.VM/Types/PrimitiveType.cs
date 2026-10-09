@@ -26,7 +26,7 @@ public abstract class PrimitiveType : StackItem
     /// <summary>
     /// The size of the VM object in bytes.
     /// </summary>
-    public virtual int Size => Memory.Length;
+    public override int Size => Memory.Length;
 
     public override StackItem ConvertTo(StackItemType type)
     {
@@ -47,7 +47,7 @@ public abstract class PrimitiveType : StackItem
 
     public abstract override bool Equals(StackItem? other);
 
-    public sealed override ReadOnlySpan<byte> GetSpan()
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
     {
         return Memory.Span;
     }
