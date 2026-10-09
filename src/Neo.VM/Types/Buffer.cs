@@ -34,19 +34,27 @@ public class Buffer : StackItem
     public int Size => InnerBuffer.Length;
     public override StackItemType Type => StackItemType.Buffer;
 
-    private readonly byte[] _buffer;
-    private bool _keep_alive = false;
+    private readonly IMemoryOwner<byte>? _memoryOwner;
+    private bool _keep_alive;
 
     /// <summary>
-    /// Create a buffer of the specified size.
+    /// Create a buffer of the specified size, backed by
+    /// <see cref="MemoryPool{T}.Shared"/>.
     /// </summary>
     /// <param name="size">The size of this buffer.</param>
     /// <param name="zeroInitialize">Indicates whether the created buffer is zero-initialized.</param>
     public Buffer(int size, bool zeroInitialize = true)
     {
-        _buffer = ArrayPool<byte>.Shared.Rent(size);
-        InnerBuffer = new Memory<byte>(_buffer, 0, size);
-        if (zeroInitialize) InnerBuffer.Span.Clear();
+        ArgumentOutOfRangeException.ThrowIfNegative(size);
+        if (size == 0)
+        {
+            InnerBuffer = Memory<byte>.Empty;
+            return;
+        }
+        _memoryOwner = MemoryPool<byte>.Shared.Rent(size);
+        InnerBuffer = _memoryOwner.Memory[..size];
+        if (zeroInitialize)
+            InnerBuffer.Span.Clear();
     }
 
     /// <summary>
@@ -61,7 +69,7 @@ public class Buffer : StackItem
     internal override void Cleanup()
     {
         if (!_keep_alive)
-            ArrayPool<byte>.Shared.Return(_buffer, clearArray: false);
+            _memoryOwner?.Dispose();
     }
 
     public void KeepAlive()

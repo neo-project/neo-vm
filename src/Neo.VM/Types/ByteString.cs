@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using System;
+using System.Buffers;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -27,16 +28,31 @@ public class ByteString : PrimitiveType
     /// </summary>
     public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
 
+    private readonly IMemoryOwner<byte>? _memoryOwner;
+
     public override ReadOnlyMemory<byte> Memory { get; }
     public override StackItemType Type => StackItemType.ByteString;
 
     /// <summary>
     /// Create a new <see cref="ByteString"/> with the specified data.
+    /// Copies into pooled <see cref="IMemoryOwner{T}"/> memory.
     /// </summary>
     /// <param name="data">The data to be contained in this <see cref="ByteString"/>.</param>
     public ByteString(ReadOnlyMemory<byte> data)
     {
-        Memory = data;
+        if (data.Length == 0)
+        {
+            Memory = ReadOnlyMemory<byte>.Empty;
+            return;
+        }
+        _memoryOwner = MemoryPool<byte>.Shared.Rent(data.Length);
+        data.Span.CopyTo(_memoryOwner.Memory.Span);
+        Memory = _memoryOwner.Memory[..data.Length];
+    }
+
+    internal override void Cleanup()
+    {
+        _memoryOwner?.Dispose();
     }
 
     private bool Equals(ByteString other)
