@@ -83,6 +83,11 @@ public abstract partial class StackItem : IEquatable<StackItem>
     public abstract StackItemType Type { get; }
 
     /// <summary>
+    /// Byte length of parameterless GetSpan.
+    /// </summary>
+    public virtual int Size => GetSpan().Length;
+
+    /// <summary>
     /// Convert the VM object to the specified type.
     /// </summary>
     /// <param name="type">The type to be converted to.</param>
@@ -186,12 +191,70 @@ public abstract partial class StackItem : IEquatable<StackItem>
 
     /// <summary>
     /// Get the readonly span used to read the VM object data.
+    /// Compounds throw <see cref="InvalidCastException"/>.
+    /// Primitives use <see cref="PrimitiveType.Memory"/> so Integer 0 stays empty.
     /// </summary>
-    /// <returns></returns>
-    public virtual ReadOnlySpan<byte> GetSpan()
+    public ReadOnlySpan<byte> GetSpan()
     {
-        throw new InvalidCastException();
+        if (this is CompoundType)
+            throw new InvalidCastException();
+        if (this is PrimitiveType primitive)
+            return primitive.Memory.Span;
+        return GetSafeSpan();
     }
+
+    /// <summary>
+    /// Opcode path for splice handlers. Compounds throw
+    /// <see cref="InvalidCastException"/>. Primitives use
+    /// <see cref="PrimitiveType.Memory"/>; other types use
+    /// <see cref="GetSafeSpan()"/> and assert
+    /// <see cref="ExecutionEngineLimits.MaxItemSize"/>.
+    /// </summary>
+    public ReadOnlySpan<byte> GetSpan(ExecutionEngineLimits limits)
+    {
+        if (this is CompoundType)
+            throw new InvalidCastException();
+        var span = this is PrimitiveType primitive
+            ? primitive.Memory.Span
+            : GetSafeSpan();
+        limits.AssertMaxItemSize(span.Length);
+        return span;
+    }
+
+    /// <summary>
+    /// Cycle-safe byte representation. Compounds always succeed here;
+    /// <see cref="GetSpan()"/> throws for Array/Map/Struct.
+    /// </summary>
+    internal ReadOnlySpan<byte> GetSafeSpan()
+    {
+        var visited = new HashSet<StackItem>(ReferenceEqualityComparer.Instance);
+        return GetSafeSpan(visited);
+    }
+
+    /// <summary>
+    /// If <paramref name="visited"/> already contains this item, returns empty
+    /// (circular reference). Otherwise computes <see cref="ComputeSpan"/>.
+    /// </summary>
+    protected internal ReadOnlySpan<byte> GetSafeSpan(HashSet<StackItem> visited)
+    {
+        if (!visited.Add(this))
+            return [];
+        try
+        {
+            return ComputeSpan(visited);
+        }
+        finally
+        {
+            visited.Remove(this);
+        }
+    }
+
+    /// <summary>
+    /// Type-specific bytes. Compounds recurse through
+    /// <see cref="GetSafeSpan(HashSet{StackItem})"/>.
+    /// </summary>
+    protected virtual ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+        => [];
 
     /// <summary>
     /// Get the <see cref="string"/> value represented by the VM object.
@@ -279,4 +342,41 @@ public abstract partial class StackItem : IEquatable<StackItem>
     {
         return (ByteString)value;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator byte(StackItem value) => (byte)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator sbyte(StackItem value) => (sbyte)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator short(StackItem value) => (short)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator ushort(StackItem value) => (ushort)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator int(StackItem value) => (int)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator uint(StackItem value) => (uint)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator long(StackItem value) => (long)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator ulong(StackItem value) => (ulong)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator BigInteger(StackItem value)
+        => value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator bool(StackItem value) => value.GetBoolean();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator byte[](StackItem value) => [.. value.GetSpan()];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator string(StackItem value) => value.ToString() ?? string.Empty;
 }
