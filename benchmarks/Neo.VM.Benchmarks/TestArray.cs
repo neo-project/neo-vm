@@ -79,13 +79,14 @@ public class TestArray : CompoundType, IReadOnlyList<StackItem>
         return base.ConvertTo(type);
     }
 
-    internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
+    internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable, ref int count)
     {
+        count++;
         if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
         var result = this is TestStruct ? new TestStruct() : new TestArray();
         refMap.Add(this, result);
         foreach (StackItem item in InnerList)
-            result.Add(item.DeepCopy(refMap, asImmutable));
+            result.Add(item.DeepCopy(refMap, asImmutable, ref count));
         result.IsReadOnly = true;
         return result;
     }
