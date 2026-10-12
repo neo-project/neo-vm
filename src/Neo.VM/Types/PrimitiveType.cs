@@ -40,8 +40,9 @@ public abstract class PrimitiveType : StackItem
         };
     }
 
-    internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
+    internal sealed override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable, ref int count)
     {
+        count++;
         return this;
     }
 
