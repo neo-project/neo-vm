@@ -81,7 +81,7 @@ partial class JumpTable
         var x1 = engine.Pop().GetSpan();
         int length = x1.Length + x2.Length;
         engine.Limits.AssertMaxItemSize(length);
-        Buffer result = new(length, false);
+        Buffer result = new(length);
         x1.CopyTo(result.InnerBuffer.Span);
         x2.CopyTo(result.InnerBuffer.Span[x1.Length..]);
         engine.Push(result);
@@ -108,7 +108,7 @@ partial class JumpTable
         var x = engine.Pop().GetSpan();
         if (checked(index + count) > x.Length)
             throw new InvalidOperationException($"The index + count is out of range for {nameof(OpCode.SUBSTR)}, index: {index}, count: {count}, {index + count}/[0, {x.Length}].");
-        Buffer result = new(count, false);
+        Buffer result = new(count);
         x.Slice(index, count).CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
         runStats.CollectOpLength(count);
@@ -131,7 +131,7 @@ partial class JumpTable
         var x = engine.Pop().GetSpan();
         if (count > x.Length)
             throw new InvalidOperationException($"The count is out of range for {nameof(OpCode.LEFT)}, {count}/[0, {x.Length}].");
-        Buffer result = new(count, false);
+        Buffer result = new(count);
         x[..count].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
         runStats.CollectOpLength(count);
@@ -154,7 +154,7 @@ partial class JumpTable
         var x = engine.Pop().GetSpan();
         if (count > x.Length)
             throw new InvalidOperationException($"The count is out of range for {nameof(OpCode.RIGHT)}, {count}/[0, {x.Length}].");
-        Buffer result = new(count, false);
+        Buffer result = new(count);
         x[^count..^0].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
         runStats.CollectOpLength(count);
