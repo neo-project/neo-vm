@@ -203,7 +203,11 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public StackItem Pop()
     {
-        return Remove<StackItem>(0);
+        var item = RemoveNoRef<StackItem>(0);
+        if (item is ByteString byteString)
+            byteString.KeepAlive();
+        _referenceCounter.RemoveStackReference(item);
+        return item;
     }
 
     /// <summary>
@@ -225,7 +229,11 @@ public sealed class EvaluationStack : IReadOnlyList<StackItem>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T Pop<T>() where T : StackItem
     {
-        return Remove<T>(0);
+        var item = RemoveNoRef<T>(0);
+        if (item is ByteString byteString)
+            byteString.KeepAlive();
+        _referenceCounter.RemoveStackReference(item);
+        return item;
     }
 
     /// <summary>

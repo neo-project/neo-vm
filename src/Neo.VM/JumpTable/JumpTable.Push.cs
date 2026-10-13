@@ -163,7 +163,7 @@ partial class JumpTable
     public virtual void PushData1(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         engine.Limits.AssertMaxItemSize(instruction.Operand.Length);
-        engine.Push(instruction.Operand);
+        engine.Push(ByteString.FromImmutable(instruction.Operand));
     }
 
     /// <summary>
@@ -178,7 +178,7 @@ partial class JumpTable
     public virtual void PushData2(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         engine.Limits.AssertMaxItemSize(instruction.Operand.Length);
-        engine.Push(instruction.Operand);
+        engine.Push(ByteString.FromImmutable(instruction.Operand));
     }
 
     /// <summary>
@@ -193,7 +193,7 @@ partial class JumpTable
     public virtual void PushData4(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         engine.Limits.AssertMaxItemSize(instruction.Operand.Length);
-        engine.Push(instruction.Operand);
+        engine.Push(ByteString.FromImmutable(instruction.Operand));
     }
 
     /// <summary>

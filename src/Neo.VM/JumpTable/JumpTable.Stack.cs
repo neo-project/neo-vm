@@ -43,7 +43,7 @@ partial class JumpTable
     public virtual void Drop(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var r = engine.ReferenceCounter.Count;
-        engine.Pop();
+        engine.CurrentContext!.EvaluationStack.Remove<StackItem>(0);
         runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
     }
 

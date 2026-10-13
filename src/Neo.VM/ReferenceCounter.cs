@@ -66,6 +66,10 @@ public sealed class ReferenceCounter : IReferenceCounter
                 }
             }
         }
+        else if (item is ByteString byteString)
+        {
+            byteString.AddOwnerRefs(count);
+        }
     }
 
     /// <inheritdoc/>
@@ -99,6 +103,8 @@ public sealed class ReferenceCounter : IReferenceCounter
         else
         {
             _referencesCount--;
+            if (item is ByteString byteString)
+                byteString.ReleaseOwnerRef();
         }
     }
 }

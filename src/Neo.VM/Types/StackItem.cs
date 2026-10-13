@@ -95,6 +95,13 @@ public abstract partial class StackItem : IEquatable<StackItem>
     }
 
     /// <summary>
+    /// Returns pooled memory when the VM drops the last stack reference.
+    /// </summary>
+    internal virtual void Cleanup()
+    {
+    }
+
+    /// <summary>
     /// Copy the object and all its children.
     /// </summary>
     /// <returns>The copied object.</returns>

@@ -28,14 +28,19 @@ public class ByteString : PrimitiveType
     /// </summary>
     public static readonly ByteString Empty = ReadOnlyMemory<byte>.Empty;
 
-    private readonly IMemoryOwner<byte>? _memoryOwner;
+    private IMemoryOwner<byte>? _memoryOwner;
+    private bool _keepAlive;
+    private bool _disposed;
+    private int _stackRefs;
 
     public override ReadOnlyMemory<byte> Memory { get; }
     public override StackItemType Type => StackItemType.ByteString;
 
+    internal bool HasOwner => _memoryOwner is not null;
+
     /// <summary>
     /// Create a new <see cref="ByteString"/> with the specified data.
-    /// Copies into pooled <see cref="IMemoryOwner{T}"/> memory.
+    /// Copies into pooled memory so the caller may mutate <paramref name="data"/>.
     /// </summary>
     /// <param name="data">The data to be contained in this <see cref="ByteString"/>.</param>
     public ByteString(ReadOnlyMemory<byte> data)
@@ -50,9 +55,43 @@ public class ByteString : PrimitiveType
         Memory = _memoryOwner.Memory[..data.Length];
     }
 
+    // Distinct from the public copy ctor (same payload type).
+    private ByteString(ReadOnlyMemory<byte> immutable, bool alias)
+    {
+        Memory = immutable.Length == 0 ? ReadOnlyMemory<byte>.Empty : immutable;
+    }
+
+    /// <summary>
+    /// Wrap trusted immutable bytes (script <c>PUSHDATA</c> operands) without copying.
+    /// </summary>
+    internal static ByteString FromImmutable(ReadOnlyMemory<byte> data)
+        => data.Length == 0 ? Empty : new ByteString(data, alias: true);
+
+    /// <summary>
+    /// Keep pooled memory after the last stack reference is dropped
+    /// (result stack, notifications, host <c>Pop</c>).
+    /// </summary>
+    public void KeepAlive()
+        => _keepAlive = true;
+
+    internal void AddOwnerRefs(int count)
+        => _stackRefs += count;
+
+    internal void ReleaseOwnerRef()
+    {
+        if (_stackRefs > 0)
+            _stackRefs--;
+        if (_stackRefs == 0)
+            Cleanup();
+    }
+
     internal override void Cleanup()
     {
+        if (_keepAlive || _disposed)
+            return;
+        _disposed = true;
         _memoryOwner?.Dispose();
+        _memoryOwner = null;
     }
 
     private bool Equals(ByteString other)

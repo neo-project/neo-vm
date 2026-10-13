@@ -162,7 +162,7 @@ public class ExecutionEngine : IDisposable
                 }
                 finally
                 {
-                    PostExecuteInstruction(instruction, runStats);
+                    PostExecuteInstruction(currentInstruction, runStats);
                 }
                 if (!isJumping && currentInstruction != null)
                     context.InstructionPointer += instruction.Size;
