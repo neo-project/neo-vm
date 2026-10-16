@@ -68,11 +68,6 @@ public class Integer : PrimitiveType
         return !value.IsZero;
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(value);
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override BigInteger GetInteger()
     {
@@ -132,6 +127,37 @@ public class Integer : PrimitiveType
     {
         return new Integer(value);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator BigInteger(Integer value)
+        => value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator byte(Integer value) => (byte)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator sbyte(Integer value) => (sbyte)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator short(Integer value) => (short)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator ushort(Integer value) => (ushort)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator int(Integer value) => (int)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator uint(Integer value) => (uint)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator long(Integer value) => (long)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator ulong(Integer value) => (ulong)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator bool(Integer value) => value.GetBoolean();
 
     public override string ToString()
     {
