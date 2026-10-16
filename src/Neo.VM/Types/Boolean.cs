@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -64,11 +65,24 @@ public class Boolean : PrimitiveType
         return value ? BigInteger.One : BigInteger.Zero;
     }
 
+    /// <summary>
+    /// One byte: <c>1</c> if true, <c>0</c> if false.
+    /// </summary>
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+        => value ? [1] : [0];
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator Boolean(bool value)
     {
         return value ? True : False;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator bool(Boolean value) => value.GetBoolean();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator BigInteger(Boolean value)
+        => value.GetInteger();
 
     public override string ToString()
     {

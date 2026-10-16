@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Neo.VM.Types;
@@ -64,4 +65,10 @@ public class Pointer : StackItem
     {
         return Position.ToString();
     }
+
+    /// <summary>
+    /// The pointed-to script bytes.
+    /// </summary>
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+        => ((ReadOnlyMemory<byte>)Script).Span;
 }
