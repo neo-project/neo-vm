@@ -95,7 +95,7 @@ public class ExecutionEngine : IDisposable
     /// <param name="jumpTable">The jump table to be used.</param>
     /// <param name="referenceCounter">The reference counter to be used.</param>
     /// <param name="limits">Restrictions on the VM.</param>
-    protected ExecutionEngine(JumpTable? jumpTable, IReferenceCounter referenceCounter, ExecutionEngineLimits limits)
+    internal ExecutionEngine(JumpTable? jumpTable, IReferenceCounter referenceCounter, ExecutionEngineLimits limits)
     {
         JumpTable = jumpTable ?? JumpTable.Default;
         Limits = limits;
@@ -144,7 +144,9 @@ public class ExecutionEngine : IDisposable
             try
             {
                 ExecutionContext context = CurrentContext!;
-                Instruction instruction = context.CurrentInstruction ?? Instruction.RET;
+                Instruction? currentInstruction = context.CurrentInstruction;
+                Instruction instruction = currentInstruction ?? Instruction.RET;
+                RunStats runStats = default;
                 PreExecuteInstruction(instruction);
 #if VMPERF
                 Console.WriteLine("op:["
@@ -156,14 +158,14 @@ public class ExecutionEngine : IDisposable
 #endif
                 try
                 {
-                    JumpTable[instruction.OpCode](this, instruction);
+                    JumpTable[instruction.OpCode](this, instruction, ref runStats);
                 }
-                catch (CatchableException ex) when (Limits.CatchEngineExceptions)
+                finally
                 {
-                    JumpTable.ExecuteThrow(this, ex.Message);
+                    PostExecuteInstruction(currentInstruction, runStats);
                 }
-                PostExecuteInstruction(instruction);
-                if (!isJumping) context.MoveNext();
+                if (!isJumping && currentInstruction != null)
+                    context.InstructionPointer += instruction.Size;
                 isJumping = false;
             }
             catch (Exception e)
@@ -284,6 +286,16 @@ public class ExecutionEngine : IDisposable
     }
 
     /// <summary>
+    /// Removes and returns the item at the top of the current stack without reference counting.
+    /// </summary>
+    /// <returns>The item removed from the top of the stack.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal StackItem PopNoRef()
+    {
+        return CurrentContext!.EvaluationStack.PopNoRef();
+    }
+
+    /// <summary>
     /// Removes and returns the item at the top of the current stack and convert it to the specified type.
     /// </summary>
     /// <typeparam name="T">The type to convert to.</typeparam>
@@ -295,13 +307,23 @@ public class ExecutionEngine : IDisposable
     }
 
     /// <summary>
+    /// Removes and returns the item at the top of the current stack and convert it to the specified type
+    /// without reference counting.
+    /// </summary>
+    /// <typeparam name="T">The type to convert to.</typeparam>
+    /// <returns>The item removed from the top of the stack.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal T PopNoRef<T>() where T : StackItem
+    {
+        return CurrentContext!.EvaluationStack.PopNoRef<T>();
+    }
+
+    /// <summary>
     /// Called after an instruction is executed.
     /// </summary>
-    protected virtual void PostExecuteInstruction(Instruction instruction)
+    protected virtual void PostExecuteInstruction(Instruction? instruction, RunStats runStats)
     {
-        if (ReferenceCounter.Count < Limits.MaxStackSize) return;
-        if (ReferenceCounter.CheckZeroReferred() > Limits.MaxStackSize)
-            throw new InvalidOperationException($"MaxStackSize exceed: {ReferenceCounter.Count}/{Limits.MaxStackSize}");
+        ReferenceCounter.PostExecuteInstruction();
     }
 
     /// <summary>
@@ -317,5 +339,18 @@ public class ExecutionEngine : IDisposable
     public void Push(StackItem item)
     {
         CurrentContext!.EvaluationStack.Push(item);
+    }
+
+    /// <summary>
+    /// Pushes item to the stack and adds exactly the specified
+    /// value to the reference counter. It's a perfect method to ruin the counter,
+    /// so use carefully.
+    /// </summary>
+    /// <param name="item">The item to be pushed.</param>
+    /// <param name="count">The value by which the reference counter increases.</param>s
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal void PushItemCounted(StackItem item, int count)
+    {
+        CurrentContext!.EvaluationStack.PushItemCounted(item, count);
     }
 }

@@ -19,7 +19,8 @@
                 "type": "Struct",
                 "value": []
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]

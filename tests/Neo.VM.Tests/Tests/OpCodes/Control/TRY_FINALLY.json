@@ -31,7 +31,8 @@
                 "instructionPointer": 9,
                 "nextInstruction": "PUSH1"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {

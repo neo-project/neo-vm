@@ -21,7 +21,7 @@ public partial class JumpTable
     /// </summary>
     public static readonly JumpTable Default = new();
 
-    public delegate void DelAction(ExecutionEngine engine, Instruction instruction);
+    public delegate void DelAction(ExecutionEngine engine, Instruction instruction, ref RunStats runStats);
     protected readonly DelAction[] Table = new DelAction[byte.MaxValue];
 
     public DelAction this[OpCode opCode]
@@ -49,11 +49,7 @@ public partial class JumpTable
                     throw new InvalidOperationException($"Opcode {opCode} is already defined.");
                 }
 
-#if NET5_0_OR_GREATER
                 Table[(byte)opCode] = mi.CreateDelegate<DelAction>(this);
-#else
-                Table[(byte)opCode] = (DelAction)mi.CreateDelegate(typeof(DelAction), this);
-#endif
             }
         }
 
@@ -67,7 +63,7 @@ public partial class JumpTable
         }
     }
 
-    public virtual void InvalidOpcode(ExecutionEngine engine, Instruction instruction)
+    public virtual void InvalidOpcode(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         throw new InvalidOperationException($"Opcode {instruction.OpCode} is undefined.");
     }

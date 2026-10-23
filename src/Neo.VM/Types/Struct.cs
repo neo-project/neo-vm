@@ -26,17 +26,7 @@ public class Struct : Array
     /// </summary>
     /// <param name="fields">The fields to be included in the structure.</param>
     public Struct(IEnumerable<StackItem>? fields = null)
-        : this(null, fields)
-    {
-    }
-
-    /// <summary>
-    /// Create a structure with the specified fields. And make the structure use the specified <see cref="IReferenceCounter"/>.
-    /// </summary>
-    /// <param name="referenceCounter">The <see cref="IReferenceCounter"/> to be used by this structure.</param>
-    /// <param name="fields">The fields to be included in the structure.</param>
-    public Struct(IReferenceCounter? referenceCounter, IEnumerable<StackItem>? fields = null)
-        : base(referenceCounter, fields)
+        : base(fields)
     {
     }
 
@@ -44,11 +34,12 @@ public class Struct : Array
     /// Create a new structure with the same content as this structure. All nested structures will be copied by value.
     /// </summary>
     /// <param name="limits">Execution engine limits</param>
+    /// <param name="nClonedItems">The number of items cloned.</param>
     /// <returns>The copied structure.</returns>
-    public Struct Clone(ExecutionEngineLimits limits)
+    public Struct Clone(ExecutionEngineLimits limits, out int nClonedItems)
     {
         int count = (int)(limits.MaxStackSize - 1);
-        Struct result = new(ReferenceCounter);
+        Struct result = new();
         Queue<Struct> queue = new();
         queue.Enqueue(result);
         queue.Enqueue(this);
@@ -62,7 +53,7 @@ public class Struct : Array
                 if (count < 0) throw new InvalidOperationException("Beyond struct subitem clone limits!");
                 if (item is Struct sb)
                 {
-                    Struct sa = new(ReferenceCounter);
+                    Struct sa = new();
                     a.Add(sa);
                     queue.Enqueue(sa);
                     queue.Enqueue(sb);
@@ -73,13 +64,14 @@ public class Struct : Array
                 }
             }
         }
+        nClonedItems = (int)limits.MaxStackSize - count;
         return result;
     }
 
     public override StackItem ConvertTo(StackItemType type)
     {
         if (type == StackItemType.Array)
-            return new Array(ReferenceCounter, new List<StackItem>(InnerList));
+            return new Array(new List<StackItem>(InnerList));
         return base.ConvertTo(type);
     }
 

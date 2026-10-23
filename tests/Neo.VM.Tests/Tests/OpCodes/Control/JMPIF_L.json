@@ -46,7 +46,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -60,7 +61,8 @@
                 "instructionPointer": 7,
                 "nextInstruction": "RET"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -68,7 +70,8 @@
             "stepInto"
           ],
           "result": {
-            "state": "HALT"
+            "state": "HALT",
+            "refs": 0
           }
         }
       ]
@@ -100,7 +103,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -114,7 +118,8 @@
                 "instructionPointer": 6,
                 "nextInstruction": "NOP"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -128,7 +133,8 @@
                 "instructionPointer": 7,
                 "nextInstruction": "RET"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -136,7 +142,8 @@
             "stepInto"
           ],
           "result": {
-            "state": "HALT"
+            "state": "HALT",
+            "refs": 0
           }
         }
       ]

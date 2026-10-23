@@ -10,13 +10,15 @@
 // modifications are permitted.
 
 using System;
+using System.Threading;
 
 namespace Neo.Test.Helpers;
 
 public class RandomHelper
 {
     private const string _randchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private static readonly Random _rand = new();
+
+    private static readonly ThreadLocal<Random> _rand = new(() => new Random());
 
     /// <summary>
     /// Get random buffer
@@ -26,7 +28,7 @@ public class RandomHelper
     public static byte[] RandBuffer(int length)
     {
         var buffer = new byte[length];
-        _rand.NextBytes(buffer);
+        _rand.Value.NextBytes(buffer);
         return buffer;
     }
 
@@ -41,7 +43,7 @@ public class RandomHelper
 
         for (int i = 0; i < stringChars.Length; i++)
         {
-            stringChars[i] = _randchars[_rand.Next(_randchars.Length)];
+            stringChars[i] = _randchars[_rand.Value.Next(_randchars.Length)];
         }
 
         return new string(stringChars);

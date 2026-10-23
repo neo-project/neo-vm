@@ -29,7 +29,7 @@
             "state": "BREAK",
             "invocationStack": [
               {
-                "instructionPointer":7,
+                "instructionPointer": 7,
                 "nextInstruction": "ABORT",
                 "evaluationStack": [
                   {
@@ -38,7 +38,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {

@@ -19,7 +19,11 @@ public class TestEngine : ExecutionEngine
 {
     public Exception FaultException { get; private set; }
 
+    public RunStats LastRunStats { get; private set; }
+
     public TestEngine() : base(ComposeJumpTable()) { }
+
+    public TestEngine(IReferenceCounter referenceCounter, ExecutionEngineLimits limits) : base(ComposeJumpTable(), referenceCounter, limits) { }
 
     private static JumpTable ComposeJumpTable()
     {
@@ -28,7 +32,7 @@ public class TestEngine : ExecutionEngine
         return jumpTable;
     }
 
-    private static void OnSysCall(ExecutionEngine engine, Instruction instruction)
+    private static void OnSysCall(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         uint method = instruction.TokenU32;
 
@@ -40,7 +44,7 @@ public class TestEngine : ExecutionEngine
 
         if (method == 0xaddeadde)
         {
-            engine.JumpTable.ExecuteThrow(engine, "error");
+            engine.JumpTable.ExecuteThrow(engine, "error", out _);
             return;
         }
 
@@ -51,5 +55,11 @@ public class TestEngine : ExecutionEngine
     {
         FaultException = ex;
         base.OnFault(ex);
+    }
+
+    protected override void PostExecuteInstruction(Instruction instruction, RunStats runStats)
+    {
+        LastRunStats = runStats;
+        base.PostExecuteInstruction(instruction, runStats);
     }
 }

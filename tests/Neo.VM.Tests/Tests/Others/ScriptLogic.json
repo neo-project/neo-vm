@@ -28,7 +28,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -48,7 +49,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -68,7 +70,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -82,7 +85,8 @@
                 "instructionPointer": 4,
                 "nextInstruction": "RET"
               }
-            ]
+            ],
+            "refs": 0
           }
         },
         {
@@ -90,7 +94,8 @@
             "stepInto"
           ],
           "result": {
-            "state": "HALT"
+            "state": "HALT",
+            "refs": 0
           }
         }
       ]

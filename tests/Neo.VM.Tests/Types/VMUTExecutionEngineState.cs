@@ -28,4 +28,10 @@ public class VMUTExecutionEngineState
 
     [JsonProperty]
     public string ExceptionMessage { get; set; }
+
+    [JsonProperty]
+    public int? Refs { get; set; }
+
+    [JsonProperty]
+    public VMUTRunStats RunStats { get; set; }
 }

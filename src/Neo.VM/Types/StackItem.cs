@@ -22,6 +22,11 @@ namespace Neo.VM.Types;
 /// </summary>
 public abstract partial class StackItem : IEquatable<StackItem>
 {
+    /// <summary>
+    /// Stack Item hashcode.
+    /// </summary>
+    private int _hashCode = 0;
+
     [ThreadStatic]
     private static Boolean? tls_true;
 
@@ -89,21 +94,30 @@ public abstract partial class StackItem : IEquatable<StackItem>
         throw new InvalidCastException();
     }
 
-    internal virtual void Cleanup()
-    {
-    }
-
     /// <summary>
     /// Copy the object and all its children.
     /// </summary>
     /// <returns>The copied object.</returns>
     public StackItem DeepCopy(bool asImmutable = false)
     {
-        return DeepCopy(new(ReferenceEqualityComparer.Instance), asImmutable);
+        return DeepCopy(asImmutable, out _);
     }
 
-    internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
+    /// <summary>
+    /// Copy the object and all its children.
+    /// </summary>
+    /// <param name="asImmutable">Whether the copy should be immutable.</param>
+    /// <param name="count">The number of visited items, including repeated references.</param>
+    /// <returns>The copied object.</returns>
+    public StackItem DeepCopy(bool asImmutable, out int count)
     {
+        count = 0;
+        return DeepCopy(new(ReferenceEqualityComparer.Instance), asImmutable, ref count);
+    }
+
+    internal virtual StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable, ref int count)
+    {
+        count++;
         return this;
     }
 
@@ -122,6 +136,24 @@ public abstract partial class StackItem : IEquatable<StackItem>
     internal virtual bool Equals(StackItem? other, ExecutionEngineLimits limits)
     {
         return Equals(other);
+    }
+
+    /// <summary>
+    /// Generates a hash code based on the item's span.
+    ///
+    /// This method provides a hash code for the StackItem based on its byte span.
+    /// It is used for efficient storage and retrieval in hash-based collections.
+    ///
+    /// Use this method when you need a hash code for a StackItem.
+    /// </summary>
+    /// <returns>The hash code for the StackItem.</returns>
+    public override int GetHashCode()
+    {
+        if (_hashCode == 0)
+        {
+            _hashCode = HashCode.Combine(Type, GetSpan().XxHash3_32());
+        }
+        return _hashCode;
     }
 
     /// <summary>

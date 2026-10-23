@@ -28,11 +28,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// </summary>
     public const int MaxKeySize = 64;
 
-#if NET5_0_OR_GREATER
     private readonly OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
-#else
-    private readonly Collections.OrderedDictionary<PrimitiveType, StackItem> dictionary = new();
-#endif
 
     /// <summary>
     /// Gets or sets the element that has the specified key in the map.
@@ -53,18 +49,6 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
             if (key.Size > MaxKeySize)
                 throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
             if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not set value.");
-            if (ReferenceCounter != null)
-            {
-                if (dictionary.TryGetValue(key, out StackItem? old_value))
-                    ReferenceCounter.RemoveReference(old_value, this);
-                else
-                    ReferenceCounter.AddReference(key, this);
-                if (value is CompoundType { ReferenceCounter: null })
-                {
-                    throw new InvalidOperationException("Can not set a Map without a ReferenceCounter.");
-                }
-                ReferenceCounter.AddReference(value, this);
-            }
             dictionary[key] = value;
         }
     }
@@ -88,21 +72,18 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     public IEnumerable<StackItem> Values => dictionary.Values;
 
     /// <summary>
-    /// Create a new map with the specified reference counter.
+    /// Create a new map.
     /// </summary>
-    /// <param name="referenceCounter">The reference counter to be used.</param>
-    public Map(IReferenceCounter? referenceCounter = null)
-        : base(referenceCounter)
+    public Map() : base()
     {
     }
 
     /// <summary>
-    /// Create a new map with the specified dictionary and reference counter.
+    /// Create a new map.
     /// </summary>
     /// <param name="dictionary">Dictionary</param>
-    /// <param name="referenceCounter">Reference Counter</param>
-    public Map(IEnumerable<KeyValuePair<PrimitiveType, StackItem>> dictionary, IReferenceCounter? referenceCounter = null)
-        : this(referenceCounter)
+    public Map(IEnumerable<KeyValuePair<PrimitiveType, StackItem>> dictionary)
+        : this()
     {
         foreach (var (k, v) in dictionary)
         {
@@ -113,12 +94,6 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     public override void Clear()
     {
         if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not clear.");
-        if (ReferenceCounter != null)
-            foreach (var pair in dictionary)
-            {
-                ReferenceCounter.RemoveReference(pair.Key, this);
-                ReferenceCounter.RemoveReference(pair.Value, this);
-            }
         dictionary.Clear();
     }
 
@@ -137,13 +112,16 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
         return dictionary.ContainsKey(key);
     }
 
-    internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable)
+    internal override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable, ref int count)
     {
+        count++;
         if (refMap.TryGetValue(this, out StackItem? mappedItem)) return mappedItem;
-        Map result = new(ReferenceCounter);
+        Map result = new();
         refMap.Add(this, result);
         foreach (var (k, v) in dictionary)
-            result[k] = v.DeepCopy(refMap, asImmutable);
+        {
+            result[k] = v.DeepCopy(refMap, asImmutable, ref count);
+        }
         result.IsReadOnly = IsReadOnly || asImmutable;
         return result;
     }
@@ -162,21 +140,22 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// Removes the element with the specified key from the map.
     /// </summary>
     /// <param name="key">The key of the element to remove.</param>
+    /// <param name="index">The index of the element to remove.</param>
     /// <returns>
-    /// <see langword="true" /> if the element is successfully removed;
-    /// otherwise, <see langword="false"/>.
-    /// This method also returns <see langword="false"/> if <paramref name="key"/> was not found in the original map.
+    /// <see cref="StackItem"/> if the element is successfully removed;
+    /// otherwise, <see langword="null"/>.
     /// </returns>
-    public bool Remove(PrimitiveType key)
+    public StackItem? Remove(PrimitiveType key, out int index)
     {
         if (key.Size > MaxKeySize)
-            throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));
+            throw new ArgumentException($"Can not remove key from map, MaxKeySize of {nameof(Map)} is exceeded: {key.Size}/{MaxKeySize}.", nameof(key));
         if (IsReadOnly) throw new InvalidOperationException("The map is readonly, can not remove key.");
-        if (!dictionary.Remove(key, out StackItem? old_value))
-            return false;
-        ReferenceCounter?.RemoveReference(key, this);
-        ReferenceCounter?.RemoveReference(old_value, this);
-        return true;
+        index = dictionary.IndexOf(key);
+        if (index < 0)
+            return null;
+        StackItem oldValue = dictionary.GetAt(index).Value;
+        dictionary.RemoveAt(index);
+        return oldValue;
     }
 
     /// <summary>
@@ -191,11 +170,7 @@ public class Map : CompoundType, IReadOnlyDictionary<PrimitiveType, StackItem>
     /// <see langword="true" /> if the map contains an element that has the specified key;
     /// otherwise, <see langword="false"/>.
     /// </returns>
-#if NET5_0_OR_GREATER
     public bool TryGetValue(PrimitiveType key, [MaybeNullWhen(false)] out StackItem value)
-#else
-    public bool TryGetValue(PrimitiveType key, out StackItem value)
-#endif
     {
         if (key.Size > MaxKeySize)
             throw new ArgumentException($"Key size {key.Size} bytes exceeds maximum allowed size of {MaxKeySize} bytes.", nameof(key));

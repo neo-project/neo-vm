@@ -22,19 +22,24 @@ namespace Neo.VM.Types;
 public abstract class CompoundType : StackItem
 {
     /// <summary>
-    /// The reference counter used to count the items in the VM object.
+    /// Create a new <see cref="CompoundType"/>.
     /// </summary>
-    protected internal readonly IReferenceCounter? ReferenceCounter;
+    protected CompoundType() { }
 
     /// <summary>
-    /// Create a new <see cref="CompoundType"/> with the specified reference counter.
+    /// The number of references to this StackItem from the evaluation stack.
+    ///
+    /// This field tracks how many times this item is referenced by the evaluation stack.
+    /// It is incremented when the item is pushed onto the stack and decremented when it is popped off.
+    ///
+    /// Use this field to manage stack references and determine when an item is no longer needed.
     /// </summary>
-    /// <param name="referenceCounter">The reference counter to be used.</param>
-    protected CompoundType(IReferenceCounter? referenceCounter)
-    {
-        ReferenceCounter = referenceCounter;
-        referenceCounter?.AddZeroReferred(this);
-    }
+    internal int StackReferences { get; set; }
+
+    /// <summary>
+    /// Indicates whether this <see cref="StackItem"/> is referenced from any VM stack roots.
+    /// </summary>
+    public bool IsStackReferenced => StackReferences != 0;
 
     /// <summary>
     /// The number of items in this VM object.
@@ -52,41 +57,14 @@ public abstract class CompoundType : StackItem
     /// </summary>
     public abstract void Clear();
 
-    internal abstract override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable);
+    internal abstract override StackItem DeepCopy(Dictionary<StackItem, StackItem> refMap, bool asImmutable, ref int count);
 
     public sealed override bool GetBoolean()
     {
         return true;
     }
 
-    /// <summary>
-    ///
-    /// This method provides a hash code for the <see cref="CompoundType"/> based on its item's span.
-    /// It is used for efficient storage and retrieval in hash-based collections.
-    ///
-    /// Use this method when you need a hash code for a <see cref="CompoundType"/>.
-    /// </summary>
-    /// <returns>The hash code for the <see cref="CompoundType"/>.</returns>
-    public override int GetHashCode()
-    {
-        var h = new HashCode();
-        h.Add(Count);
-        h.Add(Type);
-        foreach (var item in SubItems)
-        {
-            // This isn't prefect and leaves somethings unsolved.
-            if (item is CompoundType cItem)
-            {
-                h.Add(cItem.Count);
-                h.Add(cItem.Type);
-            }
-            else
-            {
-                h.Add(item.GetHashCode());
-            }
-        }
-        return h.ToHashCode();
-    }
+    public override int GetHashCode() => throw new NotSupportedException("Mutable compound type does not support GetHashCode.");
 
     public override string ToString()
     {

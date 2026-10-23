@@ -50,7 +50,8 @@
                 "type": "integer",
                 "value": -1
               }
-            ]
+            ],
+            "refs": 6
           }
         }
       ]

@@ -25,7 +25,8 @@
         "INITSLOT",
         "0x0100",
         "PUSH2",
-        "STLOC"
+        "STLOC",
+        "0x01"
       ],
       "steps": [
         {
@@ -69,7 +70,8 @@
                   }
                 ]
               }
-            ]
+            ],
+            "refs": 1
           }
         },
         {
@@ -83,7 +85,8 @@
                 "type": "Integer",
                 "value": 1
               }
-            ]
+            ],
+            "refs": 1
           }
         }
       ]

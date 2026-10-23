@@ -23,13 +23,15 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 1, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void NewBuffer(ExecutionEngine engine, Instruction instruction)
+    public virtual void NewBuffer(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         int length = (int)engine.Pop().GetInteger();
         engine.Limits.AssertMaxItemSize(length);
         engine.Push(new Buffer(length));
+        runStats.CollectOpLength(length);
     }
 
     /// <summary>
@@ -38,9 +40,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 5, Push 0</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Memcpy(ExecutionEngine engine, Instruction instruction)
+    public virtual void Memcpy(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -59,37 +62,42 @@ partial class JumpTable
             throw new InvalidOperationException($"The destination index + count is out of range for {nameof(OpCode.MEMCPY)}, index: {di}, count: {count}, {di}/[0, {dst.Size}].");
         // TODO: check if we can optimize the memcpy by using peek instead of dup then pop
         src.Slice(si, count).CopyTo(dst.InnerBuffer.Span[di..]);
+        runStats.CollectOpLength(count);
     }
 
     /// <summary>
     /// Concatenates two buffers and pushes the result onto the evaluation stack.
+    /// The result is the first pushed item concatenated with the second pushed item.
     /// <see cref="OpCode.CAT"/>
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Cat(ExecutionEngine engine, Instruction instruction)
+    public virtual void Cat(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var x2 = engine.Pop().GetSpan();
         var x1 = engine.Pop().GetSpan();
         int length = x1.Length + x2.Length;
         engine.Limits.AssertMaxItemSize(length);
-        Buffer result = new(length, false);
+        Buffer result = new(length);
         x1.CopyTo(result.InnerBuffer.Span);
         x2.CopyTo(result.InnerBuffer.Span[x1.Length..]);
         engine.Push(result);
+        runStats.CollectOpLength(length);
     }
 
     /// <summary>
-    /// Extracts a substring from the specified buffer and pushes it onto the evaluation stack.
+    /// Extracts a sub-buffer from the specified buffer and pushes it onto the evaluation stack.
     /// <see cref="OpCode.SUBSTR"/>
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 3, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void SubStr(ExecutionEngine engine, Instruction instruction)
+    public virtual void SubStr(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -100,9 +108,10 @@ partial class JumpTable
         var x = engine.Pop().GetSpan();
         if (checked(index + count) > x.Length)
             throw new InvalidOperationException($"The index + count is out of range for {nameof(OpCode.SUBSTR)}, index: {index}, count: {count}, {index + count}/[0, {x.Length}].");
-        Buffer result = new(count, false);
+        Buffer result = new(count);
         x.Slice(index, count).CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
+        runStats.CollectOpLength(count);
     }
 
     /// <summary>
@@ -111,9 +120,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Left(ExecutionEngine engine, Instruction instruction)
+    public virtual void Left(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -121,9 +131,10 @@ partial class JumpTable
         var x = engine.Pop().GetSpan();
         if (count > x.Length)
             throw new InvalidOperationException($"The count is out of range for {nameof(OpCode.LEFT)}, {count}/[0, {x.Length}].");
-        Buffer result = new(count, false);
+        Buffer result = new(count);
         x[..count].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
+        runStats.CollectOpLength(count);
     }
 
     /// <summary>
@@ -132,9 +143,10 @@ partial class JumpTable
     /// </summary>
     /// <param name="engine">The execution engine.</param>
     /// <param name="instruction">The instruction being executed.</param>
+    /// <param name="runStats">The opcode parameters for dynamic pricing.</param>
     /// <remarks>Pop 2, Push 1</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual void Right(ExecutionEngine engine, Instruction instruction)
+    public virtual void Right(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         int count = (int)engine.Pop().GetInteger();
         if (count < 0)
@@ -142,8 +154,9 @@ partial class JumpTable
         var x = engine.Pop().GetSpan();
         if (count > x.Length)
             throw new InvalidOperationException($"The count is out of range for {nameof(OpCode.RIGHT)}, {count}/[0, {x.Length}].");
-        Buffer result = new(count, false);
+        Buffer result = new(count);
         x[^count..^0].CopyTo(result.InnerBuffer.Span);
         engine.Push(result);
+        runStats.CollectOpLength(count);
     }
 }

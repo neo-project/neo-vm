@@ -39,38 +39,20 @@ public class Benchmarks_DeepCopy
     [Benchmark]
     public void BenchNestedArrayDeepCopy()
     {
-        var root = new Array(new ReferenceCounter());
+        var root = new Array();
         CreateNestedArray(root, Params.Depth, Params.ElementsPerLevel);
-        _ = root.DeepCopy();
-    }
-
-    [Benchmark]
-    public void BenchNestedArrayDeepCopyWithReferenceCounter()
-    {
-        var referenceCounter = new ReferenceCounter();
-        var root = new Array(referenceCounter);
-        CreateNestedArray(root, Params.Depth, Params.ElementsPerLevel, referenceCounter);
         _ = root.DeepCopy();
     }
 
     [Benchmark]
     public void BenchNestedTestArrayDeepCopy()
     {
-        var root = new TestArray(new ReferenceCounter());
+        var root = new TestArray();
         CreateNestedTestArray(root, Params.Depth, Params.ElementsPerLevel);
         _ = root.DeepCopy();
     }
 
-    [Benchmark]
-    public void BenchNestedTestArrayDeepCopyWithReferenceCounter()
-    {
-        var referenceCounter = new ReferenceCounter();
-        var root = new TestArray(referenceCounter);
-        CreateNestedTestArray(root, Params.Depth, Params.ElementsPerLevel, referenceCounter);
-        _ = root.DeepCopy();
-    }
-
-    private static void CreateNestedArray(Array? rootArray, int depth, int elementsPerLevel = 1, IReferenceCounter? referenceCounter = null)
+    private static void CreateNestedArray(Array? rootArray, int depth, int elementsPerLevel = 1)
     {
         if (depth < 0)
         {
@@ -86,13 +68,13 @@ public class Benchmarks_DeepCopy
 
         for (var i = 0; i < elementsPerLevel; i++)
         {
-            var childArray = new Array(referenceCounter);
+            var childArray = new Array();
             rootArray.Add(childArray);
-            CreateNestedArray(childArray, depth - 1, elementsPerLevel, referenceCounter);
+            CreateNestedArray(childArray, depth - 1, elementsPerLevel);
         }
     }
 
-    private static void CreateNestedTestArray(TestArray rootArray, int depth, int elementsPerLevel = 1, IReferenceCounter? referenceCounter = null)
+    private static void CreateNestedTestArray(TestArray rootArray, int depth, int elementsPerLevel = 1)
     {
         if (depth < 0)
         {
@@ -108,9 +90,9 @@ public class Benchmarks_DeepCopy
 
         for (var i = 0; i < elementsPerLevel; i++)
         {
-            var childArray = new TestArray(referenceCounter);
+            var childArray = new TestArray();
             rootArray.Add(childArray);
-            CreateNestedTestArray(childArray, depth - 1, elementsPerLevel, referenceCounter);
+            CreateNestedTestArray(childArray, depth - 1, elementsPerLevel);
         }
     }
 }

@@ -29,7 +29,7 @@ dotnet add package Neo.VM
 
 This adds the VM to your project; you can then embed and drive it from your host application.
 
-Targets **.NET 10.0** and **.NET Standard 2.1** (compatible with a wide range of runtimes).
+Targets **.NET 10.0**.
 
 ---
 

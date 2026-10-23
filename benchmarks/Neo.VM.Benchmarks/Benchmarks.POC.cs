@@ -85,12 +85,12 @@ public class Benchmarks_PoCs
     }
 
     [Benchmark]
-    public static void NeoIssue2723()
+    public void NeoIssue2723()
     {
         // L00: INITSSLOT 1
         // L01: PUSHINT32 130000
         // L02: STSFLD 0
-        // L03: PUSHINT32 1048576
+        // L03: PUSHINT32 131070
         // L04: NEWBUFFER
         // L05: DROP
         // L06: LDSFLD 0
@@ -98,7 +98,7 @@ public class Benchmarks_PoCs
         // L08: DUP
         // L09: STSFLD 0
         // L10: JMPIF L03
-        Run("VgEC0PsBAGcAAgAAEACIRV8AnUpnACTz");
+        Run("VgEC0PsBAGAC/v8BAIhFWJ1KYCT1");
     }
 
     // Below are PoCs from issue https://github.com/neo-project/neo/issues/2723 by @dusmart
