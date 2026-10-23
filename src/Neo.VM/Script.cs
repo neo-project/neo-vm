@@ -91,7 +91,7 @@ public class Script
                     case OpCode.JMPLE:
                     case OpCode.CALL:
                     case OpCode.ENDTRY:
-                        if (!_instructions.ContainsKey(checked(ip + instruction.TokenI8)))
+                        if (!IsValidTarget(ip, instruction.TokenI8))
                             throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                         break;
                     case OpCode.PUSHA:
@@ -106,19 +106,19 @@ public class Script
                     case OpCode.JMPLE_L:
                     case OpCode.CALL_L:
                     case OpCode.ENDTRY_L:
-                        if (!_instructions.ContainsKey(checked(ip + instruction.TokenI32)))
+                        if (!IsValidTarget(ip, instruction.TokenI32))
                             throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                         break;
                     case OpCode.TRY:
-                        if (!_instructions.ContainsKey(checked(ip + instruction.TokenI8)))
+                        if (!IsValidTarget(ip, instruction.TokenI8))
                             throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
-                        if (!_instructions.ContainsKey(checked(ip + instruction.TokenI8_1)))
+                        if (!IsValidTarget(ip, instruction.TokenI8_1))
                             throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                         break;
                     case OpCode.TRY_L:
-                        if (!_instructions.ContainsKey(checked(ip + instruction.TokenI32)))
+                        if (!IsValidTarget(ip, instruction.TokenI32))
                             throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
-                        if (!_instructions.ContainsKey(checked(ip + instruction.TokenI32_1)))
+                        if (!IsValidTarget(ip, instruction.TokenI32_1))
                             throw new BadScriptException($"ip: {ip}, opcode: {instruction.OpCode}");
                         break;
                     case OpCode.NEWARRAY_T:
@@ -138,6 +138,12 @@ public class Script
             }
         }
         _strictMode = strictMode;
+    }
+
+    private bool IsValidTarget(int ip, int offset)
+    {
+        long target = (long)ip + offset;
+        return target >= 0 && target < Length && _instructions.ContainsKey((int)target);
     }
 
     /// <summary>

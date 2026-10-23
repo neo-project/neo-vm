@@ -20,6 +20,48 @@ namespace Neo.Test;
 public class UT_Script
 {
     [TestMethod]
+    [DataRow(OpCode.PUSHA)]
+    [DataRow(OpCode.JMP_L)]
+    [DataRow(OpCode.JMPIF_L)]
+    [DataRow(OpCode.JMPIFNOT_L)]
+    [DataRow(OpCode.JMPEQ_L)]
+    [DataRow(OpCode.JMPNE_L)]
+    [DataRow(OpCode.JMPGT_L)]
+    [DataRow(OpCode.JMPGE_L)]
+    [DataRow(OpCode.JMPLT_L)]
+    [DataRow(OpCode.JMPLE_L)]
+    [DataRow(OpCode.CALL_L)]
+    [DataRow(OpCode.ENDTRY_L)]
+    [DataRow(OpCode.TRY_L)]
+    public void StrictModeRejectsInvalidLongTargets(OpCode opcode)
+    {
+        foreach (int offset in new[] { int.MaxValue, int.MinValue, -2, 2, 100 })
+        {
+            byte[] bytes = new byte[opcode == OpCode.TRY_L ? 10 : 6];
+            bytes[0] = (byte)OpCode.NOP;
+            bytes[1] = (byte)opcode;
+            System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(2), offset);
+            Assert.ThrowsExactly<BadScriptException>(() => _ = new Script(bytes, true));
+            if (opcode == OpCode.TRY_L)
+            {
+                // Validate the finally offset independently of the catch offset.
+                System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(2), 0);
+                System.Buffers.Binary.BinaryPrimitives.WriteInt32LittleEndian(bytes.AsSpan(6), offset);
+                Assert.ThrowsExactly<BadScriptException>(() => _ = new Script(bytes, true));
+            }
+        }
+    }
+
+    [TestMethod]
+    public void StrictModeAcceptsValidRelativeTargets()
+    {
+        byte[] bytes = [(byte)OpCode.NOP, (byte)OpCode.JMP_L, 0xFF, 0xFF, 0xFF, 0xFF];
+        _ = new Script(bytes, true);
+        bytes = [(byte)OpCode.TRY_L, 9, 0, 0, 0, 10, 0, 0, 0, (byte)OpCode.NOP, (byte)OpCode.RET];
+        _ = new Script(bytes, true);
+    }
+
+    [TestMethod]
     public void TestConversion()
     {
         byte[] rawScript;
