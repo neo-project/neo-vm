@@ -663,7 +663,7 @@ partial class JumpTable
                     var b = p.GetInteger();
                     if (b < sbyte.MinValue || b > byte.MaxValue)
                         throw new InvalidOperationException($"Overflow in {instruction.OpCode}, {b} is not a byte type.");
-                    buffer.InnerBuffer.Span[(int)index] = (byte)b;
+                    buffer.InnerBuffer.Span[(int)index] = unchecked((byte)(int)b);
                     break;
                 }
             default:
