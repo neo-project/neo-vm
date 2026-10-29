@@ -290,7 +290,7 @@ public class ExecutionEngine : IDisposable
     /// </summary>
     /// <returns>The item removed from the top of the stack.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal StackItem PopNoRef()
+    public StackItem PopNoRef()
     {
         return CurrentContext!.EvaluationStack.PopNoRef();
     }
