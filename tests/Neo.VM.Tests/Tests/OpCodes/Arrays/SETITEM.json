@@ -1311,6 +1311,64 @@
       ]
     },
     {
+      "name": "Negative element -1 [Buffer]",
+      "script": [
+        "PUSH1",
+        "NEWBUFFER",
+        "DUP",
+        "PUSH0",
+        "PUSHM1",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                  "type": "Buffer",
+                  "value": "0xff"
+              }
+            ],
+            "refs": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Negative element -128 [Buffer]",
+      "script": [
+        "PUSH1",
+        "NEWBUFFER",
+        "DUP",
+        "PUSH0",
+        "PUSHINT8",
+        "0x80",
+        "NEGATE",
+        "SETITEM"
+      ],
+      "steps": [
+        {
+          "actions": [
+            "Execute"
+          ],
+          "result": {
+            "state": "HALT",
+            "resultStack": [
+              {
+                  "type": "Buffer",
+                  "value": "0x80"
+              }
+            ],
+            "refs": 1
+          }
+        }
+      ]
+    },
+    {
       "name": "RefsDelta [Empty struct, map dropped]",
       "script": [
         "NEWMAP",
