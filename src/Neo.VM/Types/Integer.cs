@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -79,6 +80,22 @@ public class Integer : PrimitiveType
         return value;
     }
 
+    /// <summary>
+    /// Binary form of the Integer type: always <see cref="MaxSize"/> (32)
+    /// little-endian bytes. Non-negative values are unsigned-padded with zeros;
+    /// negatives are two's-complement sign-extended.
+    /// </summary>
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+    {
+        var bytes = new byte[MaxSize];
+        var unsigned = value.Sign >= 0;
+        if (!value.TryWriteBytes(bytes, out var written, isUnsigned: unsigned, isBigEndian: false))
+            throw new InvalidOperationException($"Integer does not fit in {MaxSize} bytes.");
+        if (!unsigned && written < MaxSize)
+            bytes.AsSpan(written).Fill(0xFF);
+        return bytes;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator Integer(sbyte value)
     {
@@ -132,6 +149,37 @@ public class Integer : PrimitiveType
     {
         return new Integer(value);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator BigInteger(Integer value)
+        => value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator byte(Integer value) => (byte)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator sbyte(Integer value) => (sbyte)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator short(Integer value) => (short)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator ushort(Integer value) => (ushort)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator int(Integer value) => (int)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator uint(Integer value) => (uint)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator long(Integer value) => (long)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator ulong(Integer value) => (ulong)value.GetInteger();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator bool(Integer value) => value.GetBoolean();
 
     public override string ToString()
     {
