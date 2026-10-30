@@ -9,6 +9,7 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+using Neo.VM.Types;
 using System.Diagnostics;
 
 namespace Neo.VM;
@@ -48,6 +49,11 @@ public sealed class ExceptionHandlingContext
     /// Indicates the state of the context.
     /// </summary>
     public ExceptionHandlingState State { get; internal set; } = ExceptionHandlingState.Try;
+
+    /// <summary>
+    /// The uncaught exception associated with this context when entering the <see langword="finally"/> block.
+    /// </summary>
+    public StackItem? UncaughtException { get; internal set; }
 
     internal ExceptionHandlingContext(int catchPointer, int finallyPointer)
     {

@@ -547,14 +547,19 @@ partial class JumpTable
         if (!engine.CurrentContext.TryStack.TryPop(out var currentTry))
             throw new InvalidOperationException($"The corresponding TRY block cannot be found.");
 
-        if (engine.UncaughtException is null)
+        if (currentTry.UncaughtException is null)
         {
+            if (currentTry.State != ExceptionHandlingState.Finally || currentTry.EndPointer < 0)
+                throw new InvalidOperationException($"The opcode {OpCode.ENDFINALLY} can't be executed without entering the corresponding FINALLY block.");
             engine.CurrentContext.InstructionPointer = currentTry.EndPointer;
         }
         else
         {
-            ExecuteThrow(engine, engine.UncaughtException, out int refsDelta);
-            runStats.CollectRefDelta(refsDelta);
+            var r1 = engine.ReferenceCounter.Count;
+            engine.ReferenceCounter.RemoveStackReference(currentTry.UncaughtException);
+            var r2 = engine.ReferenceCounter.Count;
+            ExecuteThrow(engine, currentTry.UncaughtException, out int refsDelta);
+            runStats.CollectRefDelta(r1 - r2 + refsDelta);
         }
 
         engine.isJumping = true;
@@ -700,6 +705,7 @@ partial class JumpTable
         engine.UncaughtException = ex;
 
         var pop = 0;
+        var r = engine.ReferenceCounter.Count;
         foreach (var executionContext in engine.InvocationStack)
         {
             if (executionContext.TryStack != null)
@@ -708,10 +714,11 @@ partial class JumpTable
                 {
                     if (tryContext.State == ExceptionHandlingState.Finally || (tryContext.State == ExceptionHandlingState.Catch && !tryContext.HasFinally))
                     {
+                        if (tryContext.UncaughtException is not null)
+                            engine.ReferenceCounter.RemoveStackReference(tryContext.UncaughtException);
                         executionContext.TryStack.Pop();
                         continue;
                     }
-                    var r = engine.ReferenceCounter.Count;
                     for (var i = 0; i < pop; i++)
                     {
                         engine.ContextUnloaded(engine.InvocationStack.Pop());
@@ -729,7 +736,12 @@ partial class JumpTable
                     else
                     {
                         tryContext.State = ExceptionHandlingState.Finally;
+                        tryContext.UncaughtException = engine.UncaughtException;
+                        r = engine.ReferenceCounter.Count;
+                        engine.ReferenceCounter.AddStackReference(tryContext.UncaughtException!);
+                        refsDelta += engine.ReferenceCounter.Count - r;
                         executionContext.InstructionPointer = tryContext.FinallyPointer;
+                        engine.UncaughtException = null;
                     }
                     engine.isJumping = true;
                     return;
