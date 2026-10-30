@@ -549,6 +549,8 @@ partial class JumpTable
 
         if (currentTry.UncaughtException is null)
         {
+            if (currentTry.State != ExceptionHandlingState.Finally || currentTry.EndPointer < 0)
+                throw new InvalidOperationException($"The opcode {OpCode.ENDFINALLY} can't be executed without entering the corresponding FINALLY block.");
             engine.CurrentContext.InstructionPointer = currentTry.EndPointer;
         }
         else
