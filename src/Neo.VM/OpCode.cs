@@ -53,7 +53,7 @@ namespace Neo.VM;
 /// </para>
 /// <para>
 /// Operations are subject to configured VM resource limits. Integer results must fit the
-/// VM integer-size limit(the default value is 256-bit.
+/// VM integer-size limit (the default value is 256-bit).
 /// Strict script validation may reject invalid control-flow targets
 /// and invalid type operands before execution; otherwise such conditions fault when reached.
 /// </para>
