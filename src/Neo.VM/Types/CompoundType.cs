@@ -64,7 +64,16 @@ public abstract class CompoundType : StackItem
         return true;
     }
 
-    public override int GetHashCode() => throw new NotSupportedException("Mutable compound type does not support GetHashCode.");
+    public override int GetHashCode()
+        => throw new NotSupportedException("Mutable compound type does not support GetHashCode.");
+
+    /// <summary>
+    /// Content hash of <see cref="Type"/>, size, and
+    /// <see cref="StackItem.GetSafeSpan()"/>. Opcode
+    /// <see cref="StackItem.GetSpan()"/> still throws for compounds.
+    /// </summary>
+    public override int GetHashCode(ExecutionEngineLimits limits)
+        => CombineHash(GetSafeSpan());
 
     public override string ToString()
     {
