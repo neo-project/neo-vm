@@ -39,6 +39,11 @@ public class Script
     public int Length { get; }
 
     /// <summary>
+    /// Gets whether strict mode is enabled for this script.
+    /// </summary>
+    public bool IsStrictMode => _strictMode;
+
+    /// <summary>
     /// Gets the <see cref="OpCode"/> at the specified index.
     /// </summary>
     /// <param name="index">The index to locate.</param>

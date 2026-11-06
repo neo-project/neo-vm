@@ -100,6 +100,17 @@ public class UT_Script
     }
 
     [TestMethod]
+    public void TestIsStrictMode()
+    {
+        byte[] rawScript = [(byte)OpCode.RET];
+
+        Assert.IsFalse(Script.Empty.IsStrictMode);
+        Assert.IsFalse(new Script(rawScript).IsStrictMode);
+        Assert.IsFalse(new Script(rawScript, false).IsStrictMode);
+        Assert.IsTrue(new Script(rawScript, true).IsStrictMode);
+    }
+
+    [TestMethod]
     public void TestParse()
     {
         Script script;
