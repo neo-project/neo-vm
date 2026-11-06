@@ -111,16 +111,6 @@ public class UT_Script
     }
 
     [TestMethod]
-    public void TestSize()
-    {
-        Assert.AreEqual(1, Script.Empty.Size);
-        Assert.AreEqual(253, new Script(new byte[252]).Size);
-        Assert.AreEqual(256, new Script(new byte[253]).Size);
-        Assert.AreEqual(ushort.MaxValue + 3, new Script(new byte[ushort.MaxValue]).Size);
-        Assert.AreEqual(ushort.MaxValue + 1 + 5, new Script(new byte[ushort.MaxValue + 1]).Size);
-    }
-
-    [TestMethod]
     public void TestSequenceEqual()
     {
         var script = new Script(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.RET });
@@ -128,6 +118,8 @@ public class UT_Script
         Assert.IsFalse(script.SequenceEqual(new byte[] { (byte)OpCode.PUSH1 }));
         Assert.IsFalse(script.SequenceEqual(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.NOP }));
         Assert.IsTrue(Script.Empty.SequenceEqual(ReadOnlySpan<byte>.Empty));
+        Assert.IsTrue(script.SequenceEqual(new Script(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.RET })));
+        Assert.IsFalse(script.SequenceEqual(new Script(new byte[] { (byte)OpCode.PUSH1 })));
     }
 
     [TestMethod]

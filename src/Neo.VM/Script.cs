@@ -39,11 +39,6 @@ public class Script
     public int Length { get; }
 
     /// <summary>
-    /// Gets the size of the script when serialized as variable-length bytes, including the length prefix.
-    /// </summary>
-    public int Size => Length + (Length < 0xFD ? 1 : Length <= ushort.MaxValue ? 3 : 5);
-
-    /// <summary>
     /// Gets whether strict mode is enabled for this script.
     /// </summary>
     public bool IsStrictMode => _strictMode;
@@ -54,6 +49,13 @@ public class Script
     /// <param name="other">The bytes to compare with the script.</param>
     /// <returns><see langword="true"/> if the bytes are equal; otherwise, <see langword="false"/>.</returns>
     public bool SequenceEqual(ReadOnlySpan<byte> other) => _value.Span.SequenceEqual(other);
+
+    /// <summary>
+    /// Determines whether this script has the same bytecodes as another script.
+    /// </summary>
+    /// <param name="other">The script to compare with this script.</param>
+    /// <returns><see langword="true"/> if the bytecodes are equal; otherwise, <see langword="false"/>.</returns>
+    public bool SequenceEqual(Script? other) => other is not null && _value.Span.SequenceEqual(other._value.Span);
 
     /// <summary>
     /// Gets the <see cref="OpCode"/> at the specified index.
