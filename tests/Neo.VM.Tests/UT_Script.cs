@@ -11,6 +11,7 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
+using Neo.VM.Types;
 using System;
 using System.Text;
 
@@ -78,6 +79,13 @@ public class UT_Script
 
         ReadOnlyMemory<byte> scriptConversion = script;
         Assert.AreEqual(rawScript, scriptConversion);
+
+        ByteString byteString = script;
+        CollectionAssert.AreEqual(rawScript, byteString.GetSpan().ToArray());
+
+        StackItem[] stackItems = new StackItem[] { script };
+        Assert.IsInstanceOfType<ByteString>(stackItems[0]);
+        CollectionAssert.AreEqual(rawScript, stackItems[0].GetSpan().ToArray());
     }
 
     [TestMethod]

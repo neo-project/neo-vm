@@ -181,6 +181,7 @@ public class Script
     }
 
     public static implicit operator ReadOnlyMemory<byte>(Script script) => script._value;
+    public static implicit operator ByteString(Script script) => new(script._value);
     public static implicit operator Script(ReadOnlyMemory<byte> script) => new(script);
     public static implicit operator Script(byte[] script) => new(script);
 
