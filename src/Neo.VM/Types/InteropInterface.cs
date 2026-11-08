@@ -10,7 +10,9 @@
 // modifications are permitted.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Neo.VM.Types;
 
@@ -59,5 +61,34 @@ public class InteropInterface : StackItem
     public override string ToString()
     {
         return _object.ToString() ?? "NULL";
+    }
+
+    /// <summary>
+    /// Blittable layout of the wrapped object, or UTF-8 type name when that is not possible.
+    /// </summary>
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+    {
+        var ptr = nint.Zero;
+        try
+        {
+            var size = Marshal.SizeOf(_object);
+            if (size <= 0)
+                return Utility.StrictUTF8.GetBytes(_object.GetType().Name);
+
+            var bytes = GC.AllocateUninitializedArray<byte>(size);
+            ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(_object, ptr, false);
+            Marshal.Copy(ptr, bytes, 0, size);
+            return bytes;
+        }
+        catch
+        {
+            return Utility.StrictUTF8.GetBytes(_object.GetType().Name);
+        }
+        finally
+        {
+            if (ptr != nint.Zero)
+                Marshal.FreeHGlobal(ptr);
+        }
     }
 }
