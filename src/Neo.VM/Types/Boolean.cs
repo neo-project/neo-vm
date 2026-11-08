@@ -53,11 +53,6 @@ public class Boolean : PrimitiveType
         return value;
     }
 
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(value);
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override BigInteger GetInteger()
     {
@@ -69,6 +64,13 @@ public class Boolean : PrimitiveType
     {
         return value ? True : False;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator bool(Boolean value) => value.GetBoolean();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator BigInteger(Boolean value)
+        => value.GetInteger();
 
     public override string ToString()
     {
