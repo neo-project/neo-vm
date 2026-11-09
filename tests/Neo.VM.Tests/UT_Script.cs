@@ -11,6 +11,7 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.VM;
+using Neo.VM.Types;
 using System;
 using System.Text;
 
@@ -78,6 +79,13 @@ public class UT_Script
 
         ReadOnlyMemory<byte> scriptConversion = script;
         Assert.AreEqual(rawScript, scriptConversion);
+
+        ByteString byteString = script;
+        CollectionAssert.AreEqual(rawScript, byteString.GetSpan().ToArray());
+
+        StackItem[] stackItems = new StackItem[] { script };
+        Assert.IsInstanceOfType<ByteString>(stackItems[0]);
+        CollectionAssert.AreEqual(rawScript, stackItems[0].GetSpan().ToArray());
     }
 
     [TestMethod]
@@ -97,6 +105,29 @@ public class UT_Script
 
         rawScript = new byte[] { (byte)OpCode.PUSHDATA4 };
         Assert.ThrowsExactly<BadScriptException>(() => _ = new Script(rawScript, true));
+    }
+
+    [TestMethod]
+    public void TestIsStrictMode()
+    {
+        byte[] rawScript = [(byte)OpCode.RET];
+
+        Assert.IsFalse(Script.Empty.IsStrictMode);
+        Assert.IsFalse(new Script(rawScript).IsStrictMode);
+        Assert.IsFalse(new Script(rawScript, false).IsStrictMode);
+        Assert.IsTrue(new Script(rawScript, true).IsStrictMode);
+    }
+
+    [TestMethod]
+    public void TestSequenceEqual()
+    {
+        var script = new Script(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.RET });
+        Assert.IsTrue(script.SequenceEqual(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.RET }));
+        Assert.IsFalse(script.SequenceEqual(new byte[] { (byte)OpCode.PUSH1 }));
+        Assert.IsFalse(script.SequenceEqual(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.NOP }));
+        Assert.IsTrue(Script.Empty.SequenceEqual(ReadOnlySpan<byte>.Empty));
+        Assert.IsTrue(script.SequenceEqual(new Script(new byte[] { (byte)OpCode.PUSH1, (byte)OpCode.RET })));
+        Assert.IsFalse(script.SequenceEqual(new Script(new byte[] { (byte)OpCode.PUSH1 })));
     }
 
     [TestMethod]
