@@ -516,7 +516,10 @@ partial class JumpTable
                     if (!map.TryGetValue(key, out var value))
                     {
                         var r3 = engine.ReferenceCounter.Count;
-                        ExecuteThrow(engine, FormattableString.Invariant($"Key {key} not found in {nameof(Map)}."), out int refsDelta);
+                        var keyText = key is Integer
+                            ? key.GetInteger().ToString(System.Globalization.CultureInfo.InvariantCulture)
+                            : key.ToString();
+                        ExecuteThrow(engine, $"Key {keyText} not found in {nameof(Map)}.", out int refsDelta);
                         runStats.CollectRefDelta(r1 - r3 + refsDelta);
                         return;
                     }
