@@ -504,7 +504,7 @@ partial class JumpTable
                     if (index < 0 || index >= array.Count)
                     {
                         var r3 = engine.ReferenceCounter.Count;
-                        ExecuteThrow(engine, $"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).", out int refsDelta);
+                        ExecuteThrow(engine, FormattableString.Invariant($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count})."), out int refsDelta);
                         runStats.CollectRefDelta(r1 - r3 + refsDelta);
                         return;
                     }
@@ -516,7 +516,7 @@ partial class JumpTable
                     if (!map.TryGetValue(key, out var value))
                     {
                         var r3 = engine.ReferenceCounter.Count;
-                        ExecuteThrow(engine, $"Key {key} not found in {nameof(Map)}.", out int refsDelta);
+                        ExecuteThrow(engine, FormattableString.Invariant($"Key {key} not found in {nameof(Map)}."), out int refsDelta);
                         runStats.CollectRefDelta(r1 - r3 + refsDelta);
                         return;
                     }
@@ -530,7 +530,7 @@ partial class JumpTable
                     if (index < 0 || index >= byteArray.Length)
                     {
                         var r3 = engine.ReferenceCounter.Count;
-                        ExecuteThrow(engine, $"The index of {nameof(PrimitiveType)} is out of range, {index}/[0, {byteArray.Length}).", out int refsDelta);
+                        ExecuteThrow(engine, FormattableString.Invariant($"The index of {nameof(PrimitiveType)} is out of range, {index}/[0, {byteArray.Length})."), out int refsDelta);
                         runStats.CollectRefDelta(r1 - r3 + refsDelta);
                         return;
                     }
@@ -543,7 +543,7 @@ partial class JumpTable
                     if (index < 0 || index >= buffer.Size)
                     {
                         var r3 = engine.ReferenceCounter.Count;
-                        ExecuteThrow(engine, $"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).", out int refsDelta);
+                        ExecuteThrow(engine, FormattableString.Invariant($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size})."), out int refsDelta);
                         runStats.CollectRefDelta(r1 - r3 + refsDelta);
                         return;
                     }
@@ -615,7 +615,7 @@ partial class JumpTable
                     {
                         engine.ReferenceCounter.RemoveStackReference(value);
                         var r4 = engine.ReferenceCounter.Count;
-                        ExecuteThrow(engine, $"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count}).", out int refsDelta);
+                        ExecuteThrow(engine, FormattableString.Invariant($"The index of {nameof(VMArray)} is out of range, {index}/[0, {array.Count})."), out int refsDelta);
                         runStats.CollectRefDelta((r1 - r2) + (r3 - r2) + (r3 - r4) + refsDelta);
                         runStats.CollectClonedItems(nClonedItems);
                         return;
@@ -653,7 +653,7 @@ partial class JumpTable
                     if (index < 0 || index >= buffer.Size)
                     {
                         var r4 = engine.ReferenceCounter.Count;
-                        ExecuteThrow(engine, $"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size}).", out int refsDelta);
+                        ExecuteThrow(engine, FormattableString.Invariant($"The index of {nameof(Buffer)} is out of range, {index}/[0, {buffer.Size})."), out int refsDelta);
                         runStats.CollectRefDelta((r1 - r2) + (r3 - r2) + (r3 - r4) + refsDelta);
                         runStats.CollectClonedItems(nClonedItems);
                         return;
