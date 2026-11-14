@@ -209,6 +209,14 @@ public class ExecutionEngine : IDisposable
         }
         context.LocalVariables?.ClearReferences();
         context.Arguments?.ClearReferences();
+        if (context.TryStack != null)
+        {
+            while (context.TryStack.TryPop(out var tryContext))
+            {
+                if (tryContext.UncaughtException is not null)
+                    ReferenceCounter.RemoveStackReference(tryContext.UncaughtException);
+            }
+        }
     }
 
     /// <summary>
