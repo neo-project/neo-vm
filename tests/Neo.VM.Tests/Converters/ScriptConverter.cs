@@ -12,46 +12,34 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Neo.Test.Extensions;
 using Neo.VM;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Neo.Test.Converters;
 
-internal class ScriptConverter : JsonConverter
+internal class ScriptConverter : JsonConverter<byte[]>
 {
-    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(byte[]) || objectType == typeof(string);
-    }
-
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    public override byte[] Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         switch (reader.TokenType)
         {
-            case JsonToken.String:
+            case JsonTokenType.String:
                 {
-                    if (reader.Value is string str)
-                    {
-                        Assert.StartsWith("0x", str, $"'0x' prefix required for value: '{str}'");
-                        return str.FromHexString();
-                    }
-                    break;
+                    var str = reader.GetString();
+                    Assert.StartsWith("0x", str, $"'0x' prefix required for value: '{str}'");
+                    return str.FromHexString();
                 }
-            case JsonToken.Bytes:
-                {
-                    if (reader.Value is byte[] data) return data;
-                    break;
-                }
-            case JsonToken.StartArray:
+            case JsonTokenType.StartArray:
                 {
                     using var script = new ScriptBuilder();
 
-                    foreach (var entry in JArray.Load(reader))
+                    while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
                     {
                         var mul = 1;
-                        var value = entry.Value<string>();
+                        var value = reader.GetString();
 
                         if (Enum.IsDefined(typeof(OpCode), value) && Enum.TryParse<OpCode>(value, out var opCode))
                         {
@@ -77,12 +65,12 @@ internal class ScriptConverter : JsonConverter
         throw new FormatException();
     }
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    public override void Write(Utf8JsonWriter writer, byte[] value, JsonSerializerOptions options)
     {
         if (value is byte[] data)
         {
             int ip = 0;
-            var array = new JArray();
+            var array = new List<string>();
 
             try
             {
@@ -129,7 +117,7 @@ internal class ScriptConverter : JsonConverter
             // Write the script
 
             writer.WriteStartArray();
-            foreach (var entry in array) writer.WriteValue(entry.Value<string>());
+            foreach (var entry in array) writer.WriteStringValue(entry);
             writer.WriteEndArray();
 
             // Double check - Ensure that the format is exactly the same
@@ -138,13 +126,13 @@ internal class ScriptConverter : JsonConverter
 
             foreach (var entry in array)
             {
-                if (Enum.TryParse<OpCode>(entry.Value<string>(), out var opCode))
+                if (Enum.TryParse<OpCode>(entry, out var opCode))
                 {
                     script.Emit(opCode);
                 }
                 else
                 {
-                    script.EmitRaw(entry.Value<string>().FromHexString());
+                    script.EmitRaw(entry.FromHexString());
                 }
             }
 

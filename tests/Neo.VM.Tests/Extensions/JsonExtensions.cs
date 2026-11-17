@@ -9,30 +9,23 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Neo.Test.Extensions;
 
 public static class JsonExtensions
 {
-    private static readonly JsonSerializerSettings _settings;
-
-    /// <summary>
-    /// Static constructor
-    /// </summary>
-    static JsonExtensions()
+    private static readonly JsonSerializerOptions _settings = new()
     {
-        _settings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Ignore,
-        };
-
-        _settings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
-    }
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+    };
 
     /// <summary>
     /// Deserialize json to object
@@ -42,7 +35,7 @@ public static class JsonExtensions
     /// <returns>Unit test</returns>
     public static T DeserializeJson<T>(this string input)
     {
-        return JsonConvert.DeserializeObject<T>(input, _settings);
+        return JsonSerializer.Deserialize<T>(input, _settings);
     }
 
     /// <summary>
@@ -52,6 +45,7 @@ public static class JsonExtensions
     /// <returns>Json</returns>
     public static string ToJson(this object ut)
     {
-        return JsonConvert.SerializeObject(ut, _settings);
+        if (ut is null) return "null";
+        return JsonSerializer.Serialize(ut, ut.GetType(), _settings);
     }
 }

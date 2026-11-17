@@ -9,16 +9,13 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace Neo.Test.Types;
 
 public class VMUTStackItem
 {
-    [JsonProperty]
     public VMUTStackItemType Type { get; set; }
 
-    [JsonProperty]
-    public JToken Value { get; set; }
+    public JsonNode Value { get; set; }
 }
