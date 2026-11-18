@@ -3,13 +3,13 @@
   "name": "Invocation limits",
   "tests": [
     {
-      "name": "More than 1024 ExecutionContext",
+      "name": "More than 255 ExecutionContext",
       "script": [
         "INITSSLOT",
         "0x01",
         "PUSHDATA1",
         "0x02",
-        "0x0004",
+        "0xff00",
         "INC",
         "STSFLD0",
         "LDSFLD0",
@@ -39,7 +39,7 @@
                 "staticFields": [
                   {
                     "type": "integer",
-                    "value": 1025
+                    "value": 256
                   }
                 ]
               }
@@ -63,13 +63,13 @@
                 "evaluationStack": [
                   {
                     "type": "integer",
-                    "value": 1024
+                    "value": 255
                   }
                 ],
                 "staticFields": [
                   {
                     "type": "integer",
-                    "value": 1024
+                    "value": 255
                   }
                 ]
               }
@@ -91,7 +91,7 @@
                 "staticFields": [
                   {
                     "type": "integer",
-                    "value": 1024
+                    "value": 255
                   }
                 ]
               },
@@ -101,7 +101,7 @@
                 "staticFields": [
                   {
                     "type": "integer",
-                    "value": 1024
+                    "value": 255
                   }
                 ]
               }

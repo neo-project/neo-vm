@@ -49,7 +49,7 @@ public sealed record ExecutionEngineLimits
     /// <summary>
     /// The maximum number of frames in the invocation stack of the VM.
     /// </summary>
-    public uint MaxInvocationStackSize { get; init; } = 1024;
+    public uint MaxInvocationStackSize { get; init; } = byte.MaxValue;
 
     /// <summary>
     /// The maximum nesting depth of <see langword="try"/>-<see langword="catch"/>-<see langword="finally"/> blocks.

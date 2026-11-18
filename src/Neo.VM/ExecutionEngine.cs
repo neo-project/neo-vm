@@ -90,6 +90,15 @@ public class ExecutionEngine : IDisposable
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ExecutionEngine"/> class
+    /// with the specified execution limits.
+    /// </summary>
+    /// <param name="jumpTable">The jump table to be used.</param>
+    /// <param name="limits">Restrictions on the VM.</param>
+    public ExecutionEngine(JumpTable? jumpTable, ExecutionEngineLimits limits)
+        : this(jumpTable, new ReferenceCounter(), limits) { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExecutionEngine"/> class
     /// with the specified <see cref="VM.IReferenceCounter"/> and <see cref="ExecutionEngineLimits"/>.
     /// </summary>
     /// <param name="jumpTable">The jump table to be used.</param>
