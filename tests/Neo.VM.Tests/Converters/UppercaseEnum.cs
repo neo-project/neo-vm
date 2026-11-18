@@ -9,25 +9,34 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
-using Newtonsoft.Json;
 using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Neo.Test.Converters;
 
-internal class UppercaseEnum : JsonConverter
+internal class UppercaseEnum : JsonConverterFactory
 {
-    public override bool CanConvert(Type objectType)
+    public override bool CanConvert(Type typeToConvert)
     {
-        return objectType.IsEnum;
+        return typeToConvert.IsEnum;
     }
 
-    public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
-        return Enum.Parse(objectType, reader.Value.ToString(), true);
+        return (JsonConverter)Activator.CreateInstance(typeof(Converter<>).MakeGenericType(typeToConvert));
     }
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    private sealed class Converter<T> : JsonConverter<T> where T : struct, Enum
     {
-        writer.WriteValue(value.ToString().ToUpperInvariant());
+        public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return Enum.Parse<T>(reader.GetString(), true);
+        }
+
+        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.ToString().ToUpperInvariant());
+        }
     }
 }
