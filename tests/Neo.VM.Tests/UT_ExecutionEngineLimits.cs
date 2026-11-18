@@ -32,14 +32,15 @@ public class UT_ExecutionEngineLimits
     }
 
     [TestMethod]
-    public void TestDefaultInvocationStackLimitUnchanged()
+    public void TestDefaultInvocationStackLimit()
     {
         using var engine = new ExecutionEngine();
-        Assert.AreEqual(1024u, engine.Limits.MaxInvocationStackSize);
+        Assert.AreEqual((uint)byte.MaxValue, engine.Limits.MaxInvocationStackSize);
 
         var context = engine.LoadScript(new byte[] { (byte)OpCode.RET });
-        engine.LoadContext(context.Clone());
-        engine.LoadContext(context.Clone());
-        Assert.HasCount(3, engine.InvocationStack);
+        for (int i = 1; i < byte.MaxValue; i++)
+            engine.LoadContext(context.Clone());
+        Assert.HasCount(byte.MaxValue, engine.InvocationStack);
+        Assert.ThrowsExactly<InvalidOperationException>(() => engine.LoadContext(context.Clone()));
     }
 }
