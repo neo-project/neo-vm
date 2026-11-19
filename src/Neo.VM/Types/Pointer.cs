@@ -9,7 +9,9 @@
 // Redistribution and use in source and binary forms with or without
 // modifications are permitted.
 
+using Neo.VM.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Neo.VM.Types;
@@ -55,10 +57,14 @@ public class Pointer : StackItem
         return true;
     }
 
-    public override int GetHashCode()
+    public override int GetHashCode(ExecutionEngineLimits limits)
     {
-        return HashCode.Combine(Script.GetHashCode(), Position);
+        var span = GetSpan(limits);
+        return HashCode.Combine(Type, span.Length, Position, span.ToHashCode(397));
     }
+
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+        => ((ReadOnlyMemory<byte>)Script).Span;
 
     public override string ToString()
     {
