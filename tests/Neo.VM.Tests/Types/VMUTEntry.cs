@@ -10,18 +10,18 @@
 // modifications are permitted.
 
 using Neo.Test.Converters;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Neo.Test.Types;
 
 public class VMUTEntry
 {
-    [JsonProperty(Order = 1)]
+    [JsonPropertyOrder(1)]
     public string Name { get; set; }
 
-    [JsonProperty(Order = 2), JsonConverter(typeof(ScriptConverter))]
+    [JsonPropertyOrder(2), JsonConverter(typeof(ScriptConverter))]
     public byte[] Script { get; set; }
 
-    [JsonProperty(Order = 3)]
+    [JsonPropertyOrder(3)]
     public VMUTStep[] Steps { get; set; }
 }

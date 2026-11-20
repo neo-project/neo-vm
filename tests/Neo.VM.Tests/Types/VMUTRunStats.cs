@@ -10,7 +10,6 @@
 // modifications are permitted.
 
 using Neo.VM.Types;
-using Newtonsoft.Json;
 
 namespace Neo.Test.Types;
 
@@ -20,15 +19,11 @@ namespace Neo.Test.Types;
 /// </summary>
 public class VMUTRunStats
 {
-    [JsonProperty]
     public StackItemType? Type { get; set; }
 
-    [JsonProperty]
     public int? Length { get; set; }
 
-    [JsonProperty]
     public int? RefsDelta { get; set; }
 
-    [JsonProperty]
     public int? NClonedItems { get; set; }
 }

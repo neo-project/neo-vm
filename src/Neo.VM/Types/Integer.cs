@@ -11,6 +11,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -135,6 +136,6 @@ public class Integer : PrimitiveType
 
     public override string ToString()
     {
-        return value.ToString();
+        return value.ToString(CultureInfo.InvariantCulture);
     }
 }
