@@ -5,7 +5,7 @@
     <Description>Neo virtual machine</Description>
     <VersionPrefix>3.11.3</VersionPrefix>
     <Authors>The Neo Project</Authors>
-    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TargetFrameworks>net11.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <PackageTags>NEO;AntShares;Blockchain;Smart Contract;VM</PackageTags>
     <PackageProjectUrl>https://github.com/neo-project/neo-vm</PackageProjectUrl>
