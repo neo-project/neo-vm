@@ -60,6 +60,22 @@ public class UT_JumpTable_Types
     }
 
     [TestMethod]
+    public void AssertMsg_NullMessage_ContinuesWithZeroLength()
+    {
+        using var engine = new StatsCapturingEngine();
+        using var sb = new ScriptBuilder();
+        sb.EmitPush(true);
+        sb.Emit(OpCode.PUSHNULL);
+        sb.Emit(OpCode.ASSERTMSG);
+        sb.EmitPush(42);
+        engine.LoadScript(sb.ToArray());
+
+        Assert.AreEqual(VMState.HALT, engine.Execute());
+        Assert.AreEqual(42, (int)engine.ResultStack.Peek().GetInteger());
+        Assert.AreEqual(0, engine.AllStats.Single(s => s.OpCode == OpCode.ASSERTMSG).Stats.Length);
+    }
+
+    [TestMethod]
     public void AssertMsg_AccentedChar_LengthIsUtf8ByteCount()
     {
         // "é" (U+00E9) is 1 UTF-16 code unit but 2 bytes in UTF-8.

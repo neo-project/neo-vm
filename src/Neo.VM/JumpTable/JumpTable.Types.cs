@@ -120,6 +120,6 @@ partial class JumpTable
         if (!x)
             throw new Exception($"{OpCode.ASSERTMSG} is executed with false result. Reason: {msg}");
         runStats.CollectRefDelta(r - engine.ReferenceCounter.Count);
-        runStats.CollectOpLength(msgItem.GetSpan().Length);
+        runStats.CollectOpLength(msgItem.IsNull ? 0 : msgItem.GetSpan().Length);
     }
 }
