@@ -21,6 +21,48 @@ namespace Neo.Test;
 public class UT_Script
 {
     [TestMethod]
+    public void ScriptHashIsCachedHash160()
+    {
+        var script = new Script(ReadOnlyMemory<byte>.Empty);
+        Assert.AreEqual("B472A266D0BD89C13706A4132CCFB16F7C3B9FCB", Convert.ToHexString(script.ScriptHash.Span));
+        Assert.AreEqual(script.ScriptHash, script.ScriptHash);
+    }
+
+    [TestMethod]
+    public void ScriptEqualityUsesHash()
+    {
+        var first = new Script(new byte[] { (byte)OpCode.RET });
+        var same = new Script(new byte[] { (byte)OpCode.RET });
+        var different = new Script(new byte[] { (byte)OpCode.NOP });
+        Script missing = null;
+
+        Assert.IsTrue(first == same);
+        Assert.IsFalse(first != same);
+        Assert.IsTrue(first.Equals(same));
+        Assert.AreEqual(first.GetHashCode(), same.GetHashCode());
+        Assert.IsTrue(first != different);
+        Assert.IsFalse(first == different);
+        Assert.IsTrue(first != missing);
+        Assert.IsFalse(missing == first);
+        Assert.IsTrue(missing == null);
+    }
+
+    [TestMethod]
+    public void PointersCompareByScriptHash()
+    {
+        var first = new Script(new byte[] { (byte)OpCode.RET });
+        var same = new Script(new byte[] { (byte)OpCode.RET });
+        var different = new Script(new byte[] { (byte)OpCode.NOP });
+        var pointer = new Pointer(first, 0);
+        var matching = new Pointer(same, 0);
+
+        Assert.IsTrue(pointer.Equals(matching));
+        Assert.AreEqual(pointer.GetHashCode(), matching.GetHashCode());
+        Assert.IsFalse(pointer.Equals(new Pointer(different, 0)));
+        Assert.IsFalse(pointer.Equals(new Pointer(same, 1)));
+    }
+
+    [TestMethod]
     [DataRow(OpCode.PUSHA)]
     [DataRow(OpCode.JMP_L)]
     [DataRow(OpCode.JMPIF_L)]

@@ -10,10 +10,12 @@
 // modifications are permitted.
 
 using Neo.VM.Types;
+using Org.BouncyCastle.Crypto.Digests;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 
 namespace Neo.VM;
 
@@ -24,6 +26,7 @@ namespace Neo.VM;
 public class Script
 {
     private int _hashCode = 0;
+    private ReadOnlyMemory<byte> _scriptHash;
     private readonly ReadOnlyMemory<byte> _value;
     private readonly bool _strictMode;
     private readonly Dictionary<int, Instruction> _instructions = [];
@@ -37,6 +40,26 @@ public class Script
     /// The length of the script.
     /// </summary>
     public int Length { get; }
+
+    /// <summary>
+    /// Gets the HASH160 of the script bytecodes.
+    /// </summary>
+    public ReadOnlyMemory<byte> ScriptHash
+    {
+        get
+        {
+            if (_scriptHash.IsEmpty)
+            {
+                var digest = new RipeMD160Digest();
+                byte[] sha256 = SHA256.HashData(_value.Span);
+                byte[] hash = new byte[digest.GetDigestSize()];
+                digest.BlockUpdate(sha256);
+                digest.DoFinal(hash, 0);
+                _scriptHash = hash;
+            }
+            return _scriptHash;
+        }
+    }
 
     /// <summary>
     /// Gets whether strict mode is enabled for this script.
@@ -185,11 +208,27 @@ public class Script
     public static implicit operator Script(ReadOnlyMemory<byte> script) => new(script);
     public static implicit operator Script(byte[] script) => new(script);
 
+    /// <summary>
+    /// Determines whether two scripts have the same script hash.
+    /// </summary>
+    public static bool operator ==(Script? left, Script? right)
+    {
+        if (ReferenceEquals(left, right)) return true;
+        return left is not null && right is not null && left.ScriptHash.Span.SequenceEqual(right.ScriptHash.Span);
+    }
+
+    /// <summary>
+    /// Determines whether two scripts have different script hashes.
+    /// </summary>
+    public static bool operator !=(Script? left, Script? right) => !(left == right);
+
+    public override bool Equals(object? obj) => obj is Script other && this == other;
+
     public override int GetHashCode()
     {
         if (_hashCode == 0)
         {
-            _hashCode = HashCode.Combine(_value.Span.XxHash3_32());
+            _hashCode = HashCode.Combine(ScriptHash.Span.XxHash3_32());
         }
         return _hashCode;
     }
