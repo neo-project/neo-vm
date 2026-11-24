@@ -46,6 +46,7 @@ public class Pointer : StackItem
     public override bool Equals(StackItem? other)
     {
         if (other == this) return true;
+        // Script equality compares script hashes.
         if (other is Pointer p) return Position == p.Position && Script == p.Script;
         return false;
     }
