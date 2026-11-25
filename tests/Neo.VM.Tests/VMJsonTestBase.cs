@@ -14,11 +14,10 @@ using Neo.Test.Extensions;
 using Neo.Test.Types;
 using Neo.VM;
 using Neo.VM.Types;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Nodes;
 using Array = Neo.VM.Types.Array;
 using Boolean = Neo.VM.Types.Boolean;
 using Buffer = Neo.VM.Types.Buffer;
@@ -160,7 +159,7 @@ public abstract class VMJsonTestBase
 
         for (int x = 0, max = actual.Count; x < max; x++)
         {
-            AssertAreEqual(PrepareJsonItem(expected[x]).ToString(Formatting.None), ItemToJson(actual.Peek(x)).ToString(Formatting.None), message + $" Stack item #{x} mismatch");
+            AssertAreEqual(PrepareJsonItem(expected[x]).ToJsonString(), ItemToJson(actual.Peek(x)).ToJsonString(), message + $" Stack item #{x} mismatch");
         }
     }
 
@@ -176,61 +175,65 @@ public abstract class VMJsonTestBase
 
         for (int x = 0, max = actual == null ? 0 : actual.Count; x < max; x++)
         {
-            AssertAreEqual(PrepareJsonItem(expected[x]).ToString(Formatting.None), ItemToJson(actual[x]).ToString(Formatting.None), message + $" Stack item #{x} mismatch");
+            AssertAreEqual(PrepareJsonItem(expected[x]).ToJsonString(), ItemToJson(actual[x]).ToJsonString(), message + $" Stack item #{x} mismatch");
         }
     }
 
-    private static JObject PrepareJsonItem(VMUTStackItem item)
+    private static string AsString(JsonNode node)
     {
-        var ret = new JObject
+        if (node is null) return null;
+        return node is JsonValue v && v.TryGetValue<string>(out var s) ? s : node.ToJsonString();
+    }
+
+    private static JsonNode FromBytes(byte[] data) => JsonValue.Create(Convert.ToBase64String(data));
+
+    private static JsonObject PrepareJsonItem(VMUTStackItem item)
+    {
+        var ret = new JsonObject
         {
-            ["type"] = item.Type.ToString(),
-            ["value"] = item.Value
+            ["type"] = item.Type.ToString()
         };
 
         switch (item.Type)
         {
             case VMUTStackItemType.Null:
                 {
-                    ret["type"] = VMUTStackItemType.Null.ToString();
-                    ret.Remove("value");
                     break;
                 }
             case VMUTStackItemType.Pointer:
                 {
-                    ret["type"] = VMUTStackItemType.Pointer.ToString();
-                    ret["value"] = item.Value.Value<int>();
+                    ret["value"] = item.Value.GetValue<int>();
                     break;
                 }
             case VMUTStackItemType.String:
                 {
                     // Easy access
                     ret["type"] = VMUTStackItemType.ByteString.ToString();
-                    ret["value"] = Encoding.UTF8.GetBytes(item.Value.Value<string>());
+                    ret["value"] = FromBytes(Encoding.UTF8.GetBytes(AsString(item.Value)));
                     break;
                 }
             case VMUTStackItemType.ByteString:
             case VMUTStackItemType.Buffer:
                 {
-                    var value = ret["value"].Value<string>();
+                    var value = AsString(item.Value);
                     Assert.IsTrue(string.IsNullOrEmpty(value) || value.StartsWith("0x"), $"'0x' prefix required for value: '{value}'");
-                    ret["value"] = value.FromHexString();
+                    ret["value"] = FromBytes(value.FromHexString());
                     break;
                 }
             case VMUTStackItemType.Integer:
                 {
                     // Ensure format
-                    ret["value"] = ret["value"].Value<string>();
+                    ret["value"] = AsString(item.Value);
                     break;
                 }
             case VMUTStackItemType.Struct:
             case VMUTStackItemType.Array:
                 {
-                    var array = (JArray)ret["value"];
+                    var array = new JsonArray();
 
-                    for (int x = 0, m = array.Count; x < m; x++)
+                    foreach (var entry in item.Value.AsArray())
                     {
-                        array[x] = PrepareJsonItem(JsonConvert.DeserializeObject<VMUTStackItem>(array[x].ToString()));
+                        array.Add(PrepareJsonItem(entry.ToJsonString().DeserializeJson<VMUTStackItem>()));
                     }
 
                     ret["value"] = array;
@@ -238,14 +241,19 @@ public abstract class VMJsonTestBase
                 }
             case VMUTStackItemType.Map:
                 {
-                    var obj = (JObject)ret["value"];
+                    var obj = new JsonObject();
 
-                    foreach (var prop in obj.Properties())
+                    foreach (var prop in item.Value.AsObject())
                     {
-                        obj[prop.Name] = PrepareJsonItem(JsonConvert.DeserializeObject<VMUTStackItem>(prop.Value.ToString()));
+                        obj[prop.Key] = PrepareJsonItem(prop.Value.ToJsonString().DeserializeJson<VMUTStackItem>());
                     }
 
                     ret["value"] = obj;
+                    break;
+                }
+            default:
+                {
+                    ret["value"] = item.Value?.DeepClone();
                     break;
                 }
         }
@@ -253,38 +261,38 @@ public abstract class VMJsonTestBase
         return ret;
     }
 
-    private static JObject ItemToJson(StackItem item)
+    private static JsonObject ItemToJson(StackItem item)
     {
         if (item == null) return null;
 
-        JToken value;
+        JsonNode value;
         string type = item.GetType().Name;
 
         switch (item)
         {
             case Null _:
                 {
-                    return new JObject
+                    return new JsonObject
                     {
                         ["type"] = type,
                     };
                 }
             case Pointer p:
                 {
-                    return new JObject
+                    return new JsonObject
                     {
                         ["type"] = type,
                         ["value"] = p.Position
                     };
                 }
-            case Boolean v: value = new JValue(v.GetBoolean()); break;
-            case Integer v: value = new JValue(v.GetInteger().ToString()); break;
-            case ByteString v: value = new JValue(v.GetSpan().ToArray()); break;
-            case Buffer v: value = new JValue(v.InnerBuffer.ToArray()); break;
+            case Boolean v: value = JsonValue.Create(v.GetBoolean()); break;
+            case Integer v: value = JsonValue.Create(v.GetInteger().ToString()); break;
+            case ByteString v: value = FromBytes(v.GetSpan().ToArray()); break;
+            case Buffer v: value = FromBytes(v.InnerBuffer.ToArray()); break;
             //case VM.Types.Struct v:
             case Array v:
                 {
-                    var jarray = new JArray();
+                    var jarray = new JsonArray();
 
                     foreach (var entry in v)
                     {
@@ -296,7 +304,7 @@ public abstract class VMJsonTestBase
                 }
             case Map v:
                 {
-                    var jdic = new JObject();
+                    var jdic = new JsonObject();
 
                     foreach (var entry in v)
                     {
@@ -311,13 +319,13 @@ public abstract class VMJsonTestBase
                     type = "Interop";
                     var obj = v.GetInterface<object>();
 
-                    value = obj.GetType().Name.ToString();
+                    value = JsonValue.Create(obj.GetType().Name);
                     break;
                 }
             default: throw new NotImplementedException();
         }
 
-        return new JObject
+        return new JsonObject
         {
             ["type"] = type,
             ["value"] = value

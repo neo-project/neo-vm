@@ -395,6 +395,7 @@ partial class JumpTable
     public virtual void CallA(ExecutionEngine engine, Instruction instruction, ref RunStats runStats)
     {
         var x = engine.Pop<Pointer>();
+        // Script equality compares script hashes.
         if (x.Script != engine.CurrentContext!.Script)
             throw new InvalidOperationException("Pointers can't be shared between scripts");
         ExecuteCall(engine, x.Position);
