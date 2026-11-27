@@ -10,6 +10,7 @@
 // modifications are permitted.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -91,6 +92,9 @@ public class ByteString : PrimitiveType
         return new BigInteger(GetSpan());
     }
 
+    protected override ReadOnlySpan<byte> ComputeSpan(HashSet<StackItem> visited)
+        => Memory.Span;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static implicit operator ReadOnlyMemory<byte>(ByteString value)
     {
@@ -120,6 +124,9 @@ public class ByteString : PrimitiveType
     {
         return new ByteString(value.ToStrictUtf8Bytes());
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static explicit operator byte[](ByteString value) => value.Memory.ToArray();
 
     public override string ToString()
     {
